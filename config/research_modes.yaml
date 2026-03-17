@@ -1,0 +1,77 @@
+# Research Mode Definitions
+# Controls depth, breadth, and resource allocation for each mode.
+
+modes:
+  quick:
+    description: "Fast search across core sources — good for known-item lookups or topic overviews"
+    modules: [crossref, openalex, semantic_scholar]
+    max_results_per_module: 20
+    max_total_papers: 30
+    max_total_time_seconds: 60
+    pdf_download: true
+    quote_extraction: true
+    top_n: 15
+    ranking_weights:
+      relevance: 0.4
+      recency: 0.2
+      quality: 0.2
+      authority: 0.2
+
+  standard:
+    description: "Balanced search across all Tier 1 modules — recommended for most research tasks"
+    modules: all_tier_1
+    max_results_per_module: 50
+    max_total_papers: 60
+    max_total_time_seconds: 180
+    pdf_download: true
+    quote_extraction: true
+    top_n: 25
+    ranking_weights:
+      relevance: 0.4
+      recency: 0.2
+      quality: 0.2
+      authority: 0.2
+
+  deep:
+    description: "Exhaustive search across all tiers including HAN-Server — for systematic reviews"
+    modules: all_tiers
+    max_results_per_module: 100
+    max_total_papers: 120
+    max_total_time_seconds: 300
+    pdf_download: true
+    quote_extraction: true
+    top_n: 40
+    ranking_weights:
+      relevance: 0.4
+      recency: 0.2
+      quality: 0.2
+      authority: 0.2
+
+# 4D Ranking Dimensions (scored by ranking.py)
+# Total = relevance*0.4 + recency*0.2 + quality*0.2 + authority*0.2
+ranking_dimensions:
+  relevance:
+    description: "Keyword coverage in title (70%) and abstract (30%)"
+    range: [0.0, 1.0]
+
+  recency:
+    description: "Publication year score — exponential decay with 5-year half-life"
+    range: [0.0, 1.0]
+    decay_function: "exponential"
+    reference_year: current
+    half_life_years: 5
+
+  quality:
+    description: "Citation count with log scaling — log(citations+1) / log(1001)"
+    range: [0.0, 1.0]
+
+  authority:
+    description: "Venue authority heuristic — top venues (IEEE, ACM, Nature) = 1.0, mid = 0.7, other = 0.4"
+    range: [0.0, 1.0]
+
+# Portfolio adjustments (deep mode only, applied AFTER 4D scoring)
+# These are bonus/penalty adjustments, not a weighted dimension.
+portfolio_adjustments:
+  description: "Source diversity corrections applied in deep mode after initial ranking"
+  venue_concentration_penalty: -0.05   # Applied when a venue has 3+ papers
+  source_diversity_bonus: 0.03         # Applied to papers from underrepresented source modules

@@ -1,0 +1,133 @@
+# Search Module Registry
+# Each module defines a source for academic paper discovery.
+# type: api (Python httpx) | oai-pmh (XML harvest) | browser (Playwright MCP)
+# tier: 1 = free/no login, 2 = requires HAN-Server authentication
+# disciplines: optional filter — module only activates for matching topics
+
+modules:
+  # --- Tier 1: Free, no authentication ---
+  crossref:
+    enabled: true
+    tier: 1
+    type: api
+    base_url: "https://api.crossref.org/works"
+    description: "DOI registry with broad coverage across all disciplines"
+    fields: "title,author,published,DOI,abstract,is-referenced-by-count,link"
+
+  openalex:
+    enabled: true
+    tier: 1
+    type: api
+    base_url: "https://api.openalex.org/works"
+    description: "Open catalog of scholarly works, authors, venues, institutions"
+    fields: "title,authorships,publication_year,doi,abstract_inverted_index,cited_by_count,open_access"
+
+  semantic_scholar:
+    enabled: true
+    tier: 1
+    type: api
+    base_url: "https://api.semanticscholar.org/graph/v1/paper/search"
+    description: "AI-powered academic search with citation graphs and abstracts"
+    fields: "title,authors,year,abstract,citationCount,openAccessPdf,externalIds"
+
+  base:
+    enabled: true
+    tier: 1
+    type: api
+    base_url: "https://api.base-search.net/cgi-bin/BaseHttpSearchInterface.fcgi"
+    description: "Bielefeld Academic Search Engine — 400M+ documents, strong OA coverage"
+
+  econbiz:
+    enabled: true
+    tier: 1
+    type: api
+    base_url: "https://api.econbiz.de/v1/search"
+    description: "ZBW search service for economics and business studies"
+    disciplines: [economics, business, management, wirtschaftsinformatik]
+
+  econstor:
+    enabled: true
+    tier: 1
+    type: oai-pmh
+    base_url: "https://www.econstor.eu/oai/request"
+    description: "Open Access repository for economics publications"
+    disciplines: [economics, business]
+
+  repec:
+    enabled: true
+    tier: 1
+    type: browser
+    search_url: "https://ideas.repec.org/cgi-bin/htsearch?q="
+    description: "Research Papers in Economics — working papers and journal articles via IDEAS/RePEc"
+    disciplines: [economics]
+    browser_guide: repec.md
+
+  oecd:
+    enabled: true
+    tier: 1
+    type: browser
+    search_url: "https://www.oecd-ilibrary.org/search?q="
+    description: "OECD iLibrary for policy research and statistics"
+    browser_guide: oecd.md
+
+  google_scholar:
+    enabled: true
+    tier: 1
+    type: browser
+    description: "Google Scholar — broad academic search via Playwright MCP"
+    search_url: "https://scholar.google.com/scholar?q="
+    anti_scraping: true
+
+  destatis:
+    enabled: false
+    tier: 1
+    type: browser
+    description: "German Federal Statistical Office — statistics and reports"
+    search_url: "https://www.destatis.de/DE/Home/_inhalt.html"
+
+  # --- Tier 2: Requires HAN-Server login ---
+  opac:
+    enabled: false
+    tier: 2
+    type: browser
+    auth: han
+    description: "University library catalog via HAN proxy"
+
+  ebsco:
+    enabled: false
+    tier: 2
+    type: browser
+    auth: han
+    description: "EBSCO databases — Business Source, Academic Search"
+    browser_guide: ebscohost.md
+
+  proquest:
+    enabled: false
+    tier: 2
+    type: browser
+    auth: han
+    description: "ProQuest dissertations and theses"
+
+  ezb:
+    enabled: false
+    tier: 2
+    type: browser
+    auth: han
+    description: "Elektronische Zeitschriftenbibliothek — journal access"
+
+# Mode overrides determine which modules are active per research mode
+mode_overrides:
+  quick:
+    active_modules: [crossref, openalex, semantic_scholar]
+    max_results_per_module: 20
+    max_total_time: 60
+
+  standard:
+    active_tiers: [1]
+    max_results_per_module: 50
+    max_total_time: 180
+
+  deep:
+    active_tiers: [1, 2]
+    max_results_per_module: 100
+    max_total_time: 300

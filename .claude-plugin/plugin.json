@@ -1,0 +1,20 @@
+{
+  "name": "academic-research",
+  "description": "Modular academic research pipeline with 7-phase workflow, cross-platform PDF resolution, and citation management. Searches across Semantic Scholar, CrossRef, OpenAlex, BASE, Google Scholar, EconBiz, and more.",
+  "version": "3.0.0",
+  "author": {
+    "name": "Jonas"
+  },
+  "license": "MIT",
+  "keywords": [
+    "academic",
+    "research",
+    "papers",
+    "citations",
+    "literature-review",
+    "semantic-scholar",
+    "crossref",
+    "openalex"
+  ],
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,9 @@
+{
+  "hooks": [
+    {
+      "type": "SessionStart",
+      "command": "test -d ~/.academic-research/venv/ && echo '✅ academic-research: Python environment ready' || echo '⚠️ academic-research: Python environment not found. Run /academic:setup to install dependencies.'",
+      "description": "Check if Python virtual environment exists on session start"
+    }
+  ]
+}

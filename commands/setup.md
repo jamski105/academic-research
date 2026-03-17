@@ -1,0 +1,45 @@
+---
+description: Set up Python environment for academic research plugin
+allowed-tools: Bash(*)
+---
+
+# Academic Research Setup
+
+Set up the Python environment required by the academic research plugin.
+
+## Steps
+
+1. Create the data directory:
+```bash
+mkdir -p ~/.academic-research/{sessions,pdfs}
+```
+
+2. Create Python virtual environment:
+```bash
+python3 -m venv ~/.academic-research/venv
+```
+
+3. Install dependencies:
+```bash
+~/.academic-research/venv/bin/pip install -r ${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt
+```
+
+4. Verify installation:
+```bash
+~/.academic-research/venv/bin/python -c "import httpx; print('✅ httpx:', httpx.__version__)"
+~/.academic-research/venv/bin/python -c "import PyPDF2; print('✅ PyPDF2:', PyPDF2.__version__)"
+```
+
+5. Show result:
+```
+✅ Setup complete!
+
+Environment: ~/.academic-research/venv/
+Data dir:    ~/.academic-research/
+
+Next steps:
+  /academic:context  — Set up your university and preferences
+  /research "query"  — Start your first research
+```
+
+If any step fails, show the error and suggest fixes (e.g., `python3 not found` → install Python 3.11+).
