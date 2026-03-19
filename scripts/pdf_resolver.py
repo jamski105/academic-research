@@ -75,8 +75,23 @@ def tier_unpaywall(client: httpx.Client, doi: str, email: str) -> str | None:
 
 def tier_core(client: httpx.Client, doi: str) -> str | None:
     """Resolve PDF URL via CORE."""
-    resp = client.get("https://api.core.ac.uk/v3/search/works", params={"q": f"doi:{doi}"}, timeout=TIMEOUT)
-    resp.raise_for_status()
+    import time as _time
+
+    def _get() -> httpx.Response:
+        r = client.get("https://api.core.ac.uk/v3/search/works", params={"q": f"doi:{doi}"}, timeout=TIMEOUT)
+        r.raise_for_status()
+        return r
+
+    for attempt in range(3):
+        try:
+            resp = _get()
+            break
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code != 429 or attempt == 2:
+                raise
+            _time.sleep(2.0 * (2 ** attempt))
+    else:
+        return None
     payload = resp.json()
     results = payload.get("results", [])
     if not results:

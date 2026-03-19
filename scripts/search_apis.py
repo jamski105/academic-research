@@ -18,6 +18,20 @@ import httpx
 
 TIMEOUT = 30.0
 OAI_DC_NS = "http://purl.org/dc/elements/1.1/"
+ARXIV_NS = "http://www.w3.org/2005/Atom"
+
+
+def retry_on_429(fn: Callable, max_retries: int = 3, base_delay: float = 2.0) -> Any:
+    """Call fn(), retrying on HTTP 429 with exponential backoff."""
+    for attempt in range(max_retries):
+        try:
+            return fn()
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code != 429 or attempt == max_retries - 1:
+                raise
+            delay = base_delay * (2 ** attempt)  # 2s, 4s, 8s
+            logging.warning("429 rate limit — retrying in %.0fs (attempt %d/%d)", delay, attempt + 1, max_retries)
+            time.sleep(delay)
 
 
 def normalize_paper(data: dict[str, Any], source_module: str) -> dict[str, Any]:
@@ -128,8 +142,11 @@ def search_semantic_scholar(query: str, limit: int) -> list[dict[str, Any]]:
     if api_key := os.environ.get("SS_API_KEY"):
         headers["x-api-key"] = api_key
     with httpx.Client(timeout=TIMEOUT) as client:
-        resp = client.get(url, params=params, headers=headers)
-        resp.raise_for_status()
+        def _get() -> httpx.Response:
+            r = client.get(url, params=params, headers=headers)
+            r.raise_for_status()
+            return r
+        resp = retry_on_429(_get)
         items = resp.json().get("data", [])
     time.sleep(0.5)
     results: list[dict[str, Any]] = []
@@ -155,32 +172,54 @@ def search_semantic_scholar(query: str, limit: int) -> list[dict[str, Any]]:
 
 
 def search_base(query: str, limit: int) -> list[dict[str, Any]]:
-    """Search BASE API."""
+    """Search BASE API (Bielefeld Academic Search Engine)."""
     url = "https://api.base-search.net/cgi-bin/BaseHttpSearchInterface.fcgi"
-    params = {"func": "PerformSearch", "query": query, "format": "json"}
+    params = {
+        "func": "PerformSearch",
+        "query": query,
+        "format": "json",
+        "hits": limit,  # FIX: was missing — BASE returns 0 docs without this
+    }
     with httpx.Client(timeout=TIMEOUT) as client:
         resp = client.get(url, params=params)
         resp.raise_for_status()
         payload = resp.json()
     time.sleep(0.5)
-    items = payload.get("response", {}).get("docs", []) or payload.get("records", []) or []
+    items = payload.get("response", {}).get("docs", []) or []
+
     results: list[dict[str, Any]] = []
     for item in items[:limit]:
-        results.append(
-            normalize_paper(
-                {
-                    "doi": item.get("doi"),
-                    "title": item.get("title") or item.get("dctitle"),
-                    "authors": item.get("authors") or item.get("creator") or [],
-                    "year": int(item["year"]) if item.get("year") and str(item.get("year")).isdigit() else None,
-                    "abstract": item.get("abstract"),
-                    "venue": item.get("publisher"),
-                    "citations": 0,
-                    "url": item.get("url") or item.get("id"),
-                },
-                "base",
-            )
-        )
+        # FIX: BASE uses Dublin Core — all fields are arrays, extract first element
+        def dc(field: str) -> str | None:
+            val = item.get(field)
+            if isinstance(val, list):
+                return val[0] if val else None
+            return val
+
+        # Extract DOI from dcidentifier array (may contain DOI URL or plain DOI)
+        doi = None
+        for ident in (item.get("dcidentifier") or []):
+            ident_str = str(ident)
+            if "doi.org/" in ident_str:
+                doi = ident_str.split("doi.org/")[-1]
+                break
+            if ident_str.startswith("10."):
+                doi = ident_str
+                break
+
+        year_raw = dc("dcyear")
+        year = int(year_raw) if year_raw and str(year_raw).isdigit() else None
+
+        results.append(normalize_paper({
+            "doi": doi,
+            "title": dc("dctitle"),
+            "authors": item.get("dccreator") or [],
+            "year": year,
+            "abstract": dc("dcabstract"),
+            "venue": dc("dcpublisher"),
+            "citations": 0,
+            "url": dc("dcidentifier"),
+        }, "base"))
     return results
 
 
@@ -307,6 +346,60 @@ def search_econstor(query: str, limit: int) -> list[dict[str, Any]]:
     return results
 
 
+def search_arxiv(query: str, limit: int) -> list[dict[str, Any]]:
+    """Search arXiv via Atom feed API — primary OA source for CS/ML."""
+    url = "http://export.arxiv.org/api/query"
+    params = {
+        "search_query": f"all:{query}",
+        "start": 0,
+        "max_results": limit,
+        "sortBy": "relevance",
+        "sortOrder": "descending",
+    }
+    with httpx.Client(timeout=TIMEOUT) as client:
+        resp = client.get(url, params=params)
+        resp.raise_for_status()
+
+    root = ET.fromstring(resp.text)
+    results = []
+    for entry in root.findall(f"{{{ARXIV_NS}}}entry"):
+        raw_id = (entry.findtext(f"{{{ARXIV_NS}}}id") or "").strip()
+        arxiv_id = raw_id.split("/abs/")[-1].split("v")[0]  # "1906.10742"
+
+        title = (entry.findtext(f"{{{ARXIV_NS}}}title") or "").strip().replace("\n", " ")
+        abstract = (entry.findtext(f"{{{ARXIV_NS}}}summary") or "").strip()
+
+        authors = [
+            a.findtext(f"{{{ARXIV_NS}}}name") or ""
+            for a in entry.findall(f"{{{ARXIV_NS}}}author")
+        ]
+
+        published = entry.findtext(f"{{{ARXIV_NS}}}published") or ""
+        year = int(published[:4]) if len(published) >= 4 else None
+
+        pdf_url = None
+        for link in entry.findall(f"{{{ARXIV_NS}}}link"):
+            if link.get("title") == "pdf":
+                pdf_url = link.get("href")
+                break
+        if not pdf_url and arxiv_id:
+            pdf_url = f"https://arxiv.org/pdf/{arxiv_id}"
+
+        results.append(normalize_paper({
+            "doi": f"10.48550/arxiv.{arxiv_id}" if arxiv_id else None,
+            "title": title,
+            "authors": [a for a in authors if a],
+            "year": year,
+            "abstract": abstract,
+            "venue": "arXiv",
+            "citations": 0,
+            "url": pdf_url,
+        }, "arxiv"))
+
+    time.sleep(0.5)  # arXiv asks for polite crawling
+    return results
+
+
 MODULES: dict[str, Callable[[str, int], list[dict[str, Any]]]] = {
     "crossref": search_crossref,
     "openalex": search_openalex,
@@ -314,6 +407,7 @@ MODULES: dict[str, Callable[[str, int], list[dict[str, Any]]]] = {
     "base": search_base,
     "econbiz": search_econbiz,
     "econstor": search_econstor,
+    "arxiv": search_arxiv,
 }
 
 
