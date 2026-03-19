@@ -85,48 +85,34 @@ Modules: <list of active modules>
 
 ---
 
-### Step 6: Execute 7-Phase Workflow
+### Step 6: Execute 7-Phase Workflow via Coordinator Agent
 
-**You ARE the coordinator.** Do NOT spawn a separate coordinator agent.
-Read `${CLAUDE_PLUGIN_ROOT}/agents/coordinator.md` for the full phase specifications.
+Create the session directory (lightweight setup before handing off):
+```bash
+mkdir -p ~/.academic-research/sessions/$(date +%Y-%m-%d_%H-%M-%S)/pdfs
+```
+Save the session path, then spawn the coordinator as a subagent with `permissionMode: bypassPermissions`:
 
-Execute all 7 phases sequentially:
+```
+Spawn Agent:
+  type: academic-research:coordinator
+  prompt: |
+    SESSION_DIR: <session_dir>
+    QUERY: <query>
+    MODE: <mode>
+    CITATION_STYLE: <style>
+    NO_PDFS: <true|false>
+    NO_BROWSER: <true|false>
+    API_MODULES: <comma-separated list>
+    BROWSER_MODULES: <comma-separated list>
+    ACADEMIC_CONTEXT: <contents of config.local.md or "none">
 
-**Phase 1: Setup**
-- Create session dir: `mkdir -p ~/.academic-research/sessions/$(date +%Y-%m-%d_%H-%M-%S)/pdfs`
-- Store session path for subsequent phases
+    Execute all 7 phases. Read ${CLAUDE_PLUGIN_ROOT}/agents/coordinator.md for full specification.
+```
 
-**Phase 2: Query Generation**
-- Spawn `query-generator` agent (Haiku)
-- Save expanded queries to session dir
-
-**Phase 3: Modular Search**
-- Run API search script (parallel, all active API modules)
-- Browser-Module direkt via Playwright MCP ausführen (wenn aktiv und `--no-browser` nicht gesetzt)
-  - Bei `--no-browser`: Phase 3B überspringen → Status: `"Browser modules disabled (--no-browser)"`
-- Run deduplicator script
-- Show per-module result counts
-
-**Phase 4: Ranking**
-- Run 4D scoring script
-- Spawn `relevance-scorer` agent (Sonnet, batches of 10)
-- Select top N papers
-
-**Phase 5: PDF Download**
-- Run pdf_resolver script (4-tier automated)
-- For Tier 4 failures: Playwright MCP direkt für Tier 5-6 nutzen (wenn `--no-browser` nicht gesetzt)
-  - Bei `--no-browser`: Tier 5-6 überspringen → Status: `"Browser modules disabled (--no-browser)"`
-- **Never give up** — try all tiers for each paper
-
-**Phase 6: Quote Extraction**
-- For each PDF: extract text, spawn `quote-extractor` agent
-- Collect all quotes
-
-**Phase 7: Export**
-- Run export script (JSON + BibTeX + Markdown)
-- Merge into global citation DB
-- Update fulltext search index
-- Show final summary
+The coordinator agent has `permissionMode: bypassPermissions` in its frontmatter —
+it will run all scripts and sub-agents without prompting the user for each action.
+Wait for the coordinator to complete and display its final summary.
 
 ---
 

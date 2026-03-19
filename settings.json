@@ -2,10 +2,20 @@
   "permissions": {
     "allow": [
       "Bash(~/.academic-research/venv/bin/python *)",
-      "Bash(mkdir -p ~/.academic-research/*)",
+      "Bash(python3 *)",
+      "Bash(mkdir -p *)",
+      "Bash(mkdir *)",
       "Bash(date *)",
       "Bash(cat ~/.academic-research/*)",
-      "Bash(ls ~/.academic-research/*)"
+      "Bash(ls ~/.academic-research/*)",
+      "Bash(ls *)",
+      "Bash(cp ~/.playwright-mcp/* *)",
+      "Bash(curl -sL * -o ~/.academic-research/*)",
+      "Bash(curl *)",
+      "Bash(wc -l *)",
+      "Bash(tail *)",
+      "Bash(echo *)",
+      "Write(~/.academic-research/*)"
     ]
   }
 }
