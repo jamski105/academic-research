@@ -91,6 +91,11 @@ All queries must be ≤120 characters.
 - Space-separated keywords: `machine learning ethics fairness`
 - No Boolean operators — uses semantic search
 
+### arXiv
+- Simple AND/OR operators: `machine learning AND testing AND (validation OR verification)`
+- Use plain terms, not quoted phrases (works better with arXiv's index)
+- Example output: `"arxiv": "machine learning AND testing AND (validation OR verification)"`
+
 ### Generic (BASE, EconBiz, EconStor, RePEc, OECD)
 - Use the `generic` query — most accept basic Boolean
 
