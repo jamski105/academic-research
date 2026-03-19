@@ -14,6 +14,12 @@ from typing import Any
 import httpx
 
 TIMEOUT = 30.0
+PDF_MAGIC = b"%PDF"
+
+
+def is_valid_pdf(content: bytes) -> bool:
+    """Return True if content starts with PDF magic bytes."""
+    return content[:4] == PDF_MAGIC
 
 
 def normalize_doi(doi: str | None) -> str | None:
@@ -31,22 +37,32 @@ def safe_filename(value: str) -> str:
 
 
 def download_pdf(client: httpx.Client, pdf_url: str, output_path: str) -> None:
-    """Stream-download PDF mit Content-Type und Magic-Bytes Validierung."""
-    with client.stream("GET", pdf_url, timeout=TIMEOUT) as resp:
-        resp.raise_for_status()
-        content_type = resp.headers.get("content-type", "").lower()
-        if "pdf" not in content_type and "octet-stream" not in content_type:
-            raise ValueError(f"Kein PDF (content-type: {content_type!r})")
-        with open(output_path, "wb") as fh:
+    """Stream-download PDF to output path. Raises ValueError if content is not a valid PDF."""
+    try:
+        with client.stream("GET", pdf_url, timeout=TIMEOUT) as resp:
+            resp.raise_for_status()
+            first_chunk = b""
+            chunks = []
             for chunk in resp.iter_bytes():
-                if chunk:
-                    fh.write(chunk)
-    # Magic-Bytes nach Download prüfen
-    with open(output_path, "rb") as fh:
-        magic = fh.read(5)
-    if magic != b"%PDF-":
-        os.remove(output_path)
-        raise ValueError(f"Keine PDF-Datei: beginnt mit {magic!r}")
+                if not chunk:
+                    continue
+                if not first_chunk:
+                    first_chunk = chunk
+                    if not is_valid_pdf(first_chunk):
+                        raise ValueError(
+                            f"URL {pdf_url!r} is not a valid PDF "
+                            f"(starts with {first_chunk[:20]!r})"
+                        )
+                chunks.append(chunk)
+        # Only write to disk after confirming it's a real PDF
+        with open(output_path, "wb") as fh:
+            for chunk in chunks:
+                fh.write(chunk)
+    except Exception:
+        # Clean up any pre-existing or partial file so no corrupt .pdf is left on disk
+        if os.path.exists(output_path):
+            os.unlink(output_path)
+        raise
 
 
 def tier_unpaywall(client: httpx.Client, doi: str, email: str) -> str | None:
