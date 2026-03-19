@@ -293,7 +293,31 @@ print(f'{len(failed)} papers need browser download')
 "
 ```
 
-4. **Tier 5a — Springer via HAN-Proxy (einzige HAN-Route):**
+4. **Tier 5-6 Pre-check: Institutional Login**
+
+Before attempting browser downloads, count failed papers:
+```bash
+~/.academic-research/venv/bin/python -c "
+import json
+with open('$SESSION_DIR/pdf_status.json') as f: s = json.load(f)
+failed = [k for k,v in s.items() if not v.get('success')]
+print(len(failed))
+"
+```
+
+If more than 0 papers failed, **ASK THE USER:**
+> "📚 {N} papers need institutional access (Tier 5-6: HAN/Springer/EBSCO).
+>
+> Do you have a Leibniz FH login? Options:
+> - **[J]a** — I'll open the browser and guide you through login, then download
+> - **[N]ein / Später** — Skip browser download, export metadata + manual_acquisition.md
+>
+> Note: Springer requires HAN proxy login (`lfh.hh-han.com`). EBSCO uses OAuth."
+
+Only proceed with Tiers 5-6 if the user confirms with J/Yes.
+If user says No/Skip: jump directly to Phase 6 (or Phase 7 if `--no-pdfs`).
+
+5. **Tier 5a — Springer via HAN-Proxy (einzige HAN-Route):**
 
 Für Papers mit Springer-DOI (`10.1007/...`) oder `source_module="springer"`:
 - Navigiere: `http://lfh.hh-han.com/han/springer-e-books-it/doi.org/{DOI}`
@@ -301,7 +325,7 @@ Für Papers mit Springer-DOI (`10.1007/...`) oder `source_module="springer"`:
 - Nach einmaligem Login bleiben HAN-Sessions ~30min aktiv — kein erneuter Login nötig für weitere Springer-Papers
 - Download-Button klicken oder PDF-URL extrahieren
 
-5. **Tier 5b — EBSCO/EZB via OPAC-Links:**
+6. **Tier 5b — EBSCO/EZB via OPAC-Links:**
 
 Für Papers mit OPAC-generierten EBSCO- oder EZB-Links (aus Phase 3B, gespeichert als `paper.pdf_url`):
 - Navigiere zum gespeicherten EBSCO/EZB-Link direkt
@@ -311,13 +335,55 @@ Für Papers mit OPAC-generierten EBSCO- oder EZB-Links (aus Phase 3B, gespeicher
 
 **Hinweis Session-Wiederverwendung:** Wenn User in Phase 3B OPAC eingeloggt ist, ist HAN-Session evtl. noch aktiv → in Phase 5a kein erneuter Login nötig.
 
-6. **Tier 6 — ProQuest direkt (Dissertationen, letztes Mittel):**
+7. **Tier 6 — ProQuest direkt (Dissertationen, letztes Mittel):**
 
 Nur wenn `mode=deep` UND paper hat Dissertation-Indikatoren:
 - Lies `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/proquest.md`
 - Suche Paper direkt in ProQuest
 
-7. Update `pdf_status.json` with browser download results
+8. Update `pdf_status.json` with browser download results
+
+9. **Curl fallback for confirmed inline PDFs:**
+
+After browser download attempts complete, check for confirmed PDF URLs that couldn't be saved to disk:
+```bash
+if [ -f "$SESSION_DIR/confirmed_pdf_urls.json" ]; then
+  ~/.academic-research/venv/bin/python -c "
+import json, subprocess, os
+with open('$SESSION_DIR/confirmed_pdf_urls.json') as f:
+    confirmed = json.load(f)
+
+with open('$SESSION_DIR/pdf_status.json') as f:
+    status = json.load(f)
+
+for entry in confirmed.get('confirmed_pdf_urls', []):
+    key = entry['key']
+    url = entry['url']
+    filename = entry['filename']
+    out_path = os.path.join('$SESSION_DIR/pdfs', filename)
+
+    result = subprocess.run(
+        ['curl', '-sL', '-A', 'Mozilla/5.0', '--max-time', '30', '-o', out_path, url],
+        capture_output=True
+    )
+
+    if result.returncode == 0 and os.path.exists(out_path):
+        with open(out_path, 'rb') as f:
+            magic = f.read(4)
+        if magic == b'%PDF':
+            status[key] = {'success': True, 'pdf_path': out_path, 'tier': 'curl-fallback', 'error': None}
+            print(f'✓ {key}: downloaded via curl')
+        else:
+            os.unlink(out_path)
+            print(f'✗ {key}: not a PDF (HTML redirect?)')
+    else:
+        print(f'✗ {key}: curl failed ({result.returncode})')
+
+with open('$SESSION_DIR/pdf_status.json', 'w') as f:
+    json.dump(status, f, ensure_ascii=False, indent=2)
+"
+fi
+```
 
 **CRITICAL:** Try ALL tiers. Never give up after first failure.
 

@@ -153,13 +153,42 @@ For each paper without PDF, read the relevant browser guide and attempt download
 2. Follow the guide's PDF download instructions
 3. If guide specifies HAN auth: follow `han_login.md` flow first
 
+### HAN Login Flow (Springer)
+1. Navigate to `http://lfh.hh-han.com/han/springer-e-books-it/doi.org/{DOI}`
+2. Page will redirect to Microsoft/institutional login
+3. **PAUSE and tell user:** "Please log in to HAN/Springer in the browser window now."
+4. Wait for user confirmation ("done" / "angemeldet")
+5. After login, navigate to same URL — Springer PDF should now be accessible
+6. Check `document.contentType === "application/pdf"` before attempting save
+
+### EBSCO Login Flow
+1. Navigate to `https://publications.ebsco.com/?custId=ns259564&groupId=main&profileId=pfui`
+2. **PAUSE and tell user:** "Please log in to EBSCO in the browser window now."
+3. After confirmation, search for paper by DOI or title
+
+### Confirmed PDF URLs Output
+
+When navigating to a PDF URL (content-type: `application/pdf`), the browser renders it but cannot save it to disk. Instead, record the confirmed URL for the coordinator to download via curl:
+
+Write to `$SESSION_DIR/confirmed_pdf_urls.json`:
+```json
+{
+  "confirmed_pdf_urls": [
+    {"key": "10.1145/3453444", "url": "https://arxiv.org/pdf/1905.04223", "filename": "10.1145_3453444_arxiv.pdf"}
+  ]
+}
+```
+
+The coordinator will curl-download these URLs after you return.
+
 ### General PDF Download
 
 When `download_pdfs: true` and a `pdf_url` is available:
 1. `browser_navigate` to pdf_url
 2. `browser_snapshot` to verify it's a PDF page
 3. If download button needed: `browser_click` the download button
-4. Report back the URL and download status
+4. If content-type is `application/pdf` (inline): save to `confirmed_pdf_urls.json` instead
+5. Report back the URL and download status
 
 ---
 
