@@ -39,8 +39,16 @@ npx --version       # kommt mit Node.js
 ### Schritt 1: Plugin registrieren
 
 ```bash
-claude plugin install academic-research
+# Marketplace hinzufuegen (einmalig)
+/plugin marketplace add jamski105/academic-research
+
+# Plugin installieren
+/plugin install academic-research@academic-research
 ```
+
+**Was passiert hier?**
+1. Der erste Befehl registriert das GitHub-Repo als Plugin-Marketplace in Claude Code
+2. Der zweite Befehl installiert das Plugin `academic-research` aus dem Marketplace `academic-research`
 
 Das registriert das Plugin in Claude Code:
 - Liest `.claude-plugin/plugin.json` (Manifest: Name, Version, Beschreibung)
@@ -251,8 +259,9 @@ python3 -m venv ~/.academic-research/venv
 # Plugin-Registrierung pruefen:
 claude plugin list
 
-# Neu registrieren:
-claude plugin install academic-research
+# Marketplace und Plugin neu registrieren:
+/plugin marketplace add jamski105/academic-research
+/plugin install academic-research@academic-research
 ```
 
 ---

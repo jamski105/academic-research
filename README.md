@@ -18,10 +18,15 @@ Modular academic research pipeline for Claude Code. Searches across 14 academic 
 ## Installation
 
 ```bash
-# Install as Claude Code plugin
-claude plugin install academic-research
+# 1. Add this repo as a plugin marketplace (one-time)
+/plugin marketplace add jamski105/academic-research
 
-# Or install from local directory (development)
+# 2. Install the plugin from the marketplace
+/plugin install academic-research@academic-research
+```
+
+For local development:
+```bash
 claude --plugin-dir ./academic-research
 ```
 

@@ -1,0 +1,14 @@
+{
+  "name": "academic-research",
+  "owner": {
+    "name": "Jonas"
+  },
+  "plugins": [
+    {
+      "name": "academic-research",
+      "source": "./",
+      "description": "Modular academic research pipeline with 7-phase workflow, 14 search sources, cross-platform PDF resolution, and citation management.",
+      "version": "3.0.0"
+    }
+  ]
+}
