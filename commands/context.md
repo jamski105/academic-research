@@ -1,6 +1,6 @@
 ---
 description: Configure your academic profile (university, discipline, citation style)
-allowed-tools: Read, Write, Bash(cat *)
+allowed-tools: Read, Write, Bash(cat ~/.academic-research/*), Bash(mkdir -p ~/.academic-research/*)
 argument-hint: [optional: university name]
 ---
 

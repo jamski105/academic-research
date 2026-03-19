@@ -1,6 +1,6 @@
 ---
 description: Get paper recommendations based on your research history
-allowed-tools: Read, Bash(~/.academic-research/venv/bin/python *), Bash(cat *), Bash(curl *)
+allowed-tools: Read, Agent, Bash(~/.academic-research/venv/bin/python *), Bash(cat ~/.academic-research/*)
 argument-hint: [optional: session ID]
 ---
 

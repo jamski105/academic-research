@@ -1,7 +1,7 @@
 # Search Module Registry
 # Each module defines a source for academic paper discovery.
 # type: api (Python httpx) | oai-pmh (XML harvest) | browser (Playwright MCP)
-# tier: 1 = free/no login, 2 = requires HAN-Server authentication
+# tier: 1 = free or institution-direct (EBSCO OAuth, IP/bibid), 2 = requires HAN-Server proxy
 # disciplines: optional filter — module only activates for matching topics
 
 modules:
@@ -57,7 +57,8 @@ modules:
     enabled: true
     tier: 1
     type: browser
-    search_url: "https://ideas.repec.org/cgi-bin/htsearch?q="
+    search_url: "https://ideas.repec.org/"
+    search_method: form  # POST-Formular, keine direkte URL-Suche moeglich
     description: "Research Papers in Economics — working papers and journal articles via IDEAS/RePEc"
     disciplines: [economics]
     browser_guide: repec.md
@@ -66,8 +67,8 @@ modules:
     enabled: true
     tier: 1
     type: browser
-    search_url: "https://www.oecd-ilibrary.org/search?q="
-    description: "OECD iLibrary for policy research and statistics"
+    search_url: "https://www.oecd.org/en/search/publications.html?orderBy=mostRelevant&q="
+    description: "OECD — Policy Research, Working Papers und Reports (ehemals iLibrary)"
     browser_guide: oecd.md
 
   google_scholar:
@@ -85,35 +86,58 @@ modules:
     description: "German Federal Statistical Office — statistics and reports"
     search_url: "https://www.destatis.de/DE/Home/_inhalt.html"
 
-  # --- Tier 2: Requires HAN-Server login ---
-  opac:
-    enabled: false
-    tier: 2
-    type: browser
-    auth: han
-    description: "University library catalog via HAN proxy"
-
+  # --- Tier 1 Browser: Direct access (EBSCO OAuth / IP-based) ---
   ebsco:
-    enabled: false
-    tier: 2
+    enabled: true
+    tier: 1
     type: browser
-    auth: han
-    description: "EBSCO databases — Business Source, Academic Search"
+    search_url: "https://publications.ebsco.com/?custId=ns259564&groupId=main&profileId=pfui"
+    description: "EBSCO Publication Finder — Journal-Verzeichnis (NICHT Artikelsuche). Zeigt verfuegbare Zeitschriften in Business Source Premier, CASC etc. Artikelsuche via OPAC/HAN."
     browser_guide: ebscohost.md
+    databases: [business_source_premier, computers_applied_sciences_complete]
+    # HINWEIS: Publication Finder durchsucht Zeitschriften-Titel, nicht Artikel.
+    # Fuer Artikelsuche in EBSCO-Datenbanken: OPAC nutzen (liefert HAN-Proxy-Links).
 
+  springer:
+    enabled: true
+    tier: 1
+    type: browser
+    search_url: "https://link.springer.com/search?query="
+    description: "Springer Nature — Suche frei, E-Book Volltext via HAN (Pakete: Wirtschaft + IT). Auch via OPAC erreichbar."
+    browser_guide: springer.md
+    han_pdf_url: "http://lfh.hh-han.com/han/springer-e-books-it/"
+
+  ezb:
+    enabled: false
+    tier: 1
+    type: browser
+    search_url: "https://ezb.uni-regensburg.de/fl.phtml?bibid=LEIFH"
+    description: "EZB — Elektronische Zeitschriftenbibliothek (22k Wirtschaft + 4.6k Informatik Journals, Ampelsystem)"
+    browser_guide: ezb.md
+
+  opac:
+    enabled: true
+    tier: 1
+    type: browser
+    auth: library
+    search_url: "https://lbsvz2.gbv.de/DB=57/LNG=DU/CMD?ACT=SRCHA&IKT=1016&SRT=YOP&TRM="
+    description: "Leibniz FH OPAC — Bibliothekskatalog mit Volltext-Links zu EBSCO, Springer, ProQuest via HAN"
+    browser_guide: opac.md
+    disciplines: [economics, business, management, wirtschaftsinformatik, informatik]
+    # OPAC ist ein Meta-Gateway: Suchergebnisse enthalten Volltext-Links
+    # die ueber HAN-Proxy zu EBSCO, Springer, ProQuest und EZB fuehren.
+    # OPAC wird NACH den Standalone-Modulen (ebsco, springer) durchsucht,
+    # um zusaetzliche Treffer zu finden die dort nicht auftauchen.
+    gateway_for: [ebsco, springer, proquest, ezb]
+    search_after: [ebsco, springer]
+
+  # --- Tier 2: Requires HAN-Server login ---
   proquest:
     enabled: false
     tier: 2
     type: browser
     auth: han
     description: "ProQuest dissertations and theses"
-
-  ezb:
-    enabled: false
-    tier: 2
-    type: browser
-    auth: han
-    description: "Elektronische Zeitschriftenbibliothek — journal access"
 
 # Mode overrides determine which modules are active per research mode
 mode_overrides:

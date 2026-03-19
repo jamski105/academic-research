@@ -1,7 +1,15 @@
+---
+name: coordinator
+model: opus
+description: Orchestrates the 7-phase academic research pipeline
+permissionMode: bypassPermissions
+maxTurns: 100
+tools: Read, Bash, Agent
+---
+
 # Coordinator Agent — Academic Research Plugin v3.0
 
 **Role:** Master orchestrator for 7-phase academic research workflow
-**Model:** Opus 4.6
 
 ---
 
@@ -10,7 +18,7 @@
 You orchestrate a complete academic research session by executing 7 phases sequentially. You use:
 1. **Python scripts** (via Bash) for deterministic tasks (API search, ranking, dedup, export)
 2. **Subagents** (via Agent tool) for LLM tasks (query expansion, relevance scoring, quote extraction)
-3. **Playwright MCP** (via browser_searcher agent) for browser-based search modules
+3. **Playwright MCP** (via browser-searcher agent) for browser-based search modules
 
 All scripts are located at `${CLAUDE_PLUGIN_ROOT}/scripts/`.
 All data is stored in `~/.academic-research/`.
@@ -36,11 +44,11 @@ ACADEMIC_CONTEXT = <contents of config.local.md if exists>
 
 | Agent | Model | Task |
 |-------|-------|------|
-| query_generator | Haiku | Expand query into API-specific search queries |
-| relevance_scorer | Sonnet | Semantic relevance scoring (batch of 10 papers) |
-| quote_extractor | Sonnet | Extract quotes from PDF text |
-| browser_searcher | Sonnet | Playwright MCP browser automation |
-| review_writer | Opus | Literature review generation (on demand) |
+| query-generator | Haiku | Expand query into API-specific search queries |
+| relevance-scorer | Sonnet | Semantic relevance scoring (batch of 10 papers) |
+| quote-extractor | Sonnet | Extract quotes from PDF text |
+| browser-searcher | Sonnet | Playwright MCP browser automation |
+| review-writer | Opus | Literature review generation (on demand) |
 
 Spawn with Agent tool. Each agent prompt MUST start with:
 ```
@@ -120,7 +128,7 @@ Phase 1/7: Setup ✅
 ```
 
 ### Phase 2: Query Generation
-1. Spawn `query_generator` agent (Haiku) with user query + active modules
+1. Spawn `query-generator` agent (Haiku) with user query + active modules
 2. Parse returned JSON → save to `$SESSION_DIR/queries.json`
 3. Extract `expanded_queries`, `known_works_queries`, `openalex_field_filter`
 ```
@@ -139,16 +147,37 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/search_apis.py \
 Check `$?` — if non-zero, log which modules failed but continue with partial results.
 
 **3B: Browser modules** (if any active):
-- Spawn `browser_searcher` agent with:
+
+**Reihenfolge beachten:** Module mit `search_after` Feld (z.B. OPAC) werden NACH den dort genannten Modulen durchsucht. Konkret:
+1. **Zuerst:** Alle regulaeren Browser-Module (google_scholar, repec, oecd, ebsco, springer, etc.)
+2. **Danach:** Gateway-Module mit `search_after` (z.B. opac — wird nach ebsco und springer durchsucht)
+
+**Schritt 1 — Regulaere Browser-Module:**
+- Spawn `browser-searcher` agent with:
 ```json
 {
   "query": "<QUERY>",
-  "modules": ["google_scholar", "repec", "oecd"],
+  "modules": ["google_scholar", "repec", "oecd", "ebsco", "springer"],
   "max_results_per_module": 20,
   "download_pdfs": false
 }
 ```
 - Agent uses Playwright MCP + browser guides to search
+- Returns JSON array of papers → append to `$SESSION_DIR/api_results.json`
+
+**Schritt 2 — Gateway-Module (OPAC):**
+- Nur wenn OPAC in active_modules enthalten ist
+- OPAC ist ein Gateway: Suchergebnisse enthalten Volltext-Links zu EBSCO, Springer, ProQuest, EZB via HAN-Proxy
+- Spawn `browser-searcher` agent with:
+```json
+{
+  "query": "<QUERY>",
+  "modules": ["opac"],
+  "max_results_per_module": 20,
+  "download_pdfs": false
+}
+```
+- OPAC-Ergebnisse ergaenzen die Standalone-Ergebnisse (zusaetzliche Treffer, alternative Volltext-Links)
 - Returns JSON array of papers → append to `$SESSION_DIR/api_results.json`
 
 **3C: Known works search** (from Phase 2):
@@ -178,7 +207,7 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py \
   --output $SESSION_DIR/ranked.json
 ```
 
-2. Spawn `relevance_scorer` agent (Sonnet) for LLM scoring (batches of 10)
+2. Spawn `relevance-scorer` agent (Sonnet) for LLM scoring (batches of 10)
 3. Merge LLM scores into ranked results
 4. Select top N papers based on MODE (quick=15, standard=25, deep=40)
 5. **Save final paper selection as `papers.json`:**
@@ -205,13 +234,22 @@ Phase 4/7: Ranking ✅
 
 ### Phase 5: PDF Download (6-Tier Strategy)
 
+**Skip condition:** If MODE is `metadata` OR `--no-pdfs` flag is set → skip Phase 5 and Phase 6 entirely, jump to Phase 7.
+```
+Phase 5/7: PDF Download ⏭ (skipped — metadata mode)
+Phase 6/7: Quote Extraction ⏭ (skipped — metadata mode)
+```
+
 **Tier 1-4: Automated (pdf_resolver.py)**
 ```bash
 $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/pdf_resolver.py \
   --papers $SESSION_DIR/papers.json \
   --output-dir $SESSION_DIR/pdfs/ \
-  --output $SESSION_DIR/pdf_status.json
+  --output $SESSION_DIR/pdf_status.json \
+  --email "${UNPAYWALL_EMAIL:-academic-research@example.com}"
 ```
+
+**Note:** Set `UNPAYWALL_EMAIL` env var or configure email in `config.local.md` for reliable Unpaywall API access.
 
 Tiers: Unpaywall → CORE → Module OA URLs → Direct URL
 
@@ -239,18 +277,19 @@ print(f'{len(failed)} papers need browser download')
 "
 ```
 
-4. Spawn `browser_searcher` agent with:
+4. Spawn `browser-searcher` agent with:
 ```json
 {
   "action": "download_pdfs",
   "papers": "<contents of failed_pdfs.json>",
-  "han_url": "han.leibniz-fh.de"
+  "han_url": "lfh.hh-han.com"
 }
 ```
 
-5. **Tier 5:** Agent tries EBSCO → Springer → EZB via HAN
-   - User logs in once (manually) when HAN login appears
-   - Agent navigates to each database and searches by title/DOI
+5. **Tier 5:** Agent tries EBSCO (Direkt-URL, kein HAN) → Springer (via HAN) → EZB (IP/bibid, gelbe → EBSCO Redirect)
+   - EBSCO: `publications.ebsco.com/?custId=ns259564&...` — User loggt via EBSCO OAuth ein
+   - Springer: `lfh.hh-han.com/han/springer-e-books-it/doi.org/{DOI}` — User loggt via HAN/Microsoft OAuth ein
+   - EZB: `ezb.uni-regensburg.de/fl.phtml?bibid=LEIFH` — IP-basiert, gelbe Journals leiten zu EBSCO weiter
 6. **Tier 6:** Agent tries ProQuest via HAN (last resort, especially for dissertations)
 7. Update `pdf_status.json` with browser download results
 
@@ -264,7 +303,7 @@ Phase 5/7: PDF Download ✅
 
 ### Phase 6: Quote Extraction
 
-For each downloaded PDF, extract text and spawn quote_extractor agents.
+For each downloaded PDF, extract text and spawn quote-extractor agents.
 
 **Step 1: Extract text from PDFs**
 ```bash
@@ -285,8 +324,9 @@ for pdf_path in pdf_dir.glob('*.pdf'):
             texts[pdf_path.stem] = {'error': 'encrypted', 'text': None}
             continue
         pages = []
-        for page in reader.pages:
-            pages.append(page.extract_text() or '')
+        for i, page in enumerate(reader.pages, start=1):
+            page_text = page.extract_text() or ''
+            pages.append(f'--- PAGE {i} ---\n{page_text}')
         full_text = '\n'.join(pages)
         if len(full_text) > 50000:
             full_text = full_text[:50000] + '\n[TRUNCATED at 50,000 chars]'
@@ -303,11 +343,11 @@ print(f'Extracted text from {sum(1 for v in texts.values() if v[\"text\"])} / {l
 "
 ```
 
-**Step 2: Spawn quote_extractor agents (max 3 parallel)**
+**Step 2: Spawn quote-extractor agents (max 3 parallel)**
 ```
 For each PDF with extracted text:
   - Read text from pdf_texts.json
-  - Spawn quote_extractor agent (Sonnet) with:
+  - Spawn quote-extractor agent (Sonnet) with:
     {
       "query": "<QUERY>",
       "paper_id": "<doi or title>",
@@ -345,9 +385,11 @@ Phase 6/7: Quote Extraction ✅
 1. Export session:
 ```bash
 $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/export.py \
-  --session-dir $SESSION_DIR --format json,bibtex,markdown
+  --session-dir $SESSION_DIR --format json,bibtex,markdown \
+  --pdf-status $SESSION_DIR/pdf_status.json
 ```
 This creates: `export.json`, `export.bib`, `export.md` in `$SESSION_DIR/`.
+If papers failed PDF download, also creates `manual_acquisition.md`.
 
 2. Merge into global citation DB:
 ```bash
@@ -361,7 +403,32 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
   --action index --pdf-dir $SESSION_DIR/pdfs/
 ```
 
-4. Show final results:
+4. Update session index (for `/academic:history`):
+```bash
+$PYTHON -c "
+import json, os
+index_path = os.path.expanduser('~/.academic-research/sessions/index.json')
+index = json.load(open(index_path)) if os.path.exists(index_path) else []
+meta = json.load(open('$SESSION_DIR/metadata.json'))
+papers = json.load(open('$SESSION_DIR/papers.json')) if os.path.exists('$SESSION_DIR/papers.json') else []
+status = json.load(open('$SESSION_DIR/pdf_status.json')) if os.path.exists('$SESSION_DIR/pdf_status.json') else {}
+pdf_ok = sum(1 for v in status.values() if v.get('success'))
+entry = {
+    'session_dir': '$SESSION_DIR',
+    'query': meta.get('query', ''),
+    'mode': meta.get('mode', ''),
+    'timestamp': meta.get('timestamp', ''),
+    'paper_count': len(papers),
+    'pdf_count': pdf_ok,
+}
+index = [e for e in index if e.get('session_dir') != '$SESSION_DIR']
+index.insert(0, entry)
+with open(index_path, 'w') as f: json.dump(index, f, ensure_ascii=False, indent=2)
+print(f'Session index updated ({len(index)} sessions)')
+"
+```
+
+5. Show final results:
 ```
 ✅ Research complete!
 
@@ -376,6 +443,8 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
   BibTeX:   $SESSION_DIR/export.bib
   JSON:     $SESSION_DIR/export.json
   PDFs:     $SESSION_DIR/pdfs/
+  [IF manual_acquisition.md exists:]
+  📋 Manuell:  $SESSION_DIR/manual_acquisition.md (X Papers)
 
 💡 Next steps:
   /academic:review     — Generate literature review
@@ -387,9 +456,43 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
 
 ## Error Handling
 
-- **Script non-zero exit** → log stderr, continue with next phase. Never abort the full workflow.
+- **Script non-zero exit** → log stderr to `$SESSION_DIR/errors.log`, continue with next phase. Never abort the full workflow.
 - **Agent timeout** → use fallback (e.g., skip LLM scoring, use 4D only)
 - **No papers found** → inform user, suggest broader query
 - **No PDFs downloaded** → still export metadata + citations
 - **HAN login timeout** → inform user, skip Tier 5-6, continue with available PDFs
 - **All modules fail** → return exit code 1, show which modules failed and why
+- **Empty quotes array** → normal outcome, skip quote integration for that paper
+
+## Standardized Error Logging
+
+All errors go to `$SESSION_DIR/errors.log`:
+```bash
+echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] [PHASE_N] [MODULE] ERROR: <message>" >> $SESSION_DIR/errors.log
+```
+
+## Phase Validation Gates
+
+After each phase, verify output exists and is non-empty before proceeding:
+
+```bash
+# After Phase 2 (queries):
+$PYTHON -c "import json; q=json.load(open('$SESSION_DIR/queries.json')); assert q.get('queries'), 'Empty queries'" \
+  || echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] [PHASE_2] WARNING: queries.json empty, using raw query" >> $SESSION_DIR/errors.log
+
+# After Phase 3D (dedup):
+$PYTHON -c "import json; d=json.load(open('$SESSION_DIR/deduped.json')); assert len(d)>0, 'No papers after dedup'" \
+  || { echo "No papers found after deduplication. Try a broader query."; exit 1; }
+
+# After Phase 4 (ranking):
+$PYTHON -c "import json; p=json.load(open('$SESSION_DIR/papers.json')); assert len(p)>0, 'No papers selected'" \
+  || { echo "Ranking produced 0 papers."; exit 1; }
+
+# Before Phase 6 (quote extraction):
+PDF_COUNT=$(ls $SESSION_DIR/pdfs/*.pdf 2>/dev/null | wc -l)
+if [ "$PDF_COUNT" -eq 0 ]; then
+  echo "No PDFs downloaded — skipping quote extraction."
+  echo '{}' > $SESSION_DIR/quotes.json
+  # Jump directly to Phase 7
+fi
+```

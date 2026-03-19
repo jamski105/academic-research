@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rank papers using a five-dimension score."""
+"""Rank papers using a four-dimension score."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def fraction_keywords_found(text: str | None, keywords: list[str]) -> float:
     if not keywords:
         return 0.0
     haystack = (text or "").lower()
-    matches = sum(1 for kw in keywords if kw in haystack)
+    matches = sum(1 for kw in keywords if re.search(r'\b' + re.escape(kw) + r'\b', haystack))
     return matches / len(keywords)
 
 
@@ -51,10 +51,19 @@ def score_recency(paper: dict[str, Any], current_year: int) -> float:
         return 0.5
 
 
-def score_quality(paper: dict[str, Any]) -> float:
-    """Score quality from citation count using log scaling."""
+def score_quality(paper: dict[str, Any], current_year: int) -> float:
+    """Score quality from citations-per-year using log scaling."""
     citations = max(0, int(paper.get("citations") or 0))
-    return min(1.0, math.log(citations + 1) / math.log(1001))
+    year = paper.get("year")
+    if year is not None:
+        try:
+            age = max(1, current_year - int(year))
+            cpy = citations / age
+        except (ValueError, TypeError):
+            cpy = citations
+    else:
+        cpy = citations
+    return min(1.0, math.log(cpy + 1) / math.log(201))
 
 
 def score_authority(paper: dict[str, Any]) -> float:
@@ -105,6 +114,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--query", required=True)
     parser.add_argument("--mode", choices=["quick", "standard", "deep"], default="standard")
     parser.add_argument("--output")
+    parser.add_argument("--w-relevance", type=float, default=0.4)
+    parser.add_argument("--w-recency", type=float, default=0.2)
+    parser.add_argument("--w-quality", type=float, default=0.2)
+    parser.add_argument("--w-authority", type=float, default=0.2)
     return parser.parse_args()
 
 
@@ -125,9 +138,10 @@ def main() -> int:
     for paper in papers:
         relevance = score_relevance(paper, keywords)
         recency = score_recency(paper, current_year)
-        quality = score_quality(paper)
+        quality = score_quality(paper, current_year)
         authority = score_authority(paper)
-        total = 0.4 * relevance + 0.2 * recency + 0.2 * quality + 0.2 * authority
+        total = (args.w_relevance * relevance + args.w_recency * recency
+                 + args.w_quality * quality + args.w_authority * authority)
         enriched = dict(paper)
         enriched["scores"] = {
             "total": total,

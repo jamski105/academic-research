@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(~/.academic-research/venv/bin/python *)",
+      "Bash(mkdir -p ~/.academic-research/*)",
+      "Bash(date *)",
+      "Bash(cat ~/.academic-research/*)",
+      "Bash(ls ~/.academic-research/*)"
+    ]
+  }
+}

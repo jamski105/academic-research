@@ -15,12 +15,16 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Claude Code local settings (user-specific, not part of plugin)
+.claude/
+
 # Runtime data (stored in ~/.academic-research/)
 sessions/
 pdfs/
 
 # Debug logs
 firebase-debug.log
+.playwright-mcp/
 
 # Secrets
 .env

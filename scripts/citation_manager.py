@@ -218,14 +218,22 @@ def action_merge(session_dir: str) -> int:
 
     existing = read_bib_entries()
     existing_dois = {e.get("doi", "").lower() for e in existing if e.get("doi")}
+    existing_titles = {e.get("title", "").strip().lower() for e in existing if e.get("title")}
     added = 0
     annotations = load_annotations()
     for paper in papers:
         doi = paper.get("doi")
+        title = (paper.get("title") or "").strip()
         if doi and doi.lower() in existing_dois:
+            continue
+        if not doi and title and title.lower() in existing_titles:
             continue
         entry_bib = to_bibtex(paper)
         append_bib_entry(entry_bib)
+        if doi:
+            existing_dois.add(doi.lower())
+        if title:
+            existing_titles.add(title.lower())
         paper_id = normalize_doi(doi) if doi else ""
         if paper_id and paper_id not in annotations:
             annotations[paper_id] = {"tags": [], "notes": [], "status": "unread"}

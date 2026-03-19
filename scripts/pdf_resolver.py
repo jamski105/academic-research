@@ -122,7 +122,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--papers", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--email", default="academic-research@example.com")
+    parser.add_argument("--email", default=os.environ.get("UNPAYWALL_EMAIL", "academic-research@example.com"),
+                        help="Email for Unpaywall API (set UNPAYWALL_EMAIL env var or pass --email)")
     return parser.parse_args()
 
 

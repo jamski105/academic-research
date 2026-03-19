@@ -86,22 +86,21 @@ def search_openalex(query: str, limit: int) -> list[dict[str, Any]]:
         authors = [a.get("author", {}).get("display_name") for a in item.get("authorships", []) if a.get("author", {}).get("display_name")]
         location = item.get("primary_location", {}) or {}
         source = location.get("source", {}) or {}
-        results.append(
-            normalize_paper(
-                {
-                    "doi": (item.get("doi") or "").replace("https://doi.org/", "") or None,
-                    "title": item.get("title"),
-                    "authors": authors,
-                    "year": item.get("publication_year"),
-                    "abstract": None,
-                    "venue": source.get("display_name"),
-                    "citations": item.get("cited_by_count", 0),
-                    "url": item.get("id"),
-                    "oa_url": (item.get("open_access") or {}).get("oa_url"),
-                },
-                "openalex",
-            )
+        entry = normalize_paper(
+            {
+                "doi": (item.get("doi") or "").replace("https://doi.org/", "") or None,
+                "title": item.get("title"),
+                "authors": authors,
+                "year": item.get("publication_year"),
+                "abstract": None,
+                "venue": source.get("display_name"),
+                "citations": item.get("cited_by_count", 0),
+                "url": item.get("id"),
+            },
+            "openalex",
         )
+        entry["oa_url"] = (item.get("open_access") or {}).get("oa_url")
+        results.append(entry)
     return results
 
 

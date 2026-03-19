@@ -1,59 +1,82 @@
-# OECD iLibrary — Browser Navigation Guide
+# OECD — Browser Navigation Guide
 
 ## URL-Schema
 
-- **Suche:** `https://www.oecd-ilibrary.org/search?q=QUERY`
-- **Erweiterte Suche:** `https://www.oecd-ilibrary.org/search?q=QUERY&content%5B%5D=book&content%5B%5D=workingpaper&content%5B%5D=paper`
-- **Paper-Detail:** `https://www.oecd-ilibrary.org/.../{DOI_SUFFIX}`
-- **PDF:** Detail-Seite → Download-Link
+- **Suche (alle Inhalte):** `https://www.oecd.org/en/search.html?orderBy=mostRelevant&q=QUERY`
+- **Suche (nur Publikationen):** `https://www.oecd.org/en/search/publications.html?orderBy=mostRelevant&q=QUERY`
+- **Paper-Detail:** `https://www.oecd.org/en/publications/TITLE_DOISUFFIX-en.html`
+
+**WICHTIG:** Die alte Domain `oecd-ilibrary.org` leitet auf `oecd.org` um. Immer `oecd.org` verwenden.
 
 ## Selektoren
 
+### Suchseite
+
 | Element | CSS-Selektor | Accessibility |
 |---------|-------------|---------------|
-| Suchfeld | `input#searchField, input[name="q"]` | `textbox "Search"` |
-| Such-Button | `button[type="submit"], .search-btn` | `button "Search"` |
-| Ergebnis-Liste | `.result-item, .search-result` | — |
-| Ergebnis-Titel | `.result-item h3 a, .title a` | `link "Paper Title"` |
-| Autoren | `.result-item .authors, .meta-authors` | — |
-| Jahr | `.result-item .date, .pub-date` | — |
-| Typ-Badge | `.result-item .content-type` | — |
-| PDF-Download | `a.pdf-link, a[href*=".pdf"]` | `link "PDF"` |
-| Nächste Seite | `.pagination .next a` | `link "Next"` |
-| Filter: Working Papers | `input[value="workingpaper"]` | `checkbox "Working Papers"` |
+| Suchfeld | — | `searchbox "Search field allowing to enter a search term"` |
+| Such-Button | — | `button "Search button"` |
+| Ergebnis-Container | `article.search-result-list-item` | `article` in `listitem` |
+| Titel + Link | `.search-result-list-item__title a` | `link "Paper Title"` |
+| Metadaten | `.search-result-list-item__meta` | Text: "Type•Date•Pages" |
+| Snippet | `.search-result-list-item__snippet` | `paragraph` (Keywords via `mark` hervorgehoben) |
+| Ergebnis-Anzahl | — | `heading "N results"` |
+| Sortierung | — | `combobox "Order by"` (Most relevant, Most recent, Oldest, A-Z, Z-A) |
+| Pagination | `navigation "Pagination"` | `button "Page N"`, `button "Next page"` |
+
+### Filter (linke Sidebar)
+
+| Filter | Accessibility | Relevante Optionen |
+|--------|--------------|-------------------|
+| Sprache | `checkbox "English(N)"` | English, French |
+| Content-Typ | `checkbox "Working paper(N)"`, `checkbox "Report(N)"` | Working paper, Report, Policy paper, Policy brief |
+| Topics | `checkbox "Governance(N)"`, `checkbox "Digital(N)"` | Governance, Digital, Economy, etc. |
 
 ## Workflow
 
-### Suche (Open Access Inhalte)
+### Suche
 
-1. `browser_navigate` → `https://www.oecd-ilibrary.org/search?q=QUERY`
-2. `browser_wait_for` → Ergebnisliste laden
-3. `browser_snapshot` → Ergebnisse prüfen
-4. **Optional:** Filter auf "Working Papers" oder "Papers" setzen
-5. `browser_evaluate` → Daten extrahieren:
+1. `browser_navigate` → `https://www.oecd.org/en/search/publications.html?orderBy=mostRelevant&q=QUERY`
+   - Bevorzugt `/search/publications.html` um nur Publikationen zu suchen
+2. `browser_snapshot` → Ergebnisse pruefen
+3. **Optional:** Filter setzen (z.B. "Working paper" checkbox klicken)
+4. `browser_evaluate` → Daten extrahieren:
 ```javascript
-Array.from(document.querySelectorAll('.result-item, .search-result')).map(r => ({
-  title: r.querySelector('h3 a, .title a')?.textContent?.trim() || '',
-  url: r.querySelector('h3 a, .title a')?.href || '',
-  authors: r.querySelector('.authors, .meta-authors')?.textContent?.trim() || '',
-  year: r.querySelector('.date, .pub-date')?.textContent?.trim() || '',
-  type: r.querySelector('.content-type')?.textContent?.trim() || '',
-  pdf_url: r.querySelector('a[href*=".pdf"]')?.href || ''
-}))
+Array.from(document.querySelectorAll('article.search-result-list-item')).map(article => {
+  const titleEl = article.querySelector('.search-result-list-item__title a');
+  const meta = article.querySelector('.search-result-list-item__meta')?.textContent?.trim() || '';
+  const snippet = article.querySelector('.search-result-list-item__snippet')?.textContent?.trim() || '';
+  // Metadata-Format: "Report6 August 202590 Pages" — Typ, Datum, Seiten
+  const typeMatch = meta.match(/^([\w\s]+?)(\d)/);
+  const dateMatch = meta.match(/(\d{1,2}\s\w+\s\d{4})/);
+  const yearMatch = meta.match(/(\d{4})/);
+  return {
+    title: titleEl?.textContent?.trim() || '',
+    url: titleEl?.href || '',
+    type: typeMatch?.[1]?.trim() || '',
+    date: dateMatch?.[1] || '',
+    year: yearMatch?.[1] || '',
+    snippet: snippet,
+    source_module: 'oecd'
+  };
+})
 ```
+5. Bei Bedarf: Pagination via `browser_click` auf `button "Next page"`
 
 ### PDF-Download
 
-1. Paper-Detail öffnen
-2. `browser_snapshot` → Download-Optionen prüfen
-3. Viele OECD Working Papers sind frei verfügbar
-4. `browser_click` → "Read" oder "PDF" Link
-5. Bei Paywall: DOI extrahieren → über pdf_resolver.py (Unpaywall) versuchen
+1. Paper-Detail oeffnen (`browser_navigate` → Paper-URL)
+2. `browser_snapshot` → Download-Optionen suchen
+3. OECD Working Papers und Policy Briefs sind oft frei verfuegbar
+4. DOI aus URL extrahieren (Suffix `_DOIHASH-en` am Ende der URL)
+5. Bei Paywall: DOI → `pdf_resolver.py` (Unpaywall/CORE)
 
 ## Bekannte Probleme
 
-- **Kein REST API:** OECD iLibrary hat kein öffentliches Suchapi
-- **Mischung OA/Paywall:** Manche Inhalte sind frei, andere erfordern Lizenz
-- **OECD Working Papers:** Meistens frei verfügbar und besonders wertvoll für Policy-Forschung
-- **Langsame Seite:** Große Ladezeiten, 3-5 Sekunden Timeout empfohlen
-- **DOIs:** OECD-Publikationen haben fast immer DOIs → gut für Crossref-Lookup
+- **Domain-Migration:** `oecd-ilibrary.org` → `oecd.org` — alte URLs leiten um aber verlieren ggf. Query-Parameter
+- **Kein REST API:** OECD hat kein oeffentliches Such-API
+- **Mischung OA/Paywall:** OECD Working Papers meist frei, Reports oft hinter Paywall
+- **Langsame Seite:** SPA-basiert (React/Next.js), 3-5 Sekunden Ladezeit
+- **Metadata-Parsing:** Typ/Datum/Seiten sind in einem String ohne klare Trenner zusammengefasst
+- **DOIs:** OECD-Publikationen haben DOIs im URL-Suffix — nuetzlich fuer Crossref-Lookup
+- **Viele Content-Typen:** Nicht alles sind Papers — Blog, News, Events etc. filtern

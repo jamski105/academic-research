@@ -19,5 +19,19 @@ fi
 touch "$BASE/citations.bib"
 [ -f "$BASE/annotations.json" ] || echo '{}' > "$BASE/annotations.json"
 [ -f "$BASE/fulltext_index.json" ] || echo '{"index":{},"docs":{}}' > "$BASE/fulltext_index.json"
+[ -f "$BASE/sessions/index.json" ] || echo '[]' > "$BASE/sessions/index.json"
 
+echo "✅ Python environment: ready"
+
+if command -v npx &>/dev/null; then
+  echo "Installing Playwright browser..."
+  npx playwright install chromium --with-deps --quiet 2>/dev/null \
+    && echo "✅ Playwright (Chromium): ready" \
+    || echo "⚠️  Playwright browser install failed — browser modules may not work"
+else
+  echo "⚠️  Node.js/npx not found — browser search modules (Google Scholar, EBSCO...) will not work"
+  echo "   Install Node.js 18+ and rerun /academic:setup"
+fi
+
+echo ""
 echo "Setup complete: $BASE"

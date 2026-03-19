@@ -1,12 +1,13 @@
 ---
 name: research
-description: Academic research — searches across Semantic Scholar, CrossRef, OpenAlex, Google Scholar, BASE, EconBiz and more. Ranks papers, downloads PDFs, extracts quotes.
-argument-hint: [research query]
+description: Run a full academic literature search and research pipeline. Use when finding papers, searching academic databases, doing a Literaturrecherche, or building a bibliography. Searches Semantic Scholar, CrossRef, OpenAlex, Google Scholar, BASE, EconBiz and more. Ranks papers, downloads PDFs, extracts quotes.
+argument-hint: "research query"
+disable-model-invocation: true
 ---
 
 # Academic Research Skill v3.0
 
-**Command:** `/research "query"` or auto-triggered for academic research questions
+**Command:** `/research "query"` — must be explicitly invoked
 
 ---
 
@@ -18,11 +19,13 @@ You are the **Research Skill Entry Point** for Academic Research Plugin v3.0.
 
 Parse from `$ARGUMENTS`:
 - **Query**: The research question (required)
-- **--mode**: quick | standard | deep (default: standard)
+- **--mode**: quick | standard | deep | metadata (default: standard)
 - **--style**: apa7 | ieee | harvard | mla | chicago (default: from config or apa7)
 - **--modules**: Comma-separated module override (optional)
+- **--no-pdfs**: Skip PDF download and quote extraction (overrides mode setting)
 
 Example: `/research "DevOps Governance" --mode deep --style ieee`
+Example: `/research "AI Ethics" --no-pdfs` (metadata-only, fast)
 
 ---
 
@@ -92,27 +95,27 @@ Execute all 7 phases sequentially:
 - Store session path for subsequent phases
 
 **Phase 2: Query Generation**
-- Spawn `query_generator` agent (Haiku)
+- Spawn `query-generator` agent (Haiku)
 - Save expanded queries to session dir
 
 **Phase 3: Modular Search**
 - Run API search script (parallel, all active API modules)
-- Spawn `browser_searcher` agent (if browser modules active)
+- Spawn `browser-searcher` agent (if browser modules active)
 - Run deduplicator script
 - Show per-module result counts
 
 **Phase 4: Ranking**
-- Run 5D scoring script
-- Spawn `relevance_scorer` agent (Sonnet, batches of 10)
+- Run 4D scoring script
+- Spawn `relevance-scorer` agent (Sonnet, batches of 10)
 - Select top N papers
 
 **Phase 5: PDF Download**
 - Run pdf_resolver script (4-tier cross-platform)
-- For Tier 4 failures: spawn `browser_searcher` for browser download
+- For Tier 4 failures: spawn `browser-searcher` for browser download
 - **Never give up** — try all modules for each paper
 
 **Phase 6: Quote Extraction**
-- For each PDF: extract text, spawn `quote_extractor` agent
+- For each PDF: extract text, spawn `quote-extractor` agent
 - Collect all quotes
 
 **Phase 7: Export**

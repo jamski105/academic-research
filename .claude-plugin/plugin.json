@@ -5,6 +5,8 @@
   "author": {
     "name": "Jonas"
   },
+  "homepage": "https://github.com/jonas/academic-research",
+  "repository": "https://github.com/jonas/academic-research",
   "license": "MIT",
   "keywords": [
     "academic",
@@ -15,6 +17,5 @@
     "semantic-scholar",
     "crossref",
     "openalex"
-  ],
-  "mcpServers": "./.mcp.json"
+  ]
 }

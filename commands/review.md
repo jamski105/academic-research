@@ -1,6 +1,6 @@
 ---
 description: Generate a literature review draft from research sessions
-allowed-tools: Read, Write, Agent, Bash(~/.academic-research/venv/bin/python *), Bash(cat *), Bash(ls *)
+allowed-tools: Read, Write, Agent, Bash(~/.academic-research/venv/bin/python *), Bash(cat ~/.academic-research/*), Bash(ls ~/.academic-research/*)
 argument-hint: [optional: session ID or --sessions "id1,id2"]
 ---
 
@@ -19,7 +19,7 @@ Generate a structured literature review draft from one or more research sessions
 
 1. Load session data (papers, quotes, query) from session directory
 2. Load citation style from config
-3. Spawn `review_writer` agent (Opus) with:
+3. Spawn `review-writer` agent (Opus) with:
    - All papers + their quotes
    - Research query
    - Review style
@@ -33,7 +33,7 @@ Generate a structured literature review draft from one or more research sessions
 ```
 IGNORE ALL PRIOR CONVERSATION CONTEXT.
 You are a focused subagent with ONE task: writing a literature review.
-Read ${CLAUDE_PLUGIN_ROOT}/agents/review_writer.md and follow it exactly.
+Read ${CLAUDE_PLUGIN_ROOT}/agents/review-writer.md and follow it exactly.
 
 Input data:
 {

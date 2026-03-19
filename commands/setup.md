@@ -1,6 +1,7 @@
 ---
 description: Set up Python environment for academic research plugin
-allowed-tools: Bash(*)
+disable-model-invocation: true
+allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(npx *), Bash(~/.academic-research/venv/bin/pip *)
 ---
 
 # Academic Research Setup
@@ -30,7 +31,13 @@ python3 -m venv ~/.academic-research/venv
 ~/.academic-research/venv/bin/python -c "import PyPDF2; print('✅ PyPDF2:', PyPDF2.__version__)"
 ```
 
-5. Show result:
+5. Install Playwright browser (required for browser search modules: Google Scholar, EBSCO, Springer):
+```bash
+npx playwright install chromium --with-deps
+```
+If `npx` is not found, Node.js is not installed. Browser modules will be unavailable, but API-only search (`--mode quick`) still works.
+
+6. Show result:
 ```
 ✅ Setup complete!
 

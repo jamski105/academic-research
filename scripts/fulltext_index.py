@@ -15,7 +15,8 @@ from typing import Any
 
 from PyPDF2 import PdfReader
 
-INDEX_PATH = os.path.expanduser("~/.academic-research/fulltext_index.json")
+BASE_DIR = os.path.expanduser("~/.academic-research")
+INDEX_PATH = os.path.join(BASE_DIR, "fulltext_index.json")
 STOPWORDS = {"a", "an", "the", "and", "or", "in", "of", "to", "is", "are", "was", "were", "for", "with", "that", "this"}
 
 
@@ -80,7 +81,7 @@ def index_pdfs(pdf_dir: str) -> int:
     data.setdefault("docs", {})
 
     for pdf_path in Path(pdf_dir).rglob("*.pdf"):
-        doc_id = str(pdf_path)
+        doc_id = os.path.relpath(str(pdf_path), BASE_DIR)
         mtime = pdf_path.stat().st_mtime
         existing = data["docs"].get(doc_id)
         if existing and float(existing.get("mtime", 0.0)) == mtime:
@@ -105,7 +106,7 @@ def index_pdfs(pdf_dir: str) -> int:
             data["index"].setdefault(term, {})[doc_id] = tf
 
         data["docs"][doc_id] = {
-            "path": doc_id,
+            "path": str(pdf_path),
             "title": pdf_path.stem,
             "token_count": total_tokens,
             "mtime": mtime,
@@ -133,7 +134,8 @@ def search_index(query: str, limit: int) -> int:
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:limit]
     for idx, (doc_id, score) in enumerate(ranked, start=1):
         doc = data.get("docs", {}).get(doc_id, {"title": Path(doc_id).stem, "path": doc_id})
-        print(f"{idx}. {doc.get('title')} ({doc.get('path')}) — score: {score:.4f}")
+        display_path = doc.get("path") or os.path.join(BASE_DIR, doc_id)
+        print(f"{idx}. {doc.get('title')} ({display_path}) — score: {score:.4f}")
     return 0
 
 

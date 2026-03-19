@@ -47,6 +47,21 @@ modes:
       quality: 0.2
       authority: 0.2
 
+  metadata:
+    description: "Metadata-only — no PDF download, no quote extraction. Fast literature list."
+    modules: all_tier_1
+    max_results_per_module: 50
+    max_total_papers: 60
+    max_total_time_seconds: 90
+    pdf_download: false
+    quote_extraction: false
+    top_n: 25
+    ranking_weights:
+      relevance: 0.4
+      recency: 0.2
+      quality: 0.2
+      authority: 0.2
+
 # 4D Ranking Dimensions (scored by ranking.py)
 # Total = relevance*0.4 + recency*0.2 + quality*0.2 + authority*0.2
 ranking_dimensions:
@@ -62,7 +77,7 @@ ranking_dimensions:
     half_life_years: 5
 
   quality:
-    description: "Citation count with log scaling — log(citations+1) / log(1001)"
+    description: "Citations per year with log scaling — log(cit_per_year+1) / log(201)"
     range: [0.0, 1.0]
 
   authority:

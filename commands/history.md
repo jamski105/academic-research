@@ -1,6 +1,6 @@
 ---
 description: View past research sessions and their results
-allowed-tools: Read, Bash(cat *), Bash(ls *), Bash(~/.academic-research/venv/bin/python *)
+allowed-tools: Read, Bash(cat ~/.academic-research/*), Bash(ls ~/.academic-research/*), Bash(~/.academic-research/venv/bin/python *)
 argument-hint: [optional: search query or date]
 ---
 
