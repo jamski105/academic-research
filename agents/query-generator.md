@@ -111,6 +111,17 @@ All queries must be ≤120 characters.
 - Preserve semantic meaning during translation (don't translate proper nouns: COBIT, ITIL, SAFe)
 - Keep `display_title` in the original query language
 
+### CS-Disambiguierung
+
+Wenn Disziplin = "Computer Science" oder Query enthält breite CS-Begriffe:
+- Multi-Word-Phrasen IMMER in Anführungszeichen: `"machine learning" AND "software testing"`
+- NICHT: `machine AND learning AND testing` (zu viele False Positives)
+- `openalex_field_filter` IMMER setzen: `"primary_topic.field.id:17"`
+- Disambiguierungs-Terme ergänzen: `"deep learning"` statt nur `"learning"`
+
+Beispiel SCHLECHT: `network security`
+Beispiel GUT: `"network security" AND ("intrusion detection" OR "access control")`
+
 ---
 
 ## Quality Checks

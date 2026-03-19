@@ -7,6 +7,7 @@ import argparse
 import concurrent.futures
 import json
 import logging
+import os
 import sys
 import time
 from typing import Any, Callable
@@ -73,6 +74,17 @@ def search_crossref(query: str, limit: int) -> list[dict[str, Any]]:
     return results
 
 
+def reconstruct_abstract(inverted_index: dict | None) -> str | None:
+    """Rekonstruiert Abstract-Text aus OpenAlex inverted index."""
+    if not inverted_index:
+        return None
+    positions: dict[int, str] = {}
+    for word, pos_list in inverted_index.items():
+        for pos in pos_list:
+            positions[pos] = word
+    return " ".join(positions[i] for i in sorted(positions))
+
+
 def search_openalex(query: str, limit: int) -> list[dict[str, Any]]:
     """Search OpenAlex works endpoint."""
     url = "https://api.openalex.org/works"
@@ -92,7 +104,7 @@ def search_openalex(query: str, limit: int) -> list[dict[str, Any]]:
                 "title": item.get("title"),
                 "authors": authors,
                 "year": item.get("publication_year"),
-                "abstract": None,
+                "abstract": reconstruct_abstract(item.get("abstract_inverted_index")),
                 "venue": source.get("display_name"),
                 "citations": item.get("cited_by_count", 0),
                 "url": item.get("id"),
@@ -112,8 +124,11 @@ def search_semantic_scholar(query: str, limit: int) -> list[dict[str, Any]]:
         "limit": limit,
         "fields": "paperId,title,authors,year,abstract,venue,citationCount,openAccessPdf,externalIds",
     }
+    headers: dict[str, str] = {}
+    if api_key := os.environ.get("SS_API_KEY"):
+        headers["x-api-key"] = api_key
     with httpx.Client(timeout=TIMEOUT) as client:
-        resp = client.get(url, params=params)
+        resp = client.get(url, params=params, headers=headers)
         resp.raise_for_status()
         items = resp.json().get("data", [])
     time.sleep(0.5)
@@ -304,11 +319,22 @@ MODULES: dict[str, Callable[[str, int], list[dict[str, Any]]]] = {
 
 def run_module(module_name: str, query: str, limit: int) -> tuple[str, list[dict[str, Any]], bool]:
     """Run one module and return (module, papers, failed)."""
-    try:
-        return module_name, MODULES[module_name](query, limit), False
-    except Exception:
-        logging.exception("Module '%s' failed", module_name)
-        return module_name, [], True
+    max_attempts = 3 if module_name == "semantic_scholar" else 1
+    for attempt in range(max_attempts):
+        try:
+            return module_name, MODULES[module_name](query, limit), False
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 429 and attempt < max_attempts - 1:
+                delay = 2 ** attempt * 2  # 2s, dann 4s
+                logging.warning("Module '%s' rate-limited, retry in %ds", module_name, delay)
+                time.sleep(delay)
+                continue
+            logging.exception("Module '%s' failed (HTTP %s)", module_name, e.response.status_code)
+            return module_name, [], True
+        except Exception:
+            logging.exception("Module '%s' failed", module_name)
+            return module_name, [], True
+    return module_name, [], True
 
 
 def parse_args() -> argparse.Namespace:

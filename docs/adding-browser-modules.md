@@ -151,5 +151,5 @@ Dann testen: `/research "test" --modules jstor --mode quick`
 
 - Bestehende Guides: `config/browser_guides/` (9 Guides: 8 Datenbanken + HAN-Login)
 - Modul-Registry: `config/search_modules.yaml`
-- Browser Searcher Agent: `agents/browser-searcher.md`
+- Browser-Navigation: Claude nutzt Playwright MCP direkt (kein separater Agent)
 - Architektur-Uebersicht: `ARCHITECTURE.md`

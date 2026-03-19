@@ -1,4 +1,4 @@
-# Architektur — Academic Research Plugin v3.0
+# Architektur — Academic Research Plugin v3.1
 
 Automatisierte akademische Literaturrecherche als Claude Code Plugin.
 Das Plugin durchläuft 7 Phasen: Query-Expansion → Multi-Source-Suche →
@@ -42,17 +42,18 @@ Skill (/research)              ← Workflow-Orchestrierung (inline, nicht als Ag
 | 1 Setup | Session-Verzeichnis anlegen, Config laden | Coordinator | User-Query, Mode | `metadata.json` |
 | 2 Query-Expansion | Suchbegriffe für jedes Modul generieren | `query-generator` (Haiku) | Query, Module-Liste | `queries.json` |
 | 3A API-Suche | Parallele Abfrage aller API/OAI-PMH-Module | `search_apis.py` | Queries, Module-Liste | `api_results.json` |
-| 3B Browser-Suche | Playwright-gesteuerte Suche (Scholar, EBSCO…) | `browser-searcher` (Sonnet) | Queries, Browser Guides | → append `api_results.json` |
+| 3B Browser-Suche | Playwright-gesteuerte Suche (Scholar, OPAC…) | Claude direkt via Playwright MCP | Queries, Browser Guides | → append `api_results.json` |
 | 3C Known-Works | Gezielte Suche nach bekannten Werken | `search_apis.py` | Known-Works-Queries | → merge `api_results.json` |
 | 3D Deduplizierung | DOI/Titel-Matching, Merge der Ergebnisse | `deduplicator.py` | `api_results.json` | `deduped.json` |
 | 4 Ranking | 4D-Score + LLM-Relevanz + Top-N-Selektion | `ranking.py` + `relevance-scorer` (Sonnet) | `deduped.json` | `ranked.json` → `papers.json` |
-| 5 PDF-Download | 6-Tier-Strategie (API → Browser → HAN) | `pdf_resolver.py` + `browser-searcher` | `papers.json` | `pdfs/*.pdf`, `pdf_status.json` |
+| 5 PDF-Download | 6-Tier-Strategie (API → arXiv → Browser → HAN) | `pdf_resolver.py` + Playwright MCP direkt | `papers.json` | `pdfs/*.pdf`, `pdf_status.json` |
 | 6 Zitat-Extraktion | PDF-Text extrahieren, Zitate finden | `quote-extractor` (Sonnet) | `pdf_texts.json` | `quotes.json` |
 | 7 Export | BibTeX, JSON, Markdown + globaler Merge | `export.py`, `citation_manager.py`, `fulltext_index.py` | `papers.json`, `pdf_status.json`, `quotes.json` | `export.*`, `manual_acquisition.md`, `index.json` |
 
 **Kernprinzip:** `papers.json` ist die kanonische Paperliste ab Phase 4 — alle folgenden Phasen lesen daraus.
 
 **Metadata-Mode / `--no-pdfs`:** Phase 5 und 6 werden uebersprungen. Export enthalt nur Metadaten ohne Zitate.
+**`--no-browser`:** Phase 3B und PDF-Tiers 5b–6 werden uebersprungen. Nur API-basierte Suche und automatische PDF-Resolution (Tiers 1–5a).
 
 ---
 
@@ -88,10 +89,11 @@ Phase 7  ──► export.json        │
 |-------|-------|---------|-------|--------|
 | `coordinator` | Opus | 7-Phasen-Referenzdokument (wird von Skill inline gelesen, nicht als Agent gespawnt) | — | — |
 | `query-generator` | Haiku | Query → modulspezifische Suchbegriffe | Query, Module-Liste | `queries.json` |
-| `browser-searcher` | Sonnet | Playwright-Suche + PDF-Download via Browser | Query/Papers, Browser Guides | Paper-JSON / PDFs |
 | `relevance-scorer` | Sonnet | Semantische Relevanz-Bewertung (10er-Batches) | Papers + Query | Scores (0–1) |
 | `quote-extractor` | Sonnet | Zitate aus PDF-Text extrahieren (max 3 parallel) | PDF-Text + Query | Zitat-Array |
 | `review-writer` | Opus | Literaturreview-Generierung (on demand) | Papers + Quotes | Markdown-Review |
+
+**Playwright MCP** wird direkt von Claude (Hauptkontext) aufgerufen — kein separater browser-searcher Agent. Subagents erben keine MCP-Server vom Parent.
 
 Alle Subagents werden mit `IGNORE ALL PRIOR CONVERSATION CONTEXT` gestartet, um Context-Bleeding zu verhindern.
 
@@ -122,7 +124,7 @@ Definiert in `config/search_modules.yaml`. Drei Typen:
 |-----|-----------|--------|
 | **api** | `search_apis.py` (httpx) | CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz |
 | **oai-pmh** | `search_apis.py` (XML) | EconStor |
-| **browser** | `browser-searcher` (Playwright) | Google Scholar, RePEc, OECD, EBSCO, Springer, OPAC, EZB*, Destatis*, ProQuest* |
+| **browser** | Claude direkt (Playwright MCP) | Google Scholar, RePEc, OECD, Springer, OPAC, EZB*, Destatis*, ProQuest* |
 
 *\* = standardmäßig deaktiviert*
 
@@ -147,6 +149,8 @@ Score = 0.4 × Relevanz + 0.2 × Aktualität + 0.2 × Qualität + 0.2 × Autorit
 | **Qualität** | Zitationen/Jahr mit Log-Skalierung: `log(cit_per_year+1) / log(201)` | 0–1 |
 | **Autorität** | Venue-Heuristik: Top (IEEE, ACM…) = 1.0, Mid = 0.7, Sonstige = 0.4 | 0–1 |
 
+**Phrase-Bonus:** +0.15 wenn vollständige Query-Phrase in Titel, +0.08 wenn in Abstract (capped at 1.0).
+
 **Stufe 2: LLM-Relevanz** (nach 4D-Scoring, via `relevance-scorer` Agent):
 - Semantische Bewertung durch Sonnet in 10er-Batches
 - Score wird in Gesamtranking gemergt (Re-Ranking)
@@ -167,10 +171,13 @@ Details: `config/research_modes.yaml`
 | 2 | CORE | API (DOI → Download-URL) | ✅ `pdf_resolver.py` |
 | 3 | Modul-OA-URLs | Aus Suchergebnis-Metadaten | ✅ `pdf_resolver.py` |
 | 4 | Direkt-URL | URL endet auf `.pdf` | ✅ `pdf_resolver.py` |
-| 5 | EBSCO / Springer / EZB | Browser via HAN/OAuth/IP | 🔧 `browser-searcher` |
-| 6 | ProQuest | Browser via HAN (Dissertationen) | 🔧 `browser-searcher` |
+| 5a | arXiv | Titel-Suche via arXiv API | ✅ `pdf_resolver.py` |
+| 5b | Springer via HAN-Proxy | Browser (einzige HAN-Route) | 🔧 Playwright MCP direkt |
+| 5c | EBSCO/EZB via OPAC-Links | Browser via direkte Links aus Phase 3B | 🔧 Playwright MCP direkt |
+| 6 | ProQuest | Browser direkt (Dissertationen, deep mode) | 🔧 Playwright MCP direkt |
 
-Tiers 1–4 laufen immer. Tiers 5–6 nur in `standard`/`deep` Mode fuer fehlgeschlagene Papers.
+Tiers 1–5a laufen immer. Tiers 5b–6 nur in `standard`/`deep` Mode und wenn `--no-browser` nicht gesetzt.
+**Alle Downloads werden auf Content-Type und Magic-Bytes (`%PDF-`) validiert.**
 
 Die PDF-Resolution ist modular aufgebaut. Neue Download-Wege koennen ueber Browser Guides
 hinzugefuegt werden — siehe `adding-browser-modules.md`.
@@ -216,7 +223,7 @@ venv/                  ← Python Virtual Environment
 
 ## Browser Guides
 
-Vorgefertigte Navigationsanleitungen fuer den `browser-searcher` Agent.
+Vorgefertigte Navigationsanleitungen fuer Claude's direkte Playwright-MCP-Navigation.
 Liegen unter `config/browser_guides/` und beschreiben Schritt fuer Schritt,
 wie eine bestimmte Datenbank per Playwright MCP durchsucht wird.
 
@@ -243,7 +250,7 @@ Vollstaendige Kommandoreferenz mit allen Flags: `command-reference.md`
 
 | Command | Beschreibung |
 |---------|-------------|
-| `/research "query"` | 7-Phasen-Recherche (Flags: `--mode`, `--style`, `--modules`, `--no-pdfs`) |
+| `/research "query"` | 7-Phasen-Recherche (Flags: `--mode`, `--style`, `--modules`, `--no-pdfs`, `--no-browser`) |
 | `/academic-research:setup` | Python-Umgebung einrichten (venv, Dependencies) |
 | `/academic-research:context` | Akademisches Profil konfigurieren (Uni, Disziplin, Stil) |
 | `/academic-research:cite` | Zitationen verwalten (list, search, export, add, tag, note) |

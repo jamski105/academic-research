@@ -38,6 +38,18 @@ def score_relevance(paper: dict[str, Any], keywords: list[str]) -> float:
     return 0.7 * title_score + 0.3 * abstract_score
 
 
+def score_phrase_bonus(paper: dict[str, Any], query: str) -> float:
+    """Bonus wenn vollständige Query-Phrase in Titel oder Abstract vorkommt."""
+    if not query or len(query) < 4:
+        return 0.0
+    q = query.lower()
+    if q in (paper.get("title") or "").lower():
+        return 0.15
+    if q in (paper.get("abstract") or "").lower():
+        return 0.08
+    return 0.0
+
+
 def score_recency(paper: dict[str, Any], current_year: int) -> float:
     """Score recency with 5-year half-life."""
     year = paper.get("year")
@@ -140,8 +152,10 @@ def main() -> int:
         recency = score_recency(paper, current_year)
         quality = score_quality(paper, current_year)
         authority = score_authority(paper)
-        total = (args.w_relevance * relevance + args.w_recency * recency
-                 + args.w_quality * quality + args.w_authority * authority)
+        phrase_bonus = score_phrase_bonus(paper, args.query)
+        total = min(1.0, (args.w_relevance * relevance + args.w_recency * recency
+                          + args.w_quality * quality + args.w_authority * authority
+                          + phrase_bonus))
         enriched = dict(paper)
         enriched["scores"] = {
             "total": total,

@@ -8,7 +8,7 @@ Vollstaendige Uebersicht aller Commands und Flags.
 
 Hauptcommand: Startet die 7-Phasen-Recherche-Pipeline.
 
-**Syntax:** `/research "query" [--mode MODE] [--style STYLE] [--modules LIST] [--no-pdfs]`
+**Syntax:** `/research "query" [--mode MODE] [--style STYLE] [--modules LIST] [--no-pdfs] [--no-browser]`
 
 | Flag | Werte | Default | Beschreibung |
 |------|-------|---------|-------------|
@@ -16,6 +16,7 @@ Hauptcommand: Startet die 7-Phasen-Recherche-Pipeline.
 | `--style` | `apa7`, `ieee`, `harvard`, `mla`, `chicago` | `apa7` (oder aus Config) | Zitationsstil fuer Export |
 | `--modules` | Komma-getrennte Liste | (aus Mode) | Nur bestimmte Module nutzen |
 | `--no-pdfs` | (Flag, kein Wert) | `false` | Kein PDF-Download, keine Zitat-Extraktion |
+| `--no-browser` | (Flag, kein Wert) | `false` | Alle Browser-Module ueberspringen (Phase 3B + Tiers 5-6); nur API-Suche |
 
 **Beispiele:**
 ```bash
@@ -24,6 +25,7 @@ Hauptcommand: Startet die 7-Phasen-Recherche-Pipeline.
 /research "AI Ethics" --modules semantic_scholar,crossref,base
 /research "Cloud Computing" --no-pdfs
 /research "Wirtschaftsinformatik" --mode metadata
+/research "Network Security" --no-browser
 ```
 
 ### Research Modes

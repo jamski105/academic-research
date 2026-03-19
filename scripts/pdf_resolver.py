@@ -31,13 +31,22 @@ def safe_filename(value: str) -> str:
 
 
 def download_pdf(client: httpx.Client, pdf_url: str, output_path: str) -> None:
-    """Stream-download PDF to output path."""
+    """Stream-download PDF mit Content-Type und Magic-Bytes Validierung."""
     with client.stream("GET", pdf_url, timeout=TIMEOUT) as resp:
         resp.raise_for_status()
+        content_type = resp.headers.get("content-type", "").lower()
+        if "pdf" not in content_type and "octet-stream" not in content_type:
+            raise ValueError(f"Kein PDF (content-type: {content_type!r})")
         with open(output_path, "wb") as fh:
             for chunk in resp.iter_bytes():
                 if chunk:
                     fh.write(chunk)
+    # Magic-Bytes nach Download prüfen
+    with open(output_path, "rb") as fh:
+        magic = fh.read(5)
+    if magic != b"%PDF-":
+        os.remove(output_path)
+        raise ValueError(f"Keine PDF-Datei: beginnt mit {magic!r}")
 
 
 def tier_unpaywall(client: httpx.Client, doi: str, email: str) -> str | None:
@@ -82,6 +91,28 @@ def tier_direct_url(paper: dict[str, Any]) -> str | None:
     return None
 
 
+def tier_arxiv_title(client: httpx.Client, title: str) -> str | None:
+    """Sucht arXiv nach Titel und gibt PDF-URL zurück."""
+    import xml.etree.ElementTree as ET
+    safe_title = title[:80].replace('"', ' ')
+    try:
+        resp = client.get(
+            "https://export.arxiv.org/api/query",
+            params={"search_query": f"ti:{safe_title}", "max_results": "1"},
+            timeout=TIMEOUT,
+        )
+        resp.raise_for_status()
+        root = ET.fromstring(resp.text)
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        for entry in root.findall("atom:entry", ns):
+            for link in entry.findall("atom:link", ns):
+                if link.get("title") == "pdf":
+                    return link.get("href")
+    except Exception:
+        logging.exception("arXiv-Suche fehlgeschlagen für: %s", title[:40])
+    return None
+
+
 def resolve_pdf_url(client: httpx.Client, paper: dict[str, Any], email: str) -> tuple[str | None, str | None, str | None]:
     """Resolve PDF URL and source tier."""
     doi = normalize_doi(paper.get("doi"))
@@ -112,6 +143,14 @@ def resolve_pdf_url(client: httpx.Client, paper: dict[str, Any], email: str) -> 
     direct_url = tier_direct_url(paper)
     if direct_url:
         return direct_url, "direct", last_error
+
+    # Tier 5: arXiv Titel-Suche
+    if title := paper.get("title"):
+        try:
+            if url := tier_arxiv_title(client, title):
+                return url, "arxiv", last_error
+        except Exception as exc:
+            last_error = str(exc)
 
     return None, None, last_error
 

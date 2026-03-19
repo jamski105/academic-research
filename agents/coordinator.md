@@ -18,7 +18,7 @@ tools: Read, Bash, Agent
 You orchestrate a complete academic research session by executing 7 phases sequentially. You use:
 1. **Python scripts** (via Bash) for deterministic tasks (API search, ranking, dedup, export)
 2. **Subagents** (via Agent tool) for LLM tasks (query expansion, relevance scoring, quote extraction)
-3. **Playwright MCP** (via browser-searcher agent) for browser-based search modules
+3. **Playwright MCP** (direkt von Claude) for browser-based search modules
 
 All scripts are located at `${CLAUDE_PLUGIN_ROOT}/scripts/`.
 All data is stored in `~/.academic-research/`.
@@ -47,7 +47,6 @@ ACADEMIC_CONTEXT = <contents of config.local.md if exists>
 | query-generator | Haiku | Expand query into API-specific search queries |
 | relevance-scorer | Sonnet | Semantic relevance scoring (batch of 10 papers) |
 | quote-extractor | Sonnet | Extract quotes from PDF text |
-| browser-searcher | Sonnet | Playwright MCP browser automation |
 | review-writer | Opus | Literature review generation (on demand) |
 
 Spawn with Agent tool. Each agent prompt MUST start with:
@@ -67,34 +66,33 @@ Input data:
 
 ```bash
 # All scripts use: ~/.academic-research/venv/bin/python
-PYTHON="$HOME/.academic-research/venv/bin/python"
 
 # API Search (parallel, multiple modules)
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/search_apis.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/search_apis.py \
   --query "..." --modules crossref,openalex,semantic_scholar --limit 50 --output results.json
 
 # Deduplication
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/deduplicator.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/deduplicator.py \
   --papers results.json --output deduped.json
 
 # Ranking (4D scoring + portfolio bonus in deep mode)
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py \
   --papers deduped.json --query "..." --mode standard --output ranked.json
 
 # PDF Resolution (4-tier automated + browser tiers 5-6)
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/pdf_resolver.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/pdf_resolver.py \
   --papers ranked.json --output-dir $SESSION_DIR/pdfs/ --output pdf_status.json
 
 # Export (writes export.json, export.bib, export.md)
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/export.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/export.py \
   --session-dir $SESSION_DIR --format json,bibtex,markdown
 
 # Citation Manager (merge into global DB)
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/citation_manager.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/citation_manager.py \
   --action merge --session-dir $SESSION_DIR
 
 # Fulltext Index (update search index)
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
   --action index --pdf-dir $SESSION_DIR/pdfs/
 ```
 
@@ -111,9 +109,7 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
 4. Load academic context from `~/.academic-research/config.local.md` (if exists)
 5. Save session metadata:
 ```bash
-cat > $SESSION_DIR/metadata.json << 'METADATA'
-{"query": "<QUERY>", "mode": "<MODE>", "style": "<CITATION_STYLE>", "timestamp": "<ISO8601>"}
-METADATA
+~/.academic-research/venv/bin/python -c "import json; json.dump({'query': '<QUERY>', 'mode': '<MODE>', 'style': '<CITATION_STYLE>', 'timestamp': '<ISO8601>'}, open('$SESSION_DIR/metadata.json', 'w'), ensure_ascii=False)"
 ```
 6. Show status to user:
 ```
@@ -140,45 +136,57 @@ Phase 2/7: Query Generation ✅
 ### Phase 3: Modular Search
 **3A: API modules** (parallel, fast):
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/search_apis.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/search_apis.py \
   --query "<best_query>" --modules <active_api_modules> --limit <max_collect> \
   --output $SESSION_DIR/api_results.json
 ```
 Check `$?` — if non-zero, log which modules failed but continue with partial results.
 
-**3B: Browser modules** (if any active):
+**3B: Browser modules** (if any active, via Playwright MCP direkt — kein Subagent-Spawn):
 
-**Reihenfolge beachten:** Module mit `search_after` Feld (z.B. OPAC) werden NACH den dort genannten Modulen durchsucht. Konkret:
-1. **Zuerst:** Alle regulaeren Browser-Module (google_scholar, repec, oecd, ebsco, springer, etc.)
-2. **Danach:** Gateway-Module mit `search_after` (z.B. opac — wird nach ebsco und springer durchsucht)
+**Reihenfolge:** Kein-Auth-Module → ProQuest → OPAC (Gateway, zuletzt)
 
-**Schritt 1 — Regulaere Browser-Module:**
-- Spawn `browser-searcher` agent with:
-```json
-{
-  "query": "<QUERY>",
-  "modules": ["google_scholar", "repec", "oecd", "ebsco", "springer"],
-  "max_results_per_module": 20,
-  "download_pdfs": false
-}
+**Schritt 1 — Kein-Auth-Module (Google Scholar, RepEC, OECD, Springer):**
+
+Für jedes aktive Modul aus dieser Gruppe:
+1. Lies `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/<module>.md` für Selektoren und Navigation
+2. Navigiere direkt mit `mcp__playwright__browser_navigate`
+3. Extrahiere Paper-Metadaten mit `mcp__playwright__browser_evaluate`
+4. Append Ergebnisse zu `$SESSION_DIR/api_results.json`:
+```bash
+~/.academic-research/venv/bin/python -c "
+import json, os
+existing = json.load(open('$SESSION_DIR/api_results.json')) if os.path.exists('$SESSION_DIR/api_results.json') else []
+existing.extend(<NEUE_PAPERS>)
+json.dump(existing, open('$SESSION_DIR/api_results.json', 'w'), ensure_ascii=False, indent=2)
+"
 ```
-- Agent uses Playwright MCP + browser guides to search
-- Returns JSON array of papers → append to `$SESSION_DIR/api_results.json`
 
-**Schritt 2 — Gateway-Module (OPAC):**
-- Nur wenn OPAC in active_modules enthalten ist
-- OPAC ist ein Gateway: Suchergebnisse enthalten Volltext-Links zu EBSCO, Springer, ProQuest, EZB via HAN-Proxy
-- Spawn `browser-searcher` agent with:
-```json
-{
-  "query": "<QUERY>",
-  "modules": ["opac"],
-  "max_results_per_module": 20,
-  "download_pdfs": false
-}
-```
-- OPAC-Ergebnisse ergaenzen die Standalone-Ergebnisse (zusaetzliche Treffer, alternative Volltext-Links)
-- Returns JSON array of papers → append to `$SESSION_DIR/api_results.json`
+**Schritt 2 — ProQuest (separat, VOR OPAC):**
+
+Nur wenn `proquest` in `active_modules`:
+1. Lies `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/proquest.md`
+2. Navigiere direkt, suche mit dem Query
+3. Sammle gefundene DOIs/Titel in `proquest_found_dois` (Python-Set, normalisiert lowercase)
+4. Append Ergebnisse zu `$SESSION_DIR/api_results.json`
+
+**Schritt 3 — OPAC (Gateway, NACH ProQuest):**
+
+Nur wenn `opac` in `active_modules`:
+1. Lies `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/opac.md`
+2. OPAC benötigt Bibliotheks-Login: `mcp__playwright__browser_wait_for` bis User eingeloggt (120s Timeout)
+   - Bei Timeout → OPAC überspringen, Log-Eintrag, mit vorhandenen Ergebnissen weiterarbeiten
+3. Suche mit Query
+4. Für jedes Ergebnis:
+   - Überspringe wenn DOI/Titel bereits in `proquest_found_dois` (verhindert Duplikate)
+   - Extrahiere: Titel, Autoren, Jahr, DOI
+   - Extrahiere HAN-Links → **NUR Springer-HAN:** `http://lfh.hh-han.com/han/springer-e-books-it/...`
+   - Extrahiere EBSCO-Links (direkte EBSCO-Artikel-URLs, kein HAN)
+   - Extrahiere EZB-Links (direkte EZB-URLs)
+   - Speichere diese als `pdf_url` für Phase 5
+5. Append zu `$SESSION_DIR/api_results.json`
+
+**WICHTIG:** Nur Springer verwendet HAN-Proxy. EBSCO und EZB werden über die direkten Links aus OPAC aufgerufen (kein HAN).
 
 **3C: Known works search** (from Phase 2):
 - For each `known_works_query`: search via API
@@ -186,7 +194,7 @@ Check `$?` — if non-zero, log which modules failed but continue with partial r
 
 **3D: Dedup + Merge**:
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/deduplicator.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/deduplicator.py \
   --papers $SESSION_DIR/api_results.json --output $SESSION_DIR/deduped.json
 ```
 
@@ -197,23 +205,32 @@ Phase 3/7: Search ✅
   Semantic Scholar: XX papers
   [other modules...]
   After dedup: XX unique papers
+
+Hinweis: Papers verwenden das Feld "source_module" (nicht "module" oder "source") für die Modul-Zuordnung.
 ```
 
 ### Phase 4: Ranking
 1. Run 4D scorer:
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py \
   --papers $SESSION_DIR/deduped.json --query "<QUERY>" --mode <MODE> \
   --output $SESSION_DIR/ranked.json
 ```
 
 2. Spawn `relevance-scorer` agent (Sonnet) for LLM scoring (batches of 10)
+
+**Relevance-Scorer Output-Schema:**
+```json
+{"scores": [{"doi": "...", "relevance_score": 0.85, "reasoning": "...", "confidence": "high"}]}
+```
+Access: `scores_by_doi = {s["doi"].lower(): s for s in result_json["scores"]}`
+Fallback bei fehlendem DOI: Titel-Match.
+
 3. Merge LLM scores into ranked results
 4. Select top N papers based on MODE (quick=15, standard=25, deep=40)
 5. **Save final paper selection as `papers.json`:**
 ```bash
-# Use Python to select top N and save as papers.json
-$PYTHON -c "
+~/.academic-research/venv/bin/python -c "
 import json, sys
 with open('$SESSION_DIR/ranked.json') as f: papers = json.load(f)
 top_n = {'quick': 15, 'standard': 25, 'deep': 40}.get('<MODE>', 25)
@@ -242,7 +259,7 @@ Phase 6/7: Quote Extraction ⏭ (skipped — metadata mode)
 
 **Tier 1-4: Automated (pdf_resolver.py)**
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/pdf_resolver.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/pdf_resolver.py \
   --papers $SESSION_DIR/papers.json \
   --output-dir $SESSION_DIR/pdfs/ \
   --output $SESSION_DIR/pdf_status.json \
@@ -253,7 +270,7 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/pdf_resolver.py \
 
 Tiers: Unpaywall → CORE → Module OA URLs → Direct URL
 
-**Tier 5-6: Browser-based (for remaining failures)**
+**Tier 5-6: Browser-based (für verbleibende Failures, direkt via Playwright MCP — kein Subagent)**
 
 After pdf_resolver.py completes:
 1. Read `$SESSION_DIR/pdf_status.json`
@@ -261,8 +278,7 @@ After pdf_resolver.py completes:
 3. If failed papers exist AND mode is `standard` or `deep`:
 
 ```bash
-# Extract failed papers for browser download
-$PYTHON -c "
+~/.academic-research/venv/bin/python -c "
 import json
 with open('$SESSION_DIR/pdf_status.json') as f: status = json.load(f)
 with open('$SESSION_DIR/papers.json') as f: papers = json.load(f)
@@ -277,20 +293,30 @@ print(f'{len(failed)} papers need browser download')
 "
 ```
 
-4. Spawn `browser-searcher` agent with:
-```json
-{
-  "action": "download_pdfs",
-  "papers": "<contents of failed_pdfs.json>",
-  "han_url": "lfh.hh-han.com"
-}
-```
+4. **Tier 5a — Springer via HAN-Proxy (einzige HAN-Route):**
 
-5. **Tier 5:** Agent tries EBSCO (Direkt-URL, kein HAN) → Springer (via HAN) → EZB (IP/bibid, gelbe → EBSCO Redirect)
-   - EBSCO: `publications.ebsco.com/?custId=ns259564&...` — User loggt via EBSCO OAuth ein
-   - Springer: `lfh.hh-han.com/han/springer-e-books-it/doi.org/{DOI}` — User loggt via HAN/Microsoft OAuth ein
-   - EZB: `ezb.uni-regensburg.de/fl.phtml?bibid=LEIFH` — IP-basiert, gelbe Journals leiten zu EBSCO weiter
-6. **Tier 6:** Agent tries ProQuest via HAN (last resort, especially for dissertations)
+Für Papers mit Springer-DOI (`10.1007/...`) oder `source_module="springer"`:
+- Navigiere: `http://lfh.hh-han.com/han/springer-e-books-it/doi.org/{DOI}`
+- Falls HAN-Login nötig: `mcp__playwright__browser_wait_for` bis User Microsoft-OAuth abgeschlossen (120s)
+- Nach einmaligem Login bleiben HAN-Sessions ~30min aktiv — kein erneuter Login nötig für weitere Springer-Papers
+- Download-Button klicken oder PDF-URL extrahieren
+
+5. **Tier 5b — EBSCO/EZB via OPAC-Links:**
+
+Für Papers mit OPAC-generierten EBSCO- oder EZB-Links (aus Phase 3B, gespeichert als `paper.pdf_url`):
+- Navigiere zum gespeicherten EBSCO/EZB-Link direkt
+- EBSCO: OAuth-Login falls nötig, User wartet manuell (120s Timeout)
+- EZB: IP-basiert, grüne Journals direkt zugänglich, gelbe → EBSCO-Redirect
+- PDF-Download oder URL extrahieren
+
+**Hinweis Session-Wiederverwendung:** Wenn User in Phase 3B OPAC eingeloggt ist, ist HAN-Session evtl. noch aktiv → in Phase 5a kein erneuter Login nötig.
+
+6. **Tier 6 — ProQuest direkt (Dissertationen, letztes Mittel):**
+
+Nur wenn `mode=deep` UND paper hat Dissertation-Indikatoren:
+- Lies `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/proquest.md`
+- Suche Paper direkt in ProQuest
+
 7. Update `pdf_status.json` with browser download results
 
 **CRITICAL:** Try ALL tiers. Never give up after first failure.
@@ -349,9 +375,14 @@ For each PDF with extracted text:
   - Read text from pdf_texts.json
   - Spawn quote-extractor agent (Sonnet) with:
     {
-      "query": "<QUERY>",
-      "paper_id": "<doi or title>",
-      "text": "<extracted PDF text>"
+      "paper": {
+        "title": "<paper title>",
+        "doi": "<paper doi or null>",
+        "pdf_text": "<extracted PDF text>"
+      },
+      "research_query": "<QUERY>",
+      "max_quotes": 3,
+      "max_words_per_quote": 25
     }
   - Collect returned quotes
   - Max 3 agents in parallel to avoid rate limits
@@ -384,7 +415,7 @@ Phase 6/7: Quote Extraction ✅
 ### Phase 7: Export + Storage
 1. Export session:
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/export.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/export.py \
   --session-dir $SESSION_DIR --format json,bibtex,markdown \
   --pdf-status $SESSION_DIR/pdf_status.json
 ```
@@ -393,19 +424,19 @@ If papers failed PDF download, also creates `manual_acquisition.md`.
 
 2. Merge into global citation DB:
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/citation_manager.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/citation_manager.py \
   --action merge --session-dir $SESSION_DIR
 ```
 
 3. Update fulltext index:
 ```bash
-$PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
+~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
   --action index --pdf-dir $SESSION_DIR/pdfs/
 ```
 
 4. Update session index (for `/academic-research:history`):
 ```bash
-$PYTHON -c "
+~/.academic-research/venv/bin/python -c "
 import json, os
 index_path = os.path.expanduser('~/.academic-research/sessions/index.json')
 index = json.load(open(index_path)) if os.path.exists(index_path) else []
@@ -443,8 +474,9 @@ print(f'Session index updated ({len(index)} sessions)')
   BibTeX:   $SESSION_DIR/export.bib
   JSON:     $SESSION_DIR/export.json
   PDFs:     $SESSION_DIR/pdfs/
-  [IF manual_acquisition.md exists:]
-  📋 Manuell:  $SESSION_DIR/manual_acquisition.md (X Papers)
+
+[IF manual_acquisition.md exists — ALWAYS show prominently:]
+⚠️  XX Papers benötigen manuelle Beschaffung: $SESSION_DIR/manual_acquisition.md
 
 💡 Next steps:
   /academic-research:review     — Generate literature review
@@ -468,7 +500,11 @@ print(f'Session index updated ({len(index)} sessions)')
 
 All errors go to `$SESSION_DIR/errors.log`:
 ```bash
-echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] [PHASE_N] [MODULE] ERROR: <message>" >> $SESSION_DIR/errors.log
+~/.academic-research/venv/bin/python -c "
+from datetime import datetime, timezone
+with open('$SESSION_DIR/errors.log', 'a') as f:
+    f.write(f'[{datetime.now(timezone.utc).strftime(\"%Y-%m-%dT%H:%M:%SZ\")}] [PHASE_N] [MODULE] ERROR: <message>\n')
+"
 ```
 
 ## Phase Validation Gates
@@ -477,19 +513,23 @@ After each phase, verify output exists and is non-empty before proceeding:
 
 ```bash
 # After Phase 2 (queries):
-$PYTHON -c "import json; q=json.load(open('$SESSION_DIR/queries.json')); assert q.get('queries'), 'Empty queries'" \
-  || echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] [PHASE_2] WARNING: queries.json empty, using raw query" >> $SESSION_DIR/errors.log
+~/.academic-research/venv/bin/python -c "import json; q=json.load(open('$SESSION_DIR/queries.json')); assert q.get('queries'), 'Empty queries'" \
+  || ~/.academic-research/venv/bin/python -c "
+from datetime import datetime, timezone
+with open('$SESSION_DIR/errors.log', 'a') as f:
+    f.write(f'[{datetime.now(timezone.utc).strftime(\"%Y-%m-%dT%H:%M:%SZ\")}] [PHASE_2] WARNING: queries.json empty, using raw query\n')
+"
 
 # After Phase 3D (dedup):
-$PYTHON -c "import json; d=json.load(open('$SESSION_DIR/deduped.json')); assert len(d)>0, 'No papers after dedup'" \
+~/.academic-research/venv/bin/python -c "import json; d=json.load(open('$SESSION_DIR/deduped.json')); assert len(d)>0, 'No papers after dedup'" \
   || { echo "No papers found after deduplication. Try a broader query."; exit 1; }
 
 # After Phase 4 (ranking):
-$PYTHON -c "import json; p=json.load(open('$SESSION_DIR/papers.json')); assert len(p)>0, 'No papers selected'" \
+~/.academic-research/venv/bin/python -c "import json; p=json.load(open('$SESSION_DIR/papers.json')); assert len(p)>0, 'No papers selected'" \
   || { echo "Ranking produced 0 papers."; exit 1; }
 
 # Before Phase 6 (quote extraction):
-PDF_COUNT=$(ls $SESSION_DIR/pdfs/*.pdf 2>/dev/null | wc -l)
+PDF_COUNT=$(~/.academic-research/venv/bin/python -c "import glob; pdfs = glob.glob('$SESSION_DIR/pdfs/*.pdf'); print(len(pdfs))")
 if [ "$PDF_COUNT" -eq 0 ]; then
   echo "No PDFs downloaded — skipping quote extraction."
   echo '{}' > $SESSION_DIR/quotes.json

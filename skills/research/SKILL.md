@@ -23,9 +23,11 @@ Parse from `$ARGUMENTS`:
 - **--style**: apa7 | ieee | harvard | mla | chicago (default: from config or apa7)
 - **--modules**: Comma-separated module override (optional)
 - **--no-pdfs**: Skip PDF download and quote extraction (overrides mode setting)
+- **--no-browser**: Skip all browser modules (Phase 3B + Phase 5 Tier 5-6). API-only mode.
 
 Example: `/research "DevOps Governance" --mode deep --style ieee`
 Example: `/research "AI Ethics" --no-pdfs` (metadata-only, fast)
+Example: `/research "AI Ethics" --no-browser` (API-only, kein Playwright)
 
 ---
 
@@ -100,7 +102,8 @@ Execute all 7 phases sequentially:
 
 **Phase 3: Modular Search**
 - Run API search script (parallel, all active API modules)
-- Spawn `browser-searcher` agent (if browser modules active)
+- Browser-Module direkt via Playwright MCP ausführen (wenn aktiv und `--no-browser` nicht gesetzt)
+  - Bei `--no-browser`: Phase 3B überspringen → Status: `"Browser modules disabled (--no-browser)"`
 - Run deduplicator script
 - Show per-module result counts
 
@@ -110,9 +113,10 @@ Execute all 7 phases sequentially:
 - Select top N papers
 
 **Phase 5: PDF Download**
-- Run pdf_resolver script (4-tier cross-platform)
-- For Tier 4 failures: spawn `browser-searcher` for browser download
-- **Never give up** — try all modules for each paper
+- Run pdf_resolver script (4-tier automated)
+- For Tier 4 failures: Playwright MCP direkt für Tier 5-6 nutzen (wenn `--no-browser` nicht gesetzt)
+  - Bei `--no-browser`: Tier 5-6 überspringen → Status: `"Browser modules disabled (--no-browser)"`
+- **Never give up** — try all tiers for each paper
 
 **Phase 6: Quote Extraction**
 - For each PDF: extract text, spawn `quote-extractor` agent
