@@ -10,10 +10,10 @@ View past research sessions stored in `~/.academic-research/sessions/`.
 
 ## Usage
 
-- `/academic:history` — List all sessions
-- `/academic:history "DevOps"` — Search sessions by query
-- `/academic:history 2026-03-17` — Show specific session details
-- `/academic:history stats` — Show aggregate statistics
+- `/academic-research:history` — List all sessions
+- `/academic-research:history "DevOps"` — Search sessions by query
+- `/academic-research:history 2026-03-17` — Show specific session details
+- `/academic-research:history stats` — Show aggregate statistics
 
 ## Implementation
 

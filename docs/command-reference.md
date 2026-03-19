@@ -37,11 +37,11 @@ Hauptcommand: Startet die 7-Phasen-Recherche-Pipeline.
 
 ---
 
-## /academic:setup
+## /academic-research:setup
 
 Richtet die Python-Umgebung und Playwright ein.
 
-**Syntax:** `/academic:setup`
+**Syntax:** `/academic-research:setup`
 
 Keine Flags. Fuehrt automatisch aus:
 1. Erstellt `~/.academic-research/` Verzeichnis
@@ -53,11 +53,11 @@ Ausfuehrliche Anleitung mit Systemvoraussetzungen, Playwright-Erklaerung und Tro
 
 ---
 
-## /academic:context
+## /academic-research:context
 
 Konfiguriert das akademische Profil (interaktiv).
 
-**Syntax:** `/academic:context [university name]`
+**Syntax:** `/academic-research:context [university name]`
 
 | Argument | Optional | Beschreibung |
 |----------|----------|-------------|
@@ -75,24 +75,24 @@ Speichert nach: `~/.academic-research/config.local.md`
 
 ---
 
-## /academic:cite [action]
+## /academic-research:cite [action]
 
 Verwaltet Zitationen, Tags und Notizen.
 
-**Syntax:** `/academic:cite ACTION [--doi DOI] [--tag TAG] [--note "TEXT"] [--format FORMAT] [--output FILE]`
+**Syntax:** `/academic-research:cite ACTION [--doi DOI] [--tag TAG] [--note "TEXT"] [--format FORMAT] [--output FILE]`
 
 ### Actions
 
 | Action | Beschreibung | Beispiel |
 |--------|-------------|---------|
-| `list` | Alle Papers anzeigen | `/academic:cite list` |
-| `list --tag TAG` | Nach Tag filtern | `/academic:cite list --tag important` |
-| `list --status STATUS` | Nach Status filtern | `/academic:cite list --status unread` |
-| `search "query"` | Volltextsuche in Zitationen | `/academic:cite search "governance"` |
-| `export` | Bibliographie exportieren | `/academic:cite export --format bibtex` |
-| `add DOI` | Paper manuell hinzufuegen | `/academic:cite add 10.1109/ICSE.2023.00042` |
-| `tag PAPER_ID "tag"` | Tag vergeben | `/academic:cite tag paper_123 "important"` |
-| `note PAPER_ID "text"` | Notiz hinzufuegen | `/academic:cite note paper_123 "Kapitel 3"` |
+| `list` | Alle Papers anzeigen | `/academic-research:cite list` |
+| `list --tag TAG` | Nach Tag filtern | `/academic-research:cite list --tag important` |
+| `list --status STATUS` | Nach Status filtern | `/academic-research:cite list --status unread` |
+| `search "query"` | Volltextsuche in Zitationen | `/academic-research:cite search "governance"` |
+| `export` | Bibliographie exportieren | `/academic-research:cite export --format bibtex` |
+| `add DOI` | Paper manuell hinzufuegen | `/academic-research:cite add 10.1109/ICSE.2023.00042` |
+| `tag PAPER_ID "tag"` | Tag vergeben | `/academic-research:cite tag paper_123 "important"` |
+| `note PAPER_ID "text"` | Notiz hinzufuegen | `/academic-research:cite note paper_123 "Kapitel 3"` |
 
 ### Export-Formate
 
@@ -104,26 +104,26 @@ Verwaltet Zitationen, Tags und Notizen.
 
 ---
 
-## /academic:history
+## /academic-research:history
 
 Zeigt vergangene Recherche-Sessions.
 
-**Syntax:** `/academic:history [query | date | stats]`
+**Syntax:** `/academic-research:history [query | date | stats]`
 
 | Argument | Beschreibung | Beispiel |
 |----------|-------------|---------|
-| (keins) | Alle Sessions auflisten | `/academic:history` |
-| `"query"` | Sessions nach Query durchsuchen | `/academic:history "DevOps"` |
-| `YYYY-MM-DD` | Session von bestimmtem Datum | `/academic:history 2026-03-17` |
-| `stats` | Aggregierte Statistiken | `/academic:history stats` |
+| (keins) | Alle Sessions auflisten | `/academic-research:history` |
+| `"query"` | Sessions nach Query durchsuchen | `/academic-research:history "DevOps"` |
+| `YYYY-MM-DD` | Session von bestimmtem Datum | `/academic-research:history 2026-03-17` |
+| `stats` | Aggregierte Statistiken | `/academic-research:history stats` |
 
 ---
 
-## /academic:review
+## /academic-research:review
 
 Generiert einen Literaturreview-Entwurf.
 
-**Syntax:** `/academic:review [SESSION_ID] [--sessions "id1,id2"] [--style STYLE]`
+**Syntax:** `/academic-research:review [SESSION_ID] [--sessions "id1,id2"] [--style STYLE]`
 
 | Flag | Werte | Default | Beschreibung |
 |------|-------|---------|-------------|
@@ -133,18 +133,18 @@ Generiert einen Literaturreview-Entwurf.
 
 **Beispiele:**
 ```bash
-/academic:review
-/academic:review 2026-03-17_14-30-00
-/academic:review --sessions "2026-03-17,2026-03-15" --style thematic
+/academic-research:review
+/academic-research:review 2026-03-17_14-30-00
+/academic-research:review --sessions "2026-03-17,2026-03-15" --style thematic
 ```
 
 ---
 
-## /academic:recommend
+## /academic-research:recommend
 
 Paper-Empfehlungen basierend auf Recherche-Historie.
 
-**Syntax:** `/academic:recommend [SESSION_ID]`
+**Syntax:** `/academic-research:recommend [SESSION_ID]`
 
 | Argument | Optional | Beschreibung |
 |----------|----------|-------------|
@@ -155,11 +155,11 @@ Zeigt Top 10 empfohlene Papers.
 
 ---
 
-## /academic:search-pdfs "query"
+## /academic-research:search-pdfs "query"
 
 Volltextsuche ueber alle heruntergeladenen PDFs.
 
-**Syntax:** `/academic:search-pdfs "query" [--limit N]`
+**Syntax:** `/academic-research:search-pdfs "query" [--limit N]`
 
 | Flag | Default | Beschreibung |
 |------|---------|-------------|
@@ -167,14 +167,14 @@ Volltextsuche ueber alle heruntergeladenen PDFs.
 
 **Beispiel:**
 ```bash
-/academic:search-pdfs "machine learning" --limit 20
+/academic-research:search-pdfs "machine learning" --limit 20
 ```
 
 ---
 
 ## Globale Konfiguration
 
-Alle Defaults koennen ueber `/academic:context` gesetzt werden.
+Alle Defaults koennen ueber `/academic-research:context` gesetzt werden.
 Inline-Flags ueberschreiben immer die Config-Defaults.
 
 **Prioritaet:** Inline-Flag > config.local.md > Plugin-Default

@@ -47,7 +47,7 @@ Inline arguments override config defaults.
 ls ~/.academic-research/venv/bin/python 2>/dev/null || echo "MISSING"
 ```
 
-If MISSING: Tell user to run `/academic:setup` first, then stop.
+If MISSING: Tell user to run `/academic-research:setup` first, then stop.
 
 ---
 
@@ -143,10 +143,10 @@ Execute all 7 phases sequentially:
   PDFs:    pdfs/
 
 💡 Nächste Schritte:
-  /academic:review     — Literature Review generieren
-  /academic:recommend  — Paper-Empfehlungen
-  /academic:cite list  — Alle Zitate anzeigen
-  /academic:history    — Vergangene Recherchen
+  /academic-research:review     — Literature Review generieren
+  /academic-research:recommend  — Paper-Empfehlungen
+  /academic-research:cite list  — Alle Zitate anzeigen
+  /academic-research:history    — Vergangene Recherchen
 ```
 
 ---

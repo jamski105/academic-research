@@ -10,14 +10,14 @@ Manage your collected academic citations across all research sessions.
 
 ## Usage
 
-- `/academic:cite list` — List all papers
-- `/academic:cite list --tag important` — Filter by tag
-- `/academic:cite list --status unread` — Filter by reading status
-- `/academic:cite search "keyword"` — Search through citations
-- `/academic:cite export --format bibtex` — Export bibliography
-- `/academic:cite add DOI` — Manually add a paper by DOI
-- `/academic:cite tag PAPER_ID "important"` — Add tag to paper
-- `/academic:cite note PAPER_ID "Interesting approach for chapter 3"` — Add note
+- `/academic-research:cite list` — List all papers
+- `/academic-research:cite list --tag important` — Filter by tag
+- `/academic-research:cite list --status unread` — Filter by reading status
+- `/academic-research:cite search "keyword"` — Search through citations
+- `/academic-research:cite export --format bibtex` — Export bibliography
+- `/academic-research:cite add DOI` — Manually add a paper by DOI
+- `/academic-research:cite tag PAPER_ID "important"` — Add tag to paper
+- `/academic-research:cite note PAPER_ID "Interesting approach for chapter 3"` — Add note
 
 ## Implementation
 

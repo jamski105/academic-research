@@ -45,7 +45,7 @@ Environment: ~/.academic-research/venv/
 Data dir:    ~/.academic-research/
 
 Next steps:
-  /academic:context  — Set up your university and preferences
+  /academic-research:context  — Set up your university and preferences
   /research "query"  — Start your first research
 ```
 

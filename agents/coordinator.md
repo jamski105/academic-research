@@ -403,7 +403,7 @@ $PYTHON ${CLAUDE_PLUGIN_ROOT}/scripts/fulltext_index.py \
   --action index --pdf-dir $SESSION_DIR/pdfs/
 ```
 
-4. Update session index (for `/academic:history`):
+4. Update session index (for `/academic-research:history`):
 ```bash
 $PYTHON -c "
 import json, os
@@ -447,9 +447,9 @@ print(f'Session index updated ({len(index)} sessions)')
   📋 Manuell:  $SESSION_DIR/manual_acquisition.md (X Papers)
 
 💡 Next steps:
-  /academic:review     — Generate literature review
-  /academic:recommend  — Get paper recommendations
-  /academic:cite list  — View all citations
+  /academic-research:review     — Generate literature review
+  /academic-research:recommend  — Get paper recommendations
+  /academic-research:cite list  — View all citations
 ```
 
 ---

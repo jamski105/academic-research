@@ -13,7 +13,7 @@ Deterministische Arbeit erledigen Python-Scripts, Urteilsaufgaben LLM-Agents.
 User
   │
   ▼
-Commands (/academic:*)         ← 7 Slash-Commands als Einstiegspunkte
+Commands (/academic-research:*)         ← 7 Slash-Commands als Einstiegspunkte
   │
   ▼
 Skill (/research)              ← Workflow-Orchestrierung (inline, nicht als Agent)
@@ -109,7 +109,7 @@ Alle Subagents werden mit `IGNORE ALL PRIOR CONVERSATION CONTEXT` gestartet, um 
 | `citation_manager.py` | `--action {list,add,tag,note,export,search,merge}`, `--session-dir`, `--tag`, `--doi`, `--format`, `--output` | `papers.json` | `~/.academic-research/citations.bib` |
 | `fulltext_index.py` | `--action {index,search}`, `--pdf-dir`, `--query`, `--limit` | `pdfs/*.pdf` | `~/.academic-research/fulltext_index.json` |
 
-Alle Scripts laufen über `~/.academic-research/venv/bin/python`. Setup via `/academic:setup` (`scripts/setup.sh`).
+Alle Scripts laufen über `~/.academic-research/venv/bin/python`. Setup via `/academic-research:setup` (`scripts/setup.sh`).
 Ausfuehrliche Anleitung: `setup-guide.md`
 
 ---
@@ -192,7 +192,7 @@ manual_acquisition.md, pdfs/
 citations.bib          ← Globale Zitationsdatenbank (Merge aller Sessions)
 annotations.json       ← Manuelle Notizen/Tags zu Papers
 fulltext_index.json    ← Volltextindex über alle PDFs
-sessions/index.json    ← Session-Verzeichnis für /academic:history
+sessions/index.json    ← Session-Verzeichnis für /academic-research:history
 config.local.md        ← User-Konfiguration (Uni, Disziplin, Stil)
 venv/                  ← Python Virtual Environment
 ```
@@ -244,13 +244,13 @@ Vollstaendige Kommandoreferenz mit allen Flags: `command-reference.md`
 | Command | Beschreibung |
 |---------|-------------|
 | `/research "query"` | 7-Phasen-Recherche (Flags: `--mode`, `--style`, `--modules`, `--no-pdfs`) |
-| `/academic:setup` | Python-Umgebung einrichten (venv, Dependencies) |
-| `/academic:context` | Akademisches Profil konfigurieren (Uni, Disziplin, Stil) |
-| `/academic:cite` | Zitationen verwalten (list, search, export, add, tag, note) |
-| `/academic:history` | Vergangene Sessions anzeigen |
-| `/academic:review` | Literaturreview aus Session(s) generieren |
-| `/academic:recommend` | Paper-Empfehlungen basierend auf Recherche-Historie |
-| `/academic:search-pdfs` | Volltextsuche ueber alle heruntergeladenen PDFs |
+| `/academic-research:setup` | Python-Umgebung einrichten (venv, Dependencies) |
+| `/academic-research:context` | Akademisches Profil konfigurieren (Uni, Disziplin, Stil) |
+| `/academic-research:cite` | Zitationen verwalten (list, search, export, add, tag, note) |
+| `/academic-research:history` | Vergangene Sessions anzeigen |
+| `/academic-research:review` | Literaturreview aus Session(s) generieren |
+| `/academic-research:recommend` | Paper-Empfehlungen basierend auf Recherche-Historie |
+| `/academic-research:search-pdfs` | Volltextsuche ueber alle heruntergeladenen PDFs |
 
 ---
 

@@ -10,8 +10,8 @@ Recommend related papers based on your collected research using citation graph a
 
 ## Usage
 
-- `/academic:recommend` — Based on all sessions
-- `/academic:recommend SESSION_ID` — Based on specific session
+- `/academic-research:recommend` — Based on all sessions
+- `/academic-research:recommend SESSION_ID` — Based on specific session
 
 ## Algorithm
 
@@ -42,5 +42,5 @@ Based on XX papers from your research on "DevOps Governance":
      ...
 
 💡 To add a paper to your collection:
-   /academic:cite add 10.1109/...
+   /academic-research:cite add 10.1109/...
 ```

@@ -34,10 +34,10 @@ claude --plugin-dir ./academic-research
 
 ```bash
 # 1. Install Python dependencies
-/academic:setup
+/academic-research:setup
 
 # 2. Set up your academic profile (optional)
-/academic:context
+/academic-research:context
 
 # 3. Run your first research
 /research "DevOps Governance in Large Enterprises"
@@ -48,13 +48,13 @@ claude --plugin-dir ./academic-research
 | Command | Description |
 |---------|-------------|
 | `/research "query"` | Run the full 7-phase research pipeline |
-| `/academic:setup` | Install Python dependencies ([Setup Guide](docs/setup-guide.md)) |
-| `/academic:context` | Set up academic profile (university, citation style, language) |
-| `/academic:cite` | Manage citations (list, search, export, add, tag, note) |
-| `/academic:history` | View past research sessions |
-| `/academic:review` | Generate a literature review draft |
-| `/academic:recommend` | Get paper recommendations |
-| `/academic:search-pdfs` | Full-text search across PDFs |
+| `/academic-research:setup` | Install Python dependencies ([Setup Guide](docs/setup-guide.md)) |
+| `/academic-research:context` | Set up academic profile (university, citation style, language) |
+| `/academic-research:cite` | Manage citations (list, search, export, add, tag, note) |
+| `/academic-research:history` | View past research sessions |
+| `/academic-research:review` | Generate a literature review draft |
+| `/academic-research:recommend` | Get paper recommendations |
+| `/academic-research:search-pdfs` | Full-text search across PDFs |
 
 Full reference with all flags and syntax: [Command Reference](docs/command-reference.md)
 
@@ -90,15 +90,15 @@ Details (source selection, time limits, flags): [Command Reference](docs/command
 /research "Governance Frameworks" --mode standard --no-pdfs
 
 # Manage citations
-/academic:cite tag paper_123 "important"
-/academic:cite note paper_123 "Key reference for chapter 2"
-/academic:cite export --format bibtex --output refs.bib
+/academic-research:cite tag paper_123 "important"
+/academic-research:cite note paper_123 "Key reference for chapter 2"
+/academic-research:cite export --format bibtex --output refs.bib
 
 # Generate literature review from last session
-/academic:review --style thematic
+/academic-research:review --style thematic
 
 # Get paper recommendations
-/academic:recommend
+/academic-research:recommend
 ```
 
 ## Documentation
@@ -113,9 +113,9 @@ Details (source selection, time limits, flags): [Command Reference](docs/command
 ## Dependencies
 
 - **Claude Code** with Opus/Sonnet models
-- **Python 3.10+** with `httpx`, `PyPDF2` — auto-installed via `/academic:setup`
+- **Python 3.10+** with `httpx`, `PyPDF2` — auto-installed via `/academic-research:setup`
 - **Node.js 18+** — required for browser search modules (Google Scholar, EBSCO, Springer); API-only search works without it
-- **Playwright MCP** — auto-installed via `npx` when Claude Code starts; Chromium browser installed by `/academic:setup`
+- **Playwright MCP** — auto-installed via `npx` when Claude Code starts; Chromium browser installed by `/academic-research:setup`
 
 For detailed system requirements, Playwright MCP explanation, and troubleshooting: [Setup Guide](docs/setup-guide.md)
 

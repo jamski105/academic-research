@@ -30,7 +30,7 @@ if command -v npx &>/dev/null; then
     || echo "⚠️  Playwright browser install failed — browser modules may not work"
 else
   echo "⚠️  Node.js/npx not found — browser search modules (Google Scholar, EBSCO...) will not work"
-  echo "   Install Node.js 18+ and rerun /academic:setup"
+  echo "   Install Node.js 18+ and rerun /academic-research:setup"
 fi
 
 echo ""

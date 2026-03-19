@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "test -d ~/.academic-research/venv/ && echo '✅ academic-research: Python environment ready' || echo '⚠️ academic-research: Python environment not found. Run /academic:setup to install dependencies.'",
+            "command": "test -d ~/.academic-research/venv/ && echo '✅ academic-research: Python environment ready' || echo '⚠️ academic-research: Python environment not found. Run /academic-research:setup to install dependencies.'",
             "timeout": 5
           }
         ]

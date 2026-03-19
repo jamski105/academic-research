@@ -10,8 +10,8 @@ Search across all downloaded PDFs using the local full-text index.
 
 ## Usage
 
-- `/academic:search-pdfs "machine learning"` — Search all PDFs
-- `/academic:search-pdfs "governance" --limit 20` — Limit results
+- `/academic-research:search-pdfs "machine learning"` — Search all PDFs
+- `/academic-research:search-pdfs "governance" --limit 20` — Limit results
 
 ## Implementation
 

@@ -10,10 +10,10 @@ Generate a structured literature review draft from one or more research sessions
 
 ## Usage
 
-- `/academic:review` — Generate from most recent session
-- `/academic:review SESSION_ID` — From specific session
-- `/academic:review --sessions "2026-03-17,2026-03-15"` — Combine multiple sessions
-- `/academic:review --style narrative|systematic|thematic` — Review style (default: narrative)
+- `/academic-research:review` — Generate from most recent session
+- `/academic-research:review SESSION_ID` — From specific session
+- `/academic-research:review --sessions "2026-03-17,2026-03-15"` — Combine multiple sessions
+- `/academic-research:review --style narrative|systematic|thematic` — Review style (default: narrative)
 
 ## Implementation
 

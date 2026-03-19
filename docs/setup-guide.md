@@ -52,7 +52,7 @@ npx --version       # kommt mit Node.js
 
 Das registriert das Plugin in Claude Code:
 - Liest `.claude-plugin/plugin.json` (Manifest: Name, Version, Beschreibung)
-- Registriert alle Slash-Commands aus `commands/` (z.B. `/research`, `/academic:setup`)
+- Registriert alle Slash-Commands aus `commands/` (z.B. `/research`, `/academic-research:setup`)
 - Laedt Agents aus `agents/`, Skills aus `skills/`, Hooks aus `hooks/`
 - Wendet Tool-Permissions aus `settings.json` an (z.B. Python-Scripts ohne Nachfrage)
 
@@ -66,7 +66,7 @@ claude --plugin-dir ./academic-research
 ### Schritt 2: Setup ausfuehren
 
 ```bash
-/academic:setup
+/academic-research:setup
 ```
 
 Das fuehrt `scripts/setup.sh` aus und erledigt alles Weitere automatisch:
@@ -80,7 +80,7 @@ Das fuehrt `scripts/setup.sh` aus und erledigt alles Weitere automatisch:
 ├── citations.bib     ← Globale Zitationsdatenbank
 ├── annotations.json  ← Tags und Notizen zu Papers
 ├── fulltext_index.json ← Volltextindex ueber alle PDFs
-└── sessions/index.json ← Session-Verzeichnis fuer /academic:history
+└── sessions/index.json ← Session-Verzeichnis fuer /academic-research:history
 ```
 
 #### 2b: Python Virtual Environment
@@ -120,7 +120,7 @@ npx playwright install chromium --with-deps
 **Dieser Schritt braucht Node.js/npx.** Falls nicht vorhanden, zeigt das Setup:
 ```
 ⚠️  Node.js/npx not found — browser search modules will not work
-    Install Node.js 18+ and rerun /academic:setup
+    Install Node.js 18+ and rerun /academic-research:setup
 ```
 
 ---
