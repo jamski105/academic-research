@@ -85,34 +85,35 @@ Modules: <list of active modules>
 
 ---
 
-### Step 6: Execute 7-Phase Workflow via Coordinator Agent
+### Step 6: Execute 7-Phase Workflow Inline
 
-Create the session directory (lightweight setup before handing off):
+Read the coordinator specification:
 ```bash
-mkdir -p ~/.academic-research/sessions/$(date +%Y-%m-%d_%H-%M-%S)/pdfs
-```
-Save the session path, then spawn the coordinator as a subagent with `permissionMode: bypassPermissions`:
-
-```
-Spawn Agent:
-  type: academic-research:coordinator
-  prompt: |
-    SESSION_DIR: <session_dir>
-    QUERY: <query>
-    MODE: <mode>
-    CITATION_STYLE: <style>
-    NO_PDFS: <true|false>
-    NO_BROWSER: <true|false>
-    API_MODULES: <comma-separated list>
-    BROWSER_MODULES: <comma-separated list>
-    ACADEMIC_CONTEXT: <contents of config.local.md or "none">
-
-    Execute all 7 phases. Read ${CLAUDE_PLUGIN_ROOT}/agents/coordinator.md for full specification.
+cat ${CLAUDE_PLUGIN_ROOT}/agents/coordinator.md
 ```
 
-The coordinator agent has `permissionMode: bypassPermissions` in its frontmatter —
-it will run all scripts and sub-agents without prompting the user for each action.
-Wait for the coordinator to complete and display its final summary.
+Execute all 7 phases **inline** as described in coordinator.md, using the following session parameters:
+
+```
+SESSION_DIR: <session_dir>
+QUERY: <query>
+MODE: <mode>
+CITATION_STYLE: <style>
+NO_PDFS: <true|false>
+NO_BROWSER: <true|false>
+API_MODULES: <comma-separated list>
+BROWSER_MODULES: <comma-separated list>
+ACADEMIC_CONTEXT: <contents of config.local.md or "none">
+```
+
+**Important:** The coordinator is a **reference document** — its instructions run here in the
+main conversation context, NOT as a subagent. This is required because:
+- Playwright MCP tools are only available in the main context (subagents don't inherit MCP servers)
+- No `bypassPermissions` dialog is triggered for the user
+
+The 4 LLM subagents listed in coordinator.md (query-generator, relevance-scorer,
+quote-extractor, review-writer) ARE still spawned normally via Agent tool — only the
+coordinator itself runs inline.
 
 ---
 
