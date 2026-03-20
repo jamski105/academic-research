@@ -4,6 +4,7 @@ disable-model-invocation: true
 allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(npx *), Bash(~/.academic-research/venv/bin/pip *)
 ---
 
+
 # Academic Research Setup
 
 Set up the Python environment required by the academic research plugin.
@@ -37,7 +38,12 @@ npx playwright install chromium --with-deps
 ```
 If `npx` is not found, Node.js is not installed. Browser modules will be unavailable, but API-only search (`--mode quick`) still works.
 
-6. Show result:
+6. Configure Claude Code permissions (adds all required tool approvals to `~/.claude/settings.local.json`, removes stale session entries):
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/configure_permissions.py
+```
+
+7. Show result:
 ```
 ✅ Setup complete!
 
