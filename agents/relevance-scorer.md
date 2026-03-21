@@ -3,6 +3,7 @@ name: relevance-scorer
 model: sonnet
 color: cyan
 description: Evaluates semantic relevance of academic papers to a research query
+tools: ""
 maxTurns: 15
 ---
 

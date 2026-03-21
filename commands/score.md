@@ -1,5 +1,6 @@
 ---
 description: Score and rank literature with 5D scoring system (Relevance, Recency, Quality, Authority, Accessibility)
+disable-model-invocation: true
 allowed-tools: Read, Bash(~/.academic-research/venv/bin/python *)
 argument-hint: [papers.json] [--query "..."] [--mode standard] [--scoring-config path]
 ---
