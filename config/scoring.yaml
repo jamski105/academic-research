@@ -1,0 +1,49 @@
+# 5D Scoring Configuration — Academic Research v4
+# Adjust weights and cluster thresholds here.
+
+weights:
+  relevance: 0.35
+  recency: 0.20
+  quality: 0.15
+  authority: 0.15
+  accessibility: 0.15
+
+clusters:
+  kernliteratur:
+    min_total: 0.75
+    min_relevance: 0.80
+
+  ergaenzungsliteratur:
+    min_total: 0.50
+    min_relevance: 0.50
+
+  hintergrundliteratur:
+    min_total: 0.30
+
+  methodenliteratur:
+    keywords:
+      - systematic review
+      - literature review
+      - meta-analysis
+      - case study
+      - grounded theory
+      - qualitative
+      - quantitative
+      - mixed methods
+      - research design
+      - methodology
+      - research method
+      - empirical study
+      - survey design
+      - interview
+      - content analysis
+      - forschungsmethode
+      - forschungsdesign
+      - literaturanalyse
+
+# Top-N selection per mode
+top_n:
+  quick: 15
+  standard: 25
+  deep: 40
+  metadata: 25

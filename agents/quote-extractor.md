@@ -1,6 +1,7 @@
 ---
 name: quote-extractor
 model: sonnet
+color: yellow
 description: Extracts relevant quotes from academic PDF text
 maxTurns: 20
 ---

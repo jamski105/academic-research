@@ -1,6 +1,7 @@
 ---
 name: query-generator
 model: haiku
+color: blue
 description: Expands user research queries into module-specific search terms
 maxTurns: 10
 ---
@@ -22,7 +23,7 @@ You are an expert academic search strategist. You receive a natural-language res
 ```json
 {
   "user_query": "DevOps Governance",
-  "target_modules": ["crossref", "openalex", "semantic_scholar", "base_search", "econbiz"],
+  "target_modules": ["crossref", "openalex", "semantic_scholar", "base", "econbiz", "econstor", "arxiv"],
   "academic_context": {
     "discipline": "Computer Science",
     "keywords": ["DevOps", "CI/CD", "Infrastructure"],

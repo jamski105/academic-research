@@ -1,10 +1,10 @@
-# Research Mode Definitions
+# Research Mode Definitions — v4 (5D Scoring)
 # Controls depth, breadth, and resource allocation for each mode.
 
 modes:
   quick:
     description: "Fast search across core sources — good for known-item lookups or topic overviews"
-    modules: [crossref, openalex, semantic_scholar]
+    modules: [crossref, openalex, semantic_scholar, arxiv]
     max_results_per_module: 20
     max_total_papers: 30
     max_total_time_seconds: 60
@@ -12,10 +12,11 @@ modes:
     quote_extraction: true
     top_n: 15
     ranking_weights:
-      relevance: 0.4
-      recency: 0.2
-      quality: 0.2
-      authority: 0.2
+      relevance: 0.35
+      recency: 0.20
+      quality: 0.15
+      authority: 0.15
+      accessibility: 0.15
 
   standard:
     description: "Balanced search across all Tier 1 modules — recommended for most research tasks"
@@ -27,10 +28,11 @@ modes:
     quote_extraction: true
     top_n: 25
     ranking_weights:
-      relevance: 0.4
-      recency: 0.2
-      quality: 0.2
-      authority: 0.2
+      relevance: 0.35
+      recency: 0.20
+      quality: 0.15
+      authority: 0.15
+      accessibility: 0.15
 
   deep:
     description: "Exhaustive search across all tiers including HAN-Server — for systematic reviews"
@@ -42,10 +44,11 @@ modes:
     quote_extraction: true
     top_n: 40
     ranking_weights:
-      relevance: 0.4
-      recency: 0.2
-      quality: 0.2
-      authority: 0.2
+      relevance: 0.35
+      recency: 0.20
+      quality: 0.15
+      authority: 0.15
+      accessibility: 0.15
 
   metadata:
     description: "Metadata-only — no PDF download, no quote extraction. Fast literature list."
@@ -57,13 +60,14 @@ modes:
     quote_extraction: false
     top_n: 25
     ranking_weights:
-      relevance: 0.4
-      recency: 0.2
-      quality: 0.2
-      authority: 0.2
+      relevance: 0.35
+      recency: 0.20
+      quality: 0.15
+      authority: 0.15
+      accessibility: 0.15
 
-# 4D Ranking Dimensions (scored by ranking.py)
-# Total = relevance*0.4 + recency*0.2 + quality*0.2 + authority*0.2
+# 5D Ranking Dimensions (scored by ranking.py)
+# Total = relevance*0.35 + recency*0.20 + quality*0.15 + authority*0.15 + accessibility*0.15
 ranking_dimensions:
   relevance:
     description: "Keyword coverage in title (70%) and abstract (30%)"
@@ -84,9 +88,12 @@ ranking_dimensions:
     description: "Venue authority heuristic — top venues (IEEE, ACM, Nature) = 1.0, mid = 0.7, other = 0.4"
     range: [0.0, 1.0]
 
-# Portfolio adjustments (deep mode only, applied AFTER 4D scoring)
-# These are bonus/penalty adjustments, not a weighted dimension.
+  accessibility:
+    description: "How easily the full text can be obtained — OA=1.0, Institutional=0.8, DOI+Publisher=0.6, DOI-only=0.4, URL=0.2, Nothing=0.0"
+    range: [0.0, 1.0]
+
+# Portfolio adjustments (deep mode only, applied AFTER 5D scoring)
 portfolio_adjustments:
   description: "Source diversity corrections applied in deep mode after initial ranking"
-  venue_concentration_penalty: -0.05   # Applied when a venue has 3+ papers
-  source_diversity_bonus: 0.03         # Applied to papers from underrepresented source modules
+  venue_concentration_penalty: -0.05
+  source_diversity_bonus: 0.03
