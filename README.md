@@ -32,28 +32,61 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 
 ## Installation
 
-### 1. Plugin installieren
+### 1. Marketplace hinzufügen & Plugin installieren
+
+Öffne Claude Code in einem beliebigen Projekt und führe folgende Befehle aus:
+
+```
+# Marketplace registrieren (einmalig)
+/plugin marketplace add jamski105/academic-research
+
+# Plugin installieren
+/plugin install academic-research@academic-research
+```
+
+Das Plugin wird global installiert und steht in **allen** Projekten zur Verfügung — du musst Claude Code nicht im Plugin-Repo öffnen.
+
+**Update auf neue Versionen:**
+```
+/plugin update academic-research
+```
+
+<details>
+<summary>Alternative: Lokale Entwicklung (aus geklontem Repo)</summary>
 
 ```bash
-# Als lokales Plugin (Entwicklung)
 cd ~/Repos
 git clone https://github.com/jamski105/academic-research.git
-# In Claude Code: Plugin über Verzeichnis laden
-
-# Oder via Marketplace (wenn verfügbar)
 ```
+
+```bash
+# Claude Code mit Plugin-Dir starten (lädt direkt vom Dateisystem)
+claude --plugin-dir ~/Repos/academic-research
+```
+
+Änderungen im Repo sind sofort wirksam — kein Cache, kein Marketplace nötig.
+
+</details>
 
 ### 2. Python-Umgebung einrichten
 
-```bash
+```
 # Automatisch via Setup-Command in Claude Code:
 /academic-research:setup
+```
 
-# Oder manuell:
+Das Setup erstellt die venv, installiert alle Dependencies und verifiziert die Installation.
+
+<details>
+<summary>Manuelles Setup</summary>
+
+```bash
 mkdir -p ~/.academic-research/{sessions,pdfs}
 python3 -m venv ~/.academic-research/venv
-~/.academic-research/venv/bin/pip install -r scripts/requirements.txt
+~/.academic-research/venv/bin/pip install httpx PyPDF2 openpyxl pyyaml
 ```
+
+</details>
 
 ### 3. Playwright installieren (optional, für Browser-Module)
 
@@ -64,6 +97,12 @@ npx playwright install chromium --with-deps
 Ohne Playwright funktionieren alle **API-basierten** Suchquellen (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv). Browser-Module (Google Scholar, Springer, OECD, RePEc, OPAC) erfordern Playwright.
 
 ### 4. Permissions konfigurieren
+
+```
+/academic-research:setup
+```
+
+Das Setup-Command konfiguriert auch die nötigen Permissions automatisch. Alternativ manuell:
 
 ```bash
 python3 scripts/configure_permissions.py
