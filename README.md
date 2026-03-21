@@ -89,65 +89,151 @@ python3 scripts/configure_permissions.py
 → Style Evaluator Skill aktiviert sich automatisch
 ```
 
-## Skills (13 selbstaktivierende)
+---
 
-Skills aktivieren sich **automatisch** wenn Claude den passenden Kontext erkennt. Kein manueller Aufruf nötig.
+## Commands (5 Slash-Commands)
 
-### Kern-Skills
+Commands werden explizit per `/academic-research:name` aufgerufen.
 
-| Skill | Aktiviert bei | Funktion |
-|-------|-------------|----------|
-| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis" | Verwaltet Thesis-Kontext in Claude Memory |
-| **Advisor** | "Gliederung", "Exposé", "Struktur" | Interaktive Gliederungs- und Exposé-Erstellung |
-| **Chapter Writer** | "Kapitel schreiben", "verfassen" | Kapitel-Entwurf mit Zitaten und Kontext |
-| **Citation Extraction** | "Zitate finden", "zitieren" | Zitat-Extraktion aus PDFs (APA7, IEEE, Harvard, Chicago) |
+### `/academic-research:search`
 
-### Qualitäts-Skills
+Literatursuche über 7 APIs parallel, mit optionaler Query-Expansion und Browser-Modulen.
 
-| Skill | Aktiviert bei | Funktion |
-|-------|-------------|----------|
-| **Style Evaluator** | "Text prüfen", "Stil-Check", "KI-Erkennung" | 9-Metriken Textanalyse + Anti-AI-Detection |
-| **Plagiarism Check** | "Plagiat prüfen", "Textähnlichkeit" | Quellen-Nähe-Erkennung |
-| **Submission Checker** | "formale Prüfung", "abgabefertig" | Formale Anforderungen (Leibniz FH spezifisch) |
-| **Source Quality Audit** | "Quellenqualität", "Quellen-Check" | Quellenbalance-Analyse (Peer-Review %, Alter, Diversität) |
+**Syntax:** `/academic-research:search "query" [--mode MODE] [--modules LIST] [--limit N] [--no-expand] [--no-browser]`
 
-### Planungs-Skills
+| Argument | Default | Beschreibung |
+|----------|---------|-------------|
+| `query` | (Pflicht) | Suchbegriff |
+| `--mode` | `standard` | `quick` (4 APIs), `standard` (7 APIs), `deep` (7 APIs + Browser), `metadata` (ohne PDFs) |
+| `--modules` | (aus Mode) | Komma-getrennte Modulliste überschreibt Mode-Auswahl |
+| `--limit` | `50` | Max. Ergebnisse pro Modul |
+| `--no-expand` | `false` | Query-Generator Agent überspringen, rohe Query nutzen |
+| `--no-browser` | `false` | Browser-Module überspringen (nur API) |
 
-| Skill | Aktiviert bei | Funktion |
-|-------|-------------|----------|
-| **Literature Gap Analysis** | "Literaturlücken", "fehlende Quellen" | Per-Kapitel Abdeckungsbericht |
-| **Methodology Advisor** | "Methodik", "Forschungsdesign" | Methodenwahl und -begründung |
-| **Research Question Refiner** | "Forschungsfrage formulieren" | Forschungsfrage präzisieren |
-
-### Finalisierungs-Skills
-
-| Skill | Aktiviert bei | Funktion |
-|-------|-------------|----------|
-| **Title Generator** | "Titel suchen", "Titelvorschläge" | Titeloptionen aus fertiger Arbeit |
-| **Abstract Generator** | "Abstract schreiben", "Zusammenfassung" | Abstract DE+EN, Keywords, Management Summary |
-
-## Commands (3 Slash-Commands)
-
-| Command | Beschreibung |
-|---------|-------------|
-| `/academic-research:search "query"` | Literatursuche über 7 APIs (+ Browser optional) |
-| `/academic-research:score` | 5D-Scoring + Cluster-Zuweisung |
-| `/academic-research:excel` | Professionelle Literatur-Excel generieren |
-
-### Search-Optionen
-
-```
-/academic-research:search "DevOps Governance" --mode standard
-/academic-research:search "Machine Learning" --mode quick --limit 30
-/academic-research:search "IT Compliance" --mode deep
-```
+**Modi im Detail:**
 
 | Mode | Module | Top-N | PDFs | Beschreibung |
 |------|--------|-------|------|-------------|
-| `quick` | 4 APIs | 15 | Ja | Schnelle Suche |
-| `standard` | 7 APIs | 25 | Ja | Standard (empfohlen) |
-| `deep` | 7 APIs + Browser | 40 | Ja | Systematische Suche |
+| `quick` | crossref, openalex, semantic_scholar, arxiv | 15 | Ja | Schnelle Suche |
+| `standard` | 7 APIs (+ econbiz, econstor, base) | 25 | Ja | Standard (empfohlen) |
+| `deep` | 7 APIs + Browser-Module | 40 | Ja | Systematische Suche |
 | `metadata` | 7 APIs | 25 | Nein | Nur Metadaten |
+
+**Pipeline:** Query-Expansion → API-Suche → Browser-Suche → Deduplizierung → 5D-Ranking → LLM-Relevanz → Top-N-Selektion → Ergebnistabelle
+
+**Beispiele:**
+```
+/academic-research:search "DevOps Governance"
+/academic-research:search "Machine Learning" --mode quick
+/academic-research:search "IT Compliance" --mode deep
+/academic-research:search "Cloud Computing" --modules crossref,semantic_scholar --limit 30
+```
+
+### `/academic-research:score`
+
+Re-Scoring und Cluster-Zuweisung auf bereits gefundene Papers.
+
+**Syntax:** `/academic-research:score [papers.json] [--query "..."] [--mode MODE]`
+
+Nutzt die 5D-Scoring-Engine (siehe unten) und weist Cluster zu. Kann auf die letzte Session oder eine beliebige papers.json angewandt werden.
+
+### `/academic-research:excel`
+
+Professionelle Excel-Datei aus gescorten Papers generieren.
+
+**Syntax:** `/academic-research:excel [--papers papers.json] [--output name.xlsx] [--context]`
+
+Erzeugt 4 Sheets:
+
+1. **Literaturübersicht** — Alle Papers mit 5D-Scores, Cluster-Farbcodierung, Score-Ampel
+2. **Cluster-Analyse** — Statistik pro Cluster mit Balkendiagramm
+3. **Kapitel-Zuordnung** — Papers zugeordnet zu Gliederungskapiteln (mit `--context`)
+4. **Datenblatt** — Verstecktes Rohdaten-Sheet
+
+### `/academic-research:setup`
+
+Richtet die Python-Umgebung ein: venv, Dependencies, Playwright, Permissions. Führt alle Schritte automatisch aus und verifiziert die Installation.
+
+### `/academic-research:history`
+
+Zeigt vergangene Recherche-Sessions aus `~/.academic-research/sessions/`.
+
+**Syntax:** `/academic-research:history [query | date | stats]`
+
+- Ohne Argument: alle Sessions als Tabelle
+- Mit Query-Text: Sessions nach Suchbegriff filtern
+- Mit Datum: Details einer bestimmten Session
+- `stats`: Aggregierte Statistiken
+
+---
+
+## Skills (13 selbstaktivierende)
+
+Skills aktivieren sich **automatisch**, wenn Claude passende Keywords in der Konversation erkennt. Kein manueller Aufruf nötig — einfach natürlich formulieren.
+
+### Kern-Skills
+
+| Skill | Aktiviert bei | Funktion | Ressourcen |
+|-------|-------------|----------|------------|
+| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) persistent in Claude Memory | — |
+| **Advisor** | "Gliederung", "Exposé", "Struktur", "Kapitelplanung" | Interaktive Gliederungs- und Exposé-Erstellung im Dialog | `expose-template.md` |
+| **Chapter Writer** | "Kapitel schreiben", "verfassen", "entwerfen", "Textarbeit" | Kapitel-Entwurf mit Literatur, Zitaten und Kontext aus der Gliederung | — |
+| **Citation Extraction** | "Zitate finden", "zitieren", "Literaturverzeichnis" | Zitat-Extraktion aus PDFs, Formatierung in APA7/IEEE/Harvard/Chicago/BibTeX | `citation-styles.md` |
+
+### Qualitäts-Skills
+
+| Skill | Aktiviert bei | Funktion | Ressourcen |
+|-------|-------------|----------|------------|
+| **Style Evaluator** | "Text prüfen", "Stil-Check", "KI-Erkennung", "menschlich klingen" | 9-Metriken Textanalyse + Anti-AI-Detection mit Verbesserungsvorschlägen | `scoring-rubric.md` |
+| **Plagiarism Check** | "Plagiat prüfen", "Textähnlichkeit", "zu nah am Original" | Quellen-Nähe-Erkennung, Paraphrase-Check gegen Originaltexte | — |
+| **Submission Checker** | "formale Prüfung", "abgabefertig", "Formatierung prüfen" | Formale Anforderungen validieren (Leibniz FH spezifisch: Deckblatt, Ränder, Erklärung) | `leibniz-fh-requirements.md` |
+| **Source Quality Audit** | "Quellenqualität", "Quellen-Check", "peer-reviewed Anteil" | Quellenbalance-Analyse: Peer-Review-%, Alter, Diversität, Empfehlungen | — |
+
+### Planungs-Skills
+
+| Skill | Aktiviert bei | Funktion | Ressourcen |
+|-------|-------------|----------|------------|
+| **Literature Gap Analysis** | "Literaturlücken", "fehlende Quellen", "Abdeckung prüfen" | Per-Kapitel Abdeckungsbericht: welche Kapitel brauchen mehr Literatur | — |
+| **Methodology Advisor** | "Methodik", "Forschungsdesign", "qualitativ vs quantitativ" | Methodenwahl mit Vergleich, Begründungshilfe und Dokumentation | `methodology-catalog.md` |
+| **Research Question Refiner** | "Forschungsfrage formulieren", "Fragestellung präzisieren" | Forschungsfrage schärfen: zu breit/eng/unbeantwortbar erkennen, Teilfragen ableiten | — |
+
+### Finalisierungs-Skills
+
+| Skill | Aktiviert bei | Funktion | Ressourcen |
+|-------|-------------|----------|------------|
+| **Title Generator** | "Titel suchen", "Titelvorschläge", "Arbeitstitel" | 5–7 Titeloptionen mit Begründung aus fertiger Arbeit generieren | — |
+| **Abstract Generator** | "Abstract schreiben", "Zusammenfassung", "Management Summary" | Abstract DE+EN, Keywords, Management Summary aus fertigem Text | — |
+
+---
+
+## Agents (3 LLM-Subagents)
+
+Agents werden von Commands/Skills als Subagents gestartet für Aufgaben, die LLM-Urteilskraft erfordern.
+
+| Agent | Model | Genutzt von | Aufgabe |
+|-------|-------|-------------|---------|
+| **query-generator** | Haiku | `search` Command | Expandiert eine Suchanfrage in modulspezifische Suchbegriffe |
+| **relevance-scorer** | Sonnet | `search` + `score` Commands | Semantische Relevanz-Bewertung (0–1) in 10er-Batches |
+| **quote-extractor** | Sonnet | `citation-extraction` Skill | Extrahiert relevante Zitate aus PDF-Volltext |
+
+---
+
+## Scripts (8 Python-Module)
+
+Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.academic-research/venv/`).
+
+| Script | Funktion |
+|--------|----------|
+| `search.py` | API-Aufrufe an 7 Quellen parallel (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv) |
+| `ranking.py` | 5D-Scoring-Berechnung + Cluster-Zuweisung nach konfigurierbaren Schwellwerten |
+| `dedup.py` | Deduplizierung nach DOI-Match + Titel-Ähnlichkeit (Levenshtein) |
+| `pdf.py` | PDF-Download + Textextraktion (PyPDF2) |
+| `citations.py` | Zitationsformatierung in 5 Stilen (APA7, IEEE, Harvard, Chicago, BibTeX) |
+| `excel.py` | Excel-Generierung mit 4 Sheets, Farbcodierung, Diagrammen (openpyxl) |
+| `style_analysis.py` | 9-Metriken Textanalyse für Anti-KI-Detection |
+| `text_utils.py` | Shared Text-Utilities (Normalisierung, Tokenisierung) |
+
+---
 
 ## 5D Scoring System
 
@@ -155,7 +241,7 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 
 | Dimension | Gewicht | Berechnung |
 |-----------|---------|------------|
-| **Relevanz** | 35% | Keyword-Match in Titel (70%) + Abstract (30%) |
+| **Relevanz** | 35% | Keyword-Match in Titel (70%) + Abstract (30%) + Phrasen-Bonus |
 | **Aktualität** | 20% | Exponentieller Verfall, 5-Jahre Halbwertzeit |
 | **Qualität** | 15% | Zitationen/Jahr mit Log-Skalierung |
 | **Autorität** | 15% | Venue-Reputation (IEEE=1.0, Mid=0.7, Other=0.4) |
@@ -170,24 +256,7 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | ⚪ **Hintergrundliteratur** | Score ≥ 0.30 | Grundlagen, Standards |
 | 🟡 **Methodenliteratur** | Methodik-Keywords erkannt | Methodik-Begründung |
 
-## Excel-Format
-
-Die generierte Excel hat 4 Sheets:
-
-1. **Literaturübersicht** — Alle Papers mit 5D-Scores, Cluster-Farbcodierung, Score-Ampel
-2. **Cluster-Analyse** — Statistik pro Cluster mit Balkendiagramm
-3. **Kapitel-Zuordnung** — Papers zugeordnet zu Gliederungskapiteln
-4. **Datenblatt** — Verstecktes Rohdaten-Sheet
-
-## Memory-System
-
-Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions:
-
-| Datei | Inhalt |
-|-------|--------|
-| `academic_context.md` | Thesis-Profil, Gliederung, Forschungsfrage, Fortschritt |
-| `literature_state.md` | Literatur-Statistik, Kapitelzuordnung, Lücken |
-| `writing_state.md` | Aktuelles Kapitel, Wortzahl, Style-Scores |
+---
 
 ## Suchquellen (14)
 
@@ -215,16 +284,24 @@ Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions
 | EBSCO | EBSCO Publication Finder | HAN |
 | ProQuest | ProQuest Dissertationen | HAN |
 
+---
+
 ## Konfiguration
 
-### `config/scoring.yaml`
-5D-Gewichtungen und Cluster-Schwellwerte. Anpassbar.
+| Datei | Zweck |
+|-------|-------|
+| `config/scoring.yaml` | 5D-Gewichtungen und Cluster-Schwellwerte (anpassbar) |
+| `config/browser_guides/*.md` | Playwright-Navigationsanleitungen pro Datenbank (Scholar, Springer, OECD, ...) |
 
-### `config/search_modules.yaml`
-Suchquellen-Registry: welche Module existieren, welcher Tier, welche Disziplin.
+## Memory-System
 
-### `config/research_modes.yaml`
-Mode-Definitionen: quick/standard/deep/metadata mit Modul-Listen und Limits.
+Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions:
+
+| Datei | Inhalt |
+|-------|--------|
+| `academic_context.md` | Thesis-Profil, Gliederung, Forschungsfrage, Fortschritt |
+| `literature_state.md` | Literatur-Statistik, Kapitelzuordnung, Lücken |
+| `writing_state.md` | Aktuelles Kapitel, Wortzahl, Style-Scores |
 
 ## Verzeichnisstruktur
 
@@ -237,15 +314,17 @@ academic-research/
 │   ├── chapter-writer/SKILL.md
 │   ├── style-evaluator/SKILL.md + scoring-rubric.md
 │   ├── citation-extraction/SKILL.md + citation-styles.md
-│   ├── ...                          # (8 weitere Skills)
-├── commands/                        # 3 Slash-Commands + setup + history
-├── agents/                          # 4 LLM-Agents
+│   ├── submission-checker/SKILL.md + leibniz-fh-requirements.md
+│   ├── methodology-advisor/SKILL.md + methodology-catalog.md
+│   ├── ...                          # (6 weitere Skills)
+├── commands/                        # 5 Slash-Commands
+├── agents/                          # 3 LLM-Agents
 ├── scripts/                         # 8 Python-Module
 │   ├── search.py, ranking.py, dedup.py, pdf.py
 │   ├── citations.py, excel.py, style_analysis.py, text_utils.py
 ├── config/                          # YAML-Konfiguration + Browser-Guides
-├── tests/                           # 54 Tests
-└── docs/                            # Architektur + Setup-Guide
+├── hooks/                           # SessionStart-Hook (venv-Check)
+└── tests/                           # Unit-Tests
 ```
 
 ## Entwicklung
@@ -256,10 +335,6 @@ academic-research/
 ~/.academic-research/venv/bin/pip install pytest
 ~/.academic-research/venv/bin/python -m pytest tests/ -v
 ```
-
-### Neues Suchmodul hinzufügen
-
-Siehe [docs/adding-browser-modules.md](docs/adding-browser-modules.md).
 
 ### Scoring anpassen
 

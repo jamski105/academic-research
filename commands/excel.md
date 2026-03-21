@@ -1,5 +1,6 @@
 ---
 description: Generate or update a literature Excel spreadsheet with 5D scoring, clusters, and chapter assignment
+disable-model-invocation: true
 allowed-tools: Read, Write, Bash(~/.academic-research/venv/bin/python *)
 argument-hint: [--papers papers.json] [--output literature.xlsx] [--context]
 ---

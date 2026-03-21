@@ -1,5 +1,6 @@
 ---
 description: Search academic papers across multiple APIs (Semantic Scholar, CrossRef, OpenAlex, BASE, EconBiz, EconStor, arXiv)
+disable-model-invocation: true
 allowed-tools: Read, Write, Bash(~/.academic-research/venv/bin/python *), Agent
 argument-hint: "<query>" [--mode quick|standard|deep|metadata] [--modules crossref,openalex,...] [--limit N]
 ---

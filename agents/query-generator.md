@@ -3,6 +3,7 @@ name: query-generator
 model: haiku
 color: blue
 description: Expands user research queries into module-specific search terms
+tools: ""
 maxTurns: 10
 ---
 
