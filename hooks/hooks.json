@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "test -d ~/.academic-research/venv/ && echo '✅ academic-research: Python environment ready' || echo '⚠️ academic-research: Python environment not found. Run /academic-research:setup to install dependencies.'",
-            "timeout": 5
+            "command": "bash -c 'VENV=~/.academic-research/venv; if [ ! -d \"$VENV\" ]; then echo \"⚠️ academic-research: Python venv not found. Run /academic-research:setup\"; exit 0; fi; $VENV/bin/python -c \"import httpx, PyPDF2, openpyxl, yaml\" 2>/dev/null && echo \"✅ academic-research: Python environment ready\" || echo \"⚠️ academic-research: Missing dependencies. Run: $VENV/bin/pip install -r ${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt\"'",
+            "timeout": 10
           }
         ]
       }

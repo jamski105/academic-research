@@ -1,7 +1,7 @@
 {
   "name": "academic-research",
-  "description": "Modular academic research pipeline with 7-phase workflow, cross-platform PDF resolution, and citation management. Searches across Semantic Scholar, CrossRef, OpenAlex, BASE, Google Scholar, EconBiz, and more.",
-  "version": "3.1.0",
+  "version": "4.0.0",
+  "description": "Modulares akademisches Forschungs-Toolkit mit 13 selbstaktivierenden Skills, 5D-Scoring, Excel-Export und KI-Stil-Erkennung. Durchsucht Semantic Scholar, CrossRef, OpenAlex, BASE, Google Scholar und weitere Quellen.",
   "author": {
     "name": "Jonas"
   },
@@ -16,6 +16,10 @@
     "literature-review",
     "semantic-scholar",
     "crossref",
-    "openalex"
+    "openalex",
+    "excel",
+    "scoring",
+    "thesis",
+    "facharbeit"
   ]
 }

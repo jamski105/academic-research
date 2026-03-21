@@ -1,6 +1,7 @@
 ---
 name: review-writer
 model: opus
+color: green
 description: Generates structured literature reviews from research sessions
 maxTurns: 30
 ---
