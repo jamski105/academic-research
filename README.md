@@ -2,6 +2,10 @@
 
 Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierende Skills, 5D-Scoring mit Cluster-Zuweisung, Excel-Export, Anti-KI-Stil-Erkennung und Multi-Source-Literatursuche.
 
+## Halozination bei Zitatextraktion
+
+Überprüfe immer alle Zitate von der Zitatextraktion oder vordere Claude auf alles zu überprüfen
+
 ## Was ist neu in v4?
 
 | Feature | v3 | v4 |
