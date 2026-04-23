@@ -47,10 +47,10 @@ Fokus. Wenn der User „Coverage" oder „Gaps" erwähnt → delegiere an
 - Qualitätsgate vor der Abgabe für die Literatur
 - Nach einer Literatursuche, um den gesammelten Pool zu bewerten
 
-## Memory-Dateien
+## Kontext-Dateien
 
-- Lies `literature_state.md` für das aktuelle Quelleninventar (Gesamtzahl, Typenverteilung, Kapitelzuordnungen, identifizierte Lücken)
-- Lies `academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage und Zitationsstil
+- Lies `./literature_state.md` für das aktuelle Quelleninventar (Gesamtzahl, Typenverteilung, Kapitelzuordnungen, identifizierte Lücken)
+- Lies `./academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage und Zitationsstil
 
 ## Scoring-Dimensionen
 

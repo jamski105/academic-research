@@ -67,7 +67,7 @@ Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehl
 - Ein anderer Skill (Advisor, Chapter Writer, Citation Extraction) meldet unzureichende Quellenlage
 - Der User bereitet ein Betreuer-Gespräch vor und möchte einen Statusüberblick
 
-## Memory-Dateien
+## Kontext-Dateien
 
 ### Lesen
 
@@ -82,7 +82,7 @@ Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehl
 
 ### 1. Laden und Gegenüberstellen
 
-Beide Memory-Dateien lesen. Eine Matrix aufbauen:
+Beide Kontext-Dateien im Projekt-Ordner lesen. Eine Matrix aufbauen:
 
 - **Zeilen** — Kapitel und Unterabschnitte aus der Gliederung
 - **Spalten** — Coverage-Dimensionen (siehe unten)
