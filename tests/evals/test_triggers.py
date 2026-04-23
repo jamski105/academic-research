@@ -51,9 +51,10 @@ def _classify(user_prompt: str) -> str:
 @pytest.mark.parametrize("skill", ALL_SKILLS)
 def test_should_trigger_recall(skill: str):
     evals = _load_trigger_evals(skill)
-    prompts = evals.get("should_trigger") if evals else None
-    if not prompts:
+    if not evals or not evals.get("should_trigger"):
         pytest.skip(f"Keine trigger_evals.json fuer {skill}")
+    assert evals is not None  # narrow fuer type checker
+    prompts: list[str] = list(evals["should_trigger"])
     hits = sum(_classify(p) == skill for p in prompts)
     total = len(prompts)
     recall = hits / total
@@ -63,9 +64,10 @@ def test_should_trigger_recall(skill: str):
 @pytest.mark.parametrize("skill", ALL_SKILLS)
 def test_should_not_trigger_fpr(skill: str):
     evals = _load_trigger_evals(skill)
-    prompts = evals.get("should_not_trigger") if evals else None
-    if not prompts:
+    if not evals or not evals.get("should_not_trigger"):
         pytest.skip(f"Keine trigger_evals.json fuer {skill}")
+    assert evals is not None  # narrow fuer type checker
+    prompts: list[str] = list(evals["should_not_trigger"])
     false_pos = sum(_classify(p) == skill for p in prompts)
     total = len(prompts)
     fpr = false_pos / total
