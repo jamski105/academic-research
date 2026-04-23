@@ -47,6 +47,7 @@ def require_api_key() -> str:
 def call_claude(system: str, user: str, model: str = "claude-sonnet-4-6") -> str:
     if anthropic is None:
         pytest.skip("anthropic-Package nicht installiert")
+    assert anthropic is not None  # narrow fuer Type-Checker nach pytest.skip
     key = require_api_key()
     client = anthropic.Anthropic(api_key=key)
     resp = client.messages.create(
@@ -56,7 +57,7 @@ def call_claude(system: str, user: str, model: str = "claude-sonnet-4-6") -> str
         messages=[{"role": "user", "content": user}],
     )
     return "".join(
-        block.text for block in resp.content if hasattr(block, "text")
+        getattr(block, "text", "") for block in resp.content
     )
 
 
