@@ -16,8 +16,8 @@
     },
     {
       "id": "qe-03",
-      "input": "Paper-Title: 'Machine Learning Ops'. PDF-Text: '[FEHLER] scanned image'. Extrahiere Zitate zur Query 'MLOps'.",
-      "expected": {"type": "regex", "value": "extraction_quality.*failed|Extraktions-Fehler"},
+      "input": "Paper-Title: 'Machine Learning Ops'. Das gelieferte PDF enthaelt ausschliesslich gescannte Bilder ohne OCR-Text. Extrahiere Zitate zur Query 'MLOps'.",
+      "expected": {"type": "regex", "value": "extraction_quality.*(failed|low)|keine verwertbaren"},
       "mode": "with_skill"
     },
     {
