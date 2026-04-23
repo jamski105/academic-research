@@ -19,10 +19,6 @@ Evaluate the overall quality, balance, recency, and diversity of the literature 
 - Read `literature_state.md` for the current source inventory (total count, type breakdown, chapter assignments, identified gaps)
 - Read `academic_context.md` for work type, discipline, research question, and citation style
 
-## Scripts
-
-Use `${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py` for source metadata analysis (venue authority scoring via `score_authority()`, recency scoring via `score_recency()`).
-
 ## Scoring Dimensions
 
 Evaluate each dimension on a 0-100 scale.
@@ -61,7 +57,7 @@ Assess whether the literature base is current enough.
 - Historical or philosophical topics have relaxed recency expectations
 - Methodological texts may be older without penalty
 
-Use `score_recency()` from `${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py` for per-source recency computation.
+Berechne Recency inline: `recency = exp(-ln(2) * (current_year - year) / 5)` — exponentieller Decay, 5-Jahres-Halbwertszeit.
 
 ### 3. Source Diversity (weight: 0.20)
 
@@ -165,7 +161,7 @@ Status thresholds: OK >= 70, WARN 50-69, FAIL < 50.
 
 - Base the audit on actual source data from `literature_state.md`, not assumptions
 - If `literature_state.md` is incomplete, ask the user to provide their source list
-- Use `score_authority()` from `ranking.py` for venue classification when metadata is available
+- Klassifiziere Venues inline: 1.0 für Top-Venues (IEEE, ACM, Springer, Nature, Elsevier), 0.7 für indexierte Journals, 0.4 für Konferenzen, 0.2 sonst
 - Never dismiss web sources categorically -- evaluate each on institutional authority
 - Foundational works (e.g., Porter 1985, Rogers 2003) should be flagged as "Grundlagenwerk" and exempted from recency penalties
 - Recommendations must be specific ("Add 2-3 peer-reviewed sources on [specific topic]") not generic ("Find more sources")

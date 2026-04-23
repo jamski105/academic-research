@@ -1,4 +1,4 @@
-# Academic Research v4
+# Academic Research v5
 
 Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierende Skills, 5D-Scoring mit Cluster-Zuweisung, Excel-Export, Anti-KI-Stil-Erkennung und Multi-Source-Literatursuche.
 
@@ -21,9 +21,18 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 
 ## Voraussetzungen
 
-- **Python 3.9+** (empfohlen: 3.11+)
+- **Python 3.10+** (empfohlen: 3.11+)
 - **Claude Code** (CLI, aktuelle Version)
-- **Node.js 18+** (für Playwright Browser-Module, optional)
+- **`browser-use` CLI** (für Browser-Suchmodule):
+  ```bash
+  uv tool install browser-use   # oder: pipx install browser-use
+  browser-use doctor
+  ```
+  Zusätzlich muss der globale `browser-use`-Skill unter `~/.claude/skills/browser-use/` liegen (kommt mit dem CLI-Paket).
+- **`document-skills` Plugin** (für `/academic-research:excel`):
+  ```
+  /plugin install document-skills@anthropic-agent-skills
+  ```
 
 ### Python-Pakete
 
@@ -31,7 +40,6 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 |-------|---------|-------|
 | `httpx` | ≥0.25.0 | HTTP-Client für API-Suche |
 | `PyPDF2` | ≥3.0.0 | PDF-Textextraktion |
-| `openpyxl` | ≥3.1.0 | Excel-Generierung |
 | `pyyaml` | ≥6.0 | YAML-Konfiguration |
 
 ## Installation
@@ -87,18 +95,14 @@ Das Setup erstellt die venv, installiert alle Dependencies und verifiziert die I
 ```bash
 mkdir -p ~/.academic-research/{sessions,pdfs}
 python3 -m venv ~/.academic-research/venv
-~/.academic-research/venv/bin/pip install httpx PyPDF2 openpyxl pyyaml
+~/.academic-research/venv/bin/pip install httpx PyPDF2 pyyaml
 ```
 
 </details>
 
-### 3. Playwright installieren (optional, für Browser-Module)
+### 3. `browser-use` CLI installieren (für Browser-Suchmodule)
 
-```bash
-npx playwright install chromium --with-deps
-```
-
-Ohne Playwright funktionieren alle **API-basierten** Suchquellen (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv). Browser-Module (Google Scholar, Springer, OECD, RePEc, OPAC) erfordern Playwright.
+Siehe [Voraussetzungen](#voraussetzungen). Ohne `browser-use` funktionieren alle **API-basierten** Suchquellen (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv). Browser-Module (Google Scholar, Springer, OECD, RePEc, OPAC, EBSCOhost, ProQuest) erfordern `browser-use`.
 
 ### 4. Permissions konfigurieren
 
@@ -195,7 +199,7 @@ Erzeugt 4 Sheets:
 
 ### `/academic-research:setup`
 
-Richtet die Python-Umgebung ein: venv, Dependencies, Playwright, Permissions. Führt alle Schritte automatisch aus und verifiziert die Installation.
+Richtet die Python-Umgebung ein: venv, Dependencies, `browser-use`-Check, Permissions. Führt alle Schritte automatisch aus und verifiziert die Installation.
 
 ### `/academic-research:history`
 
@@ -261,19 +265,15 @@ Agents werden von Commands/Skills als Subagents gestartet für Aufgaben, die LLM
 
 ---
 
-## Scripts (8 Python-Module)
+## Scripts (4 Python-Module)
 
-Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.academic-research/venv/`).
+Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.academic-research/venv/`). Frühere Skripte für Scoring, Zitatformatierung, Excel und Stil-Analyse wurden in Skills/Agents verlagert (siehe CHANGELOG v5.0.0).
 
 | Script | Funktion |
 |--------|----------|
 | `search.py` | API-Aufrufe an 7 Quellen parallel (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv) |
-| `ranking.py` | 5D-Scoring-Berechnung + Cluster-Zuweisung nach konfigurierbaren Schwellwerten |
 | `dedup.py` | Deduplizierung nach DOI-Match + Titel-Ähnlichkeit (Levenshtein) |
-| `pdf.py` | PDF-Download + Textextraktion (PyPDF2) |
-| `citations.py` | Zitationsformatierung in 5 Stilen (APA7, IEEE, Harvard, Chicago, BibTeX) |
-| `excel.py` | Excel-Generierung mit 4 Sheets, Farbcodierung, Diagrammen (openpyxl) |
-| `style_analysis.py` | 9-Metriken Textanalyse für Anti-KI-Detection |
+| `pdf.py` | PDF-Download (5-Tier-Fallback) + Textextraktion (PyPDF2) + TF-IDF-Volltextindex |
 | `text_utils.py` | Shared Text-Utilities (Normalisierung, Tokenisierung) |
 
 ---
@@ -288,7 +288,7 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | **Aktualität** | 20% | Exponentieller Verfall, 5-Jahre Halbwertzeit |
 | **Qualität** | 15% | Zitationen/Jahr mit Log-Skalierung |
 | **Autorität** | 15% | Venue-Reputation (IEEE=1.0, Mid=0.7, Other=0.4) |
-| **Zugang** | 15% | Open Access=1.0, Institutional=0.8, DOI=0.6, URL=0.2 |
+| **Zugang** | 15% | Open Access=1.0, Institutional=0.8, DOI=0.5, URL=0.2 |
 
 ### Cluster-Zuweisung
 
@@ -315,7 +315,7 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | EconStor | OA Wirtschafts-Repo | Wirtschaft |
 | arXiv | arXiv Preprints | CS, ML, Physik, Mathe |
 
-### Browser-Module (Playwright MCP)
+### Browser-Module (`browser-use` CLI)
 
 | Modul | Quelle | Auth |
 |-------|--------|------|
@@ -334,7 +334,7 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | Datei | Zweck |
 |-------|-------|
 | `config/scoring.yaml` | 5D-Gewichtungen und Cluster-Schwellwerte (anpassbar) |
-| `config/browser_guides/*.md` | Playwright-Navigationsanleitungen pro Datenbank (Scholar, Springer, OECD, ...) |
+| `config/browser_guides/*.md` | `browser-use`-Hinweise pro Datenbank (URL, Auth, Anti-Scraping-Warnungen) |
 
 ## Memory-System
 
@@ -350,7 +350,7 @@ Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions
 
 ```
 academic-research/
-├── .claude-plugin/plugin.json       # Plugin-Manifest v4.0.0
+├── .claude-plugin/plugin.json       # Plugin-Manifest v5.0.0
 ├── skills/                          # 13 selbstaktivierende Skills
 │   ├── academic-context/SKILL.md
 │   ├── advisor/SKILL.md + expose-template.md
@@ -362,9 +362,9 @@ academic-research/
 │   ├── ...                          # (6 weitere Skills)
 ├── commands/                        # 5 Slash-Commands
 ├── agents/                          # 3 LLM-Agents
-├── scripts/                         # 8 Python-Module
-│   ├── search.py, ranking.py, dedup.py, pdf.py
-│   ├── citations.py, excel.py, style_analysis.py, text_utils.py
+├── scripts/                         # 4 Python-Module + Setup-Helper
+│   ├── search.py, dedup.py, pdf.py, text_utils.py
+│   ├── configure_permissions.py, setup.sh, requirements.txt
 ├── config/                          # YAML-Konfiguration + Browser-Guides
 ├── hooks/                           # SessionStart-Hook (venv-Check)
 └── tests/                           # Unit-Tests
@@ -389,7 +389,7 @@ Bearbeite `config/scoring.yaml` — Gewichtungen und Cluster-Schwellwerte sind d
 |---------|--------|
 | "Python venv not found" | `/academic-research:setup` ausführen |
 | "Missing dependencies" | `~/.academic-research/venv/bin/pip install -r scripts/requirements.txt` |
-| Browser-Module funktionieren nicht | `npx playwright install chromium --with-deps` |
+| Browser-Module funktionieren nicht | `uv tool install browser-use && browser-use doctor` |
 | Keine Ergebnisse bei Suche | Breitere Query verwenden, `--mode quick` testen |
 | Excel leer | Zuerst `/academic-research:search` ausführen |
 | Semantic Scholar 429 | SS_API_KEY Umgebungsvariable setzen |

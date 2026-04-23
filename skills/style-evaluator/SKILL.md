@@ -20,9 +20,9 @@ Evaluate academic text for human-likeness, AI-detection vulnerability, coherence
 - Read `academic_context.md` for citation style, language, and work type
 - Update `writing_state.md` with new evaluation scores after each run
 
-## Scripts
+## Metriken
 
-Run `${CLAUDE_PLUGIN_ROOT}/scripts/style_analysis.py` for quantitative metrics (sentence length distribution, transition frequency, vocabulary diversity, n-gram repetition). Use script output as input to the scoring rubric below.
+Die quantitativen Metriken (Satzlängenverteilung, Übergangsfrequenz, Vokabular-Diversität, n-Gramm-Wiederholung) berechnet Claude direkt aus dem Eingabetext — keine externe Pipeline. Siehe Rubrik unten für konkrete Messvorschriften pro Dimension.
 
 ## Scoring Rubric (0-100)
 
@@ -93,7 +93,7 @@ Check for:
 
 1. Read the submitted text (full chapter, section, or paragraph)
 2. Read `writing_state.md` and `academic_context.md` for context
-3. Run `${CLAUDE_PLUGIN_ROOT}/scripts/style_analysis.py` with the text as input
+3. Berechne quantitative Metriken inline aus dem Eingabetext (Satzlängen, Übergänge, n-Gramme, Vokabular-Diversität)
 4. Score each dimension (0-100) using the rubric and script metrics
 5. Compute weighted total: `total = 0.30*human + 0.25*anti_ai + 0.20*coherence + 0.15*duplication + 0.10*academic`
 6. Present results in structured format (see output format below)
@@ -137,7 +137,7 @@ When the user requests rewriting of flagged sections:
 
 ## Important Rules
 
-- Never fabricate metrics -- if `style_analysis.py` is unavailable, perform manual assessment and note the limitation
+- Never fabricate metrics -- berechne alle Werte nachvollziehbar aus dem Text und zeige die Rechenbasis, wenn der User danach fragt
 - Always preserve the author's argument and citations during rewrites
 - Score conservatively -- a perfect 100 is unrealistic for any text
 - Flag but do not auto-rewrite without user consent

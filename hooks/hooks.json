@@ -6,8 +6,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'VENV=~/.academic-research/venv; if [ ! -d \"$VENV\" ]; then echo \"⚠️ academic-research: Python venv not found. Run /academic-research:setup\"; exit 0; fi; $VENV/bin/python -c \"import httpx, PyPDF2, openpyxl, yaml\" 2>/dev/null && echo \"✅ academic-research: Python environment ready\" || echo \"⚠️ academic-research: Missing dependencies. Run: $VENV/bin/pip install -r ${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt\"'",
+            "command": "bash -c 'VENV=~/.academic-research/venv; if [ ! -d \"$VENV\" ]; then echo \"⚠️ academic-research: Python venv not found. Run /academic-research:setup\"; exit 0; fi; $VENV/bin/python -c \"import httpx, PyPDF2, yaml\" 2>/dev/null && echo \"✅ academic-research: Python environment ready\" || echo \"⚠️ academic-research: Missing dependencies. Run: $VENV/bin/pip install -r ${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt\"'",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash -c '[ -d \"$HOME/.claude/plugins/cache/anthropic-agent-skills/document-skills\" ] || echo \"⚠️  academic-research: document-skills nicht installiert — /academic-research:excel benötigt: /plugin install document-skills@anthropic-agent-skills\"'",
+            "timeout": 5
           }
         ]
       }

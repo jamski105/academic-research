@@ -8,7 +8,7 @@
       "name": "academic-research",
       "source": "./",
       "description": "Modulares akademisches Forschungs-Toolkit mit 13 selbstaktivierenden Skills, 5D-Scoring, Excel-Export und KI-Stil-Erkennung.",
-      "version": "4.0.1"
+      "version": "5.0.0"
     }
   ]
 }

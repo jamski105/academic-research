@@ -19,21 +19,8 @@ REQUIRED_PERMISSIONS = [
     "Bash(mkdir *)",
     "Bash(ls *)",
     "Bash(cat *)",
-    "Bash(npx playwright *)",
-    "Bash(npx @playwright/mcp *)",
-    "mcp__playwright__browser_navigate",
-    "mcp__playwright__browser_snapshot",
-    "mcp__playwright__browser_click",
-    "mcp__playwright__browser_evaluate",
-    "mcp__playwright__browser_type",
-    "mcp__playwright__browser_press_key",
-    "mcp__playwright__browser_wait_for",
-    "mcp__playwright__browser_tabs",
-    "mcp__playwright__browser_navigate_back",
-    "mcp__playwright__browser_hover",
-    "mcp__playwright__browser_close",
-    "mcp__playwright__browser_fill_form",
-    "mcp__playwright__browser_take_screenshot",
+    "Bash(browser-use:*)",
+    "Bash(browser-use *)",
 ]
 
 
