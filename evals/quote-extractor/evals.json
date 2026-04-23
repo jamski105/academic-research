@@ -1,0 +1,36 @@
+{
+  "component": "quote-extractor",
+  "component_type": "agent",
+  "prompts": [
+    {
+      "id": "qe-01",
+      "input": "Paper-Title: 'DevOps Governance Frameworks'. PDF-Text: 'Governance frameworks ensure DevOps compliance across distributed teams. This requires clear policy definition and shared accountability...' Extrahiere 2 verbatime Zitate, max 25 Woerter.",
+      "expected": {"type": "regex", "value": "\"quotes\"\\s*:\\s*\\["},
+      "mode": "both"
+    },
+    {
+      "id": "qe-02",
+      "input": "Paper-Title: 'Zero Trust Networks'. PDF-Text: 'Zero trust assumes no implicit trust. Every access request is verified regardless of origin.' Extrahiere 2 Zitate zur Query 'Zero Trust Prinzipien', max 25 Woerter pro Zitat.",
+      "expected": {"type": "substring", "value": "Zero trust"},
+      "mode": "with_skill"
+    },
+    {
+      "id": "qe-03",
+      "input": "Paper-Title: 'Machine Learning Ops'. PDF-Text: '[FEHLER] scanned image'. Extrahiere Zitate zur Query 'MLOps'.",
+      "expected": {"type": "regex", "value": "extraction_quality.*failed|Extraktions-Fehler"},
+      "mode": "with_skill"
+    },
+    {
+      "id": "qe-04",
+      "input": "Paper-Title: 'Agile at Scale'. PDF-Text: 'Scaled agile frameworks coordinate multiple teams through quarterly planning increments.' Query: 'SAFe Coordination'. Extrahiere 1 Zitat.",
+      "expected": {"type": "substring", "value": "quarterly"},
+      "mode": "both"
+    },
+    {
+      "id": "qe-05",
+      "input": "Paper-Title: 'Quantum Computing'. PDF-Text: 'Lorem ipsum dolor sit amet.' Query: 'Post-Quantum Cryptography'. Keine relevanten Zitate erwartet.",
+      "expected": {"type": "regex", "value": "\"quotes\"\\s*:\\s*\\[\\s*\\]|total_quotes_extracted.*0"},
+      "mode": "with_skill"
+    }
+  ]
+}

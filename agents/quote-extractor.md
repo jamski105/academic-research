@@ -42,20 +42,38 @@ Du bist ein präziser akademischer Textanalyst, spezialisiert auf das Extrahiere
 
 ---
 
-## Vorprüfung
+## Quellen-Bindung via Citations-API
 
-Bevor du die Extraktion startest, prüfe die PDF-Quelle:
+**Statt Heuristik-Guard:** Der Agent erhält PDFs über den `documents`-Parameter der Claude-API. Die API erzwingt, dass jede Antwort `citations[]` enthält, die auf `page_location` (PDF) oder `char_location` (Text) zeigen.
 
-1. **Wortanzahl** ≥ 500 (via PyPDF2 Seiten-Text zusammengefügt, tokenisiert auf Whitespace).
-   Bei < 500 → Abbruch mit Meldung: "PDF enthält nur X Wörter — zu kurz für
-   belastbare Zitat-Extraktion. Vermutlich Extraktions-Fehler oder Scan ohne OCR."
-2. **Fehler-Marker** im normalisierten Text: `[FEHLER]`, `extraction failed`,
-   `<scanned image>`, `PDF encoded`. Bei Treffer → Abbruch mit Meldung:
-   "PDF-Text enthält Extraktions-Fehlermarker. Liefere ein sauberes PDF oder
-   führe zuerst OCR aus."
-3. **Mindest-Seitenzahl** ≥ 2. Bei 1 Seite → Warnung ausgeben, nicht abbrechen.
+**API-Call-Schema (Input):**
+```json
+{
+  "model": "claude-sonnet-4-6",
+  "system": "[Dieser Agent-Prompt]",
+  "documents": [
+    {
+      "type": "document",
+      "source": {"type": "base64", "media_type": "application/pdf", "data": "<base64>"},
+      "title": "DevOps Governance Frameworks",
+      "citations": {"enabled": true}
+    }
+  ],
+  "messages": [{"role": "user", "content": "Extrahiere 2 Zitate zur Query '<query>', max 25 Woerter pro Zitat."}]
+}
+```
 
-Nur nach bestandener Vorprüfung weiter mit Zitat-Extraktion.
+**Output mit Citations:** Jeder `content`-Block mit `text` enthält ein `citations[]`-Array mit Objekten wie:
+```json
+{"type": "page_location", "cited_text": "Governance frameworks ensure DevOps compliance", "document_index": 0, "document_title": "...", "start_page_number": 3, "end_page_number": 3}
+```
+
+**Fallback:** Ist die Quelle kein PDF (HTML, Markdown), `source.type: "text"` mit `char_location`.
+
+**Qualitätsfilter (Prompt-seitig, nicht API):**
+- Zitat-Länge ≤ 25 Wörter (Agent zählt im Output-Block)
+- Verbatim-Match gegen `cited_text` (API garantiert das bereits)
+- Pro Paper max 3 Zitate
 
 **Titel-Plausibilitätscheck (nach Vorprüfung):** Erste 200 Zeichen aus `paper.pdf_text` ziehen. Prüfen, ob ≥ 3 Wörter aus `paper.title` (jedes ≥ 4 Zeichen) dort auftauchen (case-insensitive). Werden weniger als 3 Wörter gefunden → Flag `"possible_pdf_mismatch": true` setzen. Extraktion trotzdem fortführen — nicht abbrechen. Das Flag dient nur der manuellen Nachprüfung.
 
@@ -102,6 +120,8 @@ Nur nach bestandener Vorprüfung weiter mit Zitat-Extraktion.
   "warnings": []
 }
 ```
+
+Jedes Zitat-Objekt enthält zusätzlich das `citations[]`-Array aus der API-Antwort. Das ermöglicht dem nachgelagerten `citation-extraction`-Skill, die zitierte Stelle seitengenau nachzuschlagen.
 
 ---
 
