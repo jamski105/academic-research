@@ -119,7 +119,7 @@ def copy_memory_files(sources: list[Path], cwd: Path) -> None:
 
 
 def _prompt_yes_no(question: str, default_yes: bool = False) -> bool:
-    """Interactive y/n prompt. Returns False on non-interactive stdin."""
+    """Interactive y/n prompt. Returns default_yes on non-interactive stdin."""
     import sys
     if not sys.stdin.isatty():
         return default_yes
