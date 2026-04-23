@@ -52,6 +52,17 @@ Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL.
 - Der User bittet um Textverbesserung oder natürlicheres Schreiben
 - Ein anderer Skill (z. B. Chapter Writer) fordert ein Post-Write-Qualitätsgate an
 
+## Variant-Selector
+
+Lies `academic_context.md`, Feld `Sprache`:
+
+| Sprache | Referenz-Datei |
+|---------|----------------|
+| Deutsch (Default) | `references/academic-de.md` |
+| English | `references/academic-en.md` |
+
+Fehlt das Feld → `academic-de.md` als Default (Plugin-Default ist Deutsch). Unbekannte Sprache → Rueckfrage.
+
 ## Memory-Dateien
 
 - Lies `writing_state.md` für aktuellen Kapitelkontext und frühere Scores
