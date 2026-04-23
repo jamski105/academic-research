@@ -24,6 +24,22 @@ führen zu einem Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arb
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Abgrenzung
+
+Dieser Skill bewertet **Korpus-Vollständigkeit**:
+- Fehlende Schlüsselthemen aus `academic_context.md`
+- Fehlende Autor*innen-Gruppen (Cluster-Diversität)
+- Fehlende Methoden-Perspektiven (qualitativ/quantitativ/mixed)
+- Fehlende Zeitperioden (Aktualitäts-Lücken)
+- Fehlende disziplinäre Sichtweisen (Mono- vs. Multi-Disziplinarität)
+
+Für die Bewertung **einzelner Quellen** (Impact, Methodik der Einzelquelle,
+Peer-Review-Status) → `source-quality-audit`.
+
+Beide Skills greifen auf `literature_state.md` zu, aber mit unterschiedlichem
+Fokus. Wenn der User „Peer-Review" oder „Quellenqualität einzelner Artikel"
+erwähnt → delegiere an `source-quality-audit`.
+
 ## Coverage-Metriken (numerisch)
 
 Berechne und berichte jede dieser 3 Metriken:

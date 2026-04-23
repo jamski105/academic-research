@@ -24,6 +24,22 @@ führen zu einer Quellenprüfung, die der Arbeit die Zitierbarkeit entzieht. Arb
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Abgrenzung
+
+Dieser Skill bewertet **einzelne Quellen** auf:
+- Impact-Faktor / SJR / SNIP der Publikationsquelle
+- Methodik der Einzelquelle (empirisch / theoretisch / Review / Primär-/Sekundär)
+- Peer-Review-Status
+- Aktualität der Einzelquelle
+
+Für die Bewertung der **Korpus-Vollständigkeit** (fehlende Themen, fehlende
+Autor*innen-Gruppen, fehlende Methoden, fehlende Zeitperioden, disziplinäre
+Blindstellen) → `literature-gap-analysis`.
+
+Beide Skills greifen auf `literature_state.md` zu, aber mit unterschiedlichem
+Fokus. Wenn der User „Coverage" oder „Gaps" erwähnt → delegiere an
+`literature-gap-analysis`.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte die Qualität seiner Quellen oder Literaturbasis bewerten
