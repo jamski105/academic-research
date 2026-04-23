@@ -2,9 +2,28 @@
 name: quote-extractor
 model: sonnet
 color: yellow
-description: Extracts relevant quotes from academic PDF text
-tools: Read
-maxTurns: 20
+description: |
+  Extracts 2-3 highly relevant, verbatim quotes (≤25 words each) from an academic PDF text that directly address a research query. Invoke after a paper has been scored as relevant and the PDF is available. Examples:
+
+  <example>
+  Context: User hat relevante Papers identifiziert und möchte zitierfähige Stellen.
+  user: "Extrahiere aus diesen drei PDFs Zitate zu meinem Thema 'Zero Trust Architecture'"
+  assistant: "Ich rufe den quote-extractor-Agent für jede PDF auf, um verbatime Zitate zur Query zu ziehen."
+  <commentary>
+  quote-extractor ist der Standard-Weg, um wörtliche Belegstellen aus PDFs zu ziehen. Er garantiert verbatim-Extraktion (keine Paraphrasen), prüft Titel-PDF-Match und markiert degradierten OCR-Text.
+  </commentary>
+  </example>
+
+  <example>
+  Context: search-Command läuft im deep-Modus und braucht Zitate für top-gerankte Papers.
+  user: "/academic-research:search 'Resilience Engineering' --mode deep"
+  assistant: "Nach dem Ranking wird der quote-extractor-Agent für jedes PDF der Top-Cluster aufgerufen."
+  <commentary>
+  Im deep-Modus läuft quote-extractor nach dem relevance-scorer für die besten Papers, um Zitat-Kandidaten in die Session einzusammeln.
+  </commentary>
+  </example>
+tools: [Read]
+maxTurns: 5
 ---
 
 # Quote Extractor Agent

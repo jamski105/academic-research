@@ -26,7 +26,7 @@ Help choose, justify, and document the research methodology for the thesis. Comp
 
 ## Reference
 
-Consult the methodology catalog at `${CLAUDE_PLUGIN_ROOT}/templates/methodology-catalog.md` for detailed descriptions, strengths, weaknesses, and use cases of each methodology type.
+Consult the methodology catalog at `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md` for detailed descriptions, strengths, weaknesses, and use cases of each methodology type.
 
 ## Core Workflow
 

@@ -75,7 +75,7 @@ If gaps are found, offer to trigger `/search` for specific chapters with targete
 
 ### 5. Expose Generation
 
-When the user requests an expose, use the template at `${CLAUDE_PLUGIN_ROOT}/templates/expose-template.md` as the base structure. Fill in sections from the academic context and outline:
+When the user requests an expose, use the template at `${CLAUDE_PLUGIN_ROOT}/skills/advisor/expose-template.md` as the base structure. Fill in sections from the academic context and outline:
 
 - Problemstellung (problem statement)
 - Zielsetzung (objective)

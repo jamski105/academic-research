@@ -2,8 +2,26 @@
 name: query-generator
 model: haiku
 color: blue
-description: Expands user research queries into module-specific search terms
-tools: ""
+description: |
+  Expands user research queries into module-specific search terms for seven academic APIs (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv). Invoke at the start of any literature search to translate a natural-language query into API-optimised boolean and phrase queries. Examples:
+
+  <example>
+  Context: User startet eine Literaturrecherche über den search-Command.
+  user: "/academic-research:search 'Cloud Security Controls im Mittelstand'"
+  assistant: "Ich starte die Recherche. Der query-generator-Agent wird jetzt aufgerufen, um API-optimierte Queries für die sieben Datenbanken zu erzeugen."
+  <commentary>
+  Every search run spawns query-generator in Step 2 to translate the raw query into per-API syntax (boolean operators, phrase quoting, field filters).
+  </commentary>
+  </example>
+
+  <example>
+  Context: User möchte nur Queries sehen, ohne Suche auszuführen.
+  user: "Generiere mal passende Suchqueries für 'Agile Transformation in Banken' für CrossRef und OpenAlex"
+  assistant: "Ich nutze den query-generator-Agent, um die Queries zu erzeugen."
+  <commentary>
+  query-generator can be invoked standalone to preview or tune queries before triggering an actual search run.
+  </commentary>
+  </example>
 maxTurns: 10
 ---
 
