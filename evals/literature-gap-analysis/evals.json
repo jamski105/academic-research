@@ -1,0 +1,8 @@
+{
+  "component": "literature-gap-analysis",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "lg-01", "input": "Kapitel 3.2 'DevOps Governance Modelle' hat 0 Quellen. Report?", "expected": {"type": "substring", "value": "KRITISCH"}, "mode": "with_skill"},
+    {"id": "lg-02", "input": "Coverage 60%, Recency 20% ab 2020, Diversity 2 Autorengruppen. Empfehlung?", "expected": {"type": "substring", "value": "Empfehl"}, "mode": "both"}
+  ]
+}

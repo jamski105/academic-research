@@ -1,0 +1,9 @@
+{
+  "component": "abstract-generator",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "ab-01", "input": "Erzeuge ein 200-Woerter-Abstract nach IMRaD-Struktur fuer eine Bachelorarbeit zu 'DevOps Governance in KMU'. Forschungsfrage: 'Welche Faktoren erklaeren DevOps-Adoption?'. Methode: qualitative Interviews.", "expected": {"type": "regex", "value": "(Ziel|Methode|Ergebnis).*\\b(Methode|Ergebnis|Diskussion)\\b"}, "mode": "both"},
+    {"id": "ab-02", "input": "Erzeuge 5 Keywords fuer die vorherige Arbeit.", "expected": {"type": "regex", "value": "(DevOps|Governance|KMU|Adoption|Interview)"}, "mode": "with_skill"},
+    {"id": "ab-03", "input": "Generiere Abstract + Keywords auf Deutsch UND Englisch fuer eine Masterarbeit zu 'Zero Trust Security'. 200 Woerter pro Sprache.", "expected": {"type": "regex", "value": "(Zero Trust|zero trust)"}, "mode": "both"}
+  ]
+}

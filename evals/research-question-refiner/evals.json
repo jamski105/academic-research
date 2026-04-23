@@ -1,0 +1,8 @@
+{
+  "component": "research-question-refiner",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "rq-01", "input": "Bewerte meine Forschungsfrage: 'Wie beeinflusst KI die Gesellschaft?'", "expected": {"type": "substring", "value": "zu breit"}, "mode": "with_skill"},
+    {"id": "rq-02", "input": "Praezisiere die Frage 'Welche Faktoren beeinflussen DevOps-Adoption in KMU?'", "expected": {"type": "substring", "value": "KMU"}, "mode": "both"}
+  ]
+}

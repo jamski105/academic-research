@@ -1,0 +1,8 @@
+{
+  "component": "methodology-advisor",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "mt-01", "input": "Thema: DevOps-Adoption in KMU, Zeitrahmen: 3 Monate, Bachelor. Welche Methode passt?", "expected": {"type": "regex", "value": "(Fallstudie|Umfrage|Literatur-Review)"}, "mode": "with_skill"},
+    {"id": "mt-02", "input": "Qualitativ vs quantitativ fuer eine Analyse von Zero Trust in Healthcare?", "expected": {"type": "substring", "value": "qualitativ"}, "mode": "both"}
+  ]
+}
