@@ -38,6 +38,19 @@ Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 - Der User sucht Belege für eine konkrete Aussage oder ein bestimmtes Kapitel
 - Der User möchte Zitate nach Kapitel oder Thema ordnen
 
+## Citations-API
+
+Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der Claude-API statt Prompt-basierter Zitation. Vorteil: Zitate sind seitengenau, die API erzwingt die Quellenbindung.
+
+**Wann verwenden:**
+- Mindestens 1 PDF im Session-Pfad
+- Zitierstil-Konversion aus echtem Quelltext (nicht aus Metadaten)
+
+**Wann nicht:**
+- Reiner Metadaten-zu-Zitat-Workflow (User gibt Autor/Jahr/Titel) → weiter mit Prompt-basierter Formatierung nach Variant-References.
+
+**Output-Integration:** Die `citations[]`-Array-Eintraege der API enthalten `start_page_number` / `end_page_number` direkt — uebernimm sie in die Seitenangabe des Zitats (`S. X–Y`).
+
 ## Memory-Dateien
 
 ### Lesen
