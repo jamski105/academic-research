@@ -153,3 +153,28 @@ Jedes Zitat-Objekt enthält zusätzlich das `citations[]`-Array aus der API-Antw
 
 ### Seitennummer-Erkennung:
 Der PDF-Text kann Page-Break-Marker im Format `--- PAGE N ---` enthalten. Nutze den jüngsten Marker vor jedem Zitat, um das `page`-Feld zu setzen. Fehlen Marker, das Feld weglassen (auf `null` setzen).
+
+---
+
+## Cache-Strategie (Prompt-Caching fuer Batch-PDFs)
+
+Beim Batch-Extrahieren aus mehreren PDFs ist der System-Prompt (Rolle, Strategie, Output-Format) konstant — nur das `documents[]`-Array variiert pro Call.
+
+**Implementierung:**
+
+```python
+client.messages.create(
+    model="claude-sonnet-4-6",
+    system=[
+        {
+            "type": "text",
+            "text": "<Agent-System-Prompt>",
+            "cache_control": {"type": "ephemeral"},
+        }
+    ],
+    documents=[{"type": "document", "source": {...}, "citations": {"enabled": true}}],
+    messages=[{"role": "user", "content": f"Extrahiere 2 Zitate zur Query '{query}'"}],
+)
+```
+
+Bei 5+ PDFs spart der Cache die Agent-Instruktion-Tokens pro Folgecall. Kombiniert mit Citations-API liefert dies halluzinationssichere + guenstige Zitat-Extraktion.
