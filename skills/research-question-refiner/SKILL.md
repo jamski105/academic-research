@@ -14,6 +14,54 @@ führen zu einer Fragestellung, die beim ersten Supervisor-Feedback kollabiert. 
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Few-Shot-Beispiele
+
+### Template: Zu eng
+
+**Schlecht** (Grund: Frage lässt keinen Erkenntnisgewinn zu, rein deskriptiv auf einen Fall):
+
+> "Wie hoch war der Umsatz von BMW im Geschäftsjahr 2022?"
+
+**Gut** (Grund: Frage erlaubt Vergleich, Theorie-Anwendung und Erkenntnisgewinn):
+
+> "Welche Faktoren erklären die Umsatzentwicklung deutscher Automobilhersteller
+> 2019–2023 im Vergleich zur Branchenentwicklung?"
+
+### Template: Zu weit
+
+**Schlecht** (Grund: nicht im Bachelor-Zeitrahmen beantwortbar, kein klarer Scope):
+
+> "Wie beeinflusst Digitalisierung die Gesellschaft?"
+
+**Gut** (Grund: klarer Scope, konkreter Kontext, messbare Dimensionen):
+
+> "Wie beeinflusst der Einsatz generativer KI in Hochschulseminaren die
+> Prüfungsleistungen in textbasierten Fächern an der FH Leibniz 2024?"
+
+### Template: Nicht-falsifizierbar
+
+**Schlecht** (Grund: tautologisch/meinungsbasiert, keine empirische Antwort möglich):
+
+> "Ist Nachhaltigkeit wichtig für Unternehmen?"
+
+**Gut** (Grund: falsifizierbar, operationalisierbar):
+
+> "Korreliert die ESG-Rating-Verbesserung börsennotierter DAX-Unternehmen
+> 2018–2024 mit ihrer Aktienkurs-Entwicklung?"
+
+### Template: Mehrdimensional
+
+**Schlecht** (Grund: verknüpft drei eigenständige Fragen in einer):
+
+> "Welche Führungsstile wirken, was kostet ihre Einführung, und wie
+> akzeptieren Mitarbeiter sie?"
+
+**Gut** (Grund: eine Kernfrage, Nebenaspekte als Sub-Questions):
+
+> "Welcher Führungsstil (transformational/transaktional) erklärt
+> Mitarbeiterzufriedenheit in KMU der Metallverarbeitung 2023 am besten?
+> (Nebenaspekte: Einführungskosten, Akzeptanzraten)"
+
 ## Aktivierung dieses Skills
 
 - Der User möchte eine neue Forschungsfrage formulieren

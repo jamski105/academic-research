@@ -14,6 +14,41 @@ führen zu einer vor der Korrektur angreifbaren Arbeit. Arbeite ausschließlich 
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Few-Shot-Beispiele (Titelstile)
+
+### Stil: Deskriptiv
+
+**Schlecht** (Grund: zu allgemein, kein Kontext):
+
+> "Eine Untersuchung zu KI in der Lehre"
+
+**Gut** (Grund: Gegenstand + Methode + Kontext):
+
+> "Einsatz generativer KI in FH-Seminaren: Quantitative Analyse von
+> Prüfungsleistungen im Studienjahr 2024"
+
+### Stil: These
+
+**Schlecht** (Grund: These ohne Bezug zum Scope):
+
+> "KI ist die Zukunft"
+
+**Gut** (Grund: überprüfbare These + Domäne + Qualifikator):
+
+> "Generative KI verbessert Prüfungsleistungen: Evidenz aus einer
+> FH-Stichprobe 2024"
+
+### Stil: Frage
+
+**Schlecht** (Grund: rhetorisch, nicht beantwortet):
+
+> "Sollten Studierende KI nutzen?"
+
+**Gut** (Grund: direkte Forschungsfrage als Titel, empirisch beantwortbar):
+
+> "Wie beeinflusst regelmäßige KI-Nutzung die Prüfungsnoten in BWL- und
+> Informatik-Studiengängen? Eine Erhebung an der FH Leibniz 2024"
+
 ## Aktivierung dieses Skills
 
 - Der User fragt nach Titelvorschlägen oder möchte seinen Arbeitstitel ändern

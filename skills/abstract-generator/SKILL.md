@@ -14,6 +14,59 @@ führen zu einem Täuschungsversuch nach FH-Leibniz-Prüfungsordnung. Arbeite au
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Few-Shot-Beispiele (IMRaD)
+
+### Introduction
+
+**Schlecht** (Grund: keine Forschungslücke, kein Relevanz-Anker):
+
+> "Digitalisierung ist ein wichtiges Thema. Diese Arbeit untersucht
+> Digitalisierung in Unternehmen."
+
+**Gut** (Grund: Lücke + Relevanz + präzise Forschungsfrage in 3 Sätzen):
+
+> "Generative KI verändert Hochschullehre rapide, doch empirische Evidenz
+> zu Prüfungsauswirkungen fehlt. Diese Arbeit untersucht textbasierte
+> Prüfungsleistungen an der FH Leibniz 2024. Forschungsfrage: Beeinflusst
+> der seminaristische KI-Einsatz die Notenverteilung?"
+
+### Methods
+
+**Schlecht** (Grund: Methode nicht reproduzierbar, keine Stichprobe genannt):
+
+> "Es wurde eine Umfrage gemacht und ausgewertet."
+
+**Gut** (Grund: Sample, Instrument, Zeitraum, Auswertung genannt):
+
+> "Quantitative Online-Befragung (LimeSurvey, n=142, FH-Leibniz-Studierende,
+> BWL + Informatik, Mai–Juli 2024). Likert-Items zu KI-Nutzung und
+> Prüfungsnote. Deskriptive Statistik und Chi²-Test in R 4.4."
+
+### Results
+
+**Schlecht** (Grund: keine Zahlen, keine Effektgröße):
+
+> "Die Ergebnisse zeigten einen Zusammenhang zwischen KI-Nutzung und Noten."
+
+**Gut** (Grund: konkrete Effektgröße + Signifikanz + Stichprobe):
+
+> "Studierende mit regelmäßiger KI-Nutzung (n=87) erreichten im Schnitt
+> 0,4 Notenstufen bessere Prüfungsergebnisse (χ²=7,83, p=0,005) als
+> Studierende ohne KI-Nutzung (n=55)."
+
+### Conclusion
+
+**Schlecht** (Grund: überhöhte Generalisierung, keine Limitationen):
+
+> "Die Studie zeigt, dass KI grundsätzlich die Noten verbessert."
+
+**Gut** (Grund: Ergebnis + Einschränkung + Ausblick, 3 Sätze):
+
+> "Regelmäßige KI-Nutzung korreliert positiv mit Prüfungsleistung an der
+> FH Leibniz 2024. Limitationen: Einzelhochschule, Selbstauskunft zur Nutzung,
+> keine Kausalaussage möglich. Folgeforschung sollte experimentelles Design
+> mit Kontrollgruppe prüfen."
+
 ## Aktivierung dieses Skills
 
 - Der User fragt nach einem Abstract (deutsch oder englisch)
