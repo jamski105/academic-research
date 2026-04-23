@@ -5,17 +5,17 @@ allowed-tools: Read, Write
 argument-hint: [--papers papers.json] [--output literature.xlsx] [--context]
 ---
 
-# Literature Excel Generator
+# Literatur-Excel-Generator
 
 Erstellt ein formatiertes Excel-Workbook aus gescorten Papers. Die eigentliche Excel-Generierung übernimmt der extern installierte `document-skills:xlsx`-Skill (siehe README-Prerequisites).
 
-## Usage
+## Verwendung
 
-- `/academic-research:excel` — Generate from latest session
+- `/academic-research:excel` — Aus letzter Session generieren
 - `/academic-research:excel --papers papers.json --output my_literature.xlsx`
-- `/academic-research:excel --context` — Include chapter assignment from academic context
+- `/academic-research:excel --context` — Kapitel-Zuordnung aus akademischem Kontext mitnehmen
 
-## Prerequisite
+## Voraussetzung
 
 `document-skills:xlsx` muss installiert sein:
 
@@ -27,14 +27,14 @@ Wenn nicht installiert: SessionStart-Hook warnt beim Start; dieser Command brich
 
 ## Erwartete Sheets
 
-1. **Literaturübersicht** — Full paper list with 5D scores, clusters, color-coded
-2. **Cluster-Analyse** — Statistics per cluster with bar chart
-3. **Kapitel-Zuordnung** — Papers assigned to outline chapters (requires `--context`)
-4. **Datenblatt** — Raw data for programmatic access
+1. **Literaturübersicht** — Vollständige Paperliste mit 5D-Scores, Clustern, farbcodiert
+2. **Cluster-Analyse** — Statistik pro Cluster mit Balkendiagramm
+3. **Kapitel-Zuordnung** — Papers den Gliederungskapiteln zugeordnet (benötigt `--context`)
+4. **Datenblatt** — Rohdaten für programmatischen Zugriff
 
-## Implementation
+## Umsetzung
 
-### Step 1: Papers lokalisieren
+### Schritt 1: Papers lokalisieren
 
 ```bash
 if [ -z "$PAPERS" ]; then
@@ -43,7 +43,7 @@ if [ -z "$PAPERS" ]; then
 fi
 ```
 
-### Step 2: xlsx-Skill-Verfügbarkeit prüfen
+### Schritt 2: Verfügbarkeit des xlsx-Skills prüfen
 
 ```bash
 if [ ! -d "$HOME/.claude/plugins/cache/anthropic-agent-skills/document-skills" ]; then
@@ -53,29 +53,29 @@ if [ ! -d "$HOME/.claude/plugins/cache/anthropic-agent-skills/document-skills" ]
 fi
 ```
 
-### Step 3: Input strukturieren
+### Schritt 3: Input strukturieren
 
-Lese die Paper-Daten aus `$PAPERS` (JSON-Array mit Feldern `title`, `authors`, `year`, `doi`, `total_score`, `cluster`, `relevance_score`, `recency_score`, `quality_score`, `authority_score`, `access_score`, `venue`, `source_module`).
+Lies die Paper-Daten aus `$PAPERS` (JSON-Array mit Feldern `title`, `authors`, `year`, `doi`, `total_score`, `cluster`, `relevance_score`, `recency_score`, `quality_score`, `authority_score`, `access_score`, `venue`, `source_module`).
 
 Wenn `--context` gesetzt:
-- Lese `academic_context.md` aus Memory; extrahiere `Gliederung`
+- Lies `academic_context.md` aus Memory; extrahiere die `Gliederung`
 - Berechne pro Paper die zugeordneten Kapitel (Keyword-Match zwischen `title`/`abstract` und Kapitelüberschriften)
 
-### Step 4: xlsx-Skill aktivieren
+### Schritt 4: xlsx-Skill aktivieren
 
 Rufe den `document-skills:xlsx`-Skill mit klarer Input/Output-Spezifikation auf:
 
-**Input:** Strukturierte Paper-Daten (siehe Step 3) plus Sheet-Spezifikation (welche Sheets, welche Spalten, welche Farbcodierung).
+**Input:** Strukturierte Paper-Daten (siehe Schritt 3) plus Sheet-Spezifikation (welche Sheets, welche Spalten, welche Farbcodierung).
 
 **Output:** `$OUTPUT` (Default: `~/.academic-research/sessions/$LATEST/literature.xlsx`).
 
 **Sheet-Spezifikation:**
 
-- **Literaturübersicht**: Spalten `Titel | Autoren | Jahr | Venue | DOI | Gesamt | Relevanz | Aktualität | Qualität | Autorität | Zugang | Cluster`. Farbcodierung je Cluster (Kern=grün, Ergänzung=blau, Hintergrund=grau, Methoden=gelb).
+- **Literaturübersicht**: Spalten `Titel | Autoren | Jahr | Venue | DOI | Gesamt | Relevanz | Aktualität | Qualität | Autorität | Zugang | Cluster`. Farbcodierung je Cluster (Kern = grün, Ergänzung = blau, Hintergrund = grau, Methoden = gelb).
 - **Cluster-Analyse**: Aggregatstatistik pro Cluster (Anzahl, Durchschnittsscore, Jahresverteilung) + eingebettetes Balkendiagramm.
 - **Kapitel-Zuordnung** (nur bei `--context`): Mapping Kapitel → Papers.
-- **Datenblatt**: Alle Rohdaten-Felder in flachem Tabellenformat.
+- **Datenblatt**: Alle Rohdatenfelder in flachem Tabellenformat.
 
-### Step 5: Ergebnis präsentieren
+### Schritt 5: Ergebnis präsentieren
 
-Zeige Output-Pfad und Zusammenfassung (Anzahl Papers, Cluster-Verteilung, Dateigrösse).
+Ausgabepfad und Zusammenfassung anzeigen (Anzahl Papers, Cluster-Verteilung, Dateigröße).

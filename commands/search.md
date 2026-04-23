@@ -5,55 +5,55 @@ allowed-tools: Read, Write, Bash(~/.academic-research/venv/bin/python *), Bash(b
 argument-hint: "<query>" [--mode quick|standard|deep|metadata] [--modules crossref,openalex,...] [--limit N]
 ---
 
-# Academic Paper Search
+# Akademische Paper-Suche
 
-Search across 7 API sources in parallel. Optionally expand queries with the query-generator agent.
+Parallele Suche über 7 API-Quellen. Optional werden Queries mit dem `query-generator`-Agent erweitert.
 
-## Usage
+## Verwendung
 
-- `/academic-research:search "DevOps Governance"` — Standard search across all API modules
-- `/academic-research:search "Machine Learning" --mode quick` — Fast search (4 modules)
-- `/academic-research:search "IT Compliance" --mode deep` — Deep search (all modules + portfolio adjustments)
+- `/academic-research:search "DevOps Governance"` — Standardsuche über alle API-Module
+- `/academic-research:search "Machine Learning" --mode quick` — Schnelle Suche (4 Module)
+- `/academic-research:search "IT Compliance" --mode deep` — Tiefensuche (alle Module + Portfolio-Anpassungen)
 - `/academic-research:search "Cloud Computing" --modules crossref,semantic_scholar --limit 30`
 
-## Arguments
+## Argumente
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `query` | (required) | Search query |
-| `--mode` | `standard` | quick (4 APIs), standard (7 APIs), deep (7 APIs + portfolio), metadata (no PDFs) |
-| `--modules` | (from mode) | Override: comma-separated module names |
-| `--limit` | `50` | Max results per module |
-| `--no-expand` | false | Skip query-generator agent, use raw query |
-| `--no-browser` | false | Skip browser modules (API-only) |
+| Argument | Default | Beschreibung |
+|----------|---------|--------------|
+| `query` | (erforderlich) | Suchanfrage |
+| `--mode` | `standard` | quick (4 APIs), standard (7 APIs), deep (7 APIs + Portfolio), metadata (keine PDFs) |
+| `--modules` | (aus Modus) | Override: kommagetrennte Modulnamen |
+| `--limit` | `50` | Maximale Treffer pro Modul |
+| `--no-expand` | false | `query-generator`-Agent überspringen, rohe Query nutzen |
+| `--no-browser` | false | Browser-Module überspringen (nur APIs) |
 
-## Module Selection by Mode
+## Modul-Auswahl nach Modus
 
 - **quick**: crossref, openalex, semantic_scholar, arxiv
 - **standard**: crossref, openalex, semantic_scholar, base, econbiz, econstor, arxiv
-- **deep**: All 7 API modules + browser modules (Google Scholar, Springer, OECD, RePEc, OPAC)
-- **metadata**: Same as standard
+- **deep**: Alle 7 API-Module + Browser-Module (Google Scholar, Springer, OECD, RePEc, OPAC)
+- **metadata**: Wie standard
 
-## Implementation
+## Umsetzung
 
-### Step 1: Setup session directory
+### Schritt 1: Session-Verzeichnis anlegen
 
 ```bash
 SESSION_DIR=~/.academic-research/sessions/$(date -u +%Y-%m-%dT%H-%M-%SZ)
 mkdir -p "$SESSION_DIR/pdfs"
 ```
 
-Save metadata:
+Metadaten sichern:
 ```json
 {"query": "$QUERY", "mode": "$MODE", "timestamp": "$TIMESTAMP", "modules": [...]}
 ```
 
-### Step 2: Query expansion (unless --no-expand)
+### Schritt 2: Query-Erweiterung (falls nicht `--no-expand`)
 
-Spawn the `query-generator` agent with the user's query and target modules.
-Save output to `$SESSION_DIR/queries.json`.
+Den `query-generator`-Agent mit der User-Query und den Ziel-Modulen starten.
+Ausgabe nach `$SESSION_DIR/queries.json` speichern.
 
-### Step 3: API search
+### Schritt 3: API-Suche
 
 ```bash
 ~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/search.py \
@@ -64,7 +64,7 @@ Save output to `$SESSION_DIR/queries.json`.
   --output "$SESSION_DIR/api_results.json"
 ```
 
-### Step 4: Browser search (standard/deep modes, unless --no-browser)
+### Schritt 4: Browser-Suche (standard-/deep-Modus, falls nicht `--no-browser`)
 
 Für jedes Browser-Modul in fester Reihenfolge:
 
@@ -84,13 +84,13 @@ Pro Modul:
    - Bei Bedarf paginieren — maximal 2 Seiten pro Modul
 4. Ergebnisse ins `api_results.json`-Schema normalisieren (`title`, `authors`, `year`, `venue`, `doi`, `url`, `source_module`, `snippet`) und an die bestehende Ergebnisliste anhängen.
 5. Fehlerbehandlung:
-   - CAPTCHA erkannt → `browser-use screenshot` machen, User informieren, Partial Results behalten.
-   - Login schlägt fehl → Modul überspringen, Warnung loggen, weitermachen mit nächstem Modul.
-   - Rate-Limit → 30s Pause, einmal retry, dann Modul überspringen.
+   - CAPTCHA erkannt → `browser-use screenshot` machen, User informieren, Teilergebnisse behalten.
+   - Login schlägt fehl → Modul überspringen, Warnung loggen, mit nächstem Modul weitermachen.
+   - Rate-Limit → 30s Pause, einmal wiederholen, dann Modul überspringen.
 
-Append results to `$SESSION_DIR/api_results.json`.
+Ergebnisse an `$SESSION_DIR/api_results.json` anhängen.
 
-### Step 5: Deduplication
+### Schritt 5: Deduplikation
 
 ```bash
 ~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/dedup.py \
@@ -98,19 +98,19 @@ Append results to `$SESSION_DIR/api_results.json`.
   --output "$SESSION_DIR/deduped.json"
 ```
 
-### Step 6: Ranking (5D scoring + clusters)
+### Schritt 6: Ranking (5D-Scoring + Cluster)
 
-Die Heuristik-Dimensionen (Aktualität, Qualität, Autorität, Zugang) werden direkt in diesem Command berechnet — siehe Formeln in `commands/score.md` → "4 weitere Dimensionen berechnen". Gesamtscore wie dort, Clusterzuweisung ebenfalls. Das Resultat in `$SESSION_DIR/ranked.json` schreiben.
+Die Heuristik-Dimensionen (Aktualität, Qualität, Autorität, Zugang) werden direkt in diesem Command berechnet — siehe Formeln in `commands/score.md` → „4 weitere Dimensionen berechnen". Gesamtscore wie dort, Clusterzuweisung ebenfalls. Das Resultat in `$SESSION_DIR/ranked.json` schreiben.
 
-### Step 7: LLM relevance scoring
+### Schritt 7: LLM-Relevanz-Scoring
 
-Spawn `relevance-scorer` agent in batches of 10 papers.
-Merge LLM scores into ranking. Select top-N based on mode (quick=15, standard=25, deep=40).
-Save as `$SESSION_DIR/papers.json`.
+Den `relevance-scorer`-Agent in Batches von 10 Papers starten.
+LLM-Scores ins Ranking einmischen. Top-N nach Modus wählen (quick=15, standard=25, deep=40).
+Als `$SESSION_DIR/papers.json` speichern.
 
-### Step 8: Show results
+### Schritt 8: Ergebnisse anzeigen
 
-Display a formatted table with: rank, title, year, score, cluster, source module.
-Report session directory path.
+Eine formatierte Tabelle mit Rang, Titel, Jahr, Score, Cluster und Quellmodul ausgeben.
+Pfad des Session-Verzeichnisses melden.
 
-Update memory file `literature_state.md` with new statistics if academic context exists.
+Die Memory-Datei `literature_state.md` mit neuen Statistiken aktualisieren, falls akademischer Kontext vorliegt.
