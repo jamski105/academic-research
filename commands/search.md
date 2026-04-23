@@ -82,14 +82,7 @@ Order: no-auth modules first (Google Scholar → Springer → OECD), then auth m
 
 ### Step 6: Ranking (5D scoring + clusters)
 
-```bash
-~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/ranking.py \
-  --papers "$SESSION_DIR/deduped.json" \
-  --query "$QUERY" \
-  --mode "$MODE" \
-  --scoring-config "${CLAUDE_PLUGIN_ROOT}/config/scoring.yaml" \
-  --output "$SESSION_DIR/ranked.json"
-```
+Die Heuristik-Dimensionen (Aktualität, Qualität, Autorität, Zugang) werden direkt in diesem Command berechnet — siehe Formeln in `commands/score.md` → "4 weitere Dimensionen berechnen". Gesamtscore wie dort, Clusterzuweisung ebenfalls. Das Resultat in `$SESSION_DIR/ranked.json` schreiben.
 
 ### Step 7: LLM relevance scoring
 
