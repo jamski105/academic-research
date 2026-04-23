@@ -49,3 +49,32 @@ def test_detect_mode_idempotent_beats_code_repo(tmp_path):
     (tmp_path / "academic_context.md").write_text("# thesis")
     (tmp_path / "package.json").write_text("{}")
     assert pb.detect_mode(tmp_path) == "idempotent"
+
+
+TEMPLATES = Path(__file__).resolve().parent.parent / "scripts" / "templates"
+
+
+def test_create_structure_stub_mode(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    pb.create_structure(tmp_path, stub=True)
+    assert (tmp_path / "academic_context.md").exists()
+    assert "Universität: TODO" in (tmp_path / "academic_context.md").read_text()
+    assert (tmp_path / "CLAUDE.md").exists()
+    assert (tmp_path / "kapitel" / ".gitkeep").exists()
+    assert (tmp_path / "literatur" / ".gitkeep").exists()
+    assert (tmp_path / "pdfs" / ".gitkeep").exists()
+
+
+def test_create_structure_skips_existing(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    (tmp_path / "academic_context.md").write_text("USER CONTENT — do not overwrite")
+    pb.create_structure(tmp_path, stub=True)
+    assert (tmp_path / "academic_context.md").read_text() == "USER CONTENT — do not overwrite"
+    assert (tmp_path / "CLAUDE.md").exists()
+
+
+def test_create_structure_no_stub_when_stub_false(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    pb.create_structure(tmp_path, stub=False)
+    assert not (tmp_path / "academic_context.md").exists()
+    assert (tmp_path / "CLAUDE.md").exists()
