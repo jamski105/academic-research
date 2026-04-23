@@ -74,7 +74,7 @@ Write the chapter section by section. For each section:
 
 #### Source Integration
 
-When citing sources, use the citation data from `${CLAUDE_PLUGIN_ROOT}/scripts/citations.py` output. Reference papers by their formatted citation. Support these integration patterns:
+When citing sources, use the citation data produced by the Citation Extraction skill (inline-formatiert nach dem in `academic_context.md` konfigurierten Stil). Reference papers by their formatted citation. Support these integration patterns:
 
 - **Direct quote** — Exact wording in quotation marks with page number
 - **Paraphrase** — Restate in own words with citation

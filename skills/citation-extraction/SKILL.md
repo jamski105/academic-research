@@ -5,7 +5,7 @@ description: This skill should be used when the user wants to extract, format, o
 
 # Citation Extraction
 
-Extract relevant quotes from academic PDFs, format citations in the required style, and organize citation data by chapter. Uses the quote-extractor agent for extraction and `citations.py` for formatting and export.
+Extract relevant quotes from academic PDFs, format citations in the required style, and organize citation data by chapter. Uses the quote-extractor agent for extraction and inline citation formatting logic (see "Citation Formatting" below).
 
 ## When This Skill Activates
 
@@ -84,37 +84,26 @@ Present extracted quotes to the user grouped by source, showing:
 
 ### 5. Citation Formatting
 
-Use `${CLAUDE_PLUGIN_ROOT}/scripts/citations.py` to format citations in the configured style.
+Formatiere Zitate inline nach dem in `academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
 
 #### Supported Styles
 
-| Style | In-text Example | Use Case |
-|-------|----------------|----------|
-| APA7 | (Müller, 2023, S. 45) | Default, most German universities |
-| IEEE | [1, p. 45] | Engineering, Computer Science |
-| Harvard | (Müller 2023, p. 45) | Business, Social Sciences |
-| Chicago | (Müller 2023, 45) | Humanities |
+| Style | In-text Example | Bibliography Example |
+|-------|----------------|----------------------|
+| APA7 | (Müller, 2023, S. 45) | Müller, H. (2023). *Title*. Journal, 12(3), 44-67. |
+| IEEE | [1, p. 45] | [1] H. Müller, "Title," *Journal*, vol. 12, no. 3, pp. 44-67, 2023. |
+| Harvard | (Müller 2023, p. 45) | Müller, H. 2023, 'Title', *Journal*, vol. 12, no. 3, pp. 44-67. |
+| Chicago | (Müller 2023, 45) | Müller, H. 2023. "Title." *Journal* 12 (3): 44-67. |
+| BibTeX | `\cite{mueller2023}` | `@article{mueller2023, author={Müller, H.}, title={Title}, ...}` |
 
-#### Format Commands
+#### Output-Formate
 
-```bash
-# Format all papers in a session
-~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/citations.py \
-  --action format \
-  --papers "$SESSION_DIR/papers.json" \
-  --style apa7
-
-# Export bibliography
-~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/citations.py \
-  --action export \
-  --session-dir "$SESSION_DIR" \
-  --format bibtex,markdown
-
-# Merge citations from multiple sessions
-~/.academic-research/venv/bin/python ${CLAUDE_PLUGIN_ROOT}/scripts/citations.py \
-  --action merge \
-  --session-dir "$SESSION_DIR"
-```
+Claude erzeugt bei Bedarf:
+- **In-text-Zitat** — exakt im konfigurierten Stil mit Seitenzahl
+- **Literaturverzeichnis-Eintrag** — formatiert pro Quelle
+- **BibTeX-Datei** — für LaTeX-Integration (in `~/.academic-research/citations.bib` persistieren)
+- **Markdown-Bibliographie** — für Review, sortiert nach Autor/Jahr
+- **JSON** — wenn andere Skills die Daten strukturiert brauchen
 
 ### 6. Chapter Assignment
 
@@ -146,7 +135,7 @@ When gaps are detected, offer to trigger `/search` with targeted queries or trig
 
 ## Export Formats
 
-Support these output formats via `citations.py`:
+Support these output formats (inline generiert, kein externes Skript):
 
 - **BibTeX** — For LaTeX integration
 - **Markdown** — For review and manual editing
