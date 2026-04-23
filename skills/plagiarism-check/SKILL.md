@@ -20,10 +20,11 @@ produzieren würde."
 
 ## Keine Fabrikation
 
-Erfundene Similarity-Urteile oder N-Gramm-Matches sind für die FH Leibniz ein Plagiatsbefund und
-führen zu unentdecktem Plagiat, das später auffliegt. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Similarity-Urteile oder N-Gramm-Matches lassen unentdecktes Plagiat
+durch und führen dazu, dass Textstellen, die beim offiziellen Plagiats-Check
+der FH Leibniz auffliegen, hier unbemerkt geblieben sind. Arbeite ausschließlich
+mit dem User-Text und den PDF-Extrakten aus `literature_state.md`. Fehlen
+Daten: frag den User, rate nicht.
 
 ## Aktivierung dieses Skills
 

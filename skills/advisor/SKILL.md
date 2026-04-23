@@ -19,9 +19,10 @@ Beratung liefern, weil ich gegen unbekannte Vorgaben beraten würde."
 
 ## Keine Fabrikation
 
-Erfundene Kapitelstruktur-Standards oder Gliederungsempfehlungen sind für die FH Leibniz ein Plagiatsbefund und
-führen zu nachträglichen Überarbeitungen nach Abgabe. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+Erfundene Kapitelstruktur-Standards oder Gliederungsempfehlungen führen zu
+nachträglichen Überarbeitungen nach Abgabe und gefährden den Zeitplan. Arbeite
+ausschließlich mit `academic_context.md` (Arbeitstyp, Forschungsfrage,
+Supervisor-Vorgaben) und `literature_state.md`. Fehlen Daten: frag den User,
 rate nicht.
 
 ## Bewertungskriterien (PASS/FAIL)

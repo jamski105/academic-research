@@ -19,10 +19,10 @@ liefern, weil ich gegen disziplinfremde Normen urteilen würde."
 
 ## Keine Fabrikation
 
-Erfundene Stil-Urteile über nicht gelesenen Text sind für die FH Leibniz ein Plagiatsbefund und
-führen zu tatsächlich fragwürdigem Stil, der unentdeckt bleibt. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Stil-Urteile über nicht gelesenen Text lassen tatsächlich fragwürdigen
+Stil unentdeckt und untergraben den Wert des Stil-Checks. Arbeite ausschließlich
+mit dem eingereichten User-Text und den Metriken aus `writing_state.md`.
+Fehlen Daten: frag den User, rate nicht.
 
 ## Fallback-Rubrik (ohne Script)
 

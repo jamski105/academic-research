@@ -19,10 +19,10 @@ liefern, weil ich gegen unbekannte Ziele vergleichen würde."
 
 ## Keine Fabrikation
 
-Erfundene Abdeckungs-Statements oder Quellenlisten sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einem Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Abdeckungs-Statements oder Quellenlisten führen zu einem
+Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arbeite
+ausschließlich mit `literature_state.md` (Quelleninventar) und
+`academic_context.md` (Themenliste). Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 

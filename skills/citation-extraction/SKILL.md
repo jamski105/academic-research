@@ -20,10 +20,10 @@ würde."
 
 ## Keine Fabrikation
 
-Erfundene Zitate, Seitenzahlen oder Quellenangaben sind für die FH Leibniz ein Plagiatsbefund und
-führen zu Zitaten, die in der Plagiatsprüfung als nicht-auffindbar markiert werden. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Zitate, Seitenzahlen oder Quellenangaben werden in der Plagiats-
+prüfung als nicht-auffindbar markiert und gelten als Täuschungsversuch. Arbeite
+ausschließlich mit den geladenen PDFs und Einträgen aus `literature_state.md`.
+Fehlen Daten: frag den User, rate nicht.
 
 ## Aktivierung dieses Skills
 

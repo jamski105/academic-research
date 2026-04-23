@@ -9,10 +9,10 @@ Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verla
 
 ## Keine Fabrikation
 
-Erfundene Kontextangaben (Thema, Methodik, Fragestellung) sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einer vergifteten Memory-Basis, die alle nachgelagerten Skills wertlos macht. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Kontextangaben (Thema, Methodik, Fragestellung) produzieren eine
+vergiftete Memory-Basis, die alle nachgelagerten Skills wertlos macht. Arbeite
+ausschließlich mit Angaben, die der User im Gespräch explizit bestätigt hat —
+rate keine Werte, frag nach.
 
 ## Aktivierung dieses Skills
 

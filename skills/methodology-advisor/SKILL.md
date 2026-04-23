@@ -20,10 +20,11 @@ beantworten."
 
 ## Keine Fabrikation
 
-Erfundene Methodik-Standards, Begründungen oder Vergleiche sind für die FH Leibniz ein Plagiatsbefund und
-führen zu Note 5 für das Forschungsdesign. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Methodik-Standards, Begründungen oder Vergleiche führen zu Note 5
+für das Forschungsdesign und einer methodisch angreifbaren Arbeit. Arbeite
+ausschließlich mit `academic_context.md` und dem Methoden-Katalog unter
+`${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md`.
+Fehlen Daten: frag den User, rate nicht.
 
 ## Methoden-Scoring-Matrix
 

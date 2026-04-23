@@ -20,10 +20,10 @@ Arbeit passt."
 
 ## Keine Fabrikation
 
-Erfundene Belege, Zitate oder Faktenaussagen im Fließtext sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einem Plagiatsbefund laut FH-Leibniz-Regelung. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Belege, Zitate oder Faktenaussagen im Fließtext sind laut FH-Leibniz-
+Prüfungsordnung ein Plagiatsbefund und führen zum Verlust der Prüfungsleistung
+(Note 5). Arbeite ausschließlich mit Zitaten aus `literature_state.md` und
+direkt geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
 ## Few-Shot-Beispiele (pro Kapiteltyp)
 

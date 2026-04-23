@@ -19,10 +19,11 @@ liefern, weil ich leere Titel-Hülsen ohne Verankerung liefern würde."
 
 ## Keine Fabrikation
 
-Erfundene in den Titel eingebaute Claims sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einer vor der Korrektur angreifbaren Arbeit. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+In den Titel eingebaute Claims ohne Textbeleg machen die Arbeit vor der
+Korrektur angreifbar und riskieren Nachfragen im Kolloquium. Arbeite
+ausschließlich mit `writing_state.md` (fertiger Arbeitstext) und
+`academic_context.md` (Forschungsfrage, Kernergebnisse). Fehlen Daten: frag
+den User, rate nicht.
 
 ## Few-Shot-Beispiele (Titelstile)
 

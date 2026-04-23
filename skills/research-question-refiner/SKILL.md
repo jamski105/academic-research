@@ -20,10 +20,10 @@ optimieren würde."
 
 ## Keine Fabrikation
 
-Erfundene Bezüge zu Vorarbeiten oder Forschungslücken sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einer Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Bezüge zu Vorarbeiten oder Forschungslücken führen zu einer
+Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite
+ausschließlich mit `academic_context.md` und `literature_state.md`. Fehlen
+Daten: frag den User, rate nicht.
 
 ## Few-Shot-Beispiele
 

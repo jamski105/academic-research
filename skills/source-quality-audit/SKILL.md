@@ -19,10 +19,10 @@ liefern, weil ich gegen leere Menge urteilen würde."
 
 ## Keine Fabrikation
 
-Erfundene Bewertungen oder Quellenangaben sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einer Quellenprüfung, die der Arbeit die Zitierbarkeit entzieht. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Bewertungen oder Quellenangaben entziehen der Arbeit die
+Zitierbarkeit, wenn behauptete Quellen in der Nachprüfung nicht existieren.
+Arbeite ausschließlich mit den Einträgen aus `literature_state.md` und
+geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 

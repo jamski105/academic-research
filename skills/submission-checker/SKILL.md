@@ -19,10 +19,10 @@ liefern, weil ich gegen falsches FH-Regelwerk prüfen würde."
 
 ## Keine Fabrikation
 
-Erfundene Formalia-Bestätigungen sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einer Abgabe nicht-abgabefähiger Arbeit. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Formalia-Bestätigungen produzieren eine nicht-abgabefähige Arbeit,
+die bei Einreichung zurückgewiesen wird. Arbeite ausschließlich mit der
+Arbeits-PDF und den FH-Zuordnungen in `academic_context.md`. Fehlen Daten:
+frag den User, rate nicht.
 
 ## FH-Leibniz-Formalia-Check
 

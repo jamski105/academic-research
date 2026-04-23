@@ -19,10 +19,11 @@ liefern, weil ich ein erfundenes Thema beschreiben würde."
 
 ## Keine Fabrikation
 
-Erfundene Ergebnisse, Methoden oder Zahlen im Abstract sind für die FH Leibniz ein Plagiatsbefund und
-führen zu einem Täuschungsversuch nach FH-Leibniz-Prüfungsordnung. Arbeite ausschließlich mit Daten aus
-`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
-rate nicht.
+Erfundene Ergebnisse, Methoden oder Zahlen im Abstract sind ein Täuschungs-
+versuch nach FH-Leibniz-Prüfungsordnung und führen zum Verlust der Prüfungs-
+leistung. Arbeite ausschließlich mit Inhalten aus `writing_state.md`
+(Arbeitstext) und `academic_context.md` (Forschungsfrage, Methodik). Fehlen
+Daten: frag den User, rate nicht.
 
 ## Few-Shot-Beispiele (IMRaD)
 
