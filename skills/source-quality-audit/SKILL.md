@@ -7,6 +7,16 @@ description: Dieser Skill wird genutzt, wenn der User Qualität, Balance und Ang
 
 Bewertet die Gesamtqualität, Balance, Aktualität und Diversität der Literaturbasis einer akademischen Arbeit. Scort jede Dimension (0-100), identifiziert Schwächen und liefert konkrete Verbesserungsempfehlungen.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Quellenliste in `literature_state.md` kann ich kein Qualitätsurteil
+liefern, weil ich gegen leere Menge urteilen würde."
+
 ## Keine Fabrikation
 
 Erfundene Bewertungen oder Quellenangaben sind für die FH Leibniz ein Plagiatsbefund und

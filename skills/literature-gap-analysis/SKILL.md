@@ -7,6 +7,16 @@ description: Dieser Skill wird genutzt, wenn der User seine Literaturabdeckung a
 
 Analysiert die Thesis-Gliederung gegen die bestehende Literatursammlung und erzeugt einen kapitelweisen Abdeckungsbericht. Identifiziert gut abgedeckte Themen, fehlende Quellen, fehlende Gegenargumente und methodische Lücken. Bietet gezielte Suche zur Lückenschließung an.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Themenliste in `academic_context.md` kann ich keine Gap-Bewertung
+liefern, weil ich gegen unbekannte Ziele vergleichen würde."
+
 ## Keine Fabrikation
 
 Erfundene Abdeckungs-Statements oder Quellenlisten sind für die FH Leibniz ein Plagiatsbefund und

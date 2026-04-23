@@ -7,6 +7,16 @@ description: Dieser Skill wird genutzt, wenn der User vor der Abgabe seiner akad
 
 Prüft, ob eine akademische Arbeit alle formalen Abgabeanforderungen erfüllt: Seitenzahl, Formatierung, Quellenzahl, Pflichtabschnitte (Deckblatt, Inhaltsverzeichnis, Eidesstattliche Erklärung, Anhang) und hochschulspezifische Regeln.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne FH-Zuordnung in `academic_context.md` kann ich keinen Formalia-Check
+liefern, weil ich gegen falsches FH-Regelwerk prüfen würde."
+
 ## Keine Fabrikation
 
 Erfundene Formalia-Bestätigungen sind für die FH Leibniz ein Plagiatsbefund und

@@ -7,6 +7,17 @@ description: Dieser Skill wird genutzt, wenn der User seine Forschungsfrage form
 
 Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob eine Frage zu breit, zu eng oder nicht beantwortbar ist. Vergleicht mit ähnlichen Arbeiten, um Originalität und Machbarkeit sicherzustellen.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Thema und Kontext in `academic_context.md` kann ich keine Fragen-
+Schärfung liefern, weil ich gegen unbekannte Disziplin-Konventionen
+optimieren würde."
+
 ## Keine Fabrikation
 
 Erfundene Bezüge zu Vorarbeiten oder Forschungslücken sind für die FH Leibniz ein Plagiatsbefund und

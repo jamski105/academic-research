@@ -7,6 +7,17 @@ description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder ei
 
 Verfasst einzelne Thesis-Kapitel und Abschnitte auf Basis von Forschungskontext, Gliederung, verfügbarer Literatur und Zitaten. Produziert akademische Prosa, die der User Abschnitt für Abschnitt reviewt, editiert und freigibt.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Kapitelstruktur in `literature_state.md` kann ich keinen passenden
+Kapiteltext liefern, weil ich einen Kapiteltyp annehmen würde, der nicht zur
+Arbeit passt."
+
 ## Keine Fabrikation
 
 Erfundene Belege, Zitate oder Faktenaussagen im Fließtext sind für die FH Leibniz ein Plagiatsbefund und

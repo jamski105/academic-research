@@ -7,6 +7,16 @@ description: Dieser Skill wird genutzt, wenn der User Titelvorschläge für sein
 
 Analysiert eine fertige oder nahezu fertige akademische Arbeit und erzeugt 5-7 Titelvarianten mit Begründung. Liefert eine Mischung aus akademisch, kreativ und deskriptiv, abgestimmt auf Disziplin und Arbeitstyp.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Forschungsfrage und Kernergebnisse kann ich keine Titel-Vorschläge
+liefern, weil ich leere Titel-Hülsen ohne Verankerung liefern würde."
+
 ## Keine Fabrikation
 
 Erfundene in den Titel eingebaute Claims sind für die FH Leibniz ein Plagiatsbefund und

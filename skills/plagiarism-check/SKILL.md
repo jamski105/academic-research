@@ -7,6 +7,17 @@ description: Dieser Skill wird genutzt, wenn der User Text auf unbeabsichtigtes 
 
 Prüft akademischen Text auf unbeabsichtigte Nähe zum Quellmaterial. Erkennt zu nahe Paraphrasen, unzureichend umformulierte Passagen und fehlende Quellenangaben via N-Gramm-Overlap-Detection. Schlägt Umformulierungen für markierte Passagen vor.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Quellenlisten in `literature_state.md` kann ich kein Similarity-Urteil
+liefern, weil ich gegen unbekannte Quellen prüfen und False-Negatives
+produzieren würde."
+
 ## Keine Fabrikation
 
 Erfundene Similarity-Urteile oder N-Gramm-Matches sind für die FH Leibniz ein Plagiatsbefund und

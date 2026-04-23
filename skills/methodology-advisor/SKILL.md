@@ -7,6 +7,17 @@ description: Dieser Skill wird genutzt, wenn der User Hilfe bei Wahl, Begründun
 
 Hilft bei Wahl, Begründung und Dokumentation der Forschungsmethodik. Vergleicht Ansätze, prüft die Passung zur Forschungsfrage und produziert Methodik-Texte, die akademischen Standards genügen.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Forschungsfrage und Datenzugriffs-Infos kann ich keine Methoden-
+Empfehlung liefern, weil ich Methoden empfehlen würde, die die Frage nicht
+beantworten."
+
 ## Keine Fabrikation
 
 Erfundene Methodik-Standards, Begründungen oder Vergleiche sind für die FH Leibniz ein Plagiatsbefund und

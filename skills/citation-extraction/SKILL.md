@@ -7,6 +7,17 @@ description: Dieser Skill wird genutzt, wenn der User Zitate und Quellenangaben 
 
 Extrahiert relevante Zitate aus akademischen PDFs, formatiert sie im gewünschten Stil und organisiert Zitatdaten nach Kapitel. Nutzt den Agent `quote-extractor` für die Extraktion und die Inline-Zitationslogik (siehe Abschnitt "Zitat-Formatierung" unten).
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Quellenliste in `literature_state.md` kann ich keine Zitate mit
+Zuordnung liefern, weil ich Zitate zu nicht-registrierten Quellen bauen
+würde."
+
 ## Keine Fabrikation
 
 Erfundene Zitate, Seitenzahlen oder Quellenangaben sind für die FH Leibniz ein Plagiatsbefund und

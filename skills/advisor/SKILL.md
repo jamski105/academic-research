@@ -7,6 +7,16 @@ description: Dieser Skill wird genutzt, wenn der User seine Gliederung aufbauen 
 
 Baut, verfeinert und validiert Gliederungen und Exposé-Dokumente im interaktiven Dialog. Führt den User vom Ausgangsthema zu einem strukturierten, gut begründeten Kapitelplan.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Forschungsfrage und Kapitelstruktur kann ich keine fundierte Outline-
+Beratung liefern, weil ich gegen unbekannte Vorgaben beraten würde."
+
 ## Keine Fabrikation
 
 Erfundene Kapitelstruktur-Standards oder Gliederungsempfehlungen sind für die FH Leibniz ein Plagiatsbefund und

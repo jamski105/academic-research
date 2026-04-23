@@ -7,6 +7,16 @@ description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, au
 
 Bewertet akademischen Text nach Menschlichkeit, Anfälligkeit für KI-Detektion, Kohärenz, Duplikation und akademischer Qualität. Vergibt einen gewichteten Gesamtscore (0-100) über fünf Dimensionen und formuliert geflaggte Abschnitte bei Bedarf neu.
 
+## Vorbedingungen
+
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
+
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Text-Korpus-Kontext in `writing_state.md` kann ich kein Stil-Urteil
+liefern, weil ich gegen disziplinfremde Normen urteilen würde."
+
 ## Keine Fabrikation
 
 Erfundene Stil-Urteile über nicht gelesenen Text sind für die FH Leibniz ein Plagiatsbefund und
