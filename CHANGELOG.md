@@ -4,6 +4,13 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [5.0.1] — 2026-04-23
+
+### Changed
+
+- `scripts/setup.sh` zu einem vollständigen Installer ausgebaut. `browser-use` CLI wird jetzt automatisch via `uv` oder `pipx` installiert (falls eines der beiden verfügbar ist) statt nur geprüft zu werden. Zusätzliche Status-Checks für den globalen `browser-use`-Claude-Skill und das `document-skills`-Plugin mit konkreten Install-Hinweisen bei Fehlen.
+- `commands/setup.md` ruft jetzt zentral `scripts/setup.sh` auf, statt die einzelnen Schritte inline zu duplizieren. Dokumentiert Ausgabe-Interpretation und Verhalten bei fehlenden Komponenten.
+
 ## [5.0.0] — 2026-04-23
 
 > **⚠️ BREAKING:** User müssen Playwright-Konfiguration entfernen und `browser-use`-CLI plus `document-skills` Plugin installieren. Siehe README Prerequisites.
