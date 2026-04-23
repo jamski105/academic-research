@@ -91,3 +91,28 @@ def merge_gitignore(cwd: Path) -> None:
 
     separator = "" if existing.endswith("\n") or not existing else "\n"
     target.write_text(existing + separator + "\n".join(missing) + "\n", encoding="utf-8")
+
+
+MEMORY_FILE_NAMES = ("academic_context.md", "literature_state.md", "writing_state.md")
+
+
+def _cwd_slug(cwd: Path) -> str:
+    """Claude replaces path separators with hyphens; match that convention."""
+    return str(cwd).replace("/", "-")
+
+
+def find_memory_files(home: Path, cwd: Path) -> list[Path]:
+    """Return memory-side context files that exist for this cwd, in a stable order."""
+    memory_dir = home / ".claude" / "projects" / _cwd_slug(cwd) / "memory"
+    if not memory_dir.exists():
+        return []
+    return [memory_dir / name for name in MEMORY_FILE_NAMES if (memory_dir / name).exists()]
+
+
+def copy_memory_files(sources: list[Path], cwd: Path) -> None:
+    """Copy each source into cwd under its basename. Never overwrite existing targets."""
+    for src in sources:
+        target = cwd / src.name
+        if target.exists():
+            continue
+        target.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")

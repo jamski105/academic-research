@@ -117,3 +117,53 @@ def test_merge_gitignore_preserves_order_of_existing(tmp_path, monkeypatch):
     lines = (tmp_path / ".gitignore").read_text().splitlines()
     assert lines[0] == "first"
     assert lines[1] == "second"
+
+
+def test_find_memory_files_returns_empty_when_absent(tmp_path):
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+    assert pb.find_memory_files(fake_home, tmp_path / "cwd") == []
+
+
+def test_find_memory_files_picks_up_context(tmp_path):
+    """Claude-memory layout: ~/.claude/projects/<cwd-slug>/memory/academic_context.md"""
+    fake_home = tmp_path / "home"
+    cwd = tmp_path / "thesis"
+    cwd.mkdir()
+    # Use the real slug function to construct the expected path
+    slug = pb._cwd_slug(cwd)
+    memory = fake_home / ".claude" / "projects" / slug / "memory"
+    memory.mkdir(parents=True)
+    (memory / "academic_context.md").write_text("from memory")
+    (memory / "literature_state.md").write_text("lit")
+
+    found = pb.find_memory_files(fake_home, cwd)
+    names = sorted(p.name for p in found)
+    assert names == ["academic_context.md", "literature_state.md"]
+
+
+def test_copy_memory_files_to_cwd(tmp_path):
+    cwd = tmp_path / "thesis"
+    cwd.mkdir()
+    source = tmp_path / "memory"
+    source.mkdir()
+    (source / "academic_context.md").write_text("CONTEXT")
+    (source / "literature_state.md").write_text("LIT")
+
+    pb.copy_memory_files([source / "academic_context.md", source / "literature_state.md"], cwd)
+    assert (cwd / "academic_context.md").read_text() == "CONTEXT"
+    assert (cwd / "literature_state.md").read_text() == "LIT"
+    # Source files untouched (backup)
+    assert (source / "academic_context.md").exists()
+
+
+def test_copy_memory_files_skips_existing(tmp_path):
+    cwd = tmp_path / "thesis"
+    cwd.mkdir()
+    (cwd / "academic_context.md").write_text("ALREADY HERE")
+    source = tmp_path / "memory"
+    source.mkdir()
+    (source / "academic_context.md").write_text("FROM MEMORY")
+
+    pb.copy_memory_files([source / "academic_context.md"], cwd)
+    assert (cwd / "academic_context.md").read_text() == "ALREADY HERE"
