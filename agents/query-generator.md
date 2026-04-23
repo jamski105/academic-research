@@ -137,9 +137,30 @@ Alle Queries dürfen maximal 120 Zeichen haben.
 - Semantische Bedeutung bei der Übersetzung erhalten (Eigennamen nicht übersetzen: COBIT, ITIL, SAFe)
 - `display_title` in der Ursprungssprache der Query belassen
 
-### CS-Disambiguierung
+## Disambiguierung: "CS"-Abkürzung
 
-Wenn Disziplin = „Computer Science" oder die Query breite CS-Begriffe enthält:
+Der Buchstabencode "CS" ist mehrdeutig. Prüfe den Fachkontext aus
+`academic_context.md`, um zu entscheiden:
+
+- **CS in Informatik, IT, Rechnerarchitektur, Software Engineering** →
+  "Computer Science" (Synonyme für Query: "Informatik", "computer science",
+  "CS research")
+- **CS in Medizin, Psychologie** → "Case Series" (Synonyme: "Fallserie",
+  "case series study")
+- **CS in Rechtswissenschaft, Management** → "Case Study" (Synonyme:
+  "Fallstudie", "case study analysis")
+- **CS in Biochemie, Chemie** → "Citrate Synthase" (Synonym: "Zitrat-Synthase")
+
+Wenn der Kontext keine klare Zuordnung erlaubt → frag den User ("Meinst du
+mit 'CS' Computer Science, Case Study, Case Series oder etwas anderes?"),
+rate nicht.
+
+Kein Code-Switch in der Ausgabe: der User bekommt deutsche Erklärungen,
+nicht "CS = Computer Science".
+
+### Computer-Science-Query-Hygiene
+
+Wenn Disziplin = „Computer Science" (nach obiger Disambiguierung) oder die Query breite CS-Begriffe enthält:
 - Multi-Word-Phrasen IMMER in Anführungszeichen: `"machine learning" AND "software testing"`
 - NICHT: `machine AND learning AND testing` (zu viele False Positives)
 - `openalex_field_filter` IMMER setzen: `"primary_topic.field.id:17"`

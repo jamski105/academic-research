@@ -208,7 +208,7 @@ Vor der Ausgabe folgendes verifizieren:
 ## Wichtige Regeln
 
 - Immer den tatsächlichen Arbeitstext vor dem Generieren lesen -- niemals Abstracts nur aus der Gliederung erzeugen, wenn Text verfügbar ist
-- Ist die Arbeit unvollständig, generiere ein vorläufiges Abstract und markiere es klar als vorläufig
+- Ist die Arbeit unvollständig, generiere ein vorläufiges Abstract und markiere es klar mit dem Default-String „Vorläufig, Validierung ausstehend"
 - Wortzahlgrenzen strikt einhalten -- Hochschulen setzen diese oft durch
 - Das Abstract muss als eigenständiger Text für sich stehen können
 - Niemals persönliche Meinungen oder wertende Sprache einfügen, die über die Aussagen der Arbeit hinausgehen
