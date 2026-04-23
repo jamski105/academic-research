@@ -4,6 +4,37 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [5.1.0] — 2026-04-23
+
+### Added
+
+- **Anti-Fabrikations-Klauseln** in allen 13 Skills (Block B). Skill-spezifische FH-Leibniz-Konsequenzen (Plagiatsbefund, Note 5 für Forschungsdesign, Täuschungsversuch nach Prüfungsordnung, nicht-abgabefähige Arbeit, nachträgliche Überarbeitung nach Abgabe, …) mit Cookbook-Stil (Begründung + Handlung, kein ALLCAPS-NEVER).
+- **Memory-Precondition-Checks** in 12 Skills (Block E, außer `academic-context` selbst). Harter Abbruch, wenn `academic_context.md`/`literature_state.md` fehlt und der User den `academic-context`-Trigger ablehnt — mit skill-spezifischer Abbruch-Begründung.
+- **Few-Shot-Paare (Gut/Schlecht mit Grund-Annotation)** in 4 Skills (Block D): `research-question-refiner` (4 Template-Typen), `abstract-generator` (4 IMRaD-Abschnitte), `title-generator` (3 Stile), `chapter-writer` (3 Kapiteltypen).
+- **Skill-Abgrenzung** zwischen `literature-gap-analysis` und `source-quality-audit` (Block F). Jeweils ein `## Abgrenzung`-Abschnitt mit Kriterien-Liste und Delegations-Hinweis.
+- Smoke-Test `tests/test_skills_manifest.py` — 51 parametrisierte Tests für Frontmatter-Validität, Sektions-Vollständigkeit und Umlaut-Paare.
+
+### Changed
+
+- **Sprache einheitlich Deutsch** in allen 13 Skills, 5 Commands, 3 Agents (Block A). Englisch bleibt nur in Code, Pfaden, JSON-Keys, Frontmatter-Keys, Code-Kommentaren und Shell-Kommandos. Englische Fachbegriffe wie Abstract, Peer-Review, IMRaD, Cluster bleiben erhalten.
+- **Numerische Schwellen** in 5 Skills (Block C):
+  - `advisor`: 7-Kriterien-PASS/FAIL-Checkliste (Forschungsfrage ≤ 25 Wörter, ≥ 3 Kapitel, ≥ 15 Quellen, …)
+  - `methodology-advisor`: 4-Dimensionen-Scoring-Matrix (Skala 1–5) plus Empfehlungs-Schwellen (≥ 16 / 10–15 / < 10)
+  - `submission-checker`: 8-Punkte-FH-Leibniz-Formalia-Check (Seitenränder 2,5 cm, Schrift Times 12 pt/Arial 11 pt, Zeilenabstand 1,5, …)
+  - `style-evaluator`: 5-Metriken-Fallback-Rubrik (Satzlänge 15–25 Wörter, Passiv < 30 %, Nominalstil < 40 %, Füllwörter < 5 %, 0 Code-Switches)
+  - `literature-gap-analysis`: Coverage ≥ 80 %, Diversity ≥ 5 Autor*innen-Gruppen, Recency ≥ 40 % ab 2020
+- **Umlaut-Varianten** in allen 13 Skill-Trigger-Descriptions (Block G): `"Quellenqualität / Quellenqualitaet"`, `"prüfen / pruefen"`, `"Titelvorschläge / Titelvorschlaege"` etc.
+
+### Fixed
+
+- `agents/quote-extractor.md`: robusterer Pre-Execution-Guard (PDF-Wortzahl ≥ 500, Fehler-Marker-Check `[FEHLER]`/`extraction failed`/`<scanned image>`, Mindest-Seitenzahl ≥ 2) (Block H.2).
+- `agents/query-generator.md`: CS-Disambiguierung mit 4 Fachkontext-Varianten (Informatik / Medizin / Recht / Biochemie), Code-Switch aus den Anweisungen entfernt (Block H.3).
+- `skills/abstract-generator/SKILL.md`: Default-String `"Preliminary, pending validation"` → `"Vorläufig, Validierung ausstehend"` (Block H.6).
+
+### Migration
+
+Keine Migration nötig. Skills laufen sofort nach Update weiter, werden nur präziser und deutscher. `academic-context`-Skill bleibt rückwärtskompatibel mit älterem Memory-Format.
+
 ## [5.0.1] — 2026-04-23
 
 ### Changed
