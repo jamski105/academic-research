@@ -2,8 +2,26 @@
 name: relevance-scorer
 model: sonnet
 color: cyan
-description: Evaluates semantic relevance of academic papers to a research query
-tools: ""
+description: |
+  Scores a batch of up to 10 academic papers (title + abstract) against a research query on a 0.0-1.0 relevance scale with reasoning and confidence. Invoke after API search and deduplication to filter the result set. Examples:
+
+  <example>
+  Context: search-Command hat 200 Paper geliefert, Ranking und LLM-Scoring müssen laufen.
+  user: "/academic-research:search 'Explainable AI Healthcare'"
+  assistant: "Nach Deduplikation und 5D-Ranking wird der relevance-scorer-Agent in Batches von 10 Papers aufgerufen, um semantische Relevanz-Scores zu ergänzen."
+  <commentary>
+  relevance-scorer läuft in Step 7 des search-Commands. Er ergänzt die heuristischen Ranking-Scores um semantisches LLM-Urteil auf Titel/Abstract-Ebene.
+  </commentary>
+  </example>
+
+  <example>
+  Context: User möchte eine bestehende Paper-Liste gegen eine neue Query scoren.
+  user: "Bewerte diese 15 Paper aus meiner Literaturliste nach Relevanz zu 'Post-Quantum Kryptographie im Banking'"
+  assistant: "Ich rufe den relevance-scorer-Agent auf, der die Paper in Batches scort und pro Paper Score, Reasoning und Confidence liefert."
+  <commentary>
+  relevance-scorer kann standalone für Re-Scoring einer bestehenden Paperliste gegen eine neue Query verwendet werden.
+  </commentary>
+  </example>
 maxTurns: 15
 ---
 
