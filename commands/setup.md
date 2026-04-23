@@ -14,7 +14,7 @@ Vollständiges Setup über das zentrale Installationsskript. Ein Aufruf, alle Ab
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh
 ```
 
-Das Skript übernimmt in sechs Schritten:
+Das Skript übernimmt in sieben Schritten:
 
 1. Legt `~/.academic-research/{sessions,pdfs,venv}` an.
 2. Erstellt die Python-venv und installiert `httpx`, `PyPDF2`, `pyyaml` (aus `scripts/requirements.txt`).
@@ -22,6 +22,7 @@ Das Skript übernimmt in sechs Schritten:
 4. Prüft, ob der globale `browser-use` Claude-Skill unter `~/.claude/skills/browser-use/` liegt.
 5. Prüft, ob das `document-skills` Plugin im Plugin-Cache vorhanden ist. Falls nicht: zeigt den exakten `/plugin install`-Befehl an — dieser Schritt ist **nicht automatisierbar**, da Plugins in Claude Code keine anderen Plugins auto-installieren dürfen.
 6. Schreibt die Claude-Code-Permissions über `scripts/configure_permissions.py`.
+7. **Projekt-Bootstrap (Auto-Detect).** Wenn das aktuelle Verzeichnis ein leerer Ordner ist, fragt `/setup` `"Hier einen Facharbeit-Arbeitsordner initialisieren?"`. Bei `y` werden `academic_context.md` (Stub), `CLAUDE.md`, `.gitignore`, sowie `kapitel/`, `literatur/`, `pdfs/` angelegt. In einem bestehenden Facharbeit-Ordner (mit `academic_context.md`) werden nur fehlende Artefakte nachgezogen — idempotent, keine Rückfrage. In Code-Repos (erkannt an `package.json`, `pyproject.toml`, …) oder nicht-leeren fremden Verzeichnissen: keine Aktion. Findet der Bootstrap zusätzlich bestehenden Kontext in Claude-Memory, bietet er an, ihn einmalig ins Projekt zu kopieren; die Memory-Dateien bleiben als Backup liegen.
 
 ## Interpretation der Ausgabe
 
@@ -32,6 +33,7 @@ Das Skript übernimmt in sechs Schritten:
 | ✅ browser-use Claude-Skill: vorhanden | Skill unter `~/.claude/skills/browser-use/` |
 | ✅ document-skills Plugin: vorhanden | Plugin-Cache-Pfad existiert |
 | ⚠️ … | siehe Hinweistext direkt unter dem Marker |
+| ✅ Facharbeit-Arbeitsordner initialisiert | Projekt-Struktur wurde im aktuellen Verzeichnis angelegt |
 
 ## Was passiert, wenn etwas fehlt
 

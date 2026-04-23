@@ -116,3 +116,55 @@ def copy_memory_files(sources: list[Path], cwd: Path) -> None:
         if target.exists():
             continue
         target.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+
+
+def _prompt_yes_no(question: str, default_yes: bool = False) -> bool:
+    """Interactive y/n prompt. Returns False on non-interactive stdin."""
+    import sys
+    if not sys.stdin.isatty():
+        return default_yes
+    suffix = "[Y/n]" if default_yes else "[y/N]"
+    answer = input(f"{question} {suffix} ").strip().lower()
+    if not answer:
+        return default_yes
+    return answer in ("y", "yes", "j", "ja")
+
+
+def main() -> None:
+    cwd = Path.cwd()
+    home = Path.home()
+    mode = detect_mode(cwd)
+
+    if mode == "code_repo" or mode == "skip":
+        return
+
+    if mode == "idempotent":
+        # Facharbeit-Ordner bereits vorhanden — fehlende Artefakte nachziehen, keine Frage
+        create_structure(cwd, stub=False)
+        merge_gitignore(cwd)
+        print(f"✅ Facharbeit-Arbeitsordner: Artefakte aktualisiert ({cwd})")
+        return
+
+    # mode == "fresh"
+    if not _prompt_yes_no("Hier einen Facharbeit-Arbeitsordner initialisieren?", default_yes=False):
+        return
+
+    memory_files = find_memory_files(home, cwd)
+    do_migrate = False
+    if memory_files:
+        names = ", ".join(p.name for p in memory_files)
+        do_migrate = _prompt_yes_no(
+            f"Bestehender Kontext in Claude-Memory gefunden ({names}). Kopieren?",
+            default_yes=True,
+        )
+
+    create_structure(cwd, stub=not do_migrate)
+    if do_migrate:
+        copy_memory_files(memory_files, cwd)
+        print(f"✅ Memory-Kontext kopiert nach {cwd} (Original bleibt als Backup)")
+    merge_gitignore(cwd)
+    print(f"✅ Facharbeit-Arbeitsordner initialisiert: {cwd}")
+
+
+if __name__ == "__main__":
+    main()
