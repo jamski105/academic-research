@@ -24,6 +24,12 @@ Stil unentdeckt und untergraben den Wert des Stil-Checks. Arbeite ausschließlic
 mit dem eingereichten User-Text und den Metriken aus `writing_state.md`.
 Fehlen Daten: frag den User, rate nicht.
 
+## Abgrenzung
+
+Bewertet Stil-Qualität ohne Quellenbezug (Satzlänge, Passiv-Quote, Nominalstil,
+KI-Detektions-Muster, Füllwörter-Dichte).
+Für Ähnlichkeit zu konkreten Quellen → `plagiarism-check`.
+
 ## Fallback-Rubrik (ohne Script)
 
 Wenn kein externes Stil-Analyse-Script verfügbar ist, prüfe manuell gegen

@@ -25,6 +25,13 @@ Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite
 ausschließlich mit `academic_context.md` und `literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
 
+## Abgrenzung
+
+Verfeinert bestehende Forschungsfragen (zu eng, zu weit, nicht-falsifizierbar,
+mehrdimensional).
+Für Erstanlage von Forschungsfrage, Thema oder Methodik → `academic-context`.
+Für Einbettung in die Gliederung → `advisor`.
+
 ## Few-Shot-Beispiele
 
 ### Template: Zu eng

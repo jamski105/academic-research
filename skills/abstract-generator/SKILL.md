@@ -25,6 +25,12 @@ leistung. Arbeite ausschließlich mit Inhalten aus `writing_state.md`
 (Arbeitstext) und `academic_context.md` (Forschungsfrage, Methodik). Fehlen
 Daten: frag den User, rate nicht.
 
+## Abgrenzung
+
+Generiert Abstract, Zusammenfassung, Keywords, Management Summary für die
+fertige Arbeit.
+Für den Arbeitstitel selbst → `title-generator`.
+
 ## Few-Shot-Beispiele (IMRaD)
 
 ### Introduction
