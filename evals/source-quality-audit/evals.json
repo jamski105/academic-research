@@ -1,0 +1,9 @@
+{
+  "component": "source-quality-audit",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "sq-01", "input": "Bewerte: Paper 'DevOps Governance', Journal 'IEEE Software', Autor Smith 2023. Ist das peer-reviewed?", "expected": {"type": "substring", "value": "peer"}, "mode": "both"},
+    {"id": "sq-02", "input": "Ist das Journal 'International Journal of Advanced Science' ein Predatory Journal?", "expected": {"type": "regex", "value": "(Predatory|verdaechtig|Beall|prestige)"}, "mode": "with_skill"},
+    {"id": "sq-03", "input": "Welchen Impact Factor hat IEEE Software?", "expected": {"type": "regex", "value": "(Impact|Quartil|JCR)"}, "mode": "with_skill"}
+  ]
+}

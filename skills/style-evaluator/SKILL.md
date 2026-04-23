@@ -1,6 +1,6 @@
 ---
 name: Style Evaluator
-description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, auf KI-Detektions-Muster prüfen oder seinen akademischen Stil verbessern möchte. Triggers on "Text prüfen / Text pruefen", "Stil-Check", "KI-Erkennung", "Text verbessern", "Qualitätskontrolle / Qualitaetskontrolle", "menschlich klingen", "style check", "AI detection", "text quality", "improve writing", "human-like", oder wenn Text zu künstlich oder schablonenhaft klingt.
+description: Use this skill when the user wants to evaluate academic writing style (without source comparison). Triggers on "Stil prüfen / Stil pruefen", "Schreibstil", "Satzlänge / Satzlaenge", "Passiv-Quote", "Nominalstil", "style evaluation", or when a chapter draft needs stylistic review. Bewertet Stil-Qualität ohne Quellenbezug; Für Textähnlichkeit → `plagiarism-check`.
 ---
 
 # Stil-Evaluator
@@ -51,6 +51,17 @@ Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL.
 - Der User befürchtet, dass der Text zu KI-generiert klingt
 - Der User bittet um Textverbesserung oder natürlicheres Schreiben
 - Ein anderer Skill (z. B. Chapter Writer) fordert ein Post-Write-Qualitätsgate an
+
+## Variant-Selector
+
+Lies `academic_context.md`, Feld `Sprache`:
+
+| Sprache | Referenz-Datei |
+|---------|----------------|
+| Deutsch (Default) | `references/academic-de.md` |
+| English | `references/academic-en.md` |
+
+Fehlt das Feld → `academic-de.md` als Default (Plugin-Default ist Deutsch). Unbekannte Sprache → Rueckfrage.
 
 ## Memory-Dateien
 

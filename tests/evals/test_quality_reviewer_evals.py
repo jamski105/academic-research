@@ -1,0 +1,28 @@
+"""Evals fuer quality-reviewer-Agent."""
+import json
+from pathlib import Path
+
+import pytest
+
+from tests.evals.eval_runner import (
+    EVALS_ROOT,
+    call_claude,
+    check_expected,
+    load_agent_content,
+)
+
+_EVALS_PATH: Path = EVALS_ROOT / "quality-reviewer" / "evals.json"
+pytestmark = pytest.mark.skipif(
+    not _EVALS_PATH.exists(),
+    reason=f"evals-Datei fehlt: {_EVALS_PATH}",
+)
+EVALS: dict = json.loads(_EVALS_PATH.read_text()) if _EVALS_PATH.exists() else {"prompts": []}
+
+
+@pytest.mark.parametrize("prompt", EVALS["prompts"], ids=lambda p: p["id"])
+def test_quality_reviewer_eval(prompt):
+    system = load_agent_content("quality-reviewer")
+    output = call_claude(system=system, user=prompt["input"])
+    assert check_expected(output, prompt["expected"]), (
+        f"{prompt['id']}: expected={prompt['expected']} actual={output[:200]}"
+    )

@@ -102,3 +102,27 @@ Pro Batch bis zu 10 Papers verarbeiten.
 - **Fehlendes Abstract**: Ist `abstract` leer oder null, Score nur auf Titelbasis und `confidence: "low"` setzen
 - Ähnliche Papers → ähnliche Scores (innerhalb ± 0.1)
 - Unterschiedliche Formulierungen, Abkürzungen oder Schreibvarianten NICHT bestrafen
+
+---
+
+## Cache-Strategie (Prompt-Caching)
+
+Beim Batch-Scoring werden oft 10+ Papers in Folge verarbeitet. Der System-Prompt (Rolle, Bewertungsskala, Leitlinien) ist dabei konstant — der User-Input variiert nur im `papers[]`-Array.
+
+**Implementierung im API-Call:**
+
+```python
+client.messages.create(
+    model="claude-sonnet-4-6",
+    system=[
+        {
+            "type": "text",
+            "text": "<Agent-System-Prompt aus dieser Datei>",
+            "cache_control": {"type": "ephemeral"},
+        }
+    ],
+    messages=[{"role": "user", "content": json.dumps(batch_input)}],
+)
+```
+
+**Messbarer Nutzen:** Nach dem 2. Batch-Call liefert die API `cache_read_input_tokens > 0`. Token-Ersparnis skaliert linear mit Batch-Anzahl.

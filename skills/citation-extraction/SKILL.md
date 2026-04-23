@@ -1,6 +1,6 @@
 ---
 name: Citation Extraction
-description: Dieser Skill wird genutzt, wenn der User Zitate und Quellenangaben aus akademischen PDFs extrahieren, formatieren oder verwalten möchte. Triggers on "Zitate finden", "zitieren", "Quellenarbeit", "Belege suchen", "citations", "Zitate extrahieren", "quote extraction", "Literaturverzeichnis prüfen / Literaturverzeichnis pruefen", "bibliography", oder wenn ein anderer Skill feststellt, dass Zitatdaten für ein Kapitel gebraucht werden.
+description: Use this skill when the user wants to extract or format citations. Triggers on "Zitat extrahieren", "Zitation formatieren / Zitation nach APA", "APA7 Eintrag", "Harvard-Zitat", "DIN 1505-2", "Chicago Author-Date", "Literaturverzeichnis prüfen / Literaturverzeichnis pruefen", "bibliographic entry", or when a chapter draft needs citation rendering. Extrahiert wörtliche Zitate und formatiert bibliografische Einträge; Für Kapitel-Prosa → `chapter-writer`.
 ---
 
 # Zitat-Extraktion
@@ -37,6 +37,34 @@ Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 - Der User braucht eine Bibliografie oder ein Literaturverzeichnis
 - Der User sucht Belege für eine konkrete Aussage oder ein bestimmtes Kapitel
 - Der User möchte Zitate nach Kapitel oder Thema ordnen
+
+## Variant-Selector
+
+Lies `academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Variant-Datei:
+
+| Zitationsstil | Referenz-Datei |
+|---------------|----------------|
+| APA7 (Default) | `references/apa.md` |
+| Harvard | `references/harvard.md` |
+| Chicago | `references/chicago.md` |
+| DIN 1505-2 | `references/din1505.md` |
+
+Ist `Zitationsstil` leer → `apa.md` als Default. Ist der Wert unbekannt → Rueckfrage an User mit Varianten-Liste.
+
+**Wie laden:** `Read skills/citation-extraction/references/<variant>.md` — die Datei enthaelt alle Formatierungs-Regeln fuer Inline-Zitate und Literaturverzeichnis.
+
+## Citations-API
+
+Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der Claude-API statt Prompt-basierter Zitation. Vorteil: Zitate sind seitengenau, die API erzwingt die Quellenbindung.
+
+**Wann verwenden:**
+- Mindestens 1 PDF im Session-Pfad
+- Zitierstil-Konversion aus echtem Quelltext (nicht aus Metadaten)
+
+**Wann nicht:**
+- Reiner Metadaten-zu-Zitat-Workflow (User gibt Autor/Jahr/Titel) → weiter mit Prompt-basierter Formatierung nach Variant-References.
+
+**Output-Integration:** Die `citations[]`-Array-Eintraege der API enthalten `start_page_number` / `end_page_number` direkt — uebernimm sie in die Seitenangabe des Zitats (`S. X–Y`).
 
 ## Memory-Dateien
 

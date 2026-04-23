@@ -1,6 +1,6 @@
 ---
 name: Advisor
-description: Dieser Skill wird genutzt, wenn der User seine Gliederung aufbauen oder verfeinern, ein Exposé erstellen oder die Kapitelstruktur planen möchte. Triggers on "Gliederung", "Outline", "Exposé / Expose", "Struktur", "Kapitelplanung", "thesis structure", "chapter planning", "Aufbau der Arbeit", "Gliederung prüfen / Gliederung pruefen", oder wenn der User Hilfe braucht, seine akademische Arbeit in eine kohärente Struktur zu bringen.
+description: Use this skill when the user needs structural feedback on their outline, argumentation flow, or exposé. Triggers on "Gliederung prüfen / Gliederung pruefen", "Argumentationskette", "Kapitel-Feedback", "Exposé feedback", "Exposee-Bewertung", "outline review", or when another skill detects structural weaknesses. Baut die Gliederung und den Argumentations-Fluss; Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
 ---
 
 # Advisor — Gliederungs- und Exposé-Builder
@@ -146,6 +146,28 @@ Wenn bereits eine Gliederung existiert und der User Änderungen wünscht:
 - **Umbenennen** — Titel aktualisieren, prüfen ob er noch zum Inhalt passt
 
 Nach Änderungen immer die komplette aktualisierte Gliederung zeigen und bestätigen lassen.
+
+## Qualitaets-Review vor finalem Output
+
+Nach der Erstellung des Gliederungs-Feedbacks triggere den `quality-reviewer`-Agent:
+
+```
+Agent(
+  subagent_type="quality-reviewer",
+  prompt={
+    "content": "<Feedback-Text>",
+    "criteria": [
+      {"name": "Forschungsfrage Laenge", "threshold": "<= 25 Woerter", "metric": "word_count"},
+      {"name": "Kapitelanzahl", "threshold": ">= 3", "metric": "count"},
+      {"name": "Quellenzahl", "threshold": ">= 15", "metric": "count"},
+      {"name": "Alle 7 advisor-Kriterien angesprochen", "threshold": "7/7", "metric": "coverage"}
+    ],
+    "context": {"component": "advisor", "iteration": <N>}
+  }
+)
+```
+
+Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
 
 ## Wichtige Regeln
 

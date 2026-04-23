@@ -395,6 +395,23 @@ academic-research/
 
 Bearbeite `config/scoring.yaml` — Gewichtungen und Cluster-Schwellwerte sind dort konfigurierbar.
 
+### Evals (ab v5.2.0)
+
+Pro Skill und Agent gibt es eine Evals-Suite unter `tests/evals/` mit zugehörigen JSON-Daten in `evals/<component>/`.
+
+**Lokaler Lauf:**
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+~/.academic-research/venv/bin/python -m pytest tests/evals/ -v
+```
+
+**Quality-Evals** vergleichen `with_skill` vs `without_skill` und erwarten ≥ 20 Prozentpunkte PASS-Rate-Delta (sonst rechtfertigt das Skill seine Existenz nicht).
+
+**Trigger-Evals** prüfen Undertriggering (Recall ≥ 85 %) und Overtriggering (FPR ≤ 10 %) mit 20 Prompts pro Skill.
+
+**Kein CI-Trigger** — Evals laufen lokal vor jedem Release, Reports werden manuell unter `docs/evals/` committet (API-Kosten vermeiden).
+
 ## Troubleshooting
 
 | Problem | Lösung |

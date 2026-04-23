@@ -1,6 +1,6 @@
 ---
 name: Chapter Writer
-description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder einen Abschnitt schreiben, entwerfen oder formulieren möchte. Triggers on "Kapitel schreiben", "verfassen", "entwerfen", "Abschnitt schreiben", "write chapter", "draft section", "Kapitel formulieren", "Textarbeit", "Kapitelentwurf prüfen / Kapitelentwurf pruefen", oder wenn der User Hilfe beim Verfassen akademischer Prosa für einen konkreten Teil seiner Arbeit braucht.
+description: Use this skill when the user wants to write academic chapter prose. Triggers on "Kapitel schreiben", "Text verfassen", "Absatz zu Thema X", "chapter prose", "Einleitung schreiben", "Diskussions-Absatz", "Übergang zwischen Kapiteln / Uebergang zwischen Kapiteln", "übergänge formulieren / uebergaenge formulieren", or when a structural step produces prose. Schreibt Kapitel-Prosa mit Quellen-Einbindung; Für Zitat-Extraktion → `citation-extraction`.
 ---
 
 # Kapitel-Autor
@@ -202,6 +202,41 @@ Den theoretischen Rahmen auf die Daten anwenden. Befunde entlang der Unterfragen
 ### Fazit
 
 Befunde pro Unterfrage zusammenfassen. Die Hauptfrage beantworten. Limitationen und zukünftige Forschung diskutieren. Keine neuen Quellen.
+
+## Zitat-Einbindung via Citations-API
+
+Beim Einweben von Zitaten in Kapitel-Prosa: Quellen-PDFs im `documents`-Parameter an Claude uebergeben, damit die API die Quellenbindung erzwingt. Jedes Paraphrase-Segment mit einem `citations[]`-Eintrag nachweisbar.
+
+**Workflow:**
+1. `literature_state.md` lesen — welche PDFs liegen im Session-Pfad?
+2. API-Call mit `documents[]`-Anhaengen, `citations.enabled: true`
+3. Output-Text enthaelt `citations[]`-Bloecke — diese im Kapitel-Text als Inline-Zitate nach Variant-Zitierstil (aus `academic_context.md`) rendern.
+
+**Fallback:** Sind keine PDFs verfuegbar (nur Metadaten), nutze den herkoemmlichen Prompt-Workflow aus dem vorangehenden Abschnitt.
+
+## Qualitaets-Review vor finalem Output
+
+Nach der Generierung des Kapitel-Entwurfs triggere den `quality-reviewer`-Agent:
+
+```
+Agent(
+  subagent_type="quality-reviewer",
+  prompt={
+    "content": "<Entwurfs-Text>",
+    "criteria": [
+      {"name": "Satzlaenge Median", "threshold": "15-25 Woerter", "metric": "median"},
+      {"name": "Passiv-Quote", "threshold": "< 30%", "metric": "percentage"},
+      {"name": "Nominalstil", "threshold": "< 40%", "metric": "percentage"},
+      {"name": "Quellen pro 1000 Woerter", "threshold": ">= 5", "metric": "count_per_1000"}
+    ],
+    "context": {"component": "chapter-writer", "iteration": <N>}
+  }
+)
+```
+
+**Bei PASS:** Output an User liefern.
+**Bei REVISE:** Empfehlungen anwenden, erneut generieren, iteration += 1.
+**Bei iteration >= 2:** PASS-with-warnings akzeptieren und die verbleibenden Warnungen dem User transparent machen.
 
 ## Wichtige Regeln
 

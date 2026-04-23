@@ -1,0 +1,8 @@
+{
+  "component": "plagiarism-check",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "pc-01", "input": "Vergleiche meinen Text X mit Quelle Y und berechne N-Gramm-Overlap.", "expected": {"type": "substring", "value": "Overlap"}, "mode": "with_skill"},
+    {"id": "pc-02", "input": "Ist dieser Satz zu quellennah: 'Die Governance erfolgt durch definierte Policies'?", "expected": {"type": "regex", "value": "(quellennah|paraphras)"}, "mode": "both"}
+  ]
+}

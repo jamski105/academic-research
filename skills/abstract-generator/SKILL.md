@@ -1,6 +1,6 @@
 ---
 name: Abstract Generator
-description: Dieser Skill wird genutzt, wenn der User ein Abstract, eine Zusammenfassung, eine Management Summary oder eine Keyword-Liste für seine akademische Arbeit braucht. Triggers on "Abstract schreiben", "Zusammenfassung", "Keywords", "Management Summary", "Abstract generieren", "paper summary", "Schlagwörter / Schlagwoerter", "executive summary", oder wenn die Arbeit fertig ist und Front-Matter-Texte benötigt werden.
+description: Use this skill when the user wants to generate an abstract or keyword list. Triggers on "Abstract generieren", "Keywords vorschlagen", "Zusammenfassung der Arbeit", "IMRaD-Abstract", "Kurzfassung / Kurzzusammenfassung", "abstract 150 Wörter / abstract 150 Woerter", or when submission requires an abstract section. Generiert Abstract, Keywords und Zusammenfassung; Für Titel → `title-generator`.
 ---
 
 # Abstract-Generator
@@ -211,6 +211,27 @@ Vor der Ausgabe folgendes verifizieren:
 - [ ] Englisches Abstract nutzt korrekte englische Wissenschaftskonventionen (keine Germanismen)
 - [ ] Keywords nicht zu generisch ("Management", "Unternehmen") oder zu eng
 - [ ] Management Summary auch ohne Lektüre der Arbeit verständlich
+
+## Qualitaets-Review vor finalem Output
+
+Nach der Generierung des Abstracts triggere den `quality-reviewer`-Agent:
+
+```
+Agent(
+  subagent_type="quality-reviewer",
+  prompt={
+    "content": "<Abstract-Text>",
+    "criteria": [
+      {"name": "Wortzahl", "threshold": "150-250", "metric": "word_count"},
+      {"name": "IMRaD-Struktur", "threshold": "vorhanden", "metric": "section_presence"},
+      {"name": "Keyword-Dichte", "threshold": "2-5% der Woerter", "metric": "percentage"}
+    ],
+    "context": {"component": "abstract-generator", "iteration": <N>}
+  }
+)
+```
+
+Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
 
 ## Wichtige Regeln
 

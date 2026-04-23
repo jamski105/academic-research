@@ -1,0 +1,5 @@
+{
+  "component": "plagiarism-check",
+  "should_trigger": ["Plagiat pruefen", "Textaehnlichkeit zu Smith 2023", "Similarity-Check fuer Kapitel 2", "N-Gramm-Overlap berechnen", "Quellennahe pruefen", "Plagiarism scan", "Sind Passagen zu quellennah?", "Pruefe auf unzitiertes Paraphrasieren", "Textnaehe-Report", "Overlap-Analyse"],
+  "should_not_trigger": ["Stilbewertung", "Passiv-Quote pruefen", "Zitat formatieren", "Forschungsfrage schaerfen", "Gliederung", "Methodik", "Abstract", "Titel", "Paper suchen", "Formatierung"]
+}

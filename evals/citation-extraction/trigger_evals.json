@@ -1,0 +1,5 @@
+{
+  "component": "citation-extraction",
+  "should_trigger": ["Zitat nach APA7 formatieren", "Harvard-Zitation bitte", "Erzeuge einen bibliografischen Eintrag", "DIN 1505-2 Format", "Chicago Author-Date fuer dieses Paper", "Zitat extrahieren aus PDF", "APA7 Eintrag fuer Smith 2023", "In-text citation erzeugen", "Bibliographic entry fuer dieses Buch", "Konvertiere Quelle in APA"],
+  "should_not_trigger": ["Schreib das Theorie-Kapitel", "Gliederung pruefen", "Pruefe Quellenqualitaet", "Suche Paper zu Zero Trust", "Abstract generieren", "Titelvorschlag bitte", "Stilbewertung Kapitel 2", "Plagiat-Check", "Welche Methode?", "Forschungsfrage schaerfen"]
+}

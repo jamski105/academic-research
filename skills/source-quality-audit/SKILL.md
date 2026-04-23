@@ -1,6 +1,6 @@
 ---
 name: Source Quality Audit
-description: Dieser Skill wird genutzt, wenn der User Qualität, Balance und Angemessenheit seiner Literaturbasis bewerten möchte. Triggers on "Quellenqualität / Quellenqualitaet", "Quellen-Check", "Literaturqualität prüfen / Literaturqualitaet pruefen", "Source audit", "Quellenbewertung", "literature quality", "Quellenmix", "peer-reviewed Anteil", oder wenn der User unsicher ist, ob seine Quellen für die Abgabe ausreichen.
+description: Use this skill when the user wants to verify individual source quality (peer-review, impact, methodology). Triggers on "Quellenqualität / Quellenqualitaet", "Peer-Review prüfen / Peer-Review pruefen", "source quality", "Predatory Journal", "Impact der Quelle", "Methodik der Quelle", or when another skill flags weak sources. Bewertet Einzelquellen; Für Korpus-Vollständigkeit → `literature-gap-analysis`.
 ---
 
 # Quellenqualitäts-Audit

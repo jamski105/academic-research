@@ -1,0 +1,5 @@
+{
+  "component": "abstract-generator",
+  "should_trigger": ["Abstract fuer meine Thesis erzeugen", "IMRaD-Abstract bitte", "Keywords vorschlagen", "Kurzfassung meiner Arbeit", "Abstract 200 Woerter", "Erzeuge Zusammenfassung", "Keyword-Liste fuer die Arbeit", "Abstract und Keywords generieren", "150-Worte-Abstract", "Deutsches und englisches Abstract"],
+  "should_not_trigger": ["Titel vorschlagen", "Gliederung pruefen", "Forschungsfrage schaerfen", "Kapitel schreiben", "Zitat formatieren", "Methodik waehlen", "Plagiat pruefen", "Paper suchen", "Formatierung pruefen", "Literaturluecken"]
+}
