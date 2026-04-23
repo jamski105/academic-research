@@ -71,10 +71,10 @@ Für Abstract, Keywords, Management Summary → `abstract-generator`.
 - Der User hat einen Entwurf fertig und braucht einen finalen Titel
 - Der User sammelt in der Planungsphase Thesis-Titel-Ideen
 
-## Memory-Dateien
+## Kontext-Dateien
 
-- Lies `academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage, Methodik, Sprache und Hochschulanforderungen
-- Lies `writing_state.md` für abgeschlossene Kapitel und während des Schreibens identifizierte Kernargumente
+- Lies `./academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage, Methodik, Sprache und Hochschulanforderungen
+- Lies `./writing_state.md` für abgeschlossene Kapitel und während des Schreibens identifizierte Kernargumente
 
 ## Analyse-Phase
 
