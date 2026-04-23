@@ -48,8 +48,10 @@ SUBDIRS = ("kapitel", "literatur", "pdfs")
 def create_structure(cwd: Path, stub: bool) -> None:
     """Lay down the project skeleton, skipping files that already exist.
 
-    If stub=True, also copy academic_context.stub.md as academic_context.md
-    (only if the target file doesn't exist — idempotent).
+    Idempotent — never overwrites. With stub=True, copies academic_context.stub.md
+    as academic_context.md (only if absent). With stub=False (idempotent re-run
+    path from main), only nachzieht CLAUDE.md and the subdirs. Always ensures
+    kapitel/, literatur/, pdfs/ exist with .gitkeep.
     """
     if stub and not (cwd / "academic_context.md").exists():
         stub_src = TEMPLATES_DIR / "academic_context.stub.md"
@@ -60,7 +62,7 @@ def create_structure(cwd: Path, stub: bool) -> None:
         claude_md.write_text((TEMPLATES_DIR / "CLAUDE.md").read_text(encoding="utf-8"))
 
     for sub in SUBDIRS:
-        (cwd / sub).mkdir(exist_ok=True)
+        (cwd / sub).mkdir(parents=True, exist_ok=True)
         gitkeep = cwd / sub / ".gitkeep"
         if not gitkeep.exists():
             gitkeep.touch()

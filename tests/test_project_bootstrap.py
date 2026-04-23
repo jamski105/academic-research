@@ -78,3 +78,13 @@ def test_create_structure_no_stub_when_stub_false(tmp_path, monkeypatch):
     pb.create_structure(tmp_path, stub=False)
     assert not (tmp_path / "academic_context.md").exists()
     assert (tmp_path / "CLAUDE.md").exists()
+
+
+def test_create_structure_second_run_is_noop(tmp_path, monkeypatch):
+    """Calling create_structure twice must not error or change anything."""
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    pb.create_structure(tmp_path, stub=True)
+    stamp_before = (tmp_path / "academic_context.md").stat().st_mtime_ns
+    pb.create_structure(tmp_path, stub=True)
+    stamp_after = (tmp_path / "academic_context.md").stat().st_mtime_ns
+    assert stamp_before == stamp_after
