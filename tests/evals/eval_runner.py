@@ -79,18 +79,26 @@ def check_expected(output: str, expected: dict[str, Any]) -> bool:
 def _jsonpath_check(obj: Any, expected: dict[str, Any]) -> bool:
     path = expected.get("path", "$")
     check = expected.get("check", "exists")
-    # Minimaler JSONPath: $.a.b[0].c - kein Full-Feature JSONPath noetig
+    # Minimaler JSONPath: $.a.b[0].c - kein Full-Feature JSONPath noetig.
+    # Akzeptiert optionales $-Prefix (wie im Schema dokumentiert).
+    normalized = path.lstrip("$") if path != "$" else ""
     current: Any = obj
-    for seg in re.findall(r"\.(\w+)|\[(\d+)\]", path):
-        key, idx = seg
-        if key:
-            if not isinstance(current, dict) or key not in current:
-                return False
-            current = current[key]
-        elif idx:
-            if not isinstance(current, list) or int(idx) >= len(current):
-                return False
-            current = current[int(idx)]
+    if normalized:
+        segments = re.findall(r"\.(\w+)|\[(\d+)\]", normalized)
+        # Ohne Segmente, aber nicht-leerer Path = Syntaxfehler (z.B. "a.b" ohne fuehrendes .)
+        if not segments:
+            raise ValueError(
+                f"Ungueltiger JSONPath: {path!r} - erwartet '$', '$.key' oder '.key'"
+            )
+        for key, idx in segments:
+            if key:
+                if not isinstance(current, dict) or key not in current:
+                    return False
+                current = current[key]
+            elif idx:
+                if not isinstance(current, list) or int(idx) >= len(current):
+                    return False
+                current = current[int(idx)]
     if check == "exists":
         return current is not None
     if check == "non_empty":
