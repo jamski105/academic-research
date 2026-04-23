@@ -1,6 +1,6 @@
 ---
 name: Research Question Refiner
-description: Dieser Skill wird genutzt, wenn der User seine Forschungsfrage formulieren, schärfen oder bewerten möchte. Triggers on "Forschungsfrage formulieren", "Research Question", "Fragestellung", "Forschungsfrage", "Forschungsfrage schärfen / Forschungsfrage schaerfen", "research question refine", "Fragestellung präzisieren / Fragestellung praezisieren", oder wenn ein anderer Skill erkennt, dass die Forschungsfrage zu breit, zu eng oder nicht beantwortbar ist.
+description: Dieser Skill wird genutzt, wenn der User seine Forschungsfrage formulieren, schärfen oder bewerten möchte. Triggers on "Forschungsfrage formulieren", "Research Question", "Fragestellung", "Forschungsfrage", "Forschungsfrage schärfen / Forschungsfrage schaerfen", "research question refine", "Fragestellung präzisieren / Fragestellung praezisieren", oder wenn ein anderer Skill erkennt, dass die Forschungsfrage zu breit, zu eng oder nicht beantwortbar ist. Fokus auf Verfeinerung bestehender Fragen; Erstanlage von Forschungsfrage, Thema oder Methodik übernimmt `academic-context`.
 ---
 
 # Forschungsfragen-Schärfer
@@ -24,6 +24,13 @@ Erfundene Bezüge zu Vorarbeiten oder Forschungslücken führen zu einer
 Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite
 ausschließlich mit `academic_context.md` und `literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
+
+## Abgrenzung
+
+Verfeinert bestehende Forschungsfragen (zu eng, zu weit, nicht-falsifizierbar,
+mehrdimensional).
+Für Erstanlage von Forschungsfrage, Thema oder Methodik → `academic-context`.
+Für Einbettung in die Gliederung → `advisor`.
 
 ## Few-Shot-Beispiele
 

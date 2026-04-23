@@ -25,6 +25,11 @@ Prüfungsordnung ein Plagiatsbefund und führen zum Verlust der Prüfungsleistun
 (Note 5). Arbeite ausschließlich mit Zitaten aus `literature_state.md` und
 direkt geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
+## Abgrenzung
+
+Schreibt Kapitel-Prosa und baut Zitate in die Argumentation ein.
+Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extraction`.
+
 ## Few-Shot-Beispiele (pro Kapiteltyp)
 
 ### Kapitel: Theorie

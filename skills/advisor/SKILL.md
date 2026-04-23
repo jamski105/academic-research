@@ -25,6 +25,12 @@ ausschließlich mit `academic_context.md` (Arbeitstyp, Forschungsfrage,
 Supervisor-Vorgaben) und `literature_state.md`. Fehlen Daten: frag den User,
 rate nicht.
 
+## Abgrenzung
+
+Baut die Gliederung und das Exposé.
+Für Schärfung der Forschungsfrage selbst → `research-question-refiner`.
+Für Methodenwahl und Scoring-Matrix → `methodology-advisor`.
+
 ## Bewertungskriterien (PASS/FAIL)
 
 Prüfe die Outline gegen diese 7 Kriterien. Jedes ist PASS oder FAIL — kein

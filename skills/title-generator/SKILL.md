@@ -25,6 +25,11 @@ ausschließlich mit `writing_state.md` (fertiger Arbeitstext) und
 `academic_context.md` (Forschungsfrage, Kernergebnisse). Fehlen Daten: frag
 den User, rate nicht.
 
+## Abgrenzung
+
+Schlägt den finalen Arbeitstitel vor (deskriptiv, These, Frage).
+Für Abstract, Keywords, Management Summary → `abstract-generator`.
+
 ## Few-Shot-Beispiele (Titelstile)
 
 ### Stil: Deskriptiv

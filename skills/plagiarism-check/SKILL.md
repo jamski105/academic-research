@@ -26,6 +26,11 @@ der FH Leibniz auffliegen, hier unbemerkt geblieben sind. Arbeite ausschließlic
 mit dem User-Text und den PDF-Extrakten aus `literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
 
+## Abgrenzung
+
+Prüft Textnähe zu bekannten Quellen via N-Gramm-Overlap und Sentence-Similarity.
+Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
+
 ## Aktivierung dieses Skills
 
 - Der User reicht Text zur Prüfung gegen seine Quellen ein

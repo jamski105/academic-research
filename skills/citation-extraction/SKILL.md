@@ -25,6 +25,12 @@ prüfung als nicht-auffindbar markiert und gelten als Täuschungsversuch. Arbeit
 ausschließlich mit den geladenen PDFs und Einträgen aus `literature_state.md`.
 Fehlen Daten: frag den User, rate nicht.
 
+## Abgrenzung
+
+Extrahiert und formatiert wörtliche Zitate aus PDFs für einzelne Belege.
+Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
+(ruft mich bei Bedarf auf).
+
 ## Aktivierung dieses Skills
 
 - Der User möchte Zitate oder Belege aus heruntergeladenen PDFs extrahieren
