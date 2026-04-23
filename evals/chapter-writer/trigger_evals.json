@@ -1,0 +1,5 @@
+{
+  "component": "chapter-writer",
+  "should_trigger": ["Schreib das Einleitungskapitel", "Kapitel 3 verfassen, bitte", "Text zum Grundlagen-Abschnitt", "Ein Absatz zu DevOps Governance", "Einleitung schreiben", "Uebergang zwischen Kapiteln", "Diskussions-Absatz zu Ergebnis X", "Chapter prose generieren", "Schreib die Zusammenfassung", "200 Woerter zu Theorie Y"],
+  "should_not_trigger": ["Zitat nach APA formatieren", "Forschungsfrage schaerfen", "Gliederung pruefen", "Paper suchen", "Abstract erzeugen", "Titel vorschlagen", "Stilbewertung", "Methodik waehlen", "Plagiat pruefen", "FH-Leibniz-Formalia pruefen"]
+}

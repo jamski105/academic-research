@@ -1,6 +1,6 @@
 ---
 name: Title Generator
-description: Dieser Skill wird genutzt, wenn der User Titelvorschläge für seine akademische Arbeit braucht. Triggers on "Titel suchen", "Titelvorschläge / Titelvorschlaege", "Arbeitstitel", "title suggestions", "Titel finden", "paper title", "Überschrift / Ueberschrift", oder wenn der User mit dem Schreiben fertig ist und einen finalen Titel braucht.
+description: Use this skill when the user needs a thesis title proposal. Triggers on "Titel vorschlagen", "Titelvorschläge / Titelvorschlaege", "Arbeitstitel", "Thesis title", "thesis title proposal", "Untertitel bitte", or when submission requires a final title. Schlägt Arbeitstitel vor; Für Abstract, Keywords und Zusammenfassung → `abstract-generator`.
 ---
 
 # Titel-Generator

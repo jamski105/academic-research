@@ -1,0 +1,5 @@
+{
+  "component": "submission-checker",
+  "should_trigger": ["Pruefe meine Abgabe", "FH-Leibniz-Formalia pruefen", "Formatierung checken", "Seitenraender korrekt?", "Zeilenabstand 1.5?", "Submission check", "Schriftart pruefen", "Abgabe nach FH-Regeln pruefen", "Deckblatt-Formalia", "Ist die Gliederung konform?"],
+  "should_not_trigger": ["Gliederung inhaltlich pruefen", "Forschungsfrage schaerfen", "Kapitel schreiben", "Methodik", "Abstract", "Titel", "Zitat formatieren", "Plagiat", "Stil pruefen", "Paper suchen"]
+}

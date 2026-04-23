@@ -1,6 +1,6 @@
 ---
 name: Style Evaluator
-description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, auf KI-Detektions-Muster prüfen oder seinen akademischen Stil verbessern möchte. Triggers on "Text prüfen / Text pruefen", "Stil-Check", "KI-Erkennung", "Text verbessern", "Qualitätskontrolle / Qualitaetskontrolle", "menschlich klingen", "style check", "AI detection", "text quality", "improve writing", "human-like", oder wenn Text zu künstlich oder schablonenhaft klingt.
+description: Use this skill when the user wants to evaluate academic writing style (without source comparison). Triggers on "Stil prüfen / Stil pruefen", "Schreibstil", "Satzlänge / Satzlaenge", "Passiv-Quote", "Nominalstil", "style evaluation", or when a chapter draft needs stylistic review. Bewertet Stil-Qualität ohne Quellenbezug; Für Textähnlichkeit → `plagiarism-check`.
 ---
 
 # Stil-Evaluator

@@ -1,0 +1,5 @@
+{
+  "component": "research-question-refiner",
+  "should_trigger": ["Kannst du meine Forschungsfrage schärfen?", "Meine Fragestellung ist zu breit, hilf mir beim Präzisieren", "Ist meine Research Question gut genug?", "Bitte bewerte meine Hauptfrage", "Ich brauche Unterfragen zu meiner Forschungsfrage", "Wie formuliere ich eine nicht-falsifizierbare Frage um?", "Meine Betreuerin meint, meine Frage sei mehrdimensional", "Fragestellung praezisieren fuer Master-Thesis", "Forschungsfrage schaerfen, bitte", "Welche Frage passt zu meinem Literatur-Review?"],
+  "should_not_trigger": ["Welche Methodik passt zu meinem Thema?", "Wie richte ich meinen academic_context ein?", "Schreib mir ein Kapitel zu Theorie X", "Pruefe die Formatierung meiner Abgabe", "Suche mir Literatur zu Zero Trust", "Erzeuge ein Abstract fuer meine Arbeit", "Welche Autoren sollte ich lesen?", "Pruefe meine Quellenabdeckung", "Wie lautet die Gliederung?", "Welcher Titel passt zu meiner Arbeit?"]
+}

@@ -1,0 +1,5 @@
+{
+  "component": "source-quality-audit",
+  "should_trigger": ["Ist diese Quelle peer-reviewed?", "Pruefe die Quellenqualitaet", "Ist das ein Predatory Journal?", "Welchen Impact hat dieses Paper?", "Source quality check fuer Smith 2023", "Bewerte Methodik dieser Quelle", "Peer-Review pruefen", "Quellenqualitaet des Artikels", "Ist Elsevier Open Access hier seriös?", "Qualitaets-Audit der Top-5-Quellen"],
+  "should_not_trigger": ["Welche Quellen fehlen mir noch?", "Pruefe meine Abdeckung", "Literatur-Luecken identifizieren", "Gliederung pruefen", "Methodik waehlen", "Forschungsfrage schaerfen", "Schreib Kapitel", "Abstract erzeugen", "Formatierung pruefen", "Zitat extrahieren"]
+}

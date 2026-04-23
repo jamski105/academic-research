@@ -1,6 +1,6 @@
 ---
 name: Methodology Advisor
-description: Dieser Skill wird genutzt, wenn der User Hilfe bei Wahl, Begründung oder Verfeinerung seiner Forschungsmethodik braucht. Triggers on "Methodik", "Forschungsdesign", "Methodenwahl", "Vorgehensmodell", "research design", "methodology", "qualitative vs quantitative", "Forschungsmethode", "Methodik prüfen / Methodik pruefen", "Methoden-Check", oder wenn der User unsicher ist, wie er seine Forschung systematisch angehen soll.
+description: Use this skill when the user needs to choose or justify a research method. Triggers on "welche Methodik", "Methodenwahl", "Forschungsdesign", "qualitative vs quantitative", "Fallstudie oder Umfrage", "Literatur-Review als Methode", "Methodik prüfen / Methodik pruefen", "methodology fit", or when another skill detects unclear methodology. Empfiehlt Methoden mit 4-Dimensionen-Scoring; Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Gliederung → `advisor`.
 ---
 
 # Methodik-Berater

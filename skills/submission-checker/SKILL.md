@@ -1,6 +1,6 @@
 ---
 name: Submission Checker
-description: Dieser Skill wird genutzt, wenn der User vor der Abgabe seiner akademischen Arbeit formale Anforderungen prüfen möchte. Triggers on "formale Prüfung / formale Pruefung", "Abgabe-Check", "Formatierung prüfen / Formatierung pruefen", "abgabefertig", "submission check", "formal requirements", "Deckblatt prüfen / Deckblatt pruefen", "Eidesstattliche Erklärung / Eidesstattliche Erklaerung", "Seitenränder / Seitenraender", "Formatvorlage", oder wenn der User sich auf die finale Abgabe vorbereitet.
+description: Use this skill when the user prepares final submission (formalia check). Triggers on "Abgabe prüfen / Abgabe pruefen", "FH-Leibniz-Formalia", "Formatierung", "Seitenränder / Seitenraender", "Zeilenabstand", "Schriftart", "submission check", or when the user nears deadline. Prüft institutsspezifische Formalia; Default-Profil FH Leibniz, weitere via `references/<variant>.md`.
 ---
 
 # Abgabe-Prüfer

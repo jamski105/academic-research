@@ -1,6 +1,6 @@
 ---
 name: Chapter Writer
-description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder einen Abschnitt schreiben, entwerfen oder formulieren möchte. Triggers on "Kapitel schreiben", "verfassen", "entwerfen", "Abschnitt schreiben", "write chapter", "draft section", "Kapitel formulieren", "Textarbeit", "Kapitelentwurf prüfen / Kapitelentwurf pruefen", oder wenn der User Hilfe beim Verfassen akademischer Prosa für einen konkreten Teil seiner Arbeit braucht.
+description: Use this skill when the user wants to write academic chapter prose. Triggers on "Kapitel schreiben", "Text verfassen", "Absatz zu Thema X", "chapter prose", "Einleitung schreiben", "Diskussions-Absatz", "Übergang zwischen Kapiteln / Uebergang zwischen Kapiteln", "übergänge formulieren / uebergaenge formulieren", or when a structural step produces prose. Schreibt Kapitel-Prosa mit Quellen-Einbindung; Für Zitat-Extraktion → `citation-extraction`.
 ---
 
 # Kapitel-Autor

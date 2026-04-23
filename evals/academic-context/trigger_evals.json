@@ -1,0 +1,5 @@
+{
+  "component": "academic-context",
+  "should_trigger": ["Ich fange gerade mit meiner Bachelorarbeit an", "Lass uns mein Thema festhalten", "Akademischen Kontext pruefen, bitte", "Ich habe ein neues Thema gewaehlt", "Setze meinen thesis context auf", "Ich bin an der FH Leibniz, BWL, Bachelor", "Lass uns meine Gliederung aufsetzen", "Mein Abgabetermin ist in 3 Monaten", "Update mein academic profile", "Ich schreibe eine Hausarbeit zu Agile"],
+  "should_not_trigger": ["Kannst du meine Forschungsfrage schärfen?", "Suche mir 20 Paper zu Zero Trust", "Schreib mir das Methodikkapitel", "Pruefe meine Zitationen", "Finde Luecken in meiner Literatur", "Gib mir einen Titel-Vorschlag", "Erzeuge Abstract + Keywords", "Bewerte meinen Schreibstil", "Pruefe auf Plagiate", "Welche Methode passt zu meiner Fallstudie?"]
+}
