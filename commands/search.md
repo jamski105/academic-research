@@ -1,7 +1,7 @@
 ---
 description: Search academic papers across multiple APIs (Semantic Scholar, CrossRef, OpenAlex, BASE, EconBiz, EconStor, arXiv)
 disable-model-invocation: true
-allowed-tools: Read, Write, Bash(~/.academic-research/venv/bin/python *), Agent(query-generator, relevance-scorer, quote-extractor)
+allowed-tools: Read, Write, Bash(~/.academic-research/venv/bin/python *), Bash(browser-use:*), Bash(browser-use *), Agent(query-generator, relevance-scorer, quote-extractor)
 argument-hint: "<query>" [--mode quick|standard|deep|metadata] [--modules crossref,openalex,...] [--limit N]
 ---
 
@@ -66,11 +66,29 @@ Save output to `$SESSION_DIR/queries.json`.
 
 ### Step 4: Browser search (standard/deep modes, unless --no-browser)
 
-For browser modules (google_scholar, springer, oecd, repec, opac), use Playwright MCP directly.
-Read the corresponding browser guide from `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/`.
-Append results to `$SESSION_DIR/api_results.json`.
+Für jedes Browser-Modul in fester Reihenfolge:
 
-Order: no-auth modules first (Google Scholar → Springer → OECD), then auth modules (EBSCO → ProQuest → OPAC).
+1. **No-Auth zuerst:** `google_scholar` → `springer` → `oecd` → `repec`
+2. **Auth danach:** `ebscohost` → `proquest` → `opac`
+
+Pro Modul:
+
+1. Lies den Guide aus `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/<modul>.md` (URL, Auth-Typ, Anti-Scraping-Hinweise, datenbankspezifische Fallen).
+2. Bei Auth-Modulen (`ebscohost`, `proquest`, `opac`): folge zuerst `${CLAUDE_PLUGIN_ROOT}/config/browser_guides/han_login.md`.
+3. Steuere den Browser mit dem globalen `browser-use`-Skill (CLI-basiert, index-orientiert, keine CSS-Selektoren):
+   - `browser-use open <URL>` — Seite laden
+   - `browser-use state` — klickbare Elemente mit Index abrufen
+   - Query-Feld per Index identifizieren: `browser-use input <idx> "<QUERY>"`
+   - Suche auslösen (Enter oder Submit-Button per Index klicken): `browser-use click <idx>`
+   - Nach Warten auf Laden: `browser-use state` erneut, um Ergebnislisten auszulesen
+   - Bei Bedarf paginieren — maximal 2 Seiten pro Modul
+4. Ergebnisse ins `api_results.json`-Schema normalisieren (`title`, `authors`, `year`, `venue`, `doi`, `url`, `source_module`, `snippet`) und an die bestehende Ergebnisliste anhängen.
+5. Fehlerbehandlung:
+   - CAPTCHA erkannt → `browser-use screenshot` machen, User informieren, Partial Results behalten.
+   - Login schlägt fehl → Modul überspringen, Warnung loggen, weitermachen mit nächstem Modul.
+   - Rate-Limit → 30s Pause, einmal retry, dann Modul überspringen.
+
+Append results to `$SESSION_DIR/api_results.json`.
 
 ### Step 5: Deduplication
 
