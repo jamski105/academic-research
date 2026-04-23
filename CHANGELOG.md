@@ -4,6 +4,18 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [5.1.1] — 2026-04-23
+
+### Fixed
+
+- **Abgrenzungs-Klauseln** in 8 weiteren Skills (research-question-refiner, advisor, style-evaluator, plagiarism-check, citation-extraction, chapter-writer, abstract-generator, title-generator). Jeder Skill enthält jetzt einen schlanken `## Abgrenzung`-Abschnitt mit Delegations-Hinweis zum Nachbarskill. Behebt UX-Problem, wenn User mit mehrdeutigem Keyword zwei mögliche Skills triggert.
+- **Duplikat-Precondition in `literature-gap-analysis`** entfernt (N4 aus E3-Review). Die Legacy-Sektion `## Voraussetzungen` ist gelöscht; der darin enthaltene `/search`-Fallback-Hinweis wandert in den einheitlichen `## Vorbedingungen`-Block.
+- **Trigger-Überschneidung** bei `"Forschungsfrage"` zwischen `academic-context` und `research-question-refiner` aufgelöst (N5). Beide Skills behalten den Trigger, ergänzen aber einen Delegations-Satz in der Description (*„Fokus auf Erstanlage …"* bzw. *„Fokus auf Verfeinerung …"*).
+
+### Migration
+
+Keine. Reine Klarstellung der Metadaten und Sections.
+
 ## [5.1.0] — 2026-04-23
 
 ### Added

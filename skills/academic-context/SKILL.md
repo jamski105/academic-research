@@ -1,6 +1,6 @@
 ---
 name: Academic Context
-description: Dieser Skill wird genutzt, wenn der User seine Abschlussarbeit, Bachelorarbeit, Masterarbeit, Hausarbeit, Facharbeit oder akademische Arbeit diskutiert. Triggers on "meine Arbeit", "mein Thema", "Forschungsfrage", "Gliederung", "thesis context", "academic profile", "akademischer Kontext prüfen / akademischer Kontext pruefen", oder wenn ein anderer Skill Kontext braucht, der noch nicht existiert. Verwaltet den persistenten akademischen Kontext im Claude-Memory.
+description: Dieser Skill wird genutzt, wenn der User seine Abschlussarbeit, Bachelorarbeit, Masterarbeit, Hausarbeit, Facharbeit oder akademische Arbeit diskutiert. Triggers on "meine Arbeit", "mein Thema", "Forschungsfrage", "Gliederung", "thesis context", "academic profile", "akademischer Kontext prüfen / akademischer Kontext pruefen", oder wenn ein anderer Skill Kontext braucht, der noch nicht existiert. Fokus auf Erstanlage und Verwaltung des Kontexts; Schärfung einer bestehenden Forschungsfrage übernimmt `research-question-refiner`. Verwaltet den persistenten akademischen Kontext im Claude-Memory.
 ---
 
 # Akademischer Kontext
