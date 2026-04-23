@@ -5,12 +5,12 @@ description: Use this skill whenever the user starts or updates a thesis, Bachel
 
 # Akademischer Kontext
 
-Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verlassen. Dieser Skill liest und schreibt Claude-Memory-Dateien, um Thema, Gliederung, Forschungsfrage, Methodik, Fortschritt und Schlüsselkonzepte der Arbeit des Users zu tracken.
+Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verlassen. Dieser Skill liest und schreibt Kontext-Dateien im Projekt-Ordner, um Thema, Gliederung, Forschungsfrage, Methodik, Fortschritt und Schlüsselkonzepte der Arbeit des Users zu tracken.
 
 ## Keine Fabrikation
 
 Erfundene Kontextangaben (Thema, Methodik, Fragestellung) produzieren eine
-vergiftete Memory-Basis, die alle nachgelagerten Skills wertlos macht. Arbeite
+vergiftete Kontext-Basis, die alle nachgelagerten Skills wertlos macht. Arbeite
 ausschließlich mit Angaben, die der User im Gespräch explizit bestätigt hat —
 rate keine Werte, frag nach.
 
@@ -21,9 +21,9 @@ rate keine Werte, frag nach.
 - Ein anderer Skill braucht akademischen Kontext, aber es ist noch keiner vorhanden
 - Der User fragt explizit nach einer Aktualisierung seines akademischen Profils
 
-## Memory-Dateien
+## Kontext-Dateien
 
-Der gesamte Kontext liegt im Claude-Memory des Projekt-Memory-Verzeichnisses. Drei Dateien werden verwaltet:
+Der gesamte Kontext liegt im aktuellen Projekt-Ordner (cwd). Drei Dateien werden verwaltet:
 
 ### `academic_context.md` — Primäre Kontextdatei
 
@@ -41,7 +41,7 @@ Enthält das aktuell geschriebene Kapitel, Wortzahlen und die jüngsten Style-Ev
 
 ### Erstaktivierung (noch kein Kontext vorhanden)
 
-Existiert keine `academic_context.md` im Memory, sammle im Gespräch folgende Informationen:
+Existiert keine `./academic_context.md` im Projekt-Ordner, sammle im Gespräch folgende Informationen:
 
 1. **Universität und Studiengang** — Default: Leibniz FH Hannover, BWL/Wirtschaftsinformatik
 2. **Arbeitstyp** — Bachelorarbeit, Masterarbeit, Hausarbeit, Seminararbeit, Facharbeit
@@ -90,7 +90,7 @@ type: project
 
 ### Update-Aktivierung (Kontext existiert bereits)
 
-Existiert schon Kontext, lies die aktuelle `academic_context.md` aus dem Memory. Identifiziere auf Basis des Gesprächs, was sich geändert hat, und aktualisiere nur die betroffenen Abschnitte. Bewahre alle bestehenden Daten, die nicht explizit geändert wurden.
+Existiert schon Kontext, lies die aktuelle `./academic_context.md` aus dem Projekt-Ordner. Identifiziere auf Basis des Gesprächs, was sich geändert hat, und aktualisiere nur die betroffenen Abschnitte. Bewahre alle bestehenden Daten, die nicht explizit geändert wurden.
 
 Typische Updates:
 - **Gliederungsänderungen** — User hat die Kapitelstruktur verfeinert
@@ -103,7 +103,7 @@ Typische Updates:
 
 Wenn ein anderer Skill (Citation Extraction, Literature Gap Analysis, Advisor etc.) Kontext braucht:
 
-1. Prüfe, ob `academic_context.md` im Memory existiert
+1. Prüfe, ob `./academic_context.md` im Projekt-Ordner existiert
 2. Wenn ja — lies sie und nutze sie
 3. Wenn nein — informiere den User, dass Kontext benötigt wird, und biete das Setup an
 4. Gib nach dem Setup die Kontrolle an den aufrufenden Workflow zurück
