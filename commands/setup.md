@@ -1,7 +1,7 @@
 ---
 description: Set up Python environment for academic research plugin v4
 disable-model-invocation: true
-allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(npx *), Bash(~/.academic-research/venv/bin/pip *)
+allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(~/.academic-research/venv/bin/pip *)
 ---
 
 # Academic Research v4 Setup
@@ -33,11 +33,12 @@ python3 -m venv ~/.academic-research/venv
 ~/.academic-research/venv/bin/python -c "import yaml; print('✅ pyyaml:', yaml.__version__)"
 ```
 
-5. Install Playwright browser (required for browser search modules):
+5. Install `browser-use` CLI (required for browser search modules):
 ```bash
-npx playwright install chromium --with-deps
+uv tool install browser-use   # oder: pipx install browser-use
+browser-use doctor
 ```
-If `npx` is not found, browser modules will be unavailable but API search still works.
+Wenn `browser-use` nicht installiert ist, funktionieren API-Module weiter, aber keine Browser-Datenbanken (Google Scholar, Springer, OECD, RePEc, OPAC, EBSCO, ProQuest).
 
 6. Configure Claude Code permissions:
 ```bash

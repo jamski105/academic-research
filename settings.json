@@ -9,7 +9,6 @@
       "Bash(cat ~/.academic-research/*)",
       "Bash(ls ~/.academic-research/*)",
       "Bash(ls *)",
-      "Bash(cp ~/.playwright-mcp/* *)",
       "Bash(curl -sL * -o ~/.academic-research/*)",
       "Bash(curl *)",
       "Bash(wc -l *)",

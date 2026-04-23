@@ -24,7 +24,6 @@ pdfs/
 
 # Debug logs
 firebase-debug.log
-.playwright-mcp/
 
 # Secrets
 .env

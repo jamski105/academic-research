@@ -23,14 +23,10 @@ touch "$BASE/citations.bib"
 
 echo "✅ Python environment: ready"
 
-if command -v npx &>/dev/null; then
-  echo "Installing Playwright browser..."
-  npx playwright install chromium --with-deps --quiet 2>/dev/null \
-    && echo "✅ Playwright (Chromium): ready" \
-    || echo "⚠️  Playwright browser install failed — browser modules may not work"
+if command -v browser-use &>/dev/null; then
+  browser-use doctor &>/dev/null && echo "✅ browser-use: ready" || echo "⚠️  browser-use: install ok, but doctor meldet Probleme — bitte 'browser-use doctor' manuell prüfen"
 else
-  echo "⚠️  Node.js/npx not found — browser search modules (Google Scholar, EBSCO...) will not work"
-  echo "   Install Node.js 18+ and rerun /academic-research:setup"
+  echo "⚠️  browser-use nicht gefunden — Browser-Module (Scholar, EBSCO, …) werden nicht funktionieren. Install: 'uv tool install browser-use' oder 'pipx install browser-use'"
 fi
 
 echo ""
