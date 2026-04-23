@@ -17,6 +17,9 @@ Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
 "Ohne Themenliste in `academic_context.md` kann ich keine Gap-Bewertung
 liefern, weil ich gegen unbekannte Ziele vergleichen würde."
 
+Fehlt `literature_state.md` oder ist leer → schlage zuerst `/search` vor, um
+einen Quellenbestand aufzubauen, und trigger diesen Skill danach erneut.
+
 ## Keine Fabrikation
 
 Erfundene Abdeckungs-Statements oder Quellenlisten führen zu einem
@@ -74,13 +77,6 @@ Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehl
 ### Schreiben
 
 - `literature_state.md` — Ergebnisse der Gap-Analyse und Coverage-Scores aktualisieren
-
-## Voraussetzungen
-
-Beide Dateien, `academic_context.md` (mit Gliederung) und `literature_state.md` (mit mindestens einigen Quellen), müssen existieren. Fehlt eines:
-
-- Kein akademischer Kontext — Academic-Context-Skill triggern
-- Kein Literaturstatus — zuerst `/search` vorschlagen, um einen Quellenbestand aufzubauen
 
 ## Core-Workflow
 
