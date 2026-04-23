@@ -1,145 +1,177 @@
 ---
 name: Style Evaluator
-description: This skill should be used when the user wants to evaluate text quality, check for AI-detection patterns, or improve academic writing style. Triggers on "Text pruefen", "Stil-Check", "KI-Erkennung", "Text verbessern", "Qualitaetskontrolle", "menschlich klingen", "style check", "AI detection", "text quality", "improve writing", "human-like", or when text sounds too artificial or formulaic.
+description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, auf KI-Detektions-Muster prüfen oder seinen akademischen Stil verbessern möchte. Triggers on "Text prüfen / Text pruefen", "Stil-Check", "KI-Erkennung", "Text verbessern", "Qualitätskontrolle / Qualitaetskontrolle", "menschlich klingen", "style check", "AI detection", "text quality", "improve writing", "human-like", oder wenn Text zu künstlich oder schablonenhaft klingt.
 ---
 
-# Style Evaluator
+# Stil-Evaluator
 
-Evaluate academic text for human-likeness, AI-detection vulnerability, coherence, duplication, and overall academic quality. Assign a composite score (0-100) across five dimensions and optionally rewrite flagged sections.
+Bewertet akademischen Text nach Menschlichkeit, Anfälligkeit für KI-Detektion, Kohärenz, Duplikation und akademischer Qualität. Vergibt einen gewichteten Gesamtscore (0-100) über fünf Dimensionen und formuliert geflaggte Abschnitte bei Bedarf neu.
 
-## When This Skill Activates
+## Vorbedingungen
 
-- The user submits text for quality or style evaluation
-- The user suspects text sounds too AI-generated
-- The user asks for text improvement or naturalness
-- Another skill (e.g., Chapter Writer) requests a post-write quality gate
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
 
-## Memory Files
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Text-Korpus-Kontext in `writing_state.md` kann ich kein Stil-Urteil
+liefern, weil ich gegen disziplinfremde Normen urteilen würde."
 
-- Read `writing_state.md` for current chapter context and previous scores
-- Read `academic_context.md` for citation style, language, and work type
-- Update `writing_state.md` with new evaluation scores after each run
+## Keine Fabrikation
+
+Erfundene Stil-Urteile über nicht gelesenen Text lassen tatsächlich fragwürdigen
+Stil unentdeckt und untergraben den Wert des Stil-Checks. Arbeite ausschließlich
+mit dem eingereichten User-Text und den Metriken aus `writing_state.md`.
+Fehlen Daten: frag den User, rate nicht.
+
+## Fallback-Rubrik (ohne Script)
+
+Wenn kein externes Stil-Analyse-Script verfügbar ist, prüfe manuell gegen
+diese 5 Schwellen:
+
+| Metrik | Schwelle | Messverfahren |
+|---|---|---|
+| **Satzlänge (Ø)** | 15–25 Wörter | 20 zufällige Sätze, Mittelwert |
+| **Passiv-Quote** | < 30 % | "wird/werden/wurde/wurden + Partizip II" in Stichprobe 20 Sätze |
+| **Nominalstil-Anteil** | < 40 % | Sätze mit ≥ 3 Nominalphrasen (auf "-ung/-heit/-keit/-tion") in Stichprobe |
+| **Füllwörter-Dichte** | < 5 % | "quasi, eigentlich, irgendwie, sozusagen, gewissermaßen" vs. Gesamtwörter |
+| **Code-Switches** | 0 | Englische Wörter außerhalb etablierter Fachbegriffe |
+
+Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL.
+
+## Aktivierung dieses Skills
+
+- Der User reicht Text zur Qualitäts- oder Stilbewertung ein
+- Der User befürchtet, dass der Text zu KI-generiert klingt
+- Der User bittet um Textverbesserung oder natürlicheres Schreiben
+- Ein anderer Skill (z. B. Chapter Writer) fordert ein Post-Write-Qualitätsgate an
+
+## Memory-Dateien
+
+- Lies `writing_state.md` für aktuellen Kapitelkontext und frühere Scores
+- Lies `academic_context.md` für Zitationsstil, Sprache und Arbeitstyp
+- Aktualisiere `writing_state.md` nach jedem Lauf mit neuen Bewertungsscores
 
 ## Metriken
 
 Die quantitativen Metriken (Satzlängenverteilung, Übergangsfrequenz, Vokabular-Diversität, n-Gramm-Wiederholung) berechnet Claude direkt aus dem Eingabetext — keine externe Pipeline. Siehe Rubrik unten für konkrete Messvorschriften pro Dimension.
 
-## Scoring Rubric (0-100)
+## Scoring-Rubrik (0-100)
 
-Evaluate each dimension independently, then compute a weighted total.
+Jede Dimension unabhängig bewerten, dann gewichteten Gesamtwert bilden.
 
-### 1. Human-Likeness (weight: 0.30)
+### 1. Menschlichkeit (Gewicht: 0.30)
 
-Assess whether the text reads as authentically human-written.
+Wirkt der Text authentisch menschlich geschrieben?
 
-Indicators of LOW human-likeness (deduct points):
-- Sentence length standard deviation below 4 words (too uniform)
-- More than 30% of sentences starting with the same syntactic pattern
-- Absence of hedging language, qualifiers, or tentative phrasing
-- No rhetorical questions, asides, or first-person perspective where appropriate
-- Paragraph lengths too uniform (all within 10% of average)
+Indikatoren für NIEDRIGE Menschlichkeit (Abzüge):
+- Standardabweichung der Satzlänge unter 4 Wörtern (zu uniform)
+- Mehr als 30 % der Sätze beginnen mit demselben syntaktischen Muster
+- Fehlen von Hedging-Sprache, Einschränkungen oder vorsichtigen Formulierungen
+- Keine rhetorischen Fragen, Einschübe oder Ich-Perspektive, wo angemessen
+- Absatzlängen zu uniform (alle innerhalb 10 % des Durchschnitts)
 
-Indicators of HIGH human-likeness (award points):
-- Natural variation in sentence length (short + long mixed)
-- Occasional informal connectors alongside formal ones
-- Topic sentences vary in structure across paragraphs
-- Evidence of personal analytical voice
+Indikatoren für HOHE Menschlichkeit (Pluspunkte):
+- Natürliche Variation der Satzlänge (kurz und lang gemischt)
+- Gelegentliche informelle Konnektoren neben formalen
+- Topic Sentences variieren zwischen Absätzen
+- Spürbare persönliche analytische Stimme
 
-### 2. Anti-AI-Detection (weight: 0.25)
+### 2. Anti-KI-Detektion (Gewicht: 0.25)
 
-Flag patterns that AI-detection tools (GPTZero, Turnitin AI, Originality.ai) commonly identify.
+Muster flaggen, die KI-Detektoren (GPTZero, Turnitin AI, Originality.ai) häufig identifizieren.
 
-Check for:
-- **Uniform sentence lengths** -- Compute standard deviation; flag if below 5 words
-- **Repetitive transitions** -- Flag if "Furthermore", "Moreover", "Additionally", "In conclusion" each appear more than twice per 1000 words
-- **Missing personal voice** -- Flag if zero first-person pronouns in sections where methodology or opinion is expected
-- **Overly perfect structure** -- Flag if every paragraph follows identical topic-evidence-analysis pattern
-- **Lexical predictability** -- Flag if top-10 most frequent content words cover more than 15% of all content words
-- **Burstiness score** -- Measure variation in perplexity across sentences; flag if too flat
+Prüfen auf:
+- **Uniforme Satzlängen** -- Standardabweichung berechnen; flag bei < 5 Wörtern
+- **Wiederholte Übergänge** -- Flag, wenn "Darüber hinaus", "Furthermore", "Moreover", "Zusätzlich", "In conclusion" mehr als zweimal je 1000 Wörter auftauchen
+- **Fehlende persönliche Stimme** -- Flag bei null Ich-Pronomen dort, wo Methodik oder Meinung erwartet werden
+- **Zu perfekte Struktur** -- Flag, wenn jeder Absatz identisch dem Muster Topic-Evidenz-Analyse folgt
+- **Lexikalische Vorhersagbarkeit** -- Flag, wenn die 10 häufigsten Content-Wörter über 15 % aller Content-Wörter ausmachen
+- **Burstiness-Score** -- Variation der Perplexität pro Satz messen; bei zu flachem Verlauf flaggen
 
-### 3. Coherence (weight: 0.20)
+### 3. Kohärenz (Gewicht: 0.20)
 
-Evaluate logical flow between sentences and paragraphs.
+Logischen Fluss zwischen Sätzen und Absätzen bewerten.
 
-Check for:
-- Topic continuity (each paragraph advances the argument)
-- Logical connectors match actual logical relationships
-- No orphaned claims (assertions without preceding context or following evidence)
-- Smooth transitions between sections
-- Consistent terminology (no unexplained synonym switching)
+Prüfen auf:
+- Themen-Kontinuität (jeder Absatz bringt das Argument voran)
+- Logik-Konnektoren passen zur tatsächlichen logischen Relation
+- Keine waisen Aussagen (Behauptungen ohne vorausgehenden Kontext oder nachfolgende Evidenz)
+- Saubere Übergänge zwischen Abschnitten
+- Konsistente Terminologie (kein unerklärter Synonym-Wechsel)
 
-### 4. Duplication Detection (weight: 0.15)
+### 4. Duplikations-Erkennung (Gewicht: 0.15)
 
-Identify internal repetition within the text.
+Interne Wiederholung im Text identifizieren.
 
-Check for:
-- Repeated phrases (3+ word sequences appearing more than twice)
-- Paraphrased duplicates (same idea restated in adjacent paragraphs)
-- Redundant introductory/concluding sentences across sections
-- Copy-paste artifacts
+Prüfen auf:
+- Wiederholte Phrasen (3+ Wörter, mehr als zweimal)
+- Paraphrasierte Duplikate (dieselbe Idee in benachbarten Absätzen)
+- Redundante Einleitungs-/Abschlusssätze über Abschnitte hinweg
+- Copy-Paste-Artefakte
 
-### 5. Academic Quality (weight: 0.10)
+### 5. Akademische Qualität (Gewicht: 0.10)
 
-Evaluate formal academic standards.
+Formale akademische Standards bewerten.
 
-Check for:
-- Proper citation integration (not just parenthetical drops)
-- Argument structure (claim, evidence, analysis)
-- Register consistency (no colloquial breaks in formal text, no overly formal language in applied sections)
-- Terminology precision
-- Appropriate use of passive vs. active voice for the discipline
+Prüfen auf:
+- Saubere Zitat-Integration (nicht nur Klammer-Drops)
+- Argumentationsstruktur (Claim, Evidenz, Analyse)
+- Register-Konsistenz (keine umgangssprachlichen Brüche in formalen Stellen, keine überformale Sprache in Anwendungsabschnitten)
+- Terminologische Präzision
+- Angemessener Einsatz von Passiv vs. Aktiv je nach Disziplin
 
-## Evaluation Workflow
+## Evaluations-Workflow
 
-1. Read the submitted text (full chapter, section, or paragraph)
-2. Read `writing_state.md` and `academic_context.md` for context
+1. Den eingereichten Text lesen (vollständiges Kapitel, Abschnitt oder Absatz)
+2. `writing_state.md` und `academic_context.md` für Kontext lesen
 3. Berechne quantitative Metriken inline aus dem Eingabetext (Satzlängen, Übergänge, n-Gramme, Vokabular-Diversität)
-4. Score each dimension (0-100) using the rubric and script metrics
-5. Compute weighted total: `total = 0.30*human + 0.25*anti_ai + 0.20*coherence + 0.15*duplication + 0.10*academic`
-6. Present results in structured format (see output format below)
-7. Update `writing_state.md` with the new scores
+4. Jede Dimension (0-100) nach Rubrik und Metriken scoren
+5. Gewichteten Gesamtwert berechnen: `total = 0.30*human + 0.25*anti_ai + 0.20*coherence + 0.15*duplication + 0.10*academic`
+6. Ergebnisse strukturiert präsentieren (siehe Output-Format unten)
+7. `writing_state.md` mit den neuen Scores aktualisieren
 
-## Output Format
+## Output-Format
 
-Present results as:
+Ergebnisse präsentieren als:
 
 ```
-## Style Evaluation: [Section/Chapter Name]
+## Stil-Bewertung: [Abschnitt/Kapitel]
 
 | Dimension            | Score | Status |
 |----------------------|-------|--------|
-| Human-Likeness       | XX    | OK/WARN/FAIL |
-| Anti-AI-Detection    | XX    | OK/WARN/FAIL |
-| Coherence            | XX    | OK/WARN/FAIL |
-| Duplication          | XX    | OK/WARN/FAIL |
-| Academic Quality     | XX    | OK/WARN/FAIL |
+| Menschlichkeit       | XX    | OK/WARN/FAIL |
+| Anti-KI-Detektion    | XX    | OK/WARN/FAIL |
+| Kohärenz             | XX    | OK/WARN/FAIL |
+| Duplikation          | XX    | OK/WARN/FAIL |
+| Akademische Qualität | XX    | OK/WARN/FAIL |
 | **Gesamt**           | **XX**| **STATUS** |
 
-### Flagged Issues
-[List each flagged issue with location and severity]
+### Geflaggte Probleme
+[Jedes Problem mit Position und Severity auflisten]
 
-### Rewrite Suggestions
-[Concrete rewrites for WARN/FAIL sections, preserving meaning]
+### Rewrite-Vorschläge
+[Konkrete Neufassungen für WARN/FAIL-Stellen unter Bedeutungserhalt]
 ```
 
-Status thresholds: OK >= 75, WARN 50-74, FAIL < 50.
+Status-Schwellen: OK >= 75, WARN 50-74, FAIL < 50.
 
-## Rewrite Mode
+## Rewrite-Modus
 
-When the user requests rewriting of flagged sections:
+Bei Bitte um Neuformulierung geflaggter Abschnitte:
 
-1. Isolate the flagged passage
-2. Preserve the exact argument and all citations
-3. Vary sentence structure, length, and opening patterns
-4. Introduce natural hedging where appropriate ("This suggests...", "It appears that...")
-5. Break overly symmetric paragraph structures
-6. Re-evaluate the rewritten passage and confirm score improvement
+1. Geflaggte Passage isolieren
+2. Exakte Argumentation und alle Zitate bewahren
+3. Satzstruktur, -länge und Satzanfänge variieren
+4. Wo sinnvoll, natürliches Hedging einbauen ("Dies deutet darauf hin...", "Es erscheint...")
+5. Zu symmetrische Absatzstrukturen aufbrechen
+6. Neufassung bewerten und Score-Verbesserung bestätigen
 
-## Important Rules
+## Wichtige Regeln
 
-- Never fabricate metrics -- berechne alle Werte nachvollziehbar aus dem Text und zeige die Rechenbasis, wenn der User danach fragt
-- Always preserve the author's argument and citations during rewrites
-- Score conservatively -- a perfect 100 is unrealistic for any text
-- Flag but do not auto-rewrite without user consent
-- Use German labels in output when `academic_context.md` specifies German as the language
-- Track score history in `writing_state.md` to show improvement over time
+- Nie Metriken fabrizieren -- berechne alle Werte nachvollziehbar aus dem Text und zeige die Rechenbasis, wenn der User danach fragt
+- Bei Rewrites immer Argumentation und Zitate des Autors erhalten
+- Konservativ scoren -- eine 100 ist für keinen Text realistisch
+- Flaggen ja, automatisch umschreiben ohne User-Zustimmung nein
+- Deutsche Labels im Output, wenn `academic_context.md` Deutsch als Sprache angibt
+- Score-Historie in `writing_state.md` pflegen, um Verbesserung über die Zeit zu zeigen

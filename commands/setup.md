@@ -36,15 +36,15 @@ Das Skript übernimmt in sechs Schritten:
 ## Was passiert, wenn etwas fehlt
 
 - **Ohne `browser-use` CLI:** API-basierte Suchmodule (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv) laufen weiter. Browser-basierte Suchmodule (Scholar, Springer, OECD, RePEc, OPAC, EBSCOhost, ProQuest) werden übersprungen.
-- **Ohne `browser-use` Claude-Skill:** Claude fällt bei Browser-Aufrufen auf direkte CLI-Kommandos zurück (funktional identisch, nur ohne den Skill-Wrapper mit seinen best-practice-Hinweisen).
+- **Ohne `browser-use` Claude-Skill:** Claude fällt bei Browser-Aufrufen auf direkte CLI-Kommandos zurück (funktional identisch, nur ohne den Skill-Wrapper mit seinen Best-Practice-Hinweisen).
 - **Ohne `document-skills` Plugin:** `/academic-research:excel` bricht mit klarer Fehlermeldung und Install-Befehl ab.
 
 ## Erneutes Ausführen
 
 Das Skript ist idempotent. Ein zweiter Aufruf:
 
-- erstellt kein zweites venv, installiert nur fehlende Packages
-- überspringt `browser-use` CLI-Install, wenn bereits installiert
+- erstellt kein zweites venv, installiert nur fehlende Pakete
+- überspringt die `browser-use` CLI-Installation, wenn bereits installiert
 - wiederholt `browser-use doctor` (harmlos, aktualisiert den Status)
 - überschreibt keine Seed-Dateien
 - fügt Permissions nur hinzu, wenn sie noch nicht in `~/.claude/settings.local.json` stehen

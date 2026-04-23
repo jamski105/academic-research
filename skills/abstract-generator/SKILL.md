@@ -1,109 +1,180 @@
 ---
 name: Abstract Generator
-description: This skill should be used when the user needs an abstract, summary, management summary, or keyword list for their academic paper. Triggers on "Abstract schreiben", "Zusammenfassung", "Keywords", "Management Summary", "Abstract generieren", "paper summary", "Schlagwoerter", "executive summary", or when the paper is finished and needs front matter text.
+description: Dieser Skill wird genutzt, wenn der User ein Abstract, eine Zusammenfassung, eine Management Summary oder eine Keyword-Liste für seine akademische Arbeit braucht. Triggers on "Abstract schreiben", "Zusammenfassung", "Keywords", "Management Summary", "Abstract generieren", "paper summary", "Schlagwörter / Schlagwoerter", "executive summary", oder wenn die Arbeit fertig ist und Front-Matter-Texte benötigt werden.
 ---
 
-# Abstract Generator
+# Abstract-Generator
 
-Read a finished or near-finished academic paper and generate structured abstracts, summaries, and keyword lists. Produce output variants appropriate for the work type and university requirements.
+Liest eine fertige oder nahezu fertige akademische Arbeit und erzeugt strukturierte Abstracts, Zusammenfassungen und Keyword-Listen. Produziert Output-Varianten passend zum Arbeitstyp und den Hochschul-Anforderungen.
 
-## When This Skill Activates
+## Vorbedingungen
 
-- The user asks for an abstract (German or English)
-- The user needs a Management Summary or executive summary
-- The user needs a keyword list
-- The user asks for a Zusammenfassung for their paper
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
 
-## Memory Files
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Forschungsfrage und Methodik-Angabe kann ich kein belastbares Abstract
+liefern, weil ich ein erfundenes Thema beschreiben würde."
 
-- Read `academic_context.md` for university, work type, language, research question, methodology, and formal requirements
-- Read `writing_state.md` for chapter completion status and key findings identified during writing
+## Keine Fabrikation
+
+Erfundene Ergebnisse, Methoden oder Zahlen im Abstract sind ein Täuschungs-
+versuch nach FH-Leibniz-Prüfungsordnung und führen zum Verlust der Prüfungs-
+leistung. Arbeite ausschließlich mit Inhalten aus `writing_state.md`
+(Arbeitstext) und `academic_context.md` (Forschungsfrage, Methodik). Fehlen
+Daten: frag den User, rate nicht.
+
+## Few-Shot-Beispiele (IMRaD)
+
+### Introduction
+
+**Schlecht** (Grund: keine Forschungslücke, kein Relevanz-Anker):
+
+> "Digitalisierung ist ein wichtiges Thema. Diese Arbeit untersucht
+> Digitalisierung in Unternehmen."
+
+**Gut** (Grund: Lücke + Relevanz + präzise Forschungsfrage in 3 Sätzen):
+
+> "Generative KI verändert Hochschullehre rapide, doch empirische Evidenz
+> zu Prüfungsauswirkungen fehlt. Diese Arbeit untersucht textbasierte
+> Prüfungsleistungen an der FH Leibniz 2024. Forschungsfrage: Beeinflusst
+> der seminaristische KI-Einsatz die Notenverteilung?"
+
+### Methods
+
+**Schlecht** (Grund: Methode nicht reproduzierbar, keine Stichprobe genannt):
+
+> "Es wurde eine Umfrage gemacht und ausgewertet."
+
+**Gut** (Grund: Sample, Instrument, Zeitraum, Auswertung genannt):
+
+> "Quantitative Online-Befragung (LimeSurvey, n=142, FH-Leibniz-Studierende,
+> BWL + Informatik, Mai–Juli 2024). Likert-Items zu KI-Nutzung und
+> Prüfungsnote. Deskriptive Statistik und Chi²-Test in R 4.4."
+
+### Results
+
+**Schlecht** (Grund: keine Zahlen, keine Effektgröße):
+
+> "Die Ergebnisse zeigten einen Zusammenhang zwischen KI-Nutzung und Noten."
+
+**Gut** (Grund: konkrete Effektgröße + Signifikanz + Stichprobe):
+
+> "Studierende mit regelmäßiger KI-Nutzung (n=87) erreichten im Schnitt
+> 0,4 Notenstufen bessere Prüfungsergebnisse (χ²=7,83, p=0,005) als
+> Studierende ohne KI-Nutzung (n=55)."
+
+### Conclusion
+
+**Schlecht** (Grund: überhöhte Generalisierung, keine Limitationen):
+
+> "Die Studie zeigt, dass KI grundsätzlich die Noten verbessert."
+
+**Gut** (Grund: Ergebnis + Einschränkung + Ausblick, 3 Sätze):
+
+> "Regelmäßige KI-Nutzung korreliert positiv mit Prüfungsleistung an der
+> FH Leibniz 2024. Limitationen: Einzelhochschule, Selbstauskunft zur Nutzung,
+> keine Kausalaussage möglich. Folgeforschung sollte experimentelles Design
+> mit Kontrollgruppe prüfen."
+
+## Aktivierung dieses Skills
+
+- Der User fragt nach einem Abstract (deutsch oder englisch)
+- Der User braucht eine Management Summary bzw. Executive Summary
+- Der User braucht eine Keyword-Liste
+- Der User fragt nach einer Zusammenfassung seiner Arbeit
+
+## Memory-Dateien
+
+- Lies `academic_context.md` für Universität, Arbeitstyp, Sprache, Forschungsfrage, Methodik und formale Anforderungen
+- Lies `writing_state.md` für den Fertigstellungsstatus der Kapitel und die während des Schreibens identifizierten Kernaussagen
 
 ## Deliverables
 
-Generate one or more of the following based on user request. If the user asks generically for "Abstract", produce all deliverables that are required for their work type.
+Erzeuge auf Basis der User-Anfrage eine oder mehrere der folgenden Ausgaben. Fragt der User pauschal nach einem "Abstract", produziere alle Deliverables, die für den Arbeitstyp erforderlich sind.
 
-### 1. Abstract (German)
+### 1. Abstract (Deutsch)
 
-**Structure (IMRAD-based):**
+**Struktur (IMRAD-basiert):**
 
-1. **Kontext** (1-2 sentences) -- Situate the research topic and its relevance
-2. **Fragestellung** (1 sentence) -- State the research question
-3. **Methodik** (1-2 sentences) -- Describe the research approach
-4. **Ergebnisse** (2-3 sentences) -- Summarize the key findings
-5. **Schlussfolgerung** (1-2 sentences) -- State the main implication or contribution
+1. **Kontext** (1-2 Sätze) -- Forschungsthema und Relevanz einordnen
+2. **Fragestellung** (1 Satz) -- Forschungsfrage benennen
+3. **Methodik** (1-2 Sätze) -- Forschungsansatz beschreiben
+4. **Ergebnisse** (2-3 Sätze) -- Kernbefunde zusammenfassen
+5. **Schlussfolgerung** (1-2 Sätze) -- Wichtigste Implikation oder Beitrag nennen
 
-**Constraints:**
-- Length: 150-250 words (or as specified in `academic_context.md`)
-- No citations in the abstract
-- No abbreviations not spelled out
-- No references to specific chapters, figures, or tables
-- Use present tense for established facts, past tense for own research actions
-- Write in third person or impersonal constructions (German convention)
+**Vorgaben:**
+- Länge: 150-250 Wörter (oder wie in `academic_context.md` spezifiziert)
+- Keine Zitate im Abstract
+- Keine nicht ausgeschriebenen Abkürzungen
+- Keine Verweise auf konkrete Kapitel, Abbildungen oder Tabellen
+- Präsens für etablierte Fakten, Vergangenheit für eigene Forschungshandlungen
+- Dritte Person oder unpersönliche Konstruktionen (deutsche Konvention)
 
-### 2. Abstract (English)
+### 2. Abstract (Englisch)
 
-**Structure:** Same IMRAD structure as the German version.
+**Struktur:** Dieselbe IMRAD-Struktur wie die deutsche Version.
 
-**Additional constraints:**
-- Must be an independent translation, not a word-for-word rendering
-- Adapt phrasing to English academic conventions
-- Verify that technical terms have correct English equivalents
-- Length: Match the German abstract within 10%
+**Zusätzliche Vorgaben:**
+- Muss eine eigenständige Übersetzung sein, keine Wort-für-Wort-Übertragung
+- Formulierungen an englische Wissenschaftssprache anpassen
+- Fachbegriffe auf korrekte englische Entsprechungen prüfen
+- Länge: Innerhalb von 10 % der deutschen Abstract-Länge
 
 ### 3. Management Summary
 
-**When required:** Typically for Bachelorarbeiten and Masterarbeiten in BWL, Wirtschaftsinformatik, and related programs.
+**Wann erforderlich:** Typischerweise für Bachelor- und Masterarbeiten in BWL, Wirtschaftsinformatik und verwandten Studiengängen.
 
-**Structure:**
+**Struktur:**
 
-1. **Ausgangslage** (1 paragraph) -- Business context and problem
-2. **Zielsetzung** (1-2 sentences) -- What the paper aims to achieve
-3. **Vorgehen** (1 paragraph) -- Methodology in accessible language (minimize jargon)
-4. **Kernergebnisse** (1-2 paragraphs) -- Main findings with practical implications
-5. **Handlungsempfehlungen** (bullet points) -- Actionable recommendations for practitioners
+1. **Ausgangslage** (1 Absatz) -- Geschäftskontext und Problem
+2. **Zielsetzung** (1-2 Sätze) -- Was die Arbeit erreichen will
+3. **Vorgehen** (1 Absatz) -- Methodik in zugänglicher Sprache (Jargon minimieren)
+4. **Kernergebnisse** (1-2 Absätze) -- Wichtigste Befunde mit praktischen Implikationen
+5. **Handlungsempfehlungen** (Aufzählung) -- Konkrete Empfehlungen für die Praxis
 
-**Constraints:**
-- Length: 300-500 words
-- Accessible to non-academic readers (e.g., company supervisors)
-- Focus on practical value, not theoretical contribution
-- No citations
+**Vorgaben:**
+- Länge: 300-500 Wörter
+- Für nicht-akademische Leser verständlich (z. B. Unternehmensbetreuer)
+- Fokus auf praktischen Wert, nicht theoretischen Beitrag
+- Keine Zitate
 
-### 4. Keywords List
+### 4. Keyword-Liste
 
-Generate two keyword sets:
+Erzeuge zwei Keyword-Sets:
 
-**German Keywords (Schlagwoerter):**
-- 5-8 keywords
-- Mix of broad discipline terms and specific topic terms
-- Include methodology keywords if distinctive
-- Order: broad to specific
+**Deutsche Schlagwörter:**
+- 5-8 Keywords
+- Mischung aus breiten Disziplinbegriffen und spezifischen Themenbegriffen
+- Methodik-Keywords aufnehmen, wenn sie distinktiv sind
+- Reihenfolge: breit zu spezifisch
 
-**English Keywords:**
-- 5-8 keywords (not literal translations -- use established English terminology)
-- Include terms commonly used in international databases (Scopus, Web of Science)
-- Consider search discoverability
+**Englische Keywords:**
+- 5-8 Keywords (keine wörtlichen Übersetzungen -- etablierte englische Terminologie nutzen)
+- Begriffe aufnehmen, die in internationalen Datenbanken (Scopus, Web of Science) üblich sind
+- Auffindbarkeit bei Suchen berücksichtigen
 
-## Generation Workflow
+## Generierungs-Workflow
 
-1. Read `academic_context.md` for formal requirements and context
-2. Read the complete paper text (or all available chapters)
-3. Identify: research question, methodology, key findings, main contribution, limitations, implications
-4. Determine which deliverables to generate based on work type:
-   - Bachelorarbeit/Masterarbeit: Abstract (DE), Abstract (EN), Management Summary, Keywords
-   - Hausarbeit/Seminararbeit: Abstract (DE), Keywords
-   - Facharbeit: Abstract (DE) only (short version, 100-150 words)
-5. Draft each deliverable following the structure and constraints above
-6. Cross-check: ensure the abstract accurately reflects the paper's actual content (not the intended content from the outline)
-7. Present all deliverables in structured output
+1. Lies `academic_context.md` für formale Anforderungen und Kontext
+2. Lies den kompletten Arbeitstext (oder alle verfügbaren Kapitel)
+3. Identifiziere: Forschungsfrage, Methodik, Kernergebnisse, Hauptbeitrag, Limitationen, Implikationen
+4. Entscheide auf Basis des Arbeitstyps, welche Deliverables zu erzeugen sind:
+   - Bachelor-/Masterarbeit: Abstract (DE), Abstract (EN), Management Summary, Keywords
+   - Haus-/Seminararbeit: Abstract (DE), Keywords
+   - Facharbeit: nur Abstract (DE) (kurze Version, 100-150 Wörter)
+5. Entwirf jedes Deliverable gemäß der oben beschriebenen Struktur und Vorgaben
+6. Gegencheck: Sicherstellen, dass das Abstract den tatsächlichen Inhalt der Arbeit widerspiegelt (nicht den geplanten Inhalt aus der Gliederung)
+7. Präsentiere alle Deliverables in strukturiertem Output
 
-## Output Format
+## Output-Format
 
 ```
 ## Abstract & Zusammenfassung
 
 ### Abstract (Deutsch)
-[Generated abstract text]
+[Generierter Abstract-Text]
 
 **Wortanzahl:** [N]
 
@@ -113,7 +184,7 @@ Generate two keyword sets:
 **Word count:** [N]
 
 ### Management Summary
-[Generated summary text]
+[Generierter Summary-Text]
 
 **Wortanzahl:** [N]
 
@@ -122,24 +193,24 @@ Generate two keyword sets:
 **English:** [Keyword 1], [Keyword 2], ...
 ```
 
-## Quality Checks
+## Qualitätsprüfungen
 
-Before presenting the output, verify:
+Vor der Ausgabe folgendes verifizieren:
 
-- [ ] Abstract does not contain information absent from the paper
-- [ ] Abstract does not omit major findings present in the paper
-- [ ] No citations, figure references, or chapter references in abstract
-- [ ] Word count within specified range
-- [ ] German abstract uses appropriate academic register (no colloquialisms)
-- [ ] English abstract uses correct English academic conventions (not Germanisms)
-- [ ] Keywords are not too generic ("Management", "Unternehmen") or too narrow
-- [ ] Management Summary is understandable without reading the paper
+- [ ] Abstract enthält keine Informationen, die nicht in der Arbeit stehen
+- [ ] Abstract lässt keine zentralen Befunde aus, die in der Arbeit stehen
+- [ ] Keine Zitate, Abbildungs- oder Kapitelverweise im Abstract
+- [ ] Wortanzahl innerhalb des vorgegebenen Rahmens
+- [ ] Deutsches Abstract nutzt passendes wissenschaftliches Register (keine Umgangssprache)
+- [ ] Englisches Abstract nutzt korrekte englische Wissenschaftskonventionen (keine Germanismen)
+- [ ] Keywords nicht zu generisch ("Management", "Unternehmen") oder zu eng
+- [ ] Management Summary auch ohne Lektüre der Arbeit verständlich
 
-## Important Rules
+## Wichtige Regeln
 
-- Always read the actual paper content before generating -- never generate abstracts from the outline alone if text is available
-- If the paper is incomplete, generate a preliminary abstract and clearly mark it as provisional
-- Respect the word count limits strictly -- universities often enforce these
-- The abstract must stand alone as a self-contained text
-- Never include personal opinions or evaluative language beyond what the paper itself claims
-- If `academic_context.md` specifies additional requirements (e.g., structured abstract format), follow those over the defaults
+- Immer den tatsächlichen Arbeitstext vor dem Generieren lesen -- niemals Abstracts nur aus der Gliederung erzeugen, wenn Text verfügbar ist
+- Ist die Arbeit unvollständig, generiere ein vorläufiges Abstract und markiere es klar mit dem Default-String „Vorläufig, Validierung ausstehend"
+- Wortzahlgrenzen strikt einhalten -- Hochschulen setzen diese oft durch
+- Das Abstract muss als eigenständiger Text für sich stehen können
+- Niemals persönliche Meinungen oder wertende Sprache einfügen, die über die Aussagen der Arbeit hinausgehen
+- Falls `academic_context.md` zusätzliche Anforderungen nennt (z. B. strukturiertes Abstract-Format), diesen Vorrang vor den Defaults geben

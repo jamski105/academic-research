@@ -1,150 +1,189 @@
 ---
 name: Methodology Advisor
-description: This skill should be used when the user needs help choosing, justifying, or refining their research methodology. Triggers on "Methodik", "Forschungsdesign", "Methodenwahl", "Vorgehensmodell", "research design", "methodology", "qualitative vs quantitative", "Forschungsmethode", or when the user is unsure how to approach their research systematically.
+description: Dieser Skill wird genutzt, wenn der User Hilfe bei Wahl, Begründung oder Verfeinerung seiner Forschungsmethodik braucht. Triggers on "Methodik", "Forschungsdesign", "Methodenwahl", "Vorgehensmodell", "research design", "methodology", "qualitative vs quantitative", "Forschungsmethode", "Methodik prüfen / Methodik pruefen", "Methoden-Check", oder wenn der User unsicher ist, wie er seine Forschung systematisch angehen soll.
 ---
 
-# Methodology Advisor
+# Methodik-Berater
 
-Help choose, justify, and document the research methodology for the thesis. Compare approaches, evaluate fit with the research question, and produce methodology text that meets academic standards.
+Hilft bei Wahl, Begründung und Dokumentation der Forschungsmethodik. Vergleicht Ansätze, prüft die Passung zur Forschungsfrage und produziert Methodik-Texte, die akademischen Standards genügen.
 
-## When This Skill Activates
+## Vorbedingungen
 
-- The user needs to choose a research methodology
-- The user wants to compare qualitative vs. quantitative approaches
-- The user needs to justify their chosen method for a supervisor or expose
-- The user is writing the methodology chapter and needs structural guidance
+Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
+Skill und warte auf dessen Abschluss.
 
-## Memory Files
+Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
+"Ohne Forschungsfrage und Datenzugriffs-Infos kann ich keine Methoden-
+Empfehlung liefern, weil ich Methoden empfehlen würde, die die Frage nicht
+beantworten."
 
-### Read
+## Keine Fabrikation
 
-- `academic_context.md` — Research question, sub-questions, work type, topic, existing methodology choice
+Erfundene Methodik-Standards, Begründungen oder Vergleiche führen zu Note 5
+für das Forschungsdesign und einer methodisch angreifbaren Arbeit. Arbeite
+ausschließlich mit `academic_context.md` und dem Methoden-Katalog unter
+`${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md`.
+Fehlen Daten: frag den User, rate nicht.
 
-### Write
+## Methoden-Scoring-Matrix
 
-- `academic_context.md` — Update the methodology field after a decision is made
+Bewerte jede Methoden-Option auf einer Skala 1–5 in 4 Dimensionen:
 
-## Reference
+| Dimension | 1 = schlecht | 3 = okay | 5 = ideal |
+|---|---|---|---|
+| **Datenqualität** | Zugriff fraglich, Daten veraltet/unvollständig | Zugriff gegeben, Daten ausreichend | Zugriff gesichert, Daten aktuell und vollständig |
+| **Zeitaufwand** | > Rahmen der Arbeit | passt eng in den Rahmen | deutlich unter Maximalrahmen |
+| **Supervisor-Präferenz** | explizit abgelehnt | neutral / nicht erwähnt | explizit empfohlen |
+| **Fit zur Forschungsfrage** | beantwortet Frage nicht | beantwortet Frage teilweise | beantwortet Frage direkt |
 
-Consult the methodology catalog at `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md` for detailed descriptions, strengths, weaknesses, and use cases of each methodology type.
+Gesamt-Score = Summe der 4 Dimensionen (Min 4, Max 20).
 
-## Core Workflow
+**Schwellen zur Empfehlung:**
+- Score ≥ 16: starker Fit, klare Empfehlung
+- Score 10–15: tragfähig, aber mit Hinweis auf die schwächste Dimension
+- Score < 10: nicht empfehlen, alternative Methode suchen
 
-### 1. Load Context
+Bei Gleichstand: Supervisor-Präferenz entscheidet. Dokumentiere Scoring in der Ausgabe, nicht nur die Empfehlung.
 
-Read `academic_context.md`. If it does not exist, trigger the Academic Context skill first. Extract: research question, sub-questions, work type, topic, and any preliminary methodology choice.
+## Aktivierung dieses Skills
 
-### 2. Assess Research Question Type
+- Der User muss eine Forschungsmethodik wählen
+- Der User möchte qualitative vs. quantitative Ansätze vergleichen
+- Der User muss seine Methodenwahl gegenüber Betreuer oder Exposé begründen
+- Der User schreibt das Methodik-Kapitel und braucht strukturelle Orientierung
 
-Classify the research question to narrow down suitable methodologies:
+## Memory-Dateien
 
-| Question Type | Indicators | Suitable Methods |
-|---------------|------------|------------------|
-| Exploratory | "How does...", "What factors..." | Qualitative, Case Study, Grounded Theory |
-| Descriptive | "What is the state of...", "How is...structured" | Literature Review, Survey, Content Analysis |
-| Explanatory | "Why does...", "What causes..." | Quantitative, Experiment, Regression |
-| Evaluative | "How effective...", "What impact..." | Mixed Methods, Case Study, Comparative |
-| Design-oriented | "How can...be designed" | Design Science, Action Research |
+### Lesen
 
-Present the classification and reasoning to the user for confirmation.
+- `academic_context.md` — Forschungsfrage, Unterfragen, Arbeitstyp, Thema, vorhandene Methodenwahl
 
-### 3. Methodology Comparison
+### Schreiben
 
-Based on the question type, present 2-3 candidate methodologies. For each, cover:
+- `academic_context.md` — Methodik-Feld nach der Entscheidung aktualisieren
 
-#### Systematic Literature Review (SLR)
-- **When:** Synthesizing existing research on a well-defined topic
-- **Strengths:** Reproducible, comprehensive, no primary data needed
-- **Weaknesses:** Limited to published work, time-intensive search phase
-- **Fit for:** Bachelorarbeit (common), Masterarbeit (as foundation)
-- **Key references:** Kitchenham (2004), Webster & Watson (2002), Tranfield et al. (2003)
+## Referenz
 
-#### Qualitative Research
-- **When:** Understanding perspectives, experiences, or processes
-- **Subtypes:** Interviews, Focus Groups, Ethnography, Grounded Theory
-- **Strengths:** Rich data, context-sensitive, emergent findings
-- **Weaknesses:** Small samples, subjectivity, not generalizable
-- **Fit for:** Masterarbeit, exploratory Bachelorarbeit
-- **Key references:** Mayring (2015), Flick (2022), Yin (2018)
+Konsultiere den Methoden-Katalog unter `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md` für detaillierte Beschreibungen, Stärken, Schwächen und Einsatzszenarien jedes Methodentyps.
 
-#### Quantitative Research
-- **When:** Measuring, testing hypotheses, establishing correlations
-- **Subtypes:** Survey, Experiment, Secondary Data Analysis
-- **Strengths:** Generalizable, statistical rigor, reproducible
-- **Weaknesses:** Requires sufficient sample size, may miss context
-- **Fit for:** Masterarbeit, data-driven Bachelorarbeit
-- **Key references:** Bortz & Döring (2006), Field (2018)
+## Core-Workflow
+
+### 1. Kontext laden
+
+Lies `academic_context.md`. Existiert sie nicht, triggere zuerst den Academic-Context-Skill. Extrahiere: Forschungsfrage, Unterfragen, Arbeitstyp, Thema und eine eventuell vorhandene Methodik-Wahl.
+
+### 2. Typ der Forschungsfrage einschätzen
+
+Die Forschungsfrage klassifizieren, um geeignete Methoden einzugrenzen:
+
+| Fragentyp | Indikatoren | Geeignete Methoden |
+|-----------|-------------|--------------------|
+| Explorativ | "Wie funktioniert...", "Welche Faktoren..." | Qualitativ, Fallstudie, Grounded Theory |
+| Deskriptiv | "Wie ist der Stand von...", "Wie ist...gestaltet" | Literaturreview, Survey, Inhaltsanalyse |
+| Erklärend | "Warum...", "Was verursacht..." | Quantitativ, Experiment, Regression |
+| Evaluativ | "Wie wirksam...", "Welchen Einfluss..." | Mixed Methods, Fallstudie, Vergleich |
+| Gestaltungsorientiert | "Wie kann...gestaltet werden" | Design Science, Action Research |
+
+Klassifikation und Begründung dem User zur Bestätigung vorlegen.
+
+### 3. Methodenvergleich
+
+Basierend auf dem Fragentyp 2-3 Kandidaten-Methodiken präsentieren. Pro Methode behandeln:
+
+#### Systematisches Literaturreview (SLR)
+- **Wann:** Synthese bestehender Forschung zu einem abgegrenzten Thema
+- **Stärken:** Reproduzierbar, umfassend, keine Primärdaten nötig
+- **Schwächen:** Auf publizierte Arbeiten beschränkt, zeitintensive Suchphase
+- **Passung:** Bachelorarbeit (verbreitet), Masterarbeit (als Grundlage)
+- **Kernreferenzen:** Kitchenham (2004), Webster & Watson (2002), Tranfield et al. (2003)
+
+#### Qualitative Forschung
+- **Wann:** Perspektiven, Erfahrungen oder Prozesse verstehen
+- **Subtypen:** Interviews, Fokusgruppen, Ethnographie, Grounded Theory
+- **Stärken:** Reichhaltige Daten, kontextsensitiv, emergente Befunde
+- **Schwächen:** Kleine Stichproben, Subjektivität, nicht verallgemeinerbar
+- **Passung:** Masterarbeit, explorative Bachelorarbeit
+- **Kernreferenzen:** Mayring (2015), Flick (2022), Yin (2018)
+
+#### Quantitative Forschung
+- **Wann:** Messen, Hypothesen testen, Korrelationen feststellen
+- **Subtypen:** Survey, Experiment, Sekundärdatenanalyse
+- **Stärken:** Verallgemeinerbar, statistische Rigorosität, reproduzierbar
+- **Schwächen:** Braucht ausreichende Stichprobengröße, Kontext kann verloren gehen
+- **Passung:** Masterarbeit, datenbasierte Bachelorarbeit
+- **Kernreferenzen:** Bortz & Döring (2006), Field (2018)
 
 #### Mixed Methods
-- **When:** Research question requires both breadth and depth
-- **Subtypes:** Sequential Explanatory, Sequential Exploratory, Convergent
-- **Strengths:** Comprehensive, triangulation, compensates weaknesses
-- **Weaknesses:** Complex, time-intensive, requires dual competence
-- **Fit for:** Masterarbeit
-- **Key references:** Creswell & Creswell (2018), Tashakkori & Teddlie (2010)
+- **Wann:** Forschungsfrage braucht Breite und Tiefe
+- **Subtypen:** Sequential Explanatory, Sequential Exploratory, Convergent
+- **Stärken:** Umfassend, Triangulation, Schwächen kompensiert
+- **Schwächen:** Komplex, zeitintensiv, doppelte Kompetenz nötig
+- **Passung:** Masterarbeit
+- **Kernreferenzen:** Creswell & Creswell (2018), Tashakkori & Teddlie (2010)
 
-#### Case Study
-- **When:** Investigating a phenomenon in its real-world context
-- **Subtypes:** Single Case, Multiple Case, Embedded
-- **Strengths:** In-depth analysis, real-world relevance
-- **Weaknesses:** Limited generalizability, selection bias
-- **Fit for:** Bachelorarbeit, Masterarbeit
-- **Key references:** Yin (2018), Eisenhardt (1989), Stake (1995)
+#### Fallstudie
+- **Wann:** Ein Phänomen im realen Kontext untersuchen
+- **Subtypen:** Single Case, Multiple Case, Embedded
+- **Stärken:** Tiefe Analyse, Realitätsbezug
+- **Schwächen:** Eingeschränkte Generalisierbarkeit, Selektionsbias
+- **Passung:** Bachelorarbeit, Masterarbeit
+- **Kernreferenzen:** Yin (2018), Eisenhardt (1989), Stake (1995)
 
 #### Design Science Research (DSR)
-- **When:** Creating and evaluating an artifact (framework, model, tool)
-- **Strengths:** Practical contribution, iterative refinement
-- **Weaknesses:** Evaluation criteria must be defined upfront
-- **Fit for:** Wirtschaftsinformatik, engineering-oriented works
-- **Key references:** Hevner et al. (2004), Peffers et al. (2007)
+- **Wann:** Ein Artefakt (Framework, Modell, Tool) entwickeln und evaluieren
+- **Stärken:** Praxisbeitrag, iterative Verfeinerung
+- **Schwächen:** Evaluationskriterien müssen vorab definiert sein
+- **Passung:** Wirtschaftsinformatik, ingenieurorientierte Arbeiten
+- **Kernreferenzen:** Hevner et al. (2004), Peffers et al. (2007)
 
-### 4. Interactive Decision
+### 4. Interaktive Entscheidung
 
-Guide the user to a decision through targeted questions:
+Den User mit gezielten Fragen zur Entscheidung führen:
 
-1. **Data availability** — Does primary data collection require ethics approval, access, or time?
-2. **Skills and tools** — Is the user comfortable with statistical software, interview techniques, etc.?
-3. **Supervisor expectations** — Has the supervisor indicated a preference?
-4. **Time constraints** — How much time is available for data collection and analysis?
-5. **Work type fit** — Is the method realistic for the scope of the work?
+1. **Datenverfügbarkeit** — Braucht Primärdatenerhebung Ethikvotum, Zugang oder viel Zeit?
+2. **Fähigkeiten und Tools** — Ist der User fit in Statistik-Software, Interviewtechniken etc.?
+3. **Betreuer-Erwartungen** — Hat der Betreuer eine Präferenz geäußert?
+4. **Zeit-Constraints** — Wie viel Zeit bleibt für Datenerhebung und -analyse?
+5. **Passung zum Arbeitstyp** — Ist die Methode realistisch für den Scope?
 
-Present a recommendation with clear reasoning. Let the user decide.
+Eine Empfehlung mit klarer Begründung präsentieren. Den User entscheiden lassen.
 
-### 5. Methodology Justification
+### 5. Methodik-Begründung
 
-After the user chooses a method, help formulate the justification text:
+Nach der Wahl den Begründungstext formulieren:
 
-- **Why this method** — Connect to the research question type
-- **Why not alternatives** — Brief reasoning for rejecting other options
-- **Precedent** — Reference published studies in the same field using this method
-- **Limitations** — Acknowledge known limitations and mitigation strategies
+- **Warum diese Methode** — Bezug zum Typ der Forschungsfrage
+- **Warum keine Alternativen** — Kurze Begründung gegen andere Optionen
+- **Präzedenzen** — Veröffentlichte Studien im gleichen Feld mit dieser Methode nennen
+- **Limitationen** — Bekannte Grenzen und Mitigationen transparent machen
 
-This justification can be used directly in the expose or methodology chapter.
+Dieser Text kann direkt in Exposé oder Methodik-Kapitel übernommen werden.
 
-### 6. Methodology Chapter Structure
+### 6. Struktur des Methodik-Kapitels
 
-Provide a recommended structure for the methodology chapter:
+Empfohlene Struktur für das Methodik-Kapitel:
 
-1. **Forschungsdesign** — Overview of the chosen approach
-2. **Begründung der Methodenwahl** — Justification (from step 5)
-3. **Datenerhebung** — How data is collected (or how literature is searched)
-4. **Datenanalyse** — How data is analyzed (coding, statistics, comparison)
-5. **Gütekriterien** — Quality criteria (validity, reliability, or trustworthiness)
-6. **Limitationen** — Methodological limitations
+1. **Forschungsdesign** — Überblick über den gewählten Ansatz
+2. **Begründung der Methodenwahl** — Begründung (aus Schritt 5)
+3. **Datenerhebung** — Wie Daten erhoben werden (oder wie Literatur gesucht wird)
+4. **Datenanalyse** — Wie Daten analysiert werden (Coding, Statistik, Vergleich)
+5. **Gütekriterien** — Validität, Reliabilität oder Trustworthiness
+6. **Limitationen** — Methodische Grenzen
 
-### 7. Save Decision
+### 7. Entscheidung speichern
 
-After the user confirms:
+Nach Bestätigung des Users:
 
-1. Read `academic_context.md` (prevent stale overwrites)
-2. Update the `Methodik` field with the chosen methodology
-3. Add key methodology references to `## Schlüsselkonzepte` if not already present
+1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+2. Das Feld `Methodik` mit der gewählten Methodik aktualisieren
+3. Zentrale Methoden-Referenzen zu `## Schlüsselkonzepte` hinzufügen, falls noch nicht vorhanden
 
-## Important Rules
+## Wichtige Regeln
 
-- **Never choose for the user** — Present options with clear trade-offs, let the user decide
-- **Match scope to work type** — Do not recommend complex mixed methods for a Hausarbeit
-- **Cite methodology literature** — Every recommended method should reference established sources
-- **Be honest about limitations** — Every method has weaknesses; present them transparently
-- **Consider supervisor preferences** — If mentioned, factor them into the recommendation
-- **Revisit if needed** — Methodology can be refined as the work progresses; note this to the user
+- **Nie für den User entscheiden** — Optionen mit klaren Trade-offs zeigen, User entscheidet
+- **Scope zum Arbeitstyp passen lassen** — Keine komplexen Mixed-Methods-Designs für eine Hausarbeit
+- **Methodik-Literatur zitieren** — Jede empfohlene Methode mit etablierten Quellen belegen
+- **Ehrlich zu Limitationen** — Jede Methode hat Schwächen; diese transparent darstellen
+- **Betreuer-Präferenzen berücksichtigen** — Wenn erwähnt, in die Empfehlung einbeziehen
+- **Bei Bedarf revidieren** — Die Methodik kann sich im Projektverlauf anpassen; das dem User mitteilen

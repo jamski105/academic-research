@@ -4,36 +4,36 @@ allowed-tools: Read, Bash(cat ~/.academic-research/*), Bash(ls ~/.academic-resea
 argument-hint: [optional: search query or date]
 ---
 
-# Research History
+# Recherche-Verlauf
 
-View past research sessions stored in `~/.academic-research/sessions/`.
+Vergangene Recherche-Sessions ansehen, die unter `~/.academic-research/sessions/` abgelegt sind.
 
-## Usage
+## Verwendung
 
-- `/academic-research:history` — List all sessions
-- `/academic-research:history "DevOps"` — Search sessions by query
-- `/academic-research:history 2026-03-17` — Show specific session details
-- `/academic-research:history stats` — Show aggregate statistics
+- `/academic-research:history` — Alle Sessions auflisten
+- `/academic-research:history "DevOps"` — Sessions per Query durchsuchen
+- `/academic-research:history 2026-03-17` — Details einer bestimmten Session anzeigen
+- `/academic-research:history stats` — Aggregatstatistik anzeigen
 
-## Implementation
+## Umsetzung
 
-1. Read session index: `cat ~/.academic-research/sessions/index.json`
-2. If argument provided:
-   - If it's a date → find session from that date, show details
-   - If it's "stats" → show aggregate stats
-   - Otherwise → search sessions by query text
-3. Display results as formatted table:
+1. Session-Index einlesen: `cat ~/.academic-research/sessions/index.json`
+2. Wenn ein Argument übergeben wurde:
+   - Datum → Session von diesem Tag finden, Details anzeigen
+   - `"stats"` → Aggregatstatistik anzeigen
+   - Sonst → Sessions per Query-Text durchsuchen
+3. Ergebnisse als formatierte Tabelle ausgeben:
 
 ```
-📚 Research History
+📚 Recherche-Verlauf
 
-| # | Date       | Query                  | Papers | PDFs  | Mode     |
+| # | Datum      | Query                  | Papers | PDFs  | Modus    |
 |---|------------|------------------------|--------|-------|----------|
 | 1 | 2026-03-17 | DevOps Governance      | 47     | 42/47 | standard |
 | 2 | 2026-03-15 | AI Ethics              | 32     | 28/32 | deep     |
 | 3 | 2026-03-10 | ML in Healthcare       | 25     | 20/25 | quick    |
 
-Total: 3 sessions, 104 papers, 90 PDFs
+Gesamt: 3 Sessions, 104 Papers, 90 PDFs
 ```
 
-For detail view, show: papers list, quote count, module breakdown, file locations.
+Für die Detailansicht ausgeben: Paperliste, Zitat-Anzahl, Modul-Verteilung, Dateipfade.
