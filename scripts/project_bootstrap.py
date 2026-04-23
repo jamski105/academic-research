@@ -66,3 +66,28 @@ def create_structure(cwd: Path, stub: bool) -> None:
         gitkeep = cwd / sub / ".gitkeep"
         if not gitkeep.exists():
             gitkeep.touch()
+
+
+def merge_gitignore(cwd: Path) -> None:
+    """Ensure every line from the gitignore fragment is present in .gitignore.
+
+    Preserves existing content; appends only missing lines, in fragment order.
+    Creates the file if it doesn't exist.
+    """
+    fragment = (TEMPLATES_DIR / "gitignore.fragment").read_text(encoding="utf-8")
+    fragment_lines = [ln for ln in fragment.splitlines() if ln.strip()]
+
+    target = cwd / ".gitignore"
+    if target.exists():
+        existing = target.read_text(encoding="utf-8")
+        existing_lines = existing.splitlines()
+    else:
+        existing = ""
+        existing_lines = []
+
+    missing = [ln for ln in fragment_lines if ln not in existing_lines]
+    if not missing:
+        return
+
+    separator = "" if existing.endswith("\n") or not existing else "\n"
+    target.write_text(existing + separator + "\n".join(missing) + "\n", encoding="utf-8")

@@ -88,3 +88,32 @@ def test_create_structure_second_run_is_noop(tmp_path, monkeypatch):
     pb.create_structure(tmp_path, stub=True)
     stamp_after = (tmp_path / "academic_context.md").stat().st_mtime_ns
     assert stamp_before == stamp_after
+
+
+def test_merge_gitignore_creates_new(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    pb.merge_gitignore(tmp_path)
+    content = (tmp_path / ".gitignore").read_text()
+    assert "pdfs/*" in content
+    assert "!pdfs/.gitkeep" in content
+    assert ".DS_Store" in content
+
+
+def test_merge_gitignore_appends_missing_lines(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    (tmp_path / ".gitignore").write_text("node_modules/\n.DS_Store\n")
+    pb.merge_gitignore(tmp_path)
+    lines = (tmp_path / ".gitignore").read_text().splitlines()
+    assert "node_modules/" in lines
+    assert ".DS_Store" in lines
+    assert lines.count(".DS_Store") == 1  # not duplicated
+    assert "pdfs/*" in lines
+
+
+def test_merge_gitignore_preserves_order_of_existing(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    (tmp_path / ".gitignore").write_text("first\nsecond\n")
+    pb.merge_gitignore(tmp_path)
+    lines = (tmp_path / ".gitignore").read_text().splitlines()
+    assert lines[0] == "first"
+    assert lines[1] == "second"
