@@ -203,6 +203,17 @@ Den theoretischen Rahmen auf die Daten anwenden. Befunde entlang der Unterfragen
 
 Befunde pro Unterfrage zusammenfassen. Die Hauptfrage beantworten. Limitationen und zukünftige Forschung diskutieren. Keine neuen Quellen.
 
+## Zitat-Einbindung via Citations-API
+
+Beim Einweben von Zitaten in Kapitel-Prosa: Quellen-PDFs im `documents`-Parameter an Claude uebergeben, damit die API die Quellenbindung erzwingt. Jedes Paraphrase-Segment mit einem `citations[]`-Eintrag nachweisbar.
+
+**Workflow:**
+1. `literature_state.md` lesen — welche PDFs liegen im Session-Pfad?
+2. API-Call mit `documents[]`-Anhaengen, `citations.enabled: true`
+3. Output-Text enthaelt `citations[]`-Bloecke — diese im Kapitel-Text als Inline-Zitate nach Variant-Zitierstil (aus `academic_context.md`) rendern.
+
+**Fallback:** Sind keine PDFs verfuegbar (nur Metadaten), nutze den herkoemmlichen Prompt-Workflow aus dem vorangehenden Abschnitt.
+
 ## Wichtige Regeln
 
 - **Nie ohne User-Review schreiben** — Jeden Abschnitt zur Durchsicht vorlegen, bevor weitergearbeitet wird
