@@ -6,7 +6,19 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 
 Überprüfe immer alle Zitate von der Zitatextraktion oder vordere Claude auf alles zu überprüfen
 
-## Was ist neu in v4?
+## Was ist neu in v5?
+
+**v5.0.0** (Breaking) — Architektur-Bereinigung:
+- Browser-Automation von **Playwright-MCP auf `browser-use`-CLI** umgestellt (schnellerer Setup, weniger Dependencies).
+- Excel-Generierung an **externes `document-skills:xlsx` Plugin** delegiert statt eigener Python-Pipeline.
+- **Drei redundante Python-Skripte** (`citations.py`, `style_analysis.py`, `ranking.py`) gelöscht; Logik in Skills/Agents inlined.
+
+**v5.0.1** — `/academic-research:setup` wurde zum vollständigen One-Click-Installer (installiert `browser-use` automatisch via `uv` oder `pipx`).
+
+Vollständige Migration siehe [CHANGELOG.md](CHANGELOG.md).
+
+<details>
+<summary>Historisch: Was v4 gegenüber v3 brachte</summary>
 
 | Feature | v3 | v4 |
 |---------|----|----|
@@ -19,32 +31,41 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 | Kontext | Nur `config.local.md` | **Claude Memory** (persistent, sessionübergreifend) |
 | Auslösung | Nur `/research` Command | **Automatische Aktivierung** durch Konversation |
 
+</details>
+
 ## Voraussetzungen
+
+Minimal — alles Weitere erledigt `/academic-research:setup` (siehe Installation).
 
 - **Python 3.10+** (empfohlen: 3.11+)
 - **Claude Code** (CLI, aktuelle Version)
-- **`browser-use` CLI** (für Browser-Suchmodule):
+- Einer von: **`uv`** oder **`pipx`** (für die automatische `browser-use`-Installation). Fehlt beides, funktioniert das Plugin trotzdem — die Browser-Suchmodule werden dann übersprungen. Install-Hinweise:
   ```bash
-  uv tool install browser-use   # oder: pipx install browser-use
-  browser-use doctor
+  brew install pipx                                      # macOS, Linux
+  # ODER
+  curl -LsSf https://astral.sh/uv/install.sh | sh        # plattformübergreifend
   ```
-  Zusätzlich muss der globale `browser-use`-Skill unter `~/.claude/skills/browser-use/` liegen (kommt mit dem CLI-Paket).
-- **`document-skills` Plugin** (für `/academic-research:excel`):
+
+### Was `/setup` automatisch installiert
+
+| Komponente | Zweck |
+|---|---|
+| `~/.academic-research/venv/` | Isolierte Python-Umgebung |
+| `httpx`, `PyPDF2`, `pyyaml` | Python-Pakete aus `scripts/requirements.txt` |
+| `browser-use` CLI | Browser-Automation via `uv tool install` oder `pipx install` |
+| Claude-Code-Permissions | Einträge in `~/.claude/settings.local.json` |
+
+### Was zusätzlich manuell nötig ist
+
+- **`document-skills` Plugin** (nur wenn `/academic-research:excel` genutzt wird). Claude Code erlaubt keinem Plugin, andere Plugins zu installieren — der Befehl muss direkt im Claude-Prompt laufen:
   ```
   /plugin install document-skills@anthropic-agent-skills
   ```
-
-### Python-Pakete
-
-| Paket | Version | Zweck |
-|-------|---------|-------|
-| `httpx` | ≥0.25.0 | HTTP-Client für API-Suche |
-| `PyPDF2` | ≥3.0.0 | PDF-Textextraktion |
-| `pyyaml` | ≥6.0 | YAML-Konfiguration |
+- **`browser-use` Claude-Skill** unter `~/.claude/skills/browser-use/` (nur wenn noch nicht vorhanden). Dieser Skill wird von Anthropic separat distribuiert. Das Setup gibt eine Warnung aus, wenn er fehlt.
 
 ## Installation
 
-### 1. Marketplace hinzufügen & Plugin installieren
+### 1. Plugin installieren
 
 Öffne Claude Code in einem beliebigen Projekt und führe folgende Befehle aus:
 
@@ -80,41 +101,32 @@ claude --plugin-dir ~/Repos/academic-research
 
 </details>
 
-### 2. Python-Umgebung einrichten
+### 2. Setup ausführen
 
 ```
-# Automatisch via Setup-Command in Claude Code:
 /academic-research:setup
 ```
 
-Das Setup erstellt die venv, installiert alle Dependencies und verifiziert die Installation.
+Ein Aufruf, sechs Schritte: Datenverzeichnis, Python-venv, Python-Pakete, `browser-use` CLI, Skill/Plugin-Checks, Permissions. Jeder Schritt meldet `✅` oder `⚠️` mit konkretem Hinweis bei Fehlen. Idempotent — mehrfacher Aufruf ist sicher.
 
 <details>
-<summary>Manuelles Setup</summary>
+<summary>Manueller Aufruf (ohne Slash-Command)</summary>
 
 ```bash
-mkdir -p ~/.academic-research/{sessions,pdfs}
-python3 -m venv ~/.academic-research/venv
-~/.academic-research/venv/bin/pip install httpx PyPDF2 pyyaml
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh
 ```
 
 </details>
 
-### 3. `browser-use` CLI installieren (für Browser-Suchmodule)
+### 3. document-skills installieren (nur für `/excel`)
 
-Siehe [Voraussetzungen](#voraussetzungen). Ohne `browser-use` funktionieren alle **API-basierten** Suchquellen (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv). Browser-Module (Google Scholar, Springer, OECD, RePEc, OPAC, EBSCOhost, ProQuest) erfordern `browser-use`.
-
-### 4. Permissions konfigurieren
+Einmalig in Claude Code:
 
 ```
-/academic-research:setup
+/plugin install document-skills@anthropic-agent-skills
 ```
 
-Das Setup-Command konfiguriert auch die nötigen Permissions automatisch. Alternativ manuell:
-
-```bash
-python3 scripts/configure_permissions.py
-```
+Das Setup warnt beim ersten Start, wenn das Plugin fehlt. Ohne das Plugin bleibt `/academic-research:excel` nicht nutzbar; alle anderen Commands laufen weiter.
 
 ## Quick Start
 
@@ -199,7 +211,7 @@ Erzeugt 4 Sheets:
 
 ### `/academic-research:setup`
 
-Richtet die Python-Umgebung ein: venv, Dependencies, `browser-use`-Check, Permissions. Führt alle Schritte automatisch aus und verifiziert die Installation.
+Vollständiger Installer: venv, Python-Pakete, `browser-use` CLI (Auto-Install via `uv`/`pipx`), Claude-Skill- und Plugin-Checks, Permissions. Idempotent — mehrfach aufrufbar.
 
 ### `/academic-research:history`
 
