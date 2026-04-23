@@ -1,17 +1,22 @@
 """Evals fuer quote-extractor-Agent (Block B + A)."""
+import json
+from pathlib import Path
+
 import pytest
 
 from tests.evals.eval_runner import (
+    EVALS_ROOT,
     call_claude,
     check_expected,
     load_agent_content,
-    load_eval_file,
 )
 
-EVALS = load_eval_file("quote-extractor", "evals.json") if (
-    __import__("pathlib").Path(__file__).parent.parent.parent
-    / "evals" / "quote-extractor" / "evals.json"
-).exists() else {"prompts": []}
+_EVALS_PATH: Path = EVALS_ROOT / "quote-extractor" / "evals.json"
+pytestmark = pytest.mark.skipif(
+    not _EVALS_PATH.exists(),
+    reason=f"evals-Datei fehlt: {_EVALS_PATH}",
+)
+EVALS: dict = json.loads(_EVALS_PATH.read_text()) if _EVALS_PATH.exists() else {"prompts": []}
 
 
 @pytest.mark.parametrize("prompt", EVALS["prompts"], ids=lambda p: p["id"])
