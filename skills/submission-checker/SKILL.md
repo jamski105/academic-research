@@ -17,7 +17,7 @@ Validate that an academic paper meets all formal submission requirements: page c
 ## Memory and Reference Files
 
 - Read `academic_context.md` for work type, university, program, and citation style
-- Read `leibniz-fh-requirements.md` for university-specific formal requirements
+- Read `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` for university-specific formal requirements
 - Read `writing_state.md` for current word counts and chapter completion status
 
 ## Checklist Dimensions
@@ -46,7 +46,7 @@ Verify presence of all mandatory sections in correct order:
 
 ### 2. Page Count and Length
 
-Check against requirements from `leibniz-fh-requirements.md`:
+Check against requirements from `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md`:
 
 | Work Type        | Typical Range (pages) |
 |------------------|-----------------------|
@@ -112,14 +112,14 @@ If figures or tables are present:
 
 Verify:
 - Present as last page (or per university placement rule)
-- Contains required wording per `leibniz-fh-requirements.md`
+- Contains required wording per `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md`
 - Includes place and date fields
 - Includes signature line
 
 ## Evaluation Workflow
 
 1. Read `academic_context.md` to determine work type and university
-2. Read `leibniz-fh-requirements.md` for specific requirements
+2. Read `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` for specific requirements
 3. Read `writing_state.md` for current completion status
 4. Analyze the paper structure against the checklist
 5. Score each dimension as PASS, PARTIAL, or FAIL
@@ -156,8 +156,8 @@ Verify:
 
 ## Important Rules
 
-- Always check `leibniz-fh-requirements.md` first -- university-specific rules override general conventions
-- If `leibniz-fh-requirements.md` is not available, use standard German academic conventions and note that university-specific verification was not possible
+- Always check `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` first -- university-specific rules override general conventions
+- If `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` is not available, use standard German academic conventions and note that university-specific verification was not possible
 - Never assume formatting is correct without checking -- formatting errors are the most common reason for submission delays
 - Distinguish between hard requirements (FAIL = cannot submit) and soft recommendations (PARTIAL = should fix)
 - If the paper is not yet complete, run the check on available sections and note which checks are pending
