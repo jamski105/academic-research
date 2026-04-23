@@ -214,6 +214,30 @@ Beim Einweben von Zitaten in Kapitel-Prosa: Quellen-PDFs im `documents`-Paramete
 
 **Fallback:** Sind keine PDFs verfuegbar (nur Metadaten), nutze den herkoemmlichen Prompt-Workflow aus dem vorangehenden Abschnitt.
 
+## Qualitaets-Review vor finalem Output
+
+Nach der Generierung des Kapitel-Entwurfs triggere den `quality-reviewer`-Agent:
+
+```
+Agent(
+  subagent_type="quality-reviewer",
+  prompt={
+    "content": "<Entwurfs-Text>",
+    "criteria": [
+      {"name": "Satzlaenge Median", "threshold": "15-25 Woerter", "metric": "median"},
+      {"name": "Passiv-Quote", "threshold": "< 30%", "metric": "percentage"},
+      {"name": "Nominalstil", "threshold": "< 40%", "metric": "percentage"},
+      {"name": "Quellen pro 1000 Woerter", "threshold": ">= 5", "metric": "count_per_1000"}
+    ],
+    "context": {"component": "chapter-writer", "iteration": <N>}
+  }
+)
+```
+
+**Bei PASS:** Output an User liefern.
+**Bei REVISE:** Empfehlungen anwenden, erneut generieren, iteration += 1.
+**Bei iteration >= 2:** PASS-with-warnings akzeptieren und die verbleibenden Warnungen dem User transparent machen.
+
 ## Wichtige Regeln
 
 - **Nie ohne User-Review schreiben** — Jeden Abschnitt zur Durchsicht vorlegen, bevor weitergearbeitet wird

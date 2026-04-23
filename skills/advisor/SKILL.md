@@ -147,6 +147,28 @@ Wenn bereits eine Gliederung existiert und der User Änderungen wünscht:
 
 Nach Änderungen immer die komplette aktualisierte Gliederung zeigen und bestätigen lassen.
 
+## Qualitaets-Review vor finalem Output
+
+Nach der Erstellung des Gliederungs-Feedbacks triggere den `quality-reviewer`-Agent:
+
+```
+Agent(
+  subagent_type="quality-reviewer",
+  prompt={
+    "content": "<Feedback-Text>",
+    "criteria": [
+      {"name": "Forschungsfrage Laenge", "threshold": "<= 25 Woerter", "metric": "word_count"},
+      {"name": "Kapitelanzahl", "threshold": ">= 3", "metric": "count"},
+      {"name": "Quellenzahl", "threshold": ">= 15", "metric": "count"},
+      {"name": "Alle 7 advisor-Kriterien angesprochen", "threshold": "7/7", "metric": "coverage"}
+    ],
+    "context": {"component": "advisor", "iteration": <N>}
+  }
+)
+```
+
+Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
+
 ## Wichtige Regeln
 
 - **Nie ohne Dialog automatisch eine Gliederung generieren** — Den User immer in Strukturentscheidungen einbinden

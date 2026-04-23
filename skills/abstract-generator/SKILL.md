@@ -212,6 +212,27 @@ Vor der Ausgabe folgendes verifizieren:
 - [ ] Keywords nicht zu generisch ("Management", "Unternehmen") oder zu eng
 - [ ] Management Summary auch ohne Lektüre der Arbeit verständlich
 
+## Qualitaets-Review vor finalem Output
+
+Nach der Generierung des Abstracts triggere den `quality-reviewer`-Agent:
+
+```
+Agent(
+  subagent_type="quality-reviewer",
+  prompt={
+    "content": "<Abstract-Text>",
+    "criteria": [
+      {"name": "Wortzahl", "threshold": "150-250", "metric": "word_count"},
+      {"name": "IMRaD-Struktur", "threshold": "vorhanden", "metric": "section_presence"},
+      {"name": "Keyword-Dichte", "threshold": "2-5% der Woerter", "metric": "percentage"}
+    ],
+    "context": {"component": "abstract-generator", "iteration": <N>}
+  }
+)
+```
+
+Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
+
 ## Wichtige Regeln
 
 - Immer den tatsächlichen Arbeitstext vor dem Generieren lesen -- niemals Abstracts nur aus der Gliederung erzeugen, wenn Text verfügbar ist
