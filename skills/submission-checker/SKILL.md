@@ -24,27 +24,25 @@ die bei Einreichung zurückgewiesen wird. Arbeite ausschließlich mit der
 Arbeits-PDF und den FH-Zuordnungen in `academic_context.md`. Fehlen Daten:
 frag den User, rate nicht.
 
-## FH-Leibniz-Formalia-Check
-
-Prüfe folgende Formalia. Jeder Punkt ist PASS/FAIL:
-
-1. **Seitenränder** — 2,5 cm rundum (oben/unten/links/rechts)
-2. **Schriftart** — Times New Roman 12 pt ODER Arial 11 pt
-3. **Zeilenabstand** — 1,5-fach
-4. **Eidesstattliche Erklärung** — vollständiger Wortlaut laut FH-Vorlage, unterschrieben
-5. **Deckblatt** — alle Pflicht-Felder: Titel, Name, Matrikelnummer, Studiengang, Supervisor, Abgabedatum
-6. **Literaturverzeichnis** — nach FH-vorgegebenem Zitationsstil durchgehend einheitlich
-7. **Seitenzählung** — Einleitung beginnt mit Seite 1 (arabisch), Verzeichnisse römisch
-8. **Inhaltsverzeichnis** — automatisiert (nicht manuell), Seitenangaben korrekt
-
-Ausgabe: Tabelle Kriterium + PASS/FAIL + bei FAIL: konkrete Korrektur-Anweisung.
-
 ## Aktivierung dieses Skills
 
 - Der User fragt, ob seine Arbeit abgabefertig ist
 - Der User möchte Formatierung oder formale Anforderungen verifizieren
 - Qualitätssicherung vor der Abgabe
 - Der User fragt nach konkreten formalen Elementen (Deckblatt, Eidesstattliche Erklärung etc.)
+
+## Variant-Selector
+
+Lies `academic_context.md`, Feld `Universitaet` und/oder `Arbeitstyp`:
+
+| Kontext | Referenz-Datei |
+|---------|----------------|
+| FH Leibniz (Default) | `references/fh-leibniz.md` |
+| Andere deutsche Uni | `references/uni-general.md` |
+| IEEE-Konferenz/-Journal | `references/journal-ieee.md` |
+| ACM-Konferenz/-Journal | `references/journal-acm.md` |
+
+Fehlt das Feld → `fh-leibniz.md` als Default (Plugin-Default ist FH Leibniz). Unbekannt → Rueckfrage.
 
 ## Memory- und Referenzdateien
 
