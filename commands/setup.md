@@ -1,68 +1,50 @@
 ---
-description: Set up Python environment for academic research plugin v5
+description: Set up the academic research plugin (Python env, browser-use CLI, document-skills check, permissions)
 disable-model-invocation: true
-allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(~/.academic-research/venv/bin/pip *)
+allowed-tools: Bash(bash *), Bash(python3 *)
 ---
 
 # Academic Research v5 Setup
 
-Set up the Python environment required by the academic research plugin.
+Vollständiges Setup über das zentrale Installationsskript. Ein Aufruf, alle Abhängigkeiten, klare Statusmeldungen.
 
-## Steps
+## Ausführung
 
-1. Create the data directory:
 ```bash
-mkdir -p ~/.academic-research/{sessions,pdfs}
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh
 ```
 
-2. Create Python virtual environment:
-```bash
-python3 -m venv ~/.academic-research/venv
-```
+Das Skript übernimmt in sechs Schritten:
 
-3. Install dependencies:
-```bash
-~/.academic-research/venv/bin/pip install -r ${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt
-```
+1. Legt `~/.academic-research/{sessions,pdfs,venv}` an.
+2. Erstellt die Python-venv und installiert `httpx`, `PyPDF2`, `pyyaml` (aus `scripts/requirements.txt`).
+3. Prüft, ob `browser-use` CLI vorhanden ist. Falls nicht: installiert automatisch via `uv tool install` oder `pipx install`, sofern eines der beiden Tools vorhanden ist. Führt anschließend `browser-use doctor` aus.
+4. Prüft, ob der globale `browser-use` Claude-Skill unter `~/.claude/skills/browser-use/` liegt.
+5. Prüft, ob das `document-skills` Plugin im Plugin-Cache vorhanden ist. Falls nicht: zeigt den exakten `/plugin install`-Befehl an — dieser Schritt ist **nicht automatisierbar**, da Plugins in Claude Code keine anderen Plugins auto-installieren dürfen.
+6. Schreibt die Claude-Code-Permissions über `scripts/configure_permissions.py`.
 
-4. Verify installation:
-```bash
-~/.academic-research/venv/bin/python -c "import httpx; print('✅ httpx:', httpx.__version__)"
-~/.academic-research/venv/bin/python -c "import PyPDF2; print('✅ PyPDF2:', PyPDF2.__version__)"
-~/.academic-research/venv/bin/python -c "import yaml; print('✅ pyyaml:', yaml.__version__)"
-```
+## Interpretation der Ausgabe
 
-5. Install `browser-use` CLI (required for browser search modules):
-```bash
-uv tool install browser-use   # oder: pipx install browser-use
-browser-use doctor
-```
-Wenn `browser-use` nicht installiert ist, funktionieren API-Module weiter, aber keine Browser-Datenbanken (Google Scholar, Springer, OECD, RePEc, OPAC, EBSCO, ProQuest).
+| Marker | Bedeutung |
+|--------|-----------|
+| ✅ Python environment: ready | venv + requirements.txt erfolgreich installiert |
+| ✅ browser-use CLI: ready | CLI vorhanden und `browser-use doctor` meldet keinen Fehler |
+| ✅ browser-use Claude-Skill: vorhanden | Skill unter `~/.claude/skills/browser-use/` |
+| ✅ document-skills Plugin: vorhanden | Plugin-Cache-Pfad existiert |
+| ⚠️ … | siehe Hinweistext direkt unter dem Marker |
 
-6. Configure Claude Code permissions:
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/configure_permissions.py
-```
+## Was passiert, wenn etwas fehlt
 
-7. Show result:
-```
-✅ Setup complete!
+- **Ohne `browser-use` CLI:** API-basierte Suchmodule (CrossRef, OpenAlex, Semantic Scholar, BASE, EconBiz, EconStor, arXiv) laufen weiter. Browser-basierte Suchmodule (Scholar, Springer, OECD, RePEc, OPAC, EBSCOhost, ProQuest) werden übersprungen.
+- **Ohne `browser-use` Claude-Skill:** Claude fällt bei Browser-Aufrufen auf direkte CLI-Kommandos zurück (funktional identisch, nur ohne den Skill-Wrapper mit seinen best-practice-Hinweisen).
+- **Ohne `document-skills` Plugin:** `/academic-research:excel` bricht mit klarer Fehlermeldung und Install-Befehl ab.
 
-Environment: ~/.academic-research/venv/
-Data dir:    ~/.academic-research/
+## Erneutes Ausführen
 
-Available commands:
+Das Skript ist idempotent. Ein zweiter Aufruf:
 
-  /academic-research:search "query"  — Search academic papers
-  /academic-research:score           — Score and rank literature
-  /academic-research:excel           — Generate literature Excel
-
-Skills (auto-activate in conversation):
-
-  Academic Context, Advisor, Chapter Writer, Style Evaluator,
-  Title Generator, Citation Extraction, Plagiarism Check,
-  Methodology Advisor, Submission Checker, Literature Gap Analysis,
-  Abstract Generator, Source Quality Audit, Research Question Refiner
-```
-
-If any step fails, show the error and suggest fixes.
+- erstellt kein zweites venv, installiert nur fehlende Packages
+- überspringt `browser-use` CLI-Install, wenn bereits installiert
+- wiederholt `browser-use doctor` (harmlos, aktualisiert den Status)
+- überschreibt keine Seed-Dateien
+- fügt Permissions nur hinzu, wenn sie noch nicht in `~/.claude/settings.local.json` stehen
