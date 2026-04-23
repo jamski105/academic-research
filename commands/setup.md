@@ -29,7 +29,6 @@ python3 -m venv ~/.academic-research/venv
 ```bash
 ~/.academic-research/venv/bin/python -c "import httpx; print('✅ httpx:', httpx.__version__)"
 ~/.academic-research/venv/bin/python -c "import PyPDF2; print('✅ PyPDF2:', PyPDF2.__version__)"
-~/.academic-research/venv/bin/python -c "import openpyxl; print('✅ openpyxl:', openpyxl.__version__)"
 ~/.academic-research/venv/bin/python -c "import yaml; print('✅ pyyaml:', yaml.__version__)"
 ```
 
