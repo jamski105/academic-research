@@ -22,7 +22,7 @@ description: |
   relevance-scorer kann standalone für Re-Scoring einer bestehenden Paperliste gegen eine neue Query verwendet werden.
   </commentary>
   </example>
-maxTurns: 15
+maxTurns: 3
 ---
 
 # Relevance Scorer Agent

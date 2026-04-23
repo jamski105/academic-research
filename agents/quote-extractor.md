@@ -23,7 +23,7 @@ description: |
   </commentary>
   </example>
 tools: [Read]
-maxTurns: 20
+maxTurns: 5
 ---
 
 # Quote Extractor Agent
