@@ -14,6 +14,23 @@ führen zu einem Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arb
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Coverage-Metriken (numerisch)
+
+Berechne und berichte jede dieser 3 Metriken:
+
+1. **Coverage** — Anteil abgedeckter Schlüsselthemen aus `academic_context.md`
+   - Schwelle: ≥ 80 %
+   - Formel: `abgedeckte_Themen / gesamte_Schluesselthemen * 100`
+2. **Diversity** — Zahl eigenständiger Autor*innen-Gruppen (Co-Autor-Cluster)
+   - Schwelle: ≥ 5 Gruppen
+   - Zählweise: Autor*innen, die nur untereinander zusammen publizieren, zählen als 1 Gruppe
+3. **Recency** — Anteil Quellen ab Publikationsjahr 2020
+   - Schwelle: ≥ 40 %
+   - Formel: `Quellen_ab_2020 / Gesamtquellen * 100`
+
+Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL + bei FAIL: konkreter
+Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehlt).
+
 ## Aktivierung dieses Skills
 
 - Der User fragt nach Literatur-Abdeckung oder Vollständigkeit

@@ -14,6 +14,21 @@ führen zu nachträglichen Überarbeitungen nach Abgabe. Arbeite ausschließlich
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Bewertungskriterien (PASS/FAIL)
+
+Prüfe die Outline gegen diese 7 Kriterien. Jedes ist PASS oder FAIL — kein
+Zwischenstufen-Urteil:
+
+1. **Forschungsfrage formuliert** — ≤ 25 Wörter, eine W-Frage (Was/Wie/Warum/Inwiefern)
+2. **Outline mit ≥ 3 Kapiteln** — Haupt-Kapitel, nicht nur Gliederungspunkte
+3. **Literaturbasis ≥ 15 Quellen** in `literature_state.md`
+4. **Methodik benannt** — qualitativ / quantitativ / Mixed / Literatur-Review etc.
+5. **Zeitplan mit Meilensteinen** — mindestens 3 Meilensteine mit Datum
+6. **Supervisor identifiziert** — Name in `academic_context.md`
+7. **Abgabetermin fixiert** — konkretes Datum in `academic_context.md`
+
+Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte eine Gliederung erstellen oder überarbeiten

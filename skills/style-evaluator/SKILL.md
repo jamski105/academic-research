@@ -14,6 +14,21 @@ führen zu tatsächlich fragwürdigem Stil, der unentdeckt bleibt. Arbeite aussc
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Fallback-Rubrik (ohne Script)
+
+Wenn kein externes Stil-Analyse-Script verfügbar ist, prüfe manuell gegen
+diese 5 Schwellen:
+
+| Metrik | Schwelle | Messverfahren |
+|---|---|---|
+| **Satzlänge (Ø)** | 15–25 Wörter | 20 zufällige Sätze, Mittelwert |
+| **Passiv-Quote** | < 30 % | "wird/werden/wurde/wurden + Partizip II" in Stichprobe 20 Sätze |
+| **Nominalstil-Anteil** | < 40 % | Sätze mit ≥ 3 Nominalphrasen (auf "-ung/-heit/-keit/-tion") in Stichprobe |
+| **Füllwörter-Dichte** | < 5 % | "quasi, eigentlich, irgendwie, sozusagen, gewissermaßen" vs. Gesamtwörter |
+| **Code-Switches** | 0 | Englische Wörter außerhalb etablierter Fachbegriffe |
+
+Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL.
+
 ## Aktivierung dieses Skills
 
 - Der User reicht Text zur Qualitäts- oder Stilbewertung ein

@@ -14,6 +14,26 @@ führen zu Note 5 für das Forschungsdesign. Arbeite ausschließlich mit Daten a
 `literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
 rate nicht.
 
+## Methoden-Scoring-Matrix
+
+Bewerte jede Methoden-Option auf einer Skala 1–5 in 4 Dimensionen:
+
+| Dimension | 1 = schlecht | 3 = okay | 5 = ideal |
+|---|---|---|---|
+| **Datenqualität** | Zugriff fraglich, Daten veraltet/unvollständig | Zugriff gegeben, Daten ausreichend | Zugriff gesichert, Daten aktuell und vollständig |
+| **Zeitaufwand** | > Rahmen der Arbeit | passt eng in den Rahmen | deutlich unter Maximalrahmen |
+| **Supervisor-Präferenz** | explizit abgelehnt | neutral / nicht erwähnt | explizit empfohlen |
+| **Fit zur Forschungsfrage** | beantwortet Frage nicht | beantwortet Frage teilweise | beantwortet Frage direkt |
+
+Gesamt-Score = Summe der 4 Dimensionen (Min 4, Max 20).
+
+**Schwellen zur Empfehlung:**
+- Score ≥ 16: starker Fit, klare Empfehlung
+- Score 10–15: tragfähig, aber mit Hinweis auf die schwächste Dimension
+- Score < 10: nicht empfehlen, alternative Methode suchen
+
+Bei Gleichstand: Supervisor-Präferenz entscheidet. Dokumentiere Scoring in der Ausgabe, nicht nur die Empfehlung.
+
 ## Aktivierung dieses Skills
 
 - Der User muss eine Forschungsmethodik wählen
