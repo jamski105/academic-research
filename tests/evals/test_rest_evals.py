@@ -1,6 +1,5 @@
 """Evals fuer die restlichen 8 Skills + 2 Agents (minimale Baseline)."""
 import json
-from pathlib import Path
 
 import pytest
 
