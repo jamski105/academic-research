@@ -4,7 +4,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import project_bootstrap as pb  # noqa: E402
 
 
@@ -42,3 +42,10 @@ def test_detect_mode_on_dir_with_only_dotfiles(tmp_path):
 def test_detect_mode_on_dir_with_user_files(tmp_path):
     (tmp_path / "notes.txt").write_text("some notes")
     assert pb.detect_mode(tmp_path) == "skip"
+
+
+def test_detect_mode_idempotent_beats_code_repo(tmp_path):
+    """academic_context.md short-circuits the code-repo check — order matters."""
+    (tmp_path / "academic_context.md").write_text("# thesis")
+    (tmp_path / "package.json").write_text("{}")
+    assert pb.detect_mode(tmp_path) == "idempotent"
