@@ -1,54 +1,54 @@
 ---
 name: Citation Extraction
-description: This skill should be used when the user wants to extract, format, or manage citations and quotes from academic PDFs. Triggers on "Zitate finden", "zitieren", "Quellenarbeit", "Belege suchen", "citations", "Zitate extrahieren", "quote extraction", "Literaturverzeichnis", "bibliography", or when another skill identifies that citation data is needed for a chapter.
+description: Dieser Skill wird genutzt, wenn der User Zitate und Quellenangaben aus akademischen PDFs extrahieren, formatieren oder verwalten möchte. Triggers on "Zitate finden", "zitieren", "Quellenarbeit", "Belege suchen", "citations", "Zitate extrahieren", "quote extraction", "Literaturverzeichnis", "bibliography", oder wenn ein anderer Skill feststellt, dass Zitatdaten für ein Kapitel gebraucht werden.
 ---
 
-# Citation Extraction
+# Zitat-Extraktion
 
-Extract relevant quotes from academic PDFs, format citations in the required style, and organize citation data by chapter. Uses the quote-extractor agent for extraction and inline citation formatting logic (see "Citation Formatting" below).
+Extrahiert relevante Zitate aus akademischen PDFs, formatiert sie im gewünschten Stil und organisiert Zitatdaten nach Kapitel. Nutzt den Agent `quote-extractor` für die Extraktion und die Inline-Zitationslogik (siehe Abschnitt "Zitat-Formatierung" unten).
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user wants to extract quotes or citations from downloaded PDFs
-- The user needs to format a bibliography or reference list
-- The user wants to find supporting evidence for a specific claim or chapter
-- The user asks to organize citations by chapter or topic
+- Der User möchte Zitate oder Belege aus heruntergeladenen PDFs extrahieren
+- Der User braucht eine Bibliografie oder ein Literaturverzeichnis
+- Der User sucht Belege für eine konkrete Aussage oder ein bestimmtes Kapitel
+- Der User möchte Zitate nach Kapitel oder Thema ordnen
 
-## Memory Files
+## Memory-Dateien
 
-### Read
+### Lesen
 
-- `academic_context.md` — Outline structure, citation style, research question
-- `literature_state.md` — Available sources, PDF download status, chapter assignments
+- `academic_context.md` — Gliederungsstruktur, Zitationsstil, Forschungsfrage
+- `literature_state.md` — Verfügbare Quellen, PDF-Download-Status, Kapitelzuordnungen
 
-### Write
+### Schreiben
 
-- `literature_state.md` — Update citation counts and extraction status per source
+- `literature_state.md` — Zitatanzahl und Extraktionsstatus pro Quelle aktualisieren
 
-## Prerequisites
+## Voraussetzungen
 
-If `academic_context.md` does not exist, inform the user and trigger the Academic Context skill first. Citation style must be known before formatting.
+Existiert `academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Der Zitationsstil muss vor der Formatierung bekannt sein.
 
-## Core Workflow
+## Core-Workflow
 
-### 1. Identify Extraction Scope
+### 1. Extraktions-Scope bestimmen
 
-Determine what the user needs:
+Kläre, was der User braucht:
 
-- **Full extraction** — Process all downloaded PDFs in the session
-- **Chapter-targeted** — Extract quotes relevant to a specific chapter
-- **Source-targeted** — Extract from one or more specific papers
-- **Topic-targeted** — Find quotes about a specific concept across all sources
+- **Vollextraktion** — Alle in der Session heruntergeladenen PDFs verarbeiten
+- **Kapitelbezogen** — Zitate für ein bestimmtes Kapitel extrahieren
+- **Quellenbezogen** — Aus einem oder mehreren bestimmten Papern extrahieren
+- **Themenbezogen** — Zitate zu einem Konzept über alle Quellen hinweg suchen
 
-### 2. Locate PDFs
+### 2. PDFs lokalisieren
 
-Read `literature_state.md` to identify which papers have downloaded PDFs. PDFs are stored in session directories under `~/.academic-research/sessions/*/pdfs/`.
+Lies `literature_state.md`, um zu ermitteln, welche Paper ein heruntergeladenes PDF haben. PDFs liegen unter `~/.academic-research/sessions/*/pdfs/`.
 
-If the user references papers that have no PDFs, offer to trigger `/search` to find and download them.
+Verweist der User auf Paper ohne PDFs, biete an, `/search` zu triggern, um sie zu finden und herunterzuladen.
 
-### 3. Quote Extraction
+### 3. Zitat-Extraktion
 
-For each PDF, spawn the `quote-extractor` agent (defined at `${CLAUDE_PLUGIN_ROOT}/agents/quote-extractor.md`). Provide:
+Für jedes PDF den Agent `quote-extractor` spawnen (definiert in `${CLAUDE_PLUGIN_ROOT}/agents/quote-extractor.md`). Übergebe:
 
 ```json
 {
@@ -63,33 +63,33 @@ For each PDF, spawn the `quote-extractor` agent (defined at `${CLAUDE_PLUGIN_ROO
 }
 ```
 
-When doing chapter-targeted extraction, derive the `research_query` from the chapter title and key concepts in the outline. Use the TOC structure from `academic_context.md` to match papers to chapters.
+Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus `academic_context.md` nutzen, um Paper zu Kapiteln zu matchen.
 
-### 4. Quality Check
+### 4. Qualitätsprüfung
 
-After extraction, review results:
+Nach der Extraktion die Ergebnisse prüfen:
 
-- Discard quotes with `extraction_quality: "failed"`
-- Flag papers with `possible_pdf_mismatch: true` for manual review
-- Check that quotes are relevant to the target chapter/topic
-- Remove duplicates across papers (same idea, different wording)
+- Zitate mit `extraction_quality: "failed"` verwerfen
+- Paper mit `possible_pdf_mismatch: true` für manuelles Review flaggen
+- Prüfen, ob Zitate tatsächlich für das Zielkapitel/-thema relevant sind
+- Duplikate über Paper hinweg entfernen (gleiche Idee, andere Formulierung)
 
-Present extracted quotes to the user grouped by source, showing:
+Extrahierte Zitate dem User gruppiert nach Quelle präsentieren, mit:
 
-- Quote text
-- Page number (if available)
-- Section of origin
-- Relevance score
-- Paper title and authors
+- Zitattext
+- Seitenzahl (falls verfügbar)
+- Ursprungs-Abschnitt
+- Relevanz-Score
+- Paper-Titel und Autoren
 
-### 5. Citation Formatting
+### 5. Zitat-Formatierung
 
 Formatiere Zitate inline nach dem in `academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
 
-#### Supported Styles
+#### Unterstützte Stile
 
-| Style | In-text Example | Bibliography Example |
-|-------|----------------|----------------------|
+| Stil | In-Text-Beispiel | Bibliografie-Beispiel |
+|------|-------------------|-----------------------|
 | APA7 | (Müller, 2023, S. 45) | Müller, H. (2023). *Title*. Journal, 12(3), 44-67. |
 | IEEE | [1, p. 45] | [1] H. Müller, "Title," *Journal*, vol. 12, no. 3, pp. 44-67, 2023. |
 | Harvard | (Müller 2023, p. 45) | Müller, H. 2023, 'Title', *Journal*, vol. 12, no. 3, pp. 44-67. |
@@ -102,50 +102,50 @@ Claude erzeugt bei Bedarf:
 - **In-text-Zitat** — exakt im konfigurierten Stil mit Seitenzahl
 - **Literaturverzeichnis-Eintrag** — formatiert pro Quelle
 - **BibTeX-Datei** — für LaTeX-Integration (in `~/.academic-research/citations.bib` persistieren)
-- **Markdown-Bibliographie** — für Review, sortiert nach Autor/Jahr
+- **Markdown-Bibliografie** — für Review, sortiert nach Autor/Jahr
 - **JSON** — wenn andere Skills die Daten strukturiert brauchen
 
-### 6. Chapter Assignment
+### 6. Kapitelzuordnung
 
-When quotes are extracted for a specific chapter:
+Wenn Zitate für ein bestimmtes Kapitel extrahiert werden:
 
-1. Group quotes by relevance to chapter sub-sections
-2. Suggest placement within the chapter structure
-3. Identify which sub-sections still lack supporting evidence
-4. If gaps are found, offer to search for additional literature
+1. Zitate nach Relevanz für die Unterabschnitte gruppieren
+2. Platzierung innerhalb der Kapitelstruktur vorschlagen
+3. Unterabschnitte identifizieren, in denen noch stützende Evidenz fehlt
+4. Bei Lücken weitere Literatursuche anbieten
 
-### 7. Update Literature State
+### 7. Literaturstatus aktualisieren
 
-After extraction and formatting:
+Nach Extraktion und Formatierung:
 
-1. Read `literature_state.md` (prevent stale overwrites)
-2. Update per-source fields: quote count, extraction quality, assigned chapters
-3. Update aggregate statistics: total quotes extracted, coverage percentage
+1. `literature_state.md` lesen (veraltete Überschreibungen vermeiden)
+2. Pro-Quelle-Felder aktualisieren: Zitatanzahl, Extraktionsqualität, zugewiesene Kapitel
+3. Aggregierte Statistiken aktualisieren: extrahierte Zitate gesamt, Coverage-Prozentsatz
 
-## Gap Detection
+## Lückenerkennung
 
-During extraction, watch for these patterns:
+Während der Extraktion auf diese Muster achten:
 
-- **Chapters with zero quotes** — Flag as needing literature
-- **One-source chapters** — Flag as potentially under-supported
-- **Missing counter-arguments** — If all quotes support the same position, suggest looking for opposing views
-- **Outdated sources** — Flag quotes from sources older than 10 years unless they are seminal works
+- **Kapitel ohne Zitate** — Als literaturbedürftig flaggen
+- **Kapitel mit nur einer Quelle** — Als potenziell unzureichend flaggen
+- **Fehlende Gegenargumente** — Wenn alle Zitate dieselbe Position stützen, nach Gegenpositionen suchen
+- **Veraltete Quellen** — Zitate aus Quellen älter als 10 Jahre flaggen, außer es sind Standardwerke
 
-When gaps are detected, offer to trigger `/search` with targeted queries or trigger the Literature Gap Analysis skill for a comprehensive review.
+Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill "Literature Gap Analysis" für ein umfassendes Review triggern.
 
-## Export Formats
+## Export-Formate
 
-Support these output formats (inline generiert, kein externes Skript):
+Diese Output-Formate werden unterstützt (inline generiert, kein externes Skript):
 
-- **BibTeX** — For LaTeX integration
-- **Markdown** — For review and manual editing
-- **JSON** — For programmatic use by other skills
+- **BibTeX** — für LaTeX-Integration
+- **Markdown** — für Review und manuelles Editieren
+- **JSON** — für die programmatische Nutzung durch andere Skills
 
-## Important Rules
+## Wichtige Regeln
 
-- **Never fabricate quotes** — Only use text extracted directly from PDFs
-- **Preserve exact wording** — Quotes must be verbatim from the source
-- **Include page numbers** — Always include page numbers when available
-- **Respect citation style** — Use the style configured in academic context consistently
-- **Flag mismatches** — If PDF content does not match the expected paper, report it
-- **User confirms assignments** — Let the user approve chapter-to-quote assignments before saving
+- **Nie Zitate fabrizieren** — Nur Text nutzen, der direkt aus PDFs extrahiert wurde
+- **Exakten Wortlaut bewahren** — Zitate müssen wörtlich der Quelle entsprechen
+- **Seitenzahlen angeben** — Wenn verfügbar, immer Seitenzahlen mitführen
+- **Zitationsstil respektieren** — Durchgehend den im akademischen Kontext konfigurierten Stil verwenden
+- **Mismatches flaggen** — Stimmt ein PDF-Inhalt nicht mit dem erwarteten Paper überein, das melden
+- **User bestätigt Zuordnungen** — Kapitel-Zitat-Zuordnungen vor dem Speichern freigeben lassen

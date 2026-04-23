@@ -1,61 +1,61 @@
 ---
 name: Research Question Refiner
-description: This skill should be used when the user wants to formulate, sharpen, or evaluate their research question. Triggers on "Forschungsfrage formulieren", "Research Question", "Fragestellung", "Forschungsfrage", "Forschungsfrage schärfen", "research question refine", "Fragestellung präzisieren", or when another skill identifies that the research question is too broad, too narrow, or not answerable.
+description: Dieser Skill wird genutzt, wenn der User seine Forschungsfrage formulieren, schärfen oder bewerten möchte. Triggers on "Forschungsfrage formulieren", "Research Question", "Fragestellung", "Forschungsfrage", "Forschungsfrage schärfen", "research question refine", "Fragestellung präzisieren", oder wenn ein anderer Skill erkennt, dass die Forschungsfrage zu breit, zu eng oder nicht beantwortbar ist.
 ---
 
-# Research Question Refiner
+# Forschungsfragen-Schärfer
 
-Help precision-craft the main research question and sub-questions. Evaluate whether a question is too broad, too narrow, or unanswerable. Compare with similar works to ensure originality and feasibility.
+Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob eine Frage zu breit, zu eng oder nicht beantwortbar ist. Vergleicht mit ähnlichen Arbeiten, um Originalität und Machbarkeit sicherzustellen.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user wants to formulate a new research question
-- The user wants to refine or sharpen an existing research question
-- The user is unsure if their question is good enough
-- A supervisor has flagged the research question as problematic
-- Another skill (Advisor, Academic Context) identifies a weak research question
+- Der User möchte eine neue Forschungsfrage formulieren
+- Der User möchte eine bestehende Forschungsfrage verfeinern oder schärfen
+- Der User ist unsicher, ob seine Frage gut genug ist
+- Ein Betreuer hat die Forschungsfrage als problematisch markiert
+- Ein anderer Skill (Advisor, Academic Context) erkennt eine schwache Forschungsfrage
 
-## Memory Files
+## Memory-Dateien
 
-### Read
+### Lesen
 
-- `academic_context.md` — Current research question, topic, work type, methodology, outline
+- `academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
 
-### Write
+### Schreiben
 
-- `academic_context.md` — Update the research question and sub-questions after refinement
+- `academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
 
-## Core Workflow
+## Core-Workflow
 
-### 1. Load Context
+### 1. Kontext laden
 
-Read `academic_context.md`. If it does not exist, trigger the Academic Context skill to gather baseline information. Extract: topic, current research question (if any), sub-questions, work type, and methodology.
+Lies `academic_context.md`. Existiert sie nicht, triggere den Academic-Context-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
 
-### 2. Assess Current Question
+### 2. Aktuelle Frage bewerten
 
-If a research question already exists, evaluate it against these criteria:
+Existiert bereits eine Forschungsfrage, bewerte sie gegen diese Kriterien:
 
-#### Specificity
-- **Too broad:** "How does digitalization affect companies?" — Cannot be answered in one thesis
-- **Too narrow:** "How did Company X's Q3 2024 cloud migration affect ticket count?" — Too specific to generalize
-- **Good:** "How does cloud migration affect IT service management processes in mid-sized German companies?"
+#### Spezifität
+- **Zu breit:** "Wie wirkt sich Digitalisierung auf Unternehmen aus?" — Nicht in einer Thesis beantwortbar
+- **Zu eng:** "Wie wirkte sich die Cloud-Migration von Firma X im Q3 2024 auf die Ticketzahl aus?" — Zu spezifisch, kaum generalisierbar
+- **Gut:** "Wie beeinflusst Cloud-Migration das IT-Service-Management in mittelständischen deutschen Unternehmen?"
 
-#### Answerability
-- Can the question be answered with the chosen methodology?
-- Is the required data accessible?
-- Is the scope realistic for the work type and timeline?
+#### Beantwortbarkeit
+- Lässt sich die Frage mit der gewählten Methodik beantworten?
+- Sind die benötigten Daten zugänglich?
+- Ist der Scope realistisch für Arbeitstyp und Zeitplan?
 
-#### Relevance
-- Does the question address a real gap in the literature?
-- Is the answer useful for academia or practice?
-- Does the topic have sufficient existing literature to build on?
+#### Relevanz
+- Adressiert die Frage eine reale Literaturlücke?
+- Ist die Antwort für Wissenschaft oder Praxis nützlich?
+- Gibt es ausreichend Literatur, auf der aufgebaut werden kann?
 
-#### Structure
-- Is it a single, clear question (not a compound question)?
-- Does it avoid yes/no answers (open-ended)?
-- Does it contain the key variables or concepts?
+#### Struktur
+- Ist es eine einzige, klare Frage (keine Mehrfachfrage)?
+- Vermeidet sie Ja/Nein-Antworten (offen formuliert)?
+- Enthält sie die Schlüsselvariablen oder -konzepte?
 
-Present the assessment with a score per criterion:
+Die Bewertung mit Score pro Kriterium präsentieren:
 
 ```
 ## Bewertung der Forschungsfrage
@@ -70,103 +70,103 @@ Aktuelle Frage: "[...]"
 | Struktur | [gut/verbesserbar] | [...] |
 ```
 
-### 3. Refinement Dialog
+### 3. Verfeinerungs-Dialog
 
-Based on the assessment, guide the user through targeted improvements:
+Basierend auf der Bewertung gezielt Verbesserungen anstoßen:
 
-#### If Too Broad
-- Add constraints: time period, geography, industry, company size
-- Narrow the phenomenon: instead of "digitalization," specify "cloud migration" or "AI adoption"
-- Focus on a specific relationship between variables
-- Propose 2-3 narrower alternatives
+#### Wenn zu breit
+- Einschränkungen ergänzen: Zeitraum, Geografie, Branche, Unternehmensgröße
+- Phänomen verengen: statt "Digitalisierung" z. B. "Cloud-Migration" oder "KI-Adoption"
+- Auf einen konkreten Zusammenhang zwischen Variablen fokussieren
+- 2-3 engere Alternativen vorschlagen
 
-#### If Too Narrow
-- Remove overly specific constraints
-- Generalize from a single case to a category
-- Broaden the context while keeping the core phenomenon
-- Propose 2-3 broader alternatives
+#### Wenn zu eng
+- Zu spezifische Einschränkungen entfernen
+- Von einem Einzelfall auf eine Kategorie abstrahieren
+- Kontext erweitern, Kernphänomen behalten
+- 2-3 breitere Alternativen vorschlagen
 
-#### If Not Answerable
-- Adjust to match available data and methods
-- Reframe from causal ("Why does...") to descriptive ("How does...") if causal evidence is not obtainable
-- Break into answerable sub-questions
-- Suggest alternative approaches
+#### Wenn nicht beantwortbar
+- An verfügbare Daten und Methoden anpassen
+- Von kausal ("Warum...") auf deskriptiv ("Wie...") umformulieren, wenn Kausalevidenz nicht erhältlich ist
+- In beantwortbare Unterfragen zerlegen
+- Alternative Ansätze vorschlagen
 
-#### If Structurally Weak
-- Rewrite as an open-ended question
-- Separate compound questions into main + sub-questions
-- Ensure key concepts are named explicitly
-- Remove ambiguous terms
+#### Wenn strukturell schwach
+- Offen formulieren
+- Mehrfachfragen in Haupt- plus Unterfragen trennen
+- Schlüsselkonzepte explizit benennen
+- Mehrdeutige Begriffe entfernen
 
-### 4. Sub-Question Development
+### 4. Unterfragen entwickeln
 
-After the main question is refined, develop 2-4 sub-questions that:
+Nach der Verfeinerung der Hauptfrage 2-4 Unterfragen entwickeln, die:
 
-1. **Decompose** the main question into manageable parts
-2. **Map to chapters** — Each sub-question corresponds to a section of the thesis
-3. **Build on each other** — Sub-questions follow a logical sequence
-4. **Cover the scope** — Together, answering all sub-questions answers the main question
+1. **Zerlegen** die Hauptfrage in handhabbare Teile
+2. **Kapitelzuordnung** — Jede Unterfrage entspricht einem Abschnitt der Thesis
+3. **Aufeinander aufbauen** — Unterfragen folgen einer logischen Reihenfolge
+4. **Scope abdecken** — Zusammen beantworten sie die Hauptfrage
 
-Present the sub-question structure:
+Unterfragen-Struktur präsentieren:
 
 ```
-Hauptfrage: [Main Research Question]
+Hauptfrage: [Forschungshauptfrage]
 
 Unterfragen:
-1. [Sub-question 1] → Kapitel [N]: [Chapter Title]
-2. [Sub-question 2] → Kapitel [N]: [Chapter Title]
-3. [Sub-question 3] → Kapitel [N]: [Chapter Title]
+1. [Unterfrage 1] → Kapitel [N]: [Kapiteltitel]
+2. [Unterfrage 2] → Kapitel [N]: [Kapiteltitel]
+3. [Unterfrage 3] → Kapitel [N]: [Kapiteltitel]
 ```
 
-### 5. Comparison with Similar Works
+### 5. Vergleich mit ähnlichen Arbeiten
 
-Search for existing research with similar questions to evaluate:
+Nach bestehender Forschung mit ähnlichen Fragen suchen, um zu bewerten:
 
-- **Originality** — Has this exact question been answered already? If yes, what angle makes this work unique?
-- **Feasibility** — Have others successfully answered similar questions with comparable methods?
-- **Positioning** — Where does this question fit in the field? What does it add?
+- **Originalität** — Wurde genau diese Frage schon beantwortet? Wenn ja, was ist das Unterscheidungsmerkmal?
+- **Machbarkeit** — Haben andere ähnliche Fragen mit vergleichbaren Methoden erfolgreich beantwortet?
+- **Positionierung** — Wo fügt sich die Frage ins Feld ein? Was trägt sie bei?
 
-If the question overlaps significantly with published work, suggest differentiators:
-- Different context (industry, country, time period)
-- Different methodology
-- Different theoretical lens
-- Extended scope (adding variables or perspectives)
+Bei signifikantem Überlapp Differenzierungsoptionen vorschlagen:
+- Anderer Kontext (Branche, Land, Zeitraum)
+- Andere Methodik
+- Andere theoretische Linse
+- Erweiterter Scope (Variablen oder Perspektiven ergänzen)
 
-### 6. Final Formulation
+### 6. Finale Formulierung
 
-Present the refined research question and sub-questions for user approval. Include:
+Verfeinerte Forschungsfrage und Unterfragen zur Freigabe präsentieren. Einschließen:
 
-- The final main question
-- 2-4 sub-questions with chapter mapping
-- Brief justification of why this formulation works
-- Comparison with the original question (if one existed)
+- Finale Hauptfrage
+- 2-4 Unterfragen mit Kapitelzuordnung
+- Kurze Begründung, warum diese Formulierung funktioniert
+- Vergleich mit der ursprünglichen Frage (falls vorhanden)
 
-### 7. Save Updates
+### 7. Änderungen speichern
 
-After the user confirms:
+Nach der Bestätigung durch den User:
 
-1. Read `academic_context.md` (prevent stale overwrites)
-2. Update `Forschungsfrage` with the new main question
-3. Update `Unterfragen` with the new sub-questions
-4. If sub-questions map to chapters, update the `## Gliederung` section accordingly
+1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+2. `Forschungsfrage` mit der neuen Hauptfrage aktualisieren
+3. `Unterfragen` mit den neuen Unterfragen aktualisieren
+4. Entsprechen Unterfragen Kapiteln, `## Gliederung` anpassen
 
-## Research Question Templates
+## Forschungsfragen-Templates
 
-Provide these templates as starting points when the user has no question yet:
+Diese Templates als Einstiege anbieten, wenn der User noch keine Frage hat:
 
-| Template | Example |
-|----------|---------|
-| Explorative | "Welche Faktoren beeinflussen [Phänomen] in [Kontext]?" |
-| Deskriptive | "Wie ist [Phänomen] in [Kontext] gestaltet?" |
-| Kausale | "Welchen Einfluss hat [Variable A] auf [Variable B] in [Kontext]?" |
-| Evaluative | "Wie effektiv ist [Maßnahme] zur [Zielsetzung] in [Kontext]?" |
-| Gestaltungsorientierte | "Wie kann [Artefakt] zur [Zielsetzung] in [Kontext] gestaltet werden?" |
+| Template | Beispiel |
+|----------|----------|
+| Explorativ | "Welche Faktoren beeinflussen [Phänomen] in [Kontext]?" |
+| Deskriptiv | "Wie ist [Phänomen] in [Kontext] gestaltet?" |
+| Kausal | "Welchen Einfluss hat [Variable A] auf [Variable B] in [Kontext]?" |
+| Evaluativ | "Wie effektiv ist [Maßnahme] zur [Zielsetzung] in [Kontext]?" |
+| Gestaltungsorientiert | "Wie kann [Artefakt] zur [Zielsetzung] in [Kontext] gestaltet werden?" |
 
-## Important Rules
+## Wichtige Regeln
 
-- **Never impose a question** — Guide the user to their own formulation
-- **Show alternatives** — Always present 2-3 options, not just one
-- **Be honest about weaknesses** — If a question is problematic, explain why clearly
-- **Respect the user's topic** — Refine within their chosen domain, do not redirect to a different topic
-- **Connect to methodology** — Ensure the refined question is answerable with the chosen or available methods
-- **Confirm before saving** — Always get explicit approval before updating memory files
+- **Keine Frage aufdrängen** — Den User zu seiner eigenen Formulierung führen
+- **Alternativen zeigen** — Immer 2-3 Optionen präsentieren, nicht nur eine
+- **Schwächen ehrlich benennen** — Ist eine Frage problematisch, klar erklären warum
+- **Thema des Users respektieren** — Innerhalb seines Gebiets verfeinern, nicht umleiten
+- **An Methodik anbinden** — Sicherstellen, dass die verfeinerte Frage mit der gewählten oder verfügbaren Methode beantwortbar ist
+- **Vor dem Speichern bestätigen** — Immer explizite Freigabe einholen, bevor in Memory geschrieben wird

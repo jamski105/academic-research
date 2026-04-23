@@ -1,169 +1,169 @@
 ---
 name: Source Quality Audit
-description: This skill should be used when the user wants to evaluate the quality, balance, and adequacy of their literature base. Triggers on "Quellenqualitaet", "Quellen-Check", "Literaturqualitaet pruefen", "Source audit", "Quellenbewertung", "literature quality", "Quellenmix", "peer-reviewed Anteil", or when the user is unsure whether their sources are sufficient for submission.
+description: Dieser Skill wird genutzt, wenn der User Qualität, Balance und Angemessenheit seiner Literaturbasis bewerten möchte. Triggers on "Quellenqualitaet", "Quellen-Check", "Literaturqualitaet pruefen", "Source audit", "Quellenbewertung", "literature quality", "Quellenmix", "peer-reviewed Anteil", oder wenn der User unsicher ist, ob seine Quellen für die Abgabe ausreichen.
 ---
 
-# Source Quality Audit
+# Quellenqualitäts-Audit
 
-Evaluate the overall quality, balance, recency, and diversity of the literature base for an academic paper. Score each dimension (0-100), identify weaknesses, and provide concrete recommendations for improvement.
+Bewertet die Gesamtqualität, Balance, Aktualität und Diversität der Literaturbasis einer akademischen Arbeit. Scort jede Dimension (0-100), identifiziert Schwächen und liefert konkrete Verbesserungsempfehlungen.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user asks to evaluate their source quality or literature base
-- The user is unsure whether their sources are adequate
-- Pre-submission quality gate for literature
-- After a literature search session, to assess the collected pool
+- Der User möchte die Qualität seiner Quellen oder Literaturbasis bewerten
+- Der User ist unsicher, ob seine Quellen ausreichen
+- Qualitätsgate vor der Abgabe für die Literatur
+- Nach einer Literatursuche, um den gesammelten Pool zu bewerten
 
-## Memory Files
+## Memory-Dateien
 
-- Read `literature_state.md` for the current source inventory (total count, type breakdown, chapter assignments, identified gaps)
-- Read `academic_context.md` for work type, discipline, research question, and citation style
+- Lies `literature_state.md` für das aktuelle Quelleninventar (Gesamtzahl, Typenverteilung, Kapitelzuordnungen, identifizierte Lücken)
+- Lies `academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage und Zitationsstil
 
-## Scoring Dimensions
+## Scoring-Dimensionen
 
-Evaluate each dimension on a 0-100 scale.
+Jede Dimension auf einer 0-100-Skala bewerten.
 
-### 1. Peer-Review Ratio (weight: 0.25)
+### 1. Peer-Review-Anteil (Gewicht: 0.25)
 
-Assess the proportion of peer-reviewed sources in the total literature base.
-
-**Scoring:**
-- 90-100: >70% peer-reviewed journal articles or conference papers
-- 70-89: 50-70% peer-reviewed
-- 50-69: 30-50% peer-reviewed
-- 30-49: 15-30% peer-reviewed
-- 0-29: <15% peer-reviewed
-
-**Classification of source types:**
-- Peer-reviewed: Journal articles (impact factor journals), peer-reviewed conference proceedings
-- Semi-academic: Working papers, preprints, institutional reports, dissertations
-- Non-academic: Websites, blog posts, news articles, company publications, Wikipedia
-
-Flag if non-academic sources exceed 20% of total.
-
-### 2. Recency (weight: 0.20)
-
-Assess whether the literature base is current enough.
+Anteil peer-reviewter Quellen am Gesamtbestand.
 
 **Scoring:**
-- 90-100: >60% of sources from the last 5 years, key sources current
-- 70-89: >40% from last 5 years
-- 50-69: >25% from last 5 years
-- 30-49: Mostly older sources, few recent additions
-- 0-29: Literature base is outdated
+- 90-100: >70 % peer-reviewte Journal-Artikel oder Konferenzbeiträge
+- 70-89: 50-70 % peer-reviewt
+- 50-69: 30-50 % peer-reviewt
+- 30-49: 15-30 % peer-reviewt
+- 0-29: <15 % peer-reviewt
 
-**Exceptions:**
-- Foundational/seminal works are exempt from recency requirements (flag as "Grundlagenwerk")
-- Historical or philosophical topics have relaxed recency expectations
-- Methodological texts may be older without penalty
+**Klassifikation der Quellen-Typen:**
+- Peer-reviewt: Journal-Artikel (Impact-Factor-Journals), peer-reviewte Konferenzbände
+- Semi-akademisch: Working Papers, Preprints, institutionelle Reports, Dissertationen
+- Nicht-akademisch: Websites, Blog-Posts, Presseartikel, Unternehmenspublikationen, Wikipedia
+
+Flag bei mehr als 20 % nicht-akademischer Quellen.
+
+### 2. Aktualität (Gewicht: 0.20)
+
+Bewertet, ob die Literaturbasis aktuell genug ist.
+
+**Scoring:**
+- 90-100: >60 % der Quellen aus den letzten 5 Jahren, Kernquellen aktuell
+- 70-89: >40 % aus den letzten 5 Jahren
+- 50-69: >25 % aus den letzten 5 Jahren
+- 30-49: Überwiegend ältere Quellen, wenige aktuelle Ergänzungen
+- 0-29: Literaturbasis veraltet
+
+**Ausnahmen:**
+- Grundlagen-/Standardwerke sind von der Aktualitätsanforderung ausgenommen (als "Grundlagenwerk" flaggen)
+- Historische oder philosophische Themen mit gelockerten Aktualitätserwartungen
+- Methodentexte dürfen älter sein ohne Abzug
 
 Berechne Recency inline: `recency = exp(-ln(2) * (current_year - year) / 5)` — exponentieller Decay, 5-Jahres-Halbwertszeit.
 
-### 3. Source Diversity (weight: 0.20)
+### 3. Quellen-Diversität (Gewicht: 0.20)
 
-Assess whether the literature comes from varied perspectives and publication venues.
+Bewertet, ob die Literatur aus verschiedenen Perspektiven und Publikationskanälen stammt.
 
-**Check for:**
-- **Author diversity** -- Flag if more than 3 sources from the same author (over-reliance)
-- **Venue diversity** -- Flag if more than 5 sources from the same journal or publisher
-- **Geographic diversity** -- Flag if all sources come from one country or language
-- **Perspective diversity** -- Flag if all sources support the same position (confirmation bias)
-- **Type diversity** -- Mix of journals, books, conference papers, reports
-
-**Scoring:**
-- 90-100: Diverse across all sub-dimensions
-- 70-89: Good diversity with minor concentration in one area
-- 50-69: Notable concentration in 2+ sub-dimensions
-- 30-49: Heavy reliance on narrow source pool
-- 0-29: Almost all sources from same venue, author, or perspective
-
-### 4. Web Source Proportion (weight: 0.15)
-
-Assess the balance between web-only sources and traditional academic publications.
+**Prüfen auf:**
+- **Autoren-Diversität** -- Flag bei mehr als 3 Quellen derselben Autor:in (Überabhängigkeit)
+- **Venue-Diversität** -- Flag bei mehr als 5 Quellen aus demselben Journal/Verlag
+- **Geografische Diversität** -- Flag, wenn alle Quellen aus einem Land oder einer Sprache stammen
+- **Perspektiven-Diversität** -- Flag, wenn alle Quellen dieselbe Position stützen (Confirmation Bias)
+- **Typen-Diversität** -- Mischung aus Journals, Büchern, Konferenzbeiträgen, Reports
 
 **Scoring:**
-- 90-100: Web sources <10%, all with clear institutional backing
-- 70-89: Web sources 10-20%, mostly institutional (Statista, government sites, NGOs)
-- 50-69: Web sources 20-30%, some non-institutional
-- 30-49: Web sources 30-50%, several unverifiable
-- 0-29: Web sources >50%, many without institutional authority
+- 90-100: In allen Subdimensionen divers
+- 70-89: Gute Diversität mit leichter Konzentration in einem Bereich
+- 50-69: Deutliche Konzentration in 2+ Subdimensionen
+- 30-49: Starke Abhängigkeit von schmalem Quellenpool
+- 0-29: Fast alle Quellen von derselben Venue, Person oder Perspektive
 
-**Acceptable web sources:** Government statistics (destatis.de), official reports (EU, OECD, WHO), established data providers (Statista), corporate annual reports.
+### 4. Anteil Web-Quellen (Gewicht: 0.15)
 
-**Problematic web sources:** Personal blogs, undated pages, pages without clear authorship, Wikipedia as primary source.
-
-### 5. Topical Coverage (weight: 0.20)
-
-Assess whether all major aspects of the research question are backed by literature.
-
-**Procedure:**
-1. Extract key concepts from the research question and outline (via `academic_context.md`)
-2. Map each concept to available sources
-3. Identify concepts with insufficient source coverage (<2 sources per key concept)
-4. Check that each main chapter has adequate literature support
+Bewertet die Balance zwischen reinen Web-Quellen und klassischen akademischen Publikationen.
 
 **Scoring:**
-- 90-100: All key concepts covered by 3+ sources, no gaps
-- 70-89: Most concepts covered, 1-2 minor gaps
-- 50-69: Several concepts undercovered
-- 30-49: Major gaps in central topics
-- 0-29: Core research question insufficiently supported by literature
+- 90-100: Web-Quellen <10 %, alle mit klarem institutionellen Träger
+- 70-89: Web-Quellen 10-20 %, überwiegend institutionell (Statista, Behörden, NGOs)
+- 50-69: Web-Quellen 20-30 %, teils nicht-institutionell
+- 30-49: Web-Quellen 30-50 %, mehrere nicht verifizierbar
+- 0-29: Web-Quellen >50 %, viele ohne institutionelle Autorität
 
-## Evaluation Workflow
+**Akzeptable Web-Quellen:** Behördenstatistiken (destatis.de), offizielle Reports (EU, OECD, WHO), etablierte Datenanbieter (Statista), Geschäftsberichte.
 
-1. Read `literature_state.md` for the source inventory
-2. Read `academic_context.md` for research context
-3. Classify each source by type (peer-reviewed, semi-academic, non-academic, web)
-4. Score each of the 5 dimensions
-5. Compute weighted total: `total = 0.25*peer_review + 0.20*recency + 0.20*diversity + 0.15*web_ratio + 0.20*coverage`
-6. Generate specific recommendations for each dimension scoring below 70
-7. Present results in structured format
+**Problematische Web-Quellen:** Persönliche Blogs, undatierte Seiten, Seiten ohne klare Autorenschaft, Wikipedia als Primärquelle.
 
-## Output Format
+### 5. Thematische Abdeckung (Gewicht: 0.20)
+
+Bewertet, ob alle wichtigen Aspekte der Forschungsfrage durch Literatur abgedeckt sind.
+
+**Ablauf:**
+1. Schlüsselkonzepte aus Forschungsfrage und Gliederung (via `academic_context.md`) extrahieren
+2. Jedes Konzept den verfügbaren Quellen zuordnen
+3. Konzepte mit unzureichender Abdeckung identifizieren (<2 Quellen je Schlüsselkonzept)
+4. Prüfen, ob jedes Hauptkapitel ausreichend Literaturstütze hat
+
+**Scoring:**
+- 90-100: Alle Schlüsselkonzepte durch 3+ Quellen abgedeckt, keine Lücken
+- 70-89: Die meisten Konzepte abgedeckt, 1-2 kleinere Lücken
+- 50-69: Mehrere Konzepte unterversorgt
+- 30-49: Große Lücken in zentralen Themen
+- 0-29: Kernforschungsfrage unzureichend literaturgestützt
+
+## Evaluations-Workflow
+
+1. `literature_state.md` für das Quelleninventar lesen
+2. `academic_context.md` für den Forschungskontext lesen
+3. Jede Quelle klassifizieren (peer-reviewt, semi-akademisch, nicht-akademisch, Web)
+4. Jede der 5 Dimensionen bepunkten
+5. Gewichteten Gesamtwert berechnen: `total = 0.25*peer_review + 0.20*recency + 0.20*diversity + 0.15*web_ratio + 0.20*coverage`
+6. Konkrete Empfehlungen für jede Dimension mit Score unter 70 erstellen
+7. Ergebnisse im strukturierten Format präsentieren
+
+## Output-Format
 
 ```
-## Quellen-Audit: [Work Title]
+## Quellen-Audit: [Arbeitstitel]
 
-**Quellen gesamt:** [N] | **Typ:** [Work Type] | **Ziel:** [min required sources]
+**Quellen gesamt:** [N] | **Typ:** [Arbeitstyp] | **Ziel:** [min. erforderliche Quellen]
 
-### Ergebnis-Uebersicht
+### Ergebnis-Übersicht
 
 | Dimension              | Score | Status         |
 |------------------------|-------|----------------|
 | Peer-Review-Anteil     | XX    | OK/WARN/FAIL   |
-| Aktualitaet            | XX    | OK/WARN/FAIL   |
-| Quellen-Diversitaet    | XX    | OK/WARN/FAIL   |
+| Aktualität             | XX    | OK/WARN/FAIL   |
+| Quellen-Diversität     | XX    | OK/WARN/FAIL   |
 | Web-Quellen-Anteil     | XX    | OK/WARN/FAIL   |
 | Thematische Abdeckung  | XX    | OK/WARN/FAIL   |
 | **Gesamt**             | **XX**| **STATUS**     |
 
 ### Quellenverteilung
 - Peer-reviewed Journals: [N] ([X%])
-- Buecher/Monographien: [N] ([X%])
-- Konferenzbeitraege: [N] ([X%])
+- Bücher/Monographien: [N] ([X%])
+- Konferenzbeiträge: [N] ([X%])
 - Berichte/Working Papers: [N] ([X%])
 - Web-Quellen: [N] ([X%])
 - Sonstige: [N] ([X%])
 
-### Identifizierte Luecken
-[List specific topic areas or concepts lacking source coverage]
+### Identifizierte Lücken
+[Konkrete Themen oder Konzepte ohne ausreichende Quellenabdeckung auflisten]
 
 ### Empfehlungen
-[Prioritized, actionable recommendations]
-1. [Most critical action]
-2. [Second priority]
+[Priorisierte, umsetzbare Empfehlungen]
+1. [Wichtigste Aktion]
+2. [Zweitwichtigste Aktion]
 ...
 ```
 
-Status thresholds: OK >= 70, WARN 50-69, FAIL < 50.
+Status-Schwellen: OK >= 70, WARN 50-69, FAIL < 50.
 
-## Important Rules
+## Wichtige Regeln
 
-- Base the audit on actual source data from `literature_state.md`, not assumptions
-- If `literature_state.md` is incomplete, ask the user to provide their source list
+- Audit auf tatsächlichen Daten aus `literature_state.md` basieren, nicht auf Annahmen
+- Ist `literature_state.md` unvollständig, den User um die Quellenliste bitten
 - Klassifiziere Venues inline: 1.0 für Top-Venues (IEEE, ACM, Springer, Nature, Elsevier), 0.7 für indexierte Journals, 0.4 für Konferenzen, 0.2 sonst
-- Never dismiss web sources categorically -- evaluate each on institutional authority
-- Foundational works (e.g., Porter 1985, Rogers 2003) should be flagged as "Grundlagenwerk" and exempted from recency penalties
-- Recommendations must be specific ("Add 2-3 peer-reviewed sources on [specific topic]") not generic ("Find more sources")
-- Consider discipline norms: computer science values conference papers highly; business studies value journal articles; law values commentaries and court decisions
-- Update `literature_state.md` with audit results and identified gaps
+- Web-Quellen niemals pauschal ablehnen -- jede einzeln auf institutionelle Autorität prüfen
+- Standardwerke (z. B. Porter 1985, Rogers 2003) als "Grundlagenwerk" flaggen und von Aktualitätsabzügen ausnehmen
+- Empfehlungen müssen spezifisch sein ("2-3 peer-reviewte Quellen zu [konkretes Thema] ergänzen"), nicht generisch ("mehr Quellen finden")
+- Disziplinnormen beachten: Informatik wertet Konferenzbeiträge hoch; BWL bevorzugt Journal-Artikel; Rechtswissenschaft schätzt Kommentare und Urteile
+- `literature_state.md` mit Audit-Ergebnissen und identifizierten Lücken aktualisieren

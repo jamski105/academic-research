@@ -1,130 +1,130 @@
 ---
 name: Title Generator
-description: This skill should be used when the user needs title suggestions for their academic paper. Triggers on "Titel suchen", "Titelvorschlaege", "Arbeitstitel", "title suggestions", "Titel finden", "paper title", "Ueberschrift", or when the user has finished writing and needs a final title.
+description: Dieser Skill wird genutzt, wenn der User Titelvorschläge für seine akademische Arbeit braucht. Triggers on "Titel suchen", "Titelvorschlaege", "Arbeitstitel", "title suggestions", "Titel finden", "paper title", "Ueberschrift", oder wenn der User mit dem Schreiben fertig ist und einen finalen Titel braucht.
 ---
 
-# Title Generator
+# Titel-Generator
 
-Analyze a finished or near-finished academic paper and generate 5-7 title options with rationale. Provide a mix of academic, creative, and descriptive variants tailored to the discipline and work type.
+Analysiert eine fertige oder nahezu fertige akademische Arbeit und erzeugt 5-7 Titelvarianten mit Begründung. Liefert eine Mischung aus akademisch, kreativ und deskriptiv, abgestimmt auf Disziplin und Arbeitstyp.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user asks for title suggestions or wants to change their working title
-- The user has completed a draft and needs a final title
-- The user is brainstorming thesis titles during the planning phase
+- Der User fragt nach Titelvorschlägen oder möchte seinen Arbeitstitel ändern
+- Der User hat einen Entwurf fertig und braucht einen finalen Titel
+- Der User sammelt in der Planungsphase Thesis-Titel-Ideen
 
-## Memory Files
+## Memory-Dateien
 
-- Read `academic_context.md` for work type, discipline, research question, methodology, language, and university requirements
-- Read `writing_state.md` for completed chapters and key arguments identified during writing
+- Lies `academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage, Methodik, Sprache und Hochschulanforderungen
+- Lies `writing_state.md` für abgeschlossene Kapitel und während des Schreibens identifizierte Kernargumente
 
-## Analysis Phase
+## Analyse-Phase
 
-Before generating titles, analyze the paper along these dimensions:
+Vor der Titelgenerierung die Arbeit entlang dieser Dimensionen analysieren:
 
-### 1. Content Structure
+### 1. Inhaltliche Struktur
 
-- Identify the central argument or thesis statement
-- Extract the main theoretical framework or model
-- Note the scope (single case study, comparative, industry-wide)
-- Identify the dependent and independent variables or key concepts
+- Zentrale These oder Kernargument identifizieren
+- Haupttheorie oder Analyserahmen extrahieren
+- Scope notieren (Einzelfall, Vergleich, branchenweit)
+- Abhängige und unabhängige Variablen bzw. Schlüsselkonzepte bestimmen
 
-### 2. Key Arguments
+### 2. Kernaussagen
 
-- Extract the 3-5 strongest claims made in the paper
-- Identify the most novel contribution or finding
-- Note any unexpected results or contrarian positions
+- Die 3-5 stärksten Claims der Arbeit extrahieren
+- Den originellsten Beitrag oder Befund identifizieren
+- Unerwartete Ergebnisse oder Gegenpositionen notieren
 
-### 3. Methodology Signature
+### 3. Methodik-Signatur
 
-- Identify the research approach (qualitative, quantitative, mixed, literature review)
-- Note specific methods that distinguish the work (e.g., Delphi method, SLR, grounded theory)
-- Check if the methodology itself is noteworthy enough for the title
+- Forschungsansatz identifizieren (qualitativ, quantitativ, Mixed, Literaturreview)
+- Methoden notieren, die die Arbeit auszeichnen (z. B. Delphi, SLR, Grounded Theory)
+- Prüfen, ob die Methodik selbst titelwürdig ist
 
-### 4. Keywords and Terminology
+### 4. Keywords und Terminologie
 
-- Extract domain-specific keywords from the paper
-- Identify the most frequently used technical terms
-- Note any coined terms or framework names
+- Domänenspezifische Keywords aus der Arbeit extrahieren
+- Häufigste Fachbegriffe identifizieren
+- Selbst geprägte Begriffe oder Framework-Namen notieren
 
-## Title Generation
+## Titel-Generierung
 
-Generate exactly 5-7 title options across these categories:
+Genau 5-7 Titelvarianten über diese Kategorien erzeugen:
 
-### Category A: Classic Academic (2 titles)
+### Kategorie A: Klassisch-Akademisch (2 Titel)
 
-Structure: `[Topic]: [Subtitle with scope/method]`
+Struktur: `[Thema]: [Untertitel mit Scope/Methode]`
 
-Characteristics:
-- Formal, descriptive, unambiguous
-- Contains the core topic and methodology or scope
-- Typical for German Abschlussarbeiten
-- Example pattern: "Digitale Transformation im Mittelstand: Eine qualitative Analyse der Erfolgsfaktoren"
+Eigenschaften:
+- Formal, deskriptiv, eindeutig
+- Enthält Kernthema und Methodik oder Scope
+- Typisch für deutsche Abschlussarbeiten
+- Beispielmuster: "Digitale Transformation im Mittelstand: Eine qualitative Analyse der Erfolgsfaktoren"
 
-### Category B: Question-Based (1-2 titles)
+### Kategorie B: Fragenbasiert (1-2 Titel)
 
-Structure: Title formulated as the research question or a provocative question.
+Struktur: Titel als Forschungsfrage oder provokante Frage.
 
-Characteristics:
-- Engages the reader immediately
-- Reflects the research question from `academic_context.md`
-- Appropriate for exploratory or argumentative work
+Eigenschaften:
+- Spricht den Leser direkt an
+- Spiegelt die Forschungsfrage aus `academic_context.md`
+- Passend für explorative oder argumentative Arbeiten
 
-### Category C: Conceptual / Creative (1-2 titles)
+### Kategorie C: Konzeptuell / Kreativ (1-2 Titel)
 
-Structure: Short, memorable phrase with academic subtitle.
+Struktur: Kurze, einprägsame Phrase mit akademischem Untertitel.
 
-Characteristics:
-- Uses a metaphor, paradox, or striking phrase
-- Always paired with a clarifying subtitle
-- More common in social sciences and humanities
-- Must remain professionally appropriate
+Eigenschaften:
+- Nutzt Metapher, Paradox oder prägnante Formulierung
+- Immer mit klärendem Untertitel
+- Häufiger in Sozial- und Geisteswissenschaften
+- Muss professionell bleiben
 
-### Category D: Result-Oriented (1 title)
+### Kategorie D: Ergebnisorientiert (1 Titel)
 
-Structure: Title that hints at or states the main finding.
+Struktur: Titel, der das zentrale Ergebnis andeutet oder benennt.
 
-Characteristics:
-- Previews the conclusion
-- Appropriate when the finding is strong and clear
-- Less common in German academic tradition but increasingly accepted
+Eigenschaften:
+- Kündigt die Schlussfolgerung an
+- Passend, wenn der Befund klar und stark ist
+- In deutscher Tradition weniger üblich, aber zunehmend akzeptiert
 
-## Output Format
+## Output-Format
 
-Present each title with:
+Jeder Titel mit:
 
 ```
-## Titelvorschlaege
+## Titelvorschläge
 
-### 1. [Title] — Kategorie: Klassisch-Akademisch
-**Rationale:** [Why this title works -- what it emphasizes, how it positions the work]
-**Staerke:** [Key advantage]
-**Einschraenkung:** [Potential drawback or limitation]
+### 1. [Titel] — Kategorie: Klassisch-Akademisch
+**Rationale:** [Warum dieser Titel trägt -- was er betont, wie er die Arbeit positioniert]
+**Stärke:** [Wichtigster Vorteil]
+**Einschränkung:** [Möglicher Nachteil oder Grenze]
 
-### 2. [Title] — Kategorie: ...
+### 2. [Titel] — Kategorie: ...
 ...
 
 ---
 
-**Empfehlung:** [Which title best fits the work type and university context, with brief justification]
+**Empfehlung:** [Welcher Titel am besten zu Arbeitstyp und Hochschule passt, mit kurzer Begründung]
 ```
 
-## Title Quality Criteria
+## Qualitätskriterien für Titel
 
-Verify each generated title against:
+Jeder generierte Titel ist zu prüfen auf:
 
-- **Accuracy** -- Does the title faithfully represent the paper's content?
-- **Specificity** -- Is the scope clear (not too broad, not too narrow)?
-- **Searchability** -- Does it contain keywords that aid discoverability?
-- **Length** -- Aim for 8-15 words (including subtitle); flag if exceeding 20
-- **Convention** -- Does it match typical title patterns for the work type and discipline?
-- **Language** -- Match the paper's language; if German paper, generate German titles (optionally add one English variant)
+- **Korrektheit** -- Gibt der Titel den Inhalt der Arbeit korrekt wieder?
+- **Spezifität** -- Ist der Scope klar (nicht zu breit, nicht zu eng)?
+- **Auffindbarkeit** -- Enthält er Keywords, die die Auffindbarkeit unterstützen?
+- **Länge** -- Ziel 8-15 Wörter (inkl. Untertitel); flag bei über 20
+- **Konvention** -- Passt er zu typischen Titelmustern für Arbeitstyp und Disziplin?
+- **Sprache** -- Sprache der Arbeit einhalten; bei deutschen Arbeiten deutsche Titel (optional eine englische Variante ergänzen)
 
-## Important Rules
+## Wichtige Regeln
 
-- Read the actual paper content before generating titles -- never generate titles from the outline alone if text is available
-- Respect the language specified in `academic_context.md`
-- Never suggest clickbait or sensationalist phrasing
-- Avoid titles that overstate the findings
-- Include the recommendation with reasoning tied to the specific university and work type
-- If no paper text is available yet, generate preliminary titles from the outline and research question, and mark them as provisional
+- Den tatsächlichen Arbeitstext vor der Titelgenerierung lesen -- nie nur aus der Gliederung erzeugen, wenn Text da ist
+- Die in `academic_context.md` angegebene Sprache respektieren
+- Niemals Clickbait oder sensationalistische Formulierungen vorschlagen
+- Titel vermeiden, die die Befunde überhöhen
+- Empfehlung mit Begründung an Hochschule und Arbeitstyp binden
+- Liegt noch kein Text vor, vorläufige Titel aus Gliederung und Forschungsfrage erzeugen und als vorläufig markieren

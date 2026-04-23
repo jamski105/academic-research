@@ -1,53 +1,53 @@
 ---
 name: Academic Context
-description: This skill should be used when the user discusses their thesis, Bachelorarbeit, Masterarbeit, Hausarbeit, Facharbeit, or academic work. Triggers on "meine Arbeit", "mein Thema", "Forschungsfrage", "Gliederung", "thesis context", "academic profile", or when another skill needs context that doesn't exist yet. Manages the persistent academic context in Claude Memory.
+description: Dieser Skill wird genutzt, wenn der User seine Abschlussarbeit, Bachelorarbeit, Masterarbeit, Hausarbeit, Facharbeit oder akademische Arbeit diskutiert. Triggers on "meine Arbeit", "mein Thema", "Forschungsfrage", "Gliederung", "thesis context", "academic profile", oder wenn ein anderer Skill Kontext braucht, der noch nicht existiert. Verwaltet den persistenten akademischen Kontext im Claude-Memory.
 ---
 
-# Academic Context Manager
+# Akademischer Kontext
 
-Maintain a persistent academic context that other skills rely on. This skill reads and writes Claude Memory files to track the user's thesis topic, outline, research question, methodology, progress, and key concepts.
+Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verlassen. Dieser Skill liest und schreibt Claude-Memory-Dateien, um Thema, Gliederung, Forschungsfrage, Methodik, Fortschritt und Schlüsselkonzepte der Arbeit des Users zu tracken.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user mentions their thesis, paper, or academic work
-- The user provides or updates their research topic, outline, or research question
-- Another skill needs academic context but none exists yet
-- The user explicitly asks to update their academic profile
+- Der User erwähnt seine Abschlussarbeit, Hausarbeit oder akademische Arbeit
+- Der User liefert oder aktualisiert Forschungsthema, Gliederung oder Forschungsfrage
+- Ein anderer Skill braucht akademischen Kontext, aber es ist noch keiner vorhanden
+- Der User fragt explizit nach einer Aktualisierung seines akademischen Profils
 
-## Memory Files
+## Memory-Dateien
 
-All context is stored in Claude Memory at the project's memory directory. Three files are managed:
+Der gesamte Kontext liegt im Claude-Memory des Projekt-Memory-Verzeichnisses. Drei Dateien werden verwaltet:
 
-### `academic_context.md` — Primary context file
+### `academic_context.md` — Primäre Kontextdatei
 
-Contains thesis profile (university, program, citation style), work details (type, topic, research question, methodology, supervisor, deadline), outline structure, key concepts, and progress tracking.
+Enthält das Arbeitsprofil (Universität, Studiengang, Zitationsstil), die Arbeitsdetails (Typ, Thema, Forschungsfrage, Methodik, Betreuer, Abgabetermin), die Gliederungsstruktur, Schlüsselkonzepte und den Fortschritt.
 
-### `literature_state.md` — Literature status
+### `literature_state.md` — Literaturstatus
 
-Contains statistics about collected sources (total count, peer-reviewed percentage, type breakdown), chapter-to-source assignment, and identified gaps.
+Enthält Statistiken zu gesammelten Quellen (Gesamtzahl, Peer-Review-Anteil, Typenverteilung), Kapitel-Quellen-Zuordnung sowie identifizierte Lücken.
 
-### `writing_state.md` — Writing progress
+### `writing_state.md` — Schreibfortschritt
 
-Contains current chapter being written, word counts, and latest style evaluation scores.
+Enthält das aktuell geschriebene Kapitel, Wortzahlen und die jüngsten Style-Evaluator-Scores.
 
-## Core Workflow
+## Core-Workflow
 
-### First Activation (No Context Exists)
+### Erstaktivierung (noch kein Kontext vorhanden)
 
-When no `academic_context.md` exists in memory, gather the following through conversation:
+Existiert keine `academic_context.md` im Memory, sammle im Gespräch folgende Informationen:
 
-1. **University and program** — Default: Leibniz FH Hannover, BWL/Wirtschaftsinformatik
-2. **Work type** — Bachelorarbeit, Masterarbeit, Hausarbeit, Seminararbeit, Facharbeit
-3. **Topic** — Working title of the thesis
-4. **Research question** — Main question and sub-questions
-5. **Methodology** — Literature review, case study, empirical, mixed methods
-6. **Citation style** — Default: APA7 (also supports IEEE, Harvard, Chicago, MLA)
-7. **Language** — Default: Deutsch
-8. **Supervisor** — Name (optional)
-9. **Deadline** — Submission date (optional)
-10. **Outline** — Chapter structure if already planned
+1. **Universität und Studiengang** — Default: Leibniz FH Hannover, BWL/Wirtschaftsinformatik
+2. **Arbeitstyp** — Bachelorarbeit, Masterarbeit, Hausarbeit, Seminararbeit, Facharbeit
+3. **Thema** — Arbeitstitel der Abschlussarbeit
+4. **Forschungsfrage** — Hauptfrage und Unterfragen
+5. **Methodik** — Literaturreview, Fallstudie, empirisch, Mixed Methods
+6. **Zitationsstil** — Default: APA7 (unterstützt auch IEEE, Harvard, Chicago, MLA)
+7. **Sprache** — Default: Deutsch
+8. **Betreuer** — Name (optional)
+9. **Abgabetermin** — Datum (optional)
+10. **Gliederung** — Kapitelstruktur, falls schon geplant
 
-Write the gathered information to `academic_context.md` using this structure:
+Schreibe die gesammelten Informationen in `academic_context.md` mit dieser Struktur:
 
 ```markdown
 ---
@@ -72,40 +72,40 @@ type: project
 - Abgabetermin: [...]
 
 ## Gliederung
-[Numbered outline if available]
+[Nummerierte Gliederung, falls vorhanden]
 
 ## Schlüsselkonzepte
-[Key concepts with brief descriptions]
+[Schlüsselkonzepte mit Kurzbeschreibung]
 
 ## Fortschritt
-[Checklist of completed/in-progress items]
+[Checkliste abgeschlossener/in Bearbeitung befindlicher Elemente]
 ```
 
-### Update Activation (Context Exists)
+### Update-Aktivierung (Kontext existiert bereits)
 
-When context already exists, read the current `academic_context.md` from memory. Identify what changed based on the conversation and update only the relevant sections. Preserve all existing data that wasn't explicitly changed.
+Existiert schon Kontext, lies die aktuelle `academic_context.md` aus dem Memory. Identifiziere auf Basis des Gesprächs, was sich geändert hat, und aktualisiere nur die betroffenen Abschnitte. Bewahre alle bestehenden Daten, die nicht explizit geändert wurden.
 
-Common updates:
-- **Outline changes** — User refined chapter structure
-- **Progress updates** — User completed a chapter or section
-- **New concepts** — User introduced new key terms
-- **Research question refinement** — User sharpened the focus
-- **Methodology decision** — User chose or changed approach
+Typische Updates:
+- **Gliederungsänderungen** — User hat die Kapitelstruktur verfeinert
+- **Fortschrittsupdates** — User hat ein Kapitel oder einen Abschnitt abgeschlossen
+- **Neue Konzepte** — User hat neue Schlüsselbegriffe eingeführt
+- **Forschungsfragen-Schärfung** — User hat den Fokus präzisiert
+- **Methodik-Entscheidung** — User hat einen Ansatz gewählt oder geändert
 
-### Cross-Skill Support
+### Unterstützung anderer Skills
 
-When another skill (Citation Extraction, Literature Gap Analysis, Advisor, etc.) needs context:
+Wenn ein anderer Skill (Citation Extraction, Literature Gap Analysis, Advisor etc.) Kontext braucht:
 
-1. Check if `academic_context.md` exists in memory
-2. If yes — read and use it
-3. If no — inform the user that context is needed and offer to set it up
-4. After setup, return control to the requesting workflow
+1. Prüfe, ob `academic_context.md` im Memory existiert
+2. Wenn ja — lies sie und nutze sie
+3. Wenn nein — informiere den User, dass Kontext benötigt wird, und biete das Setup an
+4. Gib nach dem Setup die Kontrolle an den aufrufenden Workflow zurück
 
-## Important Rules
+## Wichtige Regeln
 
-- **Never overwrite without reading first** — Always read the current state before writing updates
-- **Preserve user data** — Never delete information the user didn't explicitly ask to remove
-- **Use German for field labels** — The context files use German labels matching the user's language
-- **Date format** — Use ISO dates (YYYY-MM-DD) for deadlines and timestamps
-- **Incremental updates** — Update only changed sections, not the entire file
-- **Confirm major changes** — Before restructuring the outline or changing the research question, confirm with the user
+- **Nie ohne vorheriges Lesen überschreiben** — Immer erst den aktuellen Stand lesen, bevor Updates geschrieben werden
+- **User-Daten bewahren** — Nie Informationen löschen, deren Entfernen der User nicht explizit verlangt hat
+- **Deutsche Feldbezeichnungen** — Die Kontextdateien nutzen deutsche Labels passend zur Sprache des Users
+- **Datumsformat** — ISO-Format (YYYY-MM-DD) für Abgabetermine und Zeitstempel
+- **Inkrementelle Updates** — Nur geänderte Abschnitte aktualisieren, nicht die ganze Datei
+- **Größere Änderungen bestätigen** — Vor einer Umstrukturierung der Gliederung oder dem Ändern der Forschungsfrage Rücksprache mit dem User halten

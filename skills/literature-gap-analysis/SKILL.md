@@ -1,75 +1,75 @@
 ---
 name: Literature Gap Analysis
-description: This skill should be used when the user wants to analyze literature coverage, find missing sources, or identify gaps in their research base. Triggers on "Literaturlücken", "Coverage", "fehlende Quellen", "Gap Analysis", "Quellenabdeckung", "literature gaps", "missing sources", "Abdeckung prüfen", or when another skill detects that chapters lack sufficient source support.
+description: Dieser Skill wird genutzt, wenn der User seine Literaturabdeckung analysieren, fehlende Quellen finden oder Lücken in seiner Forschungsbasis identifizieren möchte. Triggers on "Literaturlücken", "Coverage", "fehlende Quellen", "Gap Analysis", "Quellenabdeckung", "literature gaps", "missing sources", "Abdeckung prüfen", oder wenn ein anderer Skill erkennt, dass Kapitel nicht ausreichend quellengestützt sind.
 ---
 
-# Literature Gap Analysis
+# Literatur-Lückenanalyse
 
-Analyze the thesis outline against the existing literature collection to produce a per-chapter coverage report. Identify well-covered topics, missing sources, missing counter-arguments, and methodological gaps. Offer targeted search to fill gaps.
+Analysiert die Thesis-Gliederung gegen die bestehende Literatursammlung und erzeugt einen kapitelweisen Abdeckungsbericht. Identifiziert gut abgedeckte Themen, fehlende Quellen, fehlende Gegenargumente und methodische Lücken. Bietet gezielte Suche zur Lückenschließung an.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user asks to check literature coverage or completeness
-- The user wants to know which chapters need more sources
-- Another skill (Advisor, Chapter Writer, Citation Extraction) flags insufficient sources
-- The user is preparing for a supervisor meeting and wants a status overview
+- Der User fragt nach Literatur-Abdeckung oder Vollständigkeit
+- Der User möchte wissen, welche Kapitel mehr Quellen brauchen
+- Ein anderer Skill (Advisor, Chapter Writer, Citation Extraction) meldet unzureichende Quellenlage
+- Der User bereitet ein Betreuer-Gespräch vor und möchte einen Statusüberblick
 
-## Memory Files
+## Memory-Dateien
 
-### Read
+### Lesen
 
-- `academic_context.md` — Outline structure, research question, sub-questions, key concepts
-- `literature_state.md` — Source inventory, chapter assignments, PDF status, citation counts
+- `academic_context.md` — Gliederung, Forschungsfrage, Unterfragen, Schlüsselkonzepte
+- `literature_state.md` — Quelleninventar, Kapitelzuordnungen, PDF-Status, Zitatanzahlen
 
-### Write
+### Schreiben
 
-- `literature_state.md` — Update gap analysis results and coverage scores
+- `literature_state.md` — Ergebnisse der Gap-Analyse und Coverage-Scores aktualisieren
 
-## Prerequisites
+## Voraussetzungen
 
-Both `academic_context.md` (with an outline) and `literature_state.md` (with at least some sources) must exist. If either is missing:
+Beide Dateien, `academic_context.md` (mit Gliederung) und `literature_state.md` (mit mindestens einigen Quellen), müssen existieren. Fehlt eines:
 
-- No academic context — trigger the Academic Context skill
-- No literature state — suggest running `/search` first to build a source base
+- Kein akademischer Kontext — Academic-Context-Skill triggern
+- Kein Literaturstatus — zuerst `/search` vorschlagen, um einen Quellenbestand aufzubauen
 
-## Core Workflow
+## Core-Workflow
 
-### 1. Load and Cross-Reference
+### 1. Laden und Gegenüberstellen
 
-Read both memory files. Build a matrix:
+Beide Memory-Dateien lesen. Eine Matrix aufbauen:
 
-- **Rows** — Chapters and sub-sections from the outline
-- **Columns** — Coverage dimensions (see below)
+- **Zeilen** — Kapitel und Unterabschnitte aus der Gliederung
+- **Spalten** — Coverage-Dimensionen (siehe unten)
 
-### 2. Coverage Dimensions
+### 2. Coverage-Dimensionen
 
-Evaluate each chapter along these dimensions:
+Jedes Kapitel entlang dieser Dimensionen bewerten:
 
-#### Source Count
-- 0 sources — CRITICAL: no coverage
-- 1-2 sources — WARNING: thin coverage
-- 3-5 sources — OK for sub-sections
-- 5+ sources — Good for main chapters
+#### Quellenanzahl
+- 0 Quellen — KRITISCH: keine Abdeckung
+- 1-2 Quellen — WARNUNG: dünne Abdeckung
+- 3-5 Quellen — OK für Unterabschnitte
+- 5+ Quellen — Gut für Hauptkapitel
 
-#### Source Quality
-- Percentage of peer-reviewed sources per chapter
-- Presence of seminal/foundational works
-- Recency — percentage of sources from the last 5 years
-- Source diversity — multiple authors, not just one research group
+#### Quellen-Qualität
+- Anteil Peer-Review-Quellen pro Kapitel
+- Präsenz von Standard-/Grundlagenwerken
+- Aktualität — Anteil Quellen aus den letzten 5 Jahren
+- Quellen-Diversität — mehrere Autoren, nicht nur eine Forschungsgruppe
 
-#### Argument Balance
-- Are supporting AND opposing viewpoints represented?
-- Are alternative theories or frameworks mentioned?
-- Is there at least one source that challenges the main argument?
+#### Argumentations-Balance
+- Sind stützende UND gegensätzliche Positionen vertreten?
+- Werden alternative Theorien oder Frameworks erwähnt?
+- Gibt es mindestens eine Quelle, die das Hauptargument hinterfragt?
 
-#### Methodological Alignment
-- Do methodology chapters reference established method literature?
-- Is the chosen method justified by cited precedents?
-- Are limitations of the method discussed with source support?
+#### Methodische Passung
+- Referenzieren die Methodikkapitel etablierte Methodenliteratur?
+- Wird die gewählte Methode durch zitierte Präzedenzen gestützt?
+- Werden Limitationen der Methode mit Quellen diskutiert?
 
-### 3. Generate Coverage Report
+### 3. Coverage-Report erstellen
 
-Produce a structured report with the following format:
+Einen strukturierten Report im folgenden Format erzeugen:
 
 ```
 ## Literatur-Coverage-Report
@@ -83,83 +83,83 @@ Produce a structured report with the following format:
 
 ### Kapitelweise Analyse
 
-#### [Chapter Title]
+#### [Kapiteltitel]
 - Zugewiesene Quellen: [N]
 - Peer-reviewed: [N]%
 - Status: [KRITISCH / LÜCKE / AUSREICHEND / GUT]
-- Fehlend: [specific gap description]
-- Empfehlung: [targeted action]
+- Fehlend: [konkrete Lückenbeschreibung]
+- Empfehlung: [gezielte Aktion]
 ```
 
-### 4. Gap Classification
+### 4. Lücken-Klassifikation
 
-Classify each identified gap:
+Jede identifizierte Lücke einordnen:
 
-| Gap Type | Description | Priority |
-|----------|-------------|----------|
-| CRITICAL | Chapter has zero sources | Immediate |
-| STRUCTURAL | Missing foundational/seminal work | High |
-| BALANCE | No counter-arguments or alternative views | High |
-| RECENCY | All sources older than 5 years | Medium |
-| DEPTH | Too few sources for chapter scope | Medium |
-| DIVERSITY | All sources from same author/group | Low |
+| Lücken-Typ | Beschreibung | Priorität |
+|------------|--------------|-----------|
+| KRITISCH | Kapitel hat keine Quellen | Sofort |
+| STRUKTURELL | Fehlendes Grundlagen-/Standardwerk | Hoch |
+| BALANCE | Keine Gegenargumente oder Alternativsichten | Hoch |
+| AKTUALITÄT | Alle Quellen älter als 5 Jahre | Mittel |
+| TIEFE | Zu wenige Quellen für den Kapitel-Scope | Mittel |
+| DIVERSITÄT | Alle Quellen von derselben Autor/Gruppe | Niedrig |
 
-### 5. Search Recommendations
+### 5. Such-Empfehlungen
 
-For each gap, generate a targeted search recommendation:
+Für jede Lücke eine gezielte Such-Empfehlung erzeugen:
 
-- **Search query** — Derived from chapter title, key concepts, and gap type
-- **Suggested modules** — Which search modules are most likely to yield results
-- **Suggested mode** — quick for minor gaps, deep for critical gaps
-- **Expected source type** — Journal article, conference paper, book chapter, report
+- **Such-Query** — Abgeleitet aus Kapiteltitel, Schlüsselkonzepten und Lücken-Typ
+- **Vorgeschlagene Module** — Welche Such-Module liefern am wahrscheinlichsten Treffer
+- **Vorgeschlagener Modus** — quick bei kleinen Lücken, deep bei kritischen Lücken
+- **Erwarteter Quellentyp** — Journal-Artikel, Konferenzbeitrag, Buchkapitel, Report
 
-Example:
+Beispiel:
 ```
 GAP: Kapitel 3.2 "DevOps Governance Modelle" — keine Gegenargumente
 QUERY: "DevOps governance challenges limitations criticism"
 MODULE: semantic_scholar, crossref
 MODE: standard
-EXPECTED: Journal articles discussing governance limitations
+EXPECTED: Journal-Artikel zu Governance-Limitationen
 ```
 
-### 6. Automated Gap Filling
+### 6. Automatisiertes Lücken-Schließen
 
-When the user approves, trigger `/search` for each gap with the recommended queries. After search completes:
+Mit User-Freigabe `/search` für jede Lücke mit den empfohlenen Queries triggern. Nach Abschluss:
 
-1. Review new results against the gap requirements
-2. Suggest chapter assignments for new sources
-3. Update the coverage report
-4. Re-evaluate coverage scores
+1. Neue Treffer gegen die Lücken-Anforderungen prüfen
+2. Kapitelzuordnung für neue Quellen vorschlagen
+3. Coverage-Report aktualisieren
+4. Coverage-Scores neu berechnen
 
-### 7. Update Literature State
+### 7. Literaturstatus aktualisieren
 
-After analysis:
+Nach der Analyse:
 
-1. Read `literature_state.md` (prevent stale overwrites)
-2. Write gap analysis results: per-chapter coverage scores, identified gaps, recommendations
-3. Update timestamp of last analysis
+1. `literature_state.md` lesen (veraltete Überschreibungen vermeiden)
+2. Ergebnisse schreiben: pro-Kapitel-Coverage-Scores, identifizierte Lücken, Empfehlungen
+3. Zeitstempel der letzten Analyse aktualisieren
 
-## Comparison with Similar Works
+## Vergleich mit ähnlichen Arbeiten
 
-When evaluating completeness, consider:
+Bei der Vollständigkeitsbewertung berücksichtigen:
 
-- **Standard references** — Are commonly cited foundational works in the field present?
-- **Recent surveys** — Has the user included recent literature reviews or meta-analyses?
-- **Methodological references** — Are standard methodology textbooks cited?
-- **Institutional requirements** — Does the source count meet the minimum expected for the work type?
+- **Standardreferenzen** — Sind die üblichen Grundlagenwerke des Felds enthalten?
+- **Aktuelle Reviews** — Gibt es aktuelle Literaturreviews oder Meta-Analysen?
+- **Methodenreferenzen** — Werden Standard-Methodenlehrbücher zitiert?
+- **Institutionelle Anforderungen** — Erfüllt die Quellenzahl das für den Arbeitstyp erwartete Minimum?
 
-Typical minimums by work type:
+Typische Minima nach Arbeitstyp:
 
-| Work Type | Minimum Sources | Peer-reviewed Minimum |
-|-----------|-----------------|-----------------------|
+| Arbeitstyp | Minimum Quellen | Peer-Review-Minimum |
+|------------|-----------------|---------------------|
 | Bachelorarbeit | 25-35 | 60% |
 | Masterarbeit | 40-60 | 70% |
 | Hausarbeit | 10-20 | 50% |
 
-## Important Rules
+## Wichtige Regeln
 
-- **Report facts, not judgments** — Present coverage data objectively; let the user decide priorities
-- **Suggest, do not auto-execute** — Always ask before triggering searches for gaps
-- **Acknowledge limitations** — Gap analysis depends on correct chapter assignments in literature state
-- **Re-run after changes** — Suggest re-running analysis after new literature is added
-- **No false positives** — Only flag gaps where the outline clearly requires source support
+- **Fakten berichten, nicht werten** — Coverage-Daten objektiv präsentieren; der User setzt Prioritäten
+- **Vorschlagen, nicht automatisch ausführen** — Vor Such-Triggern immer nachfragen
+- **Limitationen anerkennen** — Die Gap-Analyse hängt von korrekten Kapitelzuordnungen im Literaturstatus ab
+- **Nach Änderungen neu laufen lassen** — Nach Literatur-Updates eine erneute Analyse vorschlagen
+- **Keine Fehlalarme** — Nur Lücken flaggen, wo die Gliederung klar Quellenbedarf vorsieht

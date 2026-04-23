@@ -1,141 +1,141 @@
 ---
 name: Submission Checker
-description: This skill should be used when the user wants to verify formal requirements before submitting their academic paper. Triggers on "formale Pruefung", "Abgabe-Check", "Formatierung pruefen", "abgabefertig", "submission check", "formal requirements", "Deckblatt pruefen", "Eidesstattliche Erklaerung", "Seitenraender", "Formatvorlage", or when the user is preparing for final submission.
+description: Dieser Skill wird genutzt, wenn der User vor der Abgabe seiner akademischen Arbeit formale Anforderungen prüfen möchte. Triggers on "formale Pruefung", "Abgabe-Check", "Formatierung pruefen", "abgabefertig", "submission check", "formal requirements", "Deckblatt pruefen", "Eidesstattliche Erklaerung", "Seitenraender", "Formatvorlage", oder wenn der User sich auf die finale Abgabe vorbereitet.
 ---
 
-# Submission Checker
+# Abgabe-Prüfer
 
-Validate that an academic paper meets all formal submission requirements: page count, formatting, source count, required sections (cover page, table of contents, declaration of authorship, appendix), and university-specific rules.
+Prüft, ob eine akademische Arbeit alle formalen Abgabeanforderungen erfüllt: Seitenzahl, Formatierung, Quellenzahl, Pflichtabschnitte (Deckblatt, Inhaltsverzeichnis, Eidesstattliche Erklärung, Anhang) und hochschulspezifische Regeln.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user asks to check if their paper is ready for submission
-- The user wants to verify formatting or formal requirements
-- Pre-submission quality assurance
-- The user asks about specific formal elements (Deckblatt, Eidesstattliche Erklaerung, etc.)
+- Der User fragt, ob seine Arbeit abgabefertig ist
+- Der User möchte Formatierung oder formale Anforderungen verifizieren
+- Qualitätssicherung vor der Abgabe
+- Der User fragt nach konkreten formalen Elementen (Deckblatt, Eidesstattliche Erklärung etc.)
 
-## Memory and Reference Files
+## Memory- und Referenzdateien
 
-- Read `academic_context.md` for work type, university, program, and citation style
-- Read `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` for university-specific formal requirements
-- Read `writing_state.md` for current word counts and chapter completion status
+- Lies `academic_context.md` für Arbeitstyp, Universität, Studiengang und Zitationsstil
+- Lies `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` für hochschulspezifische Formalia
+- Lies `writing_state.md` für aktuelle Wortzahlen und Kapitelstatus
 
-## Checklist Dimensions
+## Checklisten-Dimensionen
 
-### 1. Required Sections
+### 1. Pflichtabschnitte
 
-Verify presence of all mandatory sections in correct order:
+Präsenz aller verpflichtenden Abschnitte in der korrekten Reihenfolge prüfen:
 
 **Front Matter:**
-- [ ] Deckblatt (Cover Page) -- title, author, matriculation number, supervisor, submission date, university logo
-- [ ] Abstract (if required by work type)
-- [ ] Inhaltsverzeichnis (Table of Contents) -- with page numbers
-- [ ] Abbildungsverzeichnis (List of Figures) -- if figures are present
-- [ ] Tabellenverzeichnis (List of Tables) -- if tables are present
-- [ ] Abkuerzungsverzeichnis (List of Abbreviations) -- if abbreviations are used
+- [ ] Deckblatt -- Titel, Autor:in, Matrikelnummer, Betreuer:in, Abgabedatum, Hochschullogo
+- [ ] Abstract (falls für den Arbeitstyp erforderlich)
+- [ ] Inhaltsverzeichnis -- mit Seitenzahlen
+- [ ] Abbildungsverzeichnis -- falls Abbildungen enthalten sind
+- [ ] Tabellenverzeichnis -- falls Tabellen enthalten sind
+- [ ] Abkürzungsverzeichnis -- falls Abkürzungen verwendet werden
 
-**Body:**
-- [ ] Einleitung (Introduction) -- with research question, methodology overview, structure preview
-- [ ] Hauptteil (Main chapters) -- as defined in outline
-- [ ] Fazit/Schluss (Conclusion) -- with summary, limitations, outlook
+**Hauptteil:**
+- [ ] Einleitung -- mit Forschungsfrage, Methodik-Überblick, Strukturvorschau
+- [ ] Hauptkapitel -- laut Gliederung
+- [ ] Fazit/Schluss -- mit Zusammenfassung, Limitationen, Ausblick
 
 **Back Matter:**
-- [ ] Literaturverzeichnis (Bibliography) -- all cited sources, correctly formatted
-- [ ] Anhang (Appendix) -- if referenced in text
-- [ ] Eidesstattliche Erklaerung (Declaration of Authorship) -- signed statement of independent work
+- [ ] Literaturverzeichnis -- alle zitierten Quellen, korrekt formatiert
+- [ ] Anhang -- falls im Text referenziert
+- [ ] Eidesstattliche Erklärung -- unterzeichnete Erklärung eigenständiger Arbeit
 
-### 2. Page Count and Length
+### 2. Seitenzahl und Umfang
 
-Check against requirements from `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md`:
+Gegen Anforderungen aus `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` prüfen:
 
-| Work Type        | Typical Range (pages) |
-|------------------|-----------------------|
-| Bachelorarbeit   | 30-50                 |
-| Masterarbeit     | 60-80                 |
-| Hausarbeit       | 12-20                 |
-| Seminararbeit    | 15-25                 |
-| Facharbeit       | 8-15                  |
+| Arbeitstyp       | Typischer Umfang (Seiten) |
+|------------------|---------------------------|
+| Bachelorarbeit   | 30-50                     |
+| Masterarbeit     | 60-80                     |
+| Hausarbeit       | 12-20                     |
+| Seminararbeit    | 15-25                     |
+| Facharbeit       | 8-15                      |
 
-Verify:
-- Total page count within allowed range
-- Front matter and back matter excluded from page count (if university requires this)
-- No chapter disproportionately long or short relative to others
+Verifizieren:
+- Gesamtseitenzahl im zulässigen Rahmen
+- Front Matter und Back Matter nicht mitgezählt (falls die Hochschule das verlangt)
+- Kein Kapitel überproportional lang oder kurz
 
-### 3. Formatting
+### 3. Formatierung
 
-Check compliance with standard formatting rules:
+Compliance mit gängigen Formatierungsregeln prüfen:
 
-**Typography:**
-- Font: Times New Roman 12pt or Arial 11pt (per university requirement)
-- Line spacing: 1.5
-- Margins: left 3cm (binding), right 2.5cm, top 2.5cm, bottom 2cm
-- Justified text (Blocksatz)
-- Page numbers: Arabic numerals, starting from introduction (front matter with Roman numerals)
+**Typografie:**
+- Schrift: Times New Roman 12pt oder Arial 11pt (je nach Hochschule)
+- Zeilenabstand: 1.5
+- Ränder: links 3 cm (Bindung), rechts 2.5 cm, oben 2.5 cm, unten 2 cm
+- Blocksatz
+- Seitenzahlen: arabisch ab Einleitung (Front Matter in römischen Ziffern)
 
-**Headings:**
-- Consistent heading hierarchy (no skipped levels)
-- Numbered headings (1, 1.1, 1.1.1 -- max 3 levels)
-- No orphan headings (heading at bottom of page with text on next page)
+**Überschriften:**
+- Konsistente Hierarchie (keine übersprungenen Ebenen)
+- Nummerierte Überschriften (1, 1.1, 1.1.1 -- max. 3 Ebenen)
+- Keine Schuster-Überschriften (Überschrift am Seitenende, Text beginnt erst auf der nächsten Seite)
 
-**Paragraphs:**
-- No single-sentence paragraphs
-- Consistent paragraph indentation or spacing
+**Absätze:**
+- Keine Einzelsatz-Absätze
+- Konsistente Absatz-Einrückung oder -Abstände
 
-### 4. Source Count and Citation Quality
+### 4. Quellenzahl und Zitationsqualität
 
-Verify adequate source usage:
+Ausreichende Quellennutzung prüfen:
 
-| Work Type        | Minimum Sources |
+| Arbeitstyp       | Minimum Quellen |
 |------------------|-----------------|
 | Bachelorarbeit   | 25-40           |
 | Masterarbeit     | 40-60           |
 | Hausarbeit       | 10-20           |
 | Seminararbeit    | 15-25           |
 
-Check:
-- Total number of unique sources in bibliography
-- All in-text citations have corresponding bibliography entry
-- All bibliography entries are cited at least once in text
-- Citation format matches style from `academic_context.md` (APA7, IEEE, Harvard, etc.)
-- No chapter without any citations (except introduction structure preview and conclusion outlook)
+Prüfen:
+- Gesamtzahl eindeutiger Quellen in der Bibliografie
+- Alle In-Text-Zitate haben einen Eintrag im Literaturverzeichnis
+- Alle Literatureinträge werden im Text mindestens einmal zitiert
+- Zitierformat entspricht dem Stil aus `academic_context.md` (APA7, IEEE, Harvard etc.)
+- Kein Kapitel ohne Zitate (Ausnahme: Strukturvorschau in der Einleitung und Ausblick im Fazit)
 
-### 5. Figures and Tables
+### 5. Abbildungen und Tabellen
 
-If figures or tables are present:
-- Each has a caption with number ("Abbildung 1:", "Tabelle 1:")
-- Each is referenced in the text
-- Numbering is sequential and consistent
-- Source attribution below each figure/table
-- List of figures/tables in front matter matches actual content
+Falls Abbildungen oder Tabellen vorhanden:
+- Jede hat eine nummerierte Beschriftung ("Abbildung 1:", "Tabelle 1:")
+- Jede wird im Text referenziert
+- Nummerierung sequenziell und konsistent
+- Quellenangabe unter jeder Abbildung/Tabelle
+- Abbildungs-/Tabellenverzeichnis im Front Matter stimmt mit dem Inhalt überein
 
-### 6. Declaration of Authorship (Eidesstattliche Erklaerung)
+### 6. Eidesstattliche Erklärung
 
-Verify:
-- Present as last page (or per university placement rule)
-- Contains required wording per `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md`
-- Includes place and date fields
-- Includes signature line
+Verifizieren:
+- Vorhanden als letzte Seite (oder gemäß hochschulspezifischer Platzierungsregel)
+- Enthält den geforderten Wortlaut gemäß `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md`
+- Enthält Ort-/Datum-Feld
+- Enthält Unterschriftenfeld
 
-## Evaluation Workflow
+## Evaluations-Workflow
 
-1. Read `academic_context.md` to determine work type and university
-2. Read `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` for specific requirements
-3. Read `writing_state.md` for current completion status
-4. Analyze the paper structure against the checklist
-5. Score each dimension as PASS, PARTIAL, or FAIL
-6. Compile results in structured output
-7. Prioritize fixes by severity
+1. `academic_context.md` lesen, um Arbeitstyp und Hochschule zu bestimmen
+2. `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` für spezifische Anforderungen lesen
+3. `writing_state.md` für den aktuellen Fertigstellungsgrad lesen
+4. Die Arbeit gegen die Checkliste prüfen
+5. Jede Dimension als PASS, PARTIAL oder FAIL scoren
+6. Ergebnisse strukturiert ausgeben
+7. Fixes nach Schweregrad priorisieren
 
-## Output Format
+## Output-Format
 
 ```
-## Abgabe-Check: [Work Title]
+## Abgabe-Check: [Arbeitstitel]
 
-**Typ:** [Work Type] | **Uni:** [University] | **Datum:** [Check Date]
+**Typ:** [Arbeitstyp] | **Uni:** [Hochschule] | **Datum:** [Prüfdatum]
 
-### Ergebnis-Uebersicht
+### Ergebnis-Übersicht
 
-| Pruefbereich          | Status              | Details           |
+| Prüfbereich           | Status              | Details           |
 |-----------------------|---------------------|-------------------|
 | Pflichtabschnitte     | PASS/PARTIAL/FAIL   | [X/Y vorhanden]   |
 | Seitenumfang          | PASS/PARTIAL/FAIL   | [N Seiten]        |
@@ -144,21 +144,21 @@ Verify:
 | Abbildungen/Tabellen  | PASS/PARTIAL/FAIL   | [Issues count]    |
 | Eidesstattl. Erkl.    | PASS/PARTIAL/FAIL   | [vorhanden/fehlt] |
 
-### Kritische Maengel (sofort beheben)
-[List FAIL items with specific fix instructions]
+### Kritische Mängel (sofort beheben)
+[FAIL-Punkte mit konkreten Fix-Anweisungen auflisten]
 
 ### Empfehlungen (sollte behoben werden)
-[List PARTIAL items with improvement suggestions]
+[PARTIAL-Punkte mit Verbesserungsvorschlägen auflisten]
 
 ### Bestanden
-[List PASS items as confirmation]
+[PASS-Punkte zur Bestätigung auflisten]
 ```
 
-## Important Rules
+## Wichtige Regeln
 
-- Always check `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` first -- university-specific rules override general conventions
-- If `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` is not available, use standard German academic conventions and note that university-specific verification was not possible
-- Never assume formatting is correct without checking -- formatting errors are the most common reason for submission delays
-- Distinguish between hard requirements (FAIL = cannot submit) and soft recommendations (PARTIAL = should fix)
-- If the paper is not yet complete, run the check on available sections and note which checks are pending
-- Present results in German when `academic_context.md` specifies German as language
+- Immer zuerst `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` prüfen -- hochschulspezifische Regeln überschreiben allgemeine Konventionen
+- Ist die Datei nicht verfügbar, deutsche Standard-Konventionen nutzen und vermerken, dass hochschulspezifische Prüfung nicht möglich war
+- Formatierung nie als korrekt annehmen ohne zu prüfen -- Formatfehler sind der häufigste Grund für Abgabeverzögerungen
+- Zwischen harten Anforderungen (FAIL = keine Abgabe möglich) und weichen Empfehlungen (PARTIAL = sollte behoben werden) unterscheiden
+- Ist die Arbeit noch nicht fertig, Check auf vorhandene Abschnitte laufen lassen und offene Prüfpunkte benennen
+- Ergebnisse auf Deutsch präsentieren, wenn `academic_context.md` Deutsch als Sprache angibt

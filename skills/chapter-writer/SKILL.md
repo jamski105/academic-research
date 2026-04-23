@@ -1,142 +1,142 @@
 ---
 name: Chapter Writer
-description: This skill should be used when the user wants to write, draft, or compose a thesis chapter or section. Triggers on "Kapitel schreiben", "verfassen", "entwerfen", "Abschnitt schreiben", "write chapter", "draft section", "Kapitel formulieren", "Textarbeit", or when the user asks for help composing academic prose for a specific part of their work.
+description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder einen Abschnitt schreiben, entwerfen oder formulieren möchte. Triggers on "Kapitel schreiben", "verfassen", "entwerfen", "Abschnitt schreiben", "write chapter", "draft section", "Kapitel formulieren", "Textarbeit", oder wenn der User Hilfe beim Verfassen akademischer Prosa für einen konkreten Teil seiner Arbeit braucht.
 ---
 
-# Chapter Writer
+# Kapitel-Autor
 
-Draft individual thesis chapters and sections using the research context, outline, available literature, and citations. Produce academic prose that the user reviews, edits, and approves section by section.
+Verfasst einzelne Thesis-Kapitel und Abschnitte auf Basis von Forschungskontext, Gliederung, verfügbarer Literatur und Zitaten. Produziert akademische Prosa, die der User Abschnitt für Abschnitt reviewt, editiert und freigibt.
 
-## When This Skill Activates
+## Aktivierung dieses Skills
 
-- The user wants to write or draft a specific chapter or section
-- The user asks for help formulating academic text for their thesis
-- The user wants to expand bullet points or notes into full prose
-- The user needs help with transitions between sections
+- Der User möchte ein bestimmtes Kapitel oder einen Abschnitt schreiben oder entwerfen
+- Der User bittet um Hilfe beim Formulieren akademischen Texts für seine Arbeit
+- Der User möchte Stichpunkte oder Notizen zu Fließtext ausbauen
+- Der User braucht Hilfe bei Übergängen zwischen Abschnitten
 
-## Memory Files
+## Memory-Dateien
 
-### Read
+### Lesen
 
-- `academic_context.md` — Thesis profile, research question, outline, key concepts
-- `literature_state.md` — Available sources, chapter-to-source assignments
-- `writing_state.md` — Current writing progress, word counts, style scores
+- `academic_context.md` — Arbeitsprofil, Forschungsfrage, Gliederung, Schlüsselkonzepte
+- `literature_state.md` — Verfügbare Quellen, Kapitel-Quellen-Zuordnungen
+- `writing_state.md` — Aktueller Schreibfortschritt, Wortzahlen, Style-Scores
 
-### Write
+### Schreiben
 
-- `writing_state.md` — Update word counts, current chapter, and progress after writing
+- `writing_state.md` — Wortzahlen, aktuelles Kapitel und Fortschritt nach dem Schreiben aktualisieren
 
-## Core Workflow
+## Core-Workflow
 
-### 1. Load Context
+### 1. Kontext laden
 
-Read all three memory files. If `academic_context.md` does not exist, inform the user and trigger the Academic Context skill first. If no outline exists, suggest triggering the Advisor skill to create one before writing.
+Lies alle drei Memory-Dateien. Existiert `academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Gibt es noch keine Gliederung, schlage vor, den Advisor-Skill zu triggern, bevor geschrieben wird.
 
-Extract: target chapter from the outline, assigned sources from literature state, citation style, thesis language, and any existing drafts.
+Extrahiere: Ziel-Kapitel aus der Gliederung, zugeordnete Quellen aus dem Literaturstatus, Zitationsstil, Sprache der Arbeit und vorhandene Entwürfe.
 
-### 2. Identify Target Chapter
+### 2. Ziel-Kapitel bestimmen
 
-Ask the user which chapter or section to write if not already clear. Confirm:
+Frage den User, welches Kapitel oder welcher Abschnitt geschrieben werden soll, falls nicht klar. Kläre:
 
-- Chapter number and title from the outline
-- Scope — What should this chapter accomplish?
-- Available sources assigned to this chapter
-- Expected length (page estimate from outline)
+- Kapitelnummer und -titel aus der Gliederung
+- Scope — Was soll das Kapitel leisten?
+- Verfügbare zugeordnete Quellen
+- Erwarteter Umfang (Seitenschätzung aus der Gliederung)
 
-### 3. Chapter Planning
+### 3. Kapitelplanung
 
-Before writing, create a brief internal plan:
+Bevor geschrieben wird, erstelle einen kurzen internen Plan:
 
-1. **Section breakdown** — Sub-sections with 2-3 sentence descriptions of content
-2. **Source mapping** — Which sources support which sections
-3. **Argument flow** — How the chapter builds toward its contribution to the research question
-4. **Key definitions** — Terms that need to be introduced or referenced
+1. **Abschnitts-Aufbau** — Unterabschnitte mit 2-3 Sätzen Inhaltsbeschreibung
+2. **Quellen-Mapping** — Welche Quellen stützen welche Abschnitte
+3. **Argumentationsfluss** — Wie das Kapitel seinen Beitrag zur Forschungsfrage aufbaut
+4. **Schlüsseldefinitionen** — Begriffe, die eingeführt oder referenziert werden müssen
 
-Present the plan to the user for approval before drafting.
+Plan dem User zur Freigabe vorlegen, bevor gedraftet wird.
 
-### 4. Drafting
+### 4. Draften
 
-Write the chapter section by section. For each section:
+Schreibe das Kapitel Abschnitt für Abschnitt. Für jeden Abschnitt:
 
-1. Draft the text in the thesis language (default: German)
-2. Embed in-text citations using the configured citation style (default: APA7)
-3. Use formal academic register — no colloquialisms, no first person unless methodology requires it
-4. Connect to the research question explicitly where appropriate
-5. Present the draft to the user for review
+1. Text in der Sprache der Arbeit entwerfen (Default: Deutsch)
+2. In-Text-Zitate im konfigurierten Zitationsstil einbauen (Default: APA7)
+3. Formales akademisches Register nutzen — keine Umgangssprache, keine Ich-Form, außer die Methodik verlangt es
+4. Wo sinnvoll, explizit an die Forschungsfrage anknüpfen
+5. Entwurf dem User zur Durchsicht vorlegen
 
-#### Writing Guidelines
+#### Schreibrichtlinien
 
-- **Paragraph structure** — Topic sentence, elaboration, evidence, synthesis
-- **Citation density** — At least one citation per substantive claim in theory chapters; less in methodology/analysis
-- **Transitions** — Each section ends with a bridge to the next
-- **Hedging language** — Use appropriate hedging for claims ("suggests", "indicates", "according to")
-- **No filler** — Every sentence must contribute to the argument
+- **Absatzstruktur** — Topic Sentence, Ausarbeitung, Evidenz, Synthese
+- **Zitationsdichte** — In Theoriekapiteln mindestens ein Zitat pro substanzieller Aussage; weniger in Methodik/Analyse
+- **Übergänge** — Jeder Abschnitt endet mit einer Brücke zum nächsten
+- **Hedging-Sprache** — Angemessene Abschwächung bei Aussagen ("deutet darauf hin", "weist darauf hin", "laut")
+- **Keine Füllwörter** — Jeder Satz muss zur Argumentation beitragen
 
-#### Source Integration
+#### Quellenintegration
 
-When citing sources, use the citation data produced by the Citation Extraction skill (inline-formatiert nach dem in `academic_context.md` konfigurierten Stil). Reference papers by their formatted citation. Support these integration patterns:
+Beim Zitieren die Daten aus dem Citation-Extraction-Skill nutzen (inline-formatiert nach dem in `academic_context.md` konfigurierten Stil). Paper über das formatierte Zitat referenzieren. Folgende Integrationsmuster werden unterstützt:
 
-- **Direct quote** — Exact wording in quotation marks with page number
-- **Paraphrase** — Restate in own words with citation
-- **Summary** — Condense a source's argument with citation
-- **Synthesis** — Combine multiple sources to support a point
+- **Direktzitat** — Exakter Wortlaut in Anführungszeichen mit Seitenzahl
+- **Paraphrase** — In eigenen Worten wiedergeben, mit Zitat
+- **Zusammenfassung** — Argumentation einer Quelle verdichten, mit Zitat
+- **Synthese** — Mehrere Quellen kombinieren, um einen Punkt zu stützen
 
-### 5. User Review Cycle
+### 5. User-Review-Zyklus
 
-After presenting each section draft:
+Nach dem Vorstellen jedes Abschnittsentwurfs:
 
-- Wait for user feedback before proceeding
-- Accept edits, rewrites, or approval
-- Incorporate feedback into the next section
-- Never proceed to the next section without user confirmation
+- Auf User-Feedback warten, bevor weitergeschrieben wird
+- Edits, Rewrites oder Freigaben akzeptieren
+- Feedback in den nächsten Abschnitt übernehmen
+- Nie ohne Bestätigung des Users zum nächsten Abschnitt übergehen
 
-If the user provides their own notes or bullet points, expand them into academic prose while preserving the user's intended meaning.
+Liefert der User eigene Notizen oder Stichpunkte, bau sie zu akademischer Prosa aus und bewahre die inhaltliche Absicht.
 
-### 6. Chapter Assembly
+### 6. Kapitel-Zusammensetzung
 
-After all sections are reviewed and approved:
+Nachdem alle Abschnitte reviewt und freigegeben sind:
 
-1. Combine sections into the complete chapter
-2. Check internal consistency (terminology, argument flow)
-3. Verify all citations are present and correctly formatted
-4. Add chapter introduction (if not the thesis introduction) and chapter summary
-5. Report final word count
+1. Abschnitte zum Gesamtkapitel zusammenführen
+2. Interne Konsistenz prüfen (Terminologie, Argumentationsfluss)
+3. Alle Zitate auf Vollständigkeit und Formatierung prüfen
+4. Kapitel-Einleitung (außer bei Thesis-Einleitung) und Kapitel-Zusammenfassung ergänzen
+5. Finale Wortzahl berichten
 
-### 7. Update Writing State
+### 7. Writing-State aktualisieren
 
-After the user approves the chapter:
+Nach der Freigabe des Kapitels durch den User:
 
-1. Read `writing_state.md` (prevent stale overwrites)
-2. Update current chapter, word count, and progress status
-3. Mark the chapter as "draft complete" in progress tracking
+1. `writing_state.md` lesen (veraltete Überschreibungen vermeiden)
+2. Aktuelles Kapitel, Wortzahl und Fortschrittsstatus aktualisieren
+3. Kapitel im Fortschrittstracking als "draft complete" markieren
 
-## Special Chapter Types
+## Spezielle Kapiteltypen
 
-### Introduction (Einleitung)
+### Einleitung
 
-Follow this structure: topic relevance, problem statement, research question, methodology overview, outline preview. Write last or revise after all other chapters are done.
+Struktur: Themenrelevanz, Problemstellung, Forschungsfrage, Methodik-Überblick, Gliederungs-Vorschau. Zuletzt schreiben oder nach Fertigstellung der anderen Kapitel überarbeiten.
 
-### Theoretical Framework (Theoretischer Rahmen)
+### Theoretischer Rahmen
 
-Heavy citation density. Define all key concepts. Compare perspectives from different authors. Build toward the analytical framework used later.
+Hohe Zitationsdichte. Alle Schlüsselkonzepte definieren. Perspektiven verschiedener Autoren vergleichen. Auf den später verwendeten Analyserahmen hinarbeiten.
 
-### Methodology (Methodik)
+### Methodik
 
-Justify the chosen approach. Describe data collection and analysis methods. Address limitations. Reference methodology literature.
+Den gewählten Ansatz begründen. Datenerhebung und -analyse beschreiben. Limitationen adressieren. Methodik-Literatur referenzieren.
 
-### Analysis / Results (Analyse / Ergebnisse)
+### Analyse / Ergebnisse
 
-Apply the theoretical framework to the data. Present findings structured by sub-questions or themes. Use evidence from primary or secondary sources.
+Den theoretischen Rahmen auf die Daten anwenden. Befunde entlang der Unterfragen oder Themen strukturieren. Evidenz aus Primär- oder Sekundärquellen nutzen.
 
-### Conclusion (Fazit)
+### Fazit
 
-Summarize findings per sub-question. Answer the main research question. Discuss limitations and future research. No new sources.
+Befunde pro Unterfrage zusammenfassen. Die Hauptfrage beantworten. Limitationen und zukünftige Forschung diskutieren. Keine neuen Quellen.
 
-## Important Rules
+## Wichtige Regeln
 
-- **Never write without user review** — Present each section for feedback before continuing
-- **Never fabricate citations** — Only use sources that exist in the literature state
-- **Preserve user voice** — When the user provides notes, respect their phrasing and intent
-- **Match thesis language** — Write in the language specified in academic context
-- **Track progress** — Always update writing_state.md after approved drafts
-- **Flag gaps** — If a section needs a source that is not available, flag it and offer to trigger `/search`
+- **Nie ohne User-Review schreiben** — Jeden Abschnitt zur Durchsicht vorlegen, bevor weitergearbeitet wird
+- **Nie Zitate fabrizieren** — Nur Quellen nutzen, die im Literaturstatus existieren
+- **User-Voice bewahren** — Wenn der User Notizen liefert, Formulierung und Intention respektieren
+- **Sprache der Arbeit einhalten** — In der Sprache schreiben, die im akademischen Kontext angegeben ist
+- **Fortschritt tracken** — Nach freigegebenen Drafts immer `writing_state.md` aktualisieren
+- **Lücken flaggen** — Fehlt für einen Abschnitt eine Quelle, das melden und `/search` anbieten
