@@ -4,6 +4,35 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [5.2.0] — 2026-04-23
+
+### Added
+
+- **Native Citations-API** in `quote-extractor`, `citation-extraction`, `chapter-writer` (Block A). Ersetzt Heuristik-Pre-Execution-Guards. Zitate sind jetzt seitengenau (`page_location`) und von der API erzwungen quellengebunden.
+- **Evals-Suite** pro Skill/Agent via pytest (`tests/evals/`). `evals/<component>/evals.json` liefert Test-Prompts mit `substring` / `regex` / `json_field` Expectations. Baseline-Vergleich `with_skill` vs `without_skill`. Schwelle: Δ ≥ 20 pp PASS-Rate. Reports unter `docs/evals/`.
+- **Trigger-Evals** pro Skill (Block C) — 10 should_trigger + 10 should_not_trigger Prompts je Skill. Runner in `tests/evals/test_triggers.py` mit Schwellen Recall ≥ 85 % / FPR ≤ 10 %.
+- **`quality-reviewer`-Agent** (`agents/quality-reviewer.md`, Sonnet-Modell). Evaluator-Optimizer-Pattern: Input = Text + Kriterien-Checkliste, Output = `PASS | REVISE` + Fix-Liste. Wird von `chapter-writer`, `abstract-generator`, `advisor` vor finalem Output aufgerufen.
+- **Domain-organized References** (Block E) in 3 Skills: `citation-extraction/references/{apa,harvard,chicago,din1505}.md`, `style-evaluator/references/{academic-de,academic-en}.md`, `submission-checker/references/{fh-leibniz,uni-general,journal-ieee,journal-acm}.md`. SKILL.md laedt nur die Kontext-passende Variante.
+- **Prompt-Caching** in `relevance-scorer` und `quote-extractor` (Block F). Cache-Breakpoint auf System-Prompt + Scoring-Rubrik/Extraktions-Instruktionen. `cache_read_input_tokens > 0` ab 2. Batch-Call.
+
+### Changed
+
+- **Alle 13 Skill-Descriptions** auf Pushy-Stil umformuliert (Block C): imperativer Einstieg `Use this skill when …`, 3–4 konkrete Trigger-Beispiele mit Umlaut-Paaren, Delegations-Satz an Nachbar-Skill. Kein ALLCAPS.
+- `skills/submission-checker/SKILL.md`: bestehende 8-Punkte-FH-Leibniz-Formalia nach `references/fh-leibniz.md` verschoben. SKILL.md enthaelt jetzt nur Workflow + Variant-Selector.
+
+### Dependencies
+
+- `scripts/requirements.txt`: `anthropic>=0.40` ergaenzt (fuer Citations-API und Prompt-Caching).
+
+### Migration
+
+**Fuer End-User:** Keine Action noetig. Neue Features aktivieren sich automatisch nach Plugin-Update.
+
+**Fuer Eval-Nutzer:**
+1. `pip install anthropic>=0.40` (oder `rm -rf ~/.academic-research/venv && /academic-research:setup`)
+2. `export ANTHROPIC_API_KEY=sk-ant-...`
+3. `pytest tests/evals/` — laeuft lokal, kein CI-Trigger.
+
 ## [5.1.1] — 2026-04-23
 
 ### Fixed
