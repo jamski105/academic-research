@@ -53,7 +53,7 @@ Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
 - Der User fragt nach Kapitelstruktur, Reihenfolge oder logischem Aufbau
 - Der User möchte planen, welche Themen in welches Kapitel gehören
 
-## Memory-Dateien
+## Kontext-Dateien
 
 ### Lesen
 
@@ -68,7 +68,7 @@ Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
 
 ### 1. Kontext laden
 
-Lies `academic_context.md` aus dem Memory. Existiert sie nicht, informiere den User und triggere den Academic-Context-Skill, um Grunddaten zu erheben, bevor fortgefahren wird.
+Lies `./academic_context.md` aus dem Projekt-Ordner. Existiert sie nicht, informiere den User und triggere den Academic-Context-Skill, um Grunddaten zu erheben, bevor fortgefahren wird.
 
 Extrahiere: Arbeitstyp, Thema, Forschungsfrage, Unterfragen, Methodik und eine eventuell vorhandene Gliederung.
 
@@ -176,4 +176,4 @@ Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
 - **Deutsche Kapiteltitel als Default** — Sprache aus dem akademischen Kontext übernehmen
 - **Begründung zeigen** — Erklären, warum eine bestimmte Struktur empfohlen wird
 - **Eine Änderung nach der anderen** — Mehrere Probleme sequenziell angehen
-- **Vor dem Speichern bestätigen lassen** — Immer explizite Freigabe einholen, bevor ins Memory geschrieben wird
+- **Vor dem Speichern bestätigen lassen** — Immer explizite Freigabe einholen, bevor in ./academic_context.md geschrieben wird

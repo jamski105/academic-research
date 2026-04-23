@@ -53,7 +53,7 @@ Bei Gleichstand: Supervisor-Präferenz entscheidet. Dokumentiere Scoring in der 
 - Der User muss seine Methodenwahl gegenüber Betreuer oder Exposé begründen
 - Der User schreibt das Methodik-Kapitel und braucht strukturelle Orientierung
 
-## Memory-Dateien
+## Kontext-Dateien
 
 ### Lesen
 
@@ -71,7 +71,7 @@ Konsultiere den Methoden-Katalog unter `${CLAUDE_PLUGIN_ROOT}/skills/methodology
 
 ### 1. Kontext laden
 
-Lies `academic_context.md`. Existiert sie nicht, triggere zuerst den Academic-Context-Skill. Extrahiere: Forschungsfrage, Unterfragen, Arbeitstyp, Thema und eine eventuell vorhandene Methodik-Wahl.
+Lies `./academic_context.md`. Existiert sie nicht, triggere zuerst den Academic-Context-Skill. Extrahiere: Forschungsfrage, Unterfragen, Arbeitstyp, Thema und eine eventuell vorhandene Methodik-Wahl.
 
 ### 2. Typ der Forschungsfrage einschätzen
 
