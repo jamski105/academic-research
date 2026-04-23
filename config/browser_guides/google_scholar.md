@@ -1,56 +1,13 @@
-# Google Scholar — Browser Navigation Guide
+# Google Scholar — Navigation Guide
 
-## URL-Schema
+**URL:** https://scholar.google.com
+**Auth:** keine
+**Max. Ergebnisse:** 20 (2 Seiten à 10)
+**Anti-Scraping:** **hoch** — Google blockiert Bots aggressiv. 2-3 Sekunden Pause zwischen Aktionen. Bei CAPTCHA: Screenshot machen, User informieren, Partial Results zurückgeben. Max. ~100 Requests/Tag pro IP.
 
-- **Suche:** `https://scholar.google.com/scholar?q=QUERY`
-- **Nächste Seite:** `https://scholar.google.com/scholar?start=10&q=QUERY`
-- **Profil:** `https://scholar.google.com/citations?user=USER_ID`
+## Hinweise
 
-## Selektoren
-
-| Element | CSS-Selektor | Accessibility |
-|---------|-------------|---------------|
-| Suchfeld | `input[name="q"]` | `textbox "Suche"` (DE) / `textbox "Search"` (EN) |
-| Ergebnis-Container | `.gs_r.gs_or.gs_scl` | — |
-| Titel + Link | `.gs_rt a` | `link "Paper Title"` |
-| Autoren/Venue/Jahr | `.gs_a` | — |
-| Snippet | `.gs_rs` | — |
-| Zitationen-Link | `.gs_fl a` — **filtern nach "Cited by" / "Zitiert von"** | `link "Zitiert von: N"` (DE) / `link "Cited by N"` (EN) |
-| PDF-Link | `.gs_or_ggsm a` | `link "[PDF] domain.tld"` |
-| Nächste Seite | `#gs_n a` (letzter) | `link "Weiter"` (DE) / `link "Next"` (EN) |
-
-**WICHTIG:** `.gs_fl` enthält auch "Speichern"/"Zitieren"-Buttons als `<a>` Tags — den Zitationen-Link immer per Textfilter identifizieren, NICHT einfach den ersten Link nehmen.
-
-## Workflow
-
-1. `browser_navigate` → `https://scholar.google.com`
-2. `browser_snapshot` → Suchfeld identifizieren
-3. `browser_type` → Query eingeben
-4. `browser_press_key` → Enter
-5. `browser_wait_for` → Warte auf `.gs_r` Elemente
-6. `browser_evaluate` → Daten extrahieren:
-```javascript
-Array.from(document.querySelectorAll('.gs_r.gs_or.gs_scl')).map(r => {
-  // Zitationen: Link filtern der "Cited by" oder "Zitiert von" enthält
-  const citLink = Array.from(r.querySelectorAll('.gs_fl a'))
-    .find(a => /Cited by|Zitiert von/i.test(a.textContent));
-  return {
-    title: r.querySelector('.gs_rt a')?.textContent || '',
-    url: r.querySelector('.gs_rt a')?.href || '',
-    authors_line: r.querySelector('.gs_a')?.textContent || '',
-    snippet: r.querySelector('.gs_rs')?.textContent || '',
-    citations: parseInt(citLink?.textContent?.match(/\d+/)?.[0] || '0'),
-    pdf_url: r.querySelector('.gs_or_ggsm a')?.href || ''
-  };
-})
-```
-7. Autoren-Zeile parsen: Format ist `AUTOR1, AUTOR2 - VENUE, JAHR - PUBLISHER`
-8. Bei Bedarf: `browser_click` → "Weiter"/"Next" für Seite 2 (max 2 Seiten)
-
-## Bekannte Probleme
-
-- **Anti-Scraping:** Google blockiert Bots aggressiv. **2-3 Sekunden Pause** zwischen Aktionen.
-- **CAPTCHA:** Bei Erkennung → `browser_take_screenshot` → User informieren, Partial Results zurückgeben.
-- **Rate Limit:** Max 20 Ergebnisse (2 Seiten) pro Session.
-- **Kein API-Key:** Google Scholar hat keine offizielle API.
-- **IP-Blocking:** Nach ~100 Requests pro Tag kann die IP gesperrt werden.
+- URL-Parameter: `?q=<QUERY>` für Erstsuche, `?start=10&q=<QUERY>` für Seite 2.
+- Nach `browser-use state` enthält jede Ergebniszeile mehrere Links: Titel, PDF, Zitationen ("Cited by N" / "Zitiert von N"), "Speichern", "Zitieren". **Nicht den ersten Link in der Ergebniszeile klicken** — wähle anhand des Link-Texts (z. B. "Cited by" enthält die Zitationszahl).
+- Autoren-Zeile folgt dem Format `AUTOR1, AUTOR2 - VENUE, JAHR - PUBLISHER`. Parsing erfolgt durch den LLM aus dem `state`-Output.
+- Kein API-Key, keine offizielle API. Scholar blockiert IPs nach Erkennung dauerhaft — vorsichtig einsetzen.
