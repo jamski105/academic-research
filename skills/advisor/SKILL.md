@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User seine Gliederung aufbauen 
 
 Baut, verfeinert und validiert Gliederungen und Exposé-Dokumente im interaktiven Dialog. Führt den User vom Ausgangsthema zu einem strukturierten, gut begründeten Kapitelplan.
 
+## Keine Fabrikation
+
+Erfundene Kapitelstruktur-Standards oder Gliederungsempfehlungen sind für die FH Leibniz ein Plagiatsbefund und
+führen zu nachträglichen Überarbeitungen nach Abgabe. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte eine Gliederung erstellen oder überarbeiten

@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User Text auf unbeabsichtigtes 
 
 Prüft akademischen Text auf unbeabsichtigte Nähe zum Quellmaterial. Erkennt zu nahe Paraphrasen, unzureichend umformulierte Passagen und fehlende Quellenangaben via N-Gramm-Overlap-Detection. Schlägt Umformulierungen für markierte Passagen vor.
 
+## Keine Fabrikation
+
+Erfundene Similarity-Urteile oder N-Gramm-Matches sind für die FH Leibniz ein Plagiatsbefund und
+führen zu unentdecktem Plagiat, das später auffliegt. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User reicht Text zur Prüfung gegen seine Quellen ein

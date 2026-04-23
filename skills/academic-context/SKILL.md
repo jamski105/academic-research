@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User seine Abschlussarbeit, Bac
 
 Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verlassen. Dieser Skill liest und schreibt Claude-Memory-Dateien, um Thema, Gliederung, Forschungsfrage, Methodik, Fortschritt und Schlüsselkonzepte der Arbeit des Users zu tracken.
 
+## Keine Fabrikation
+
+Erfundene Kontextangaben (Thema, Methodik, Fragestellung) sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einer vergifteten Memory-Basis, die alle nachgelagerten Skills wertlos macht. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User erwähnt seine Abschlussarbeit, Hausarbeit oder akademische Arbeit

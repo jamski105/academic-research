@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User Hilfe bei Wahl, Begründun
 
 Hilft bei Wahl, Begründung und Dokumentation der Forschungsmethodik. Vergleicht Ansätze, prüft die Passung zur Forschungsfrage und produziert Methodik-Texte, die akademischen Standards genügen.
 
+## Keine Fabrikation
+
+Erfundene Methodik-Standards, Begründungen oder Vergleiche sind für die FH Leibniz ein Plagiatsbefund und
+führen zu Note 5 für das Forschungsdesign. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User muss eine Forschungsmethodik wählen

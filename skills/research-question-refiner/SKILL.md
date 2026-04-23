@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User seine Forschungsfrage form
 
 Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob eine Frage zu breit, zu eng oder nicht beantwortbar ist. Vergleicht mit ähnlichen Arbeiten, um Originalität und Machbarkeit sicherzustellen.
 
+## Keine Fabrikation
+
+Erfundene Bezüge zu Vorarbeiten oder Forschungslücken sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einer Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte eine neue Forschungsfrage formulieren

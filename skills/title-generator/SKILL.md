@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User Titelvorschläge für sein
 
 Analysiert eine fertige oder nahezu fertige akademische Arbeit und erzeugt 5-7 Titelvarianten mit Begründung. Liefert eine Mischung aus akademisch, kreativ und deskriptiv, abgestimmt auf Disziplin und Arbeitstyp.
 
+## Keine Fabrikation
+
+Erfundene in den Titel eingebaute Claims sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einer vor der Korrektur angreifbaren Arbeit. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User fragt nach Titelvorschlägen oder möchte seinen Arbeitstitel ändern

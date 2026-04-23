@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User Zitate und Quellenangaben 
 
 Extrahiert relevante Zitate aus akademischen PDFs, formatiert sie im gewünschten Stil und organisiert Zitatdaten nach Kapitel. Nutzt den Agent `quote-extractor` für die Extraktion und die Inline-Zitationslogik (siehe Abschnitt "Zitat-Formatierung" unten).
 
+## Keine Fabrikation
+
+Erfundene Zitate, Seitenzahlen oder Quellenangaben sind für die FH Leibniz ein Plagiatsbefund und
+führen zu Zitaten, die in der Plagiatsprüfung als nicht-auffindbar markiert werden. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte Zitate oder Belege aus heruntergeladenen PDFs extrahieren

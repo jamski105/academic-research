@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User ein Abstract, eine Zusamme
 
 Liest eine fertige oder nahezu fertige akademische Arbeit und erzeugt strukturierte Abstracts, Zusammenfassungen und Keyword-Listen. Produziert Output-Varianten passend zum Arbeitstyp und den Hochschul-Anforderungen.
 
+## Keine Fabrikation
+
+Erfundene Ergebnisse, Methoden oder Zahlen im Abstract sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einem Täuschungsversuch nach FH-Leibniz-Prüfungsordnung. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User fragt nach einem Abstract (deutsch oder englisch)

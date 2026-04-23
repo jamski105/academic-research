@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User seine Literaturabdeckung a
 
 Analysiert die Thesis-Gliederung gegen die bestehende Literatursammlung und erzeugt einen kapitelweisen Abdeckungsbericht. Identifiziert gut abgedeckte Themen, fehlende Quellen, fehlende Gegenargumente und methodische Lücken. Bietet gezielte Suche zur Lückenschließung an.
 
+## Keine Fabrikation
+
+Erfundene Abdeckungs-Statements oder Quellenlisten sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einem Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User fragt nach Literatur-Abdeckung oder Vollständigkeit

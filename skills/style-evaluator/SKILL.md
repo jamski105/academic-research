@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, au
 
 Bewertet akademischen Text nach Menschlichkeit, Anfälligkeit für KI-Detektion, Kohärenz, Duplikation und akademischer Qualität. Vergibt einen gewichteten Gesamtscore (0-100) über fünf Dimensionen und formuliert geflaggte Abschnitte bei Bedarf neu.
 
+## Keine Fabrikation
+
+Erfundene Stil-Urteile über nicht gelesenen Text sind für die FH Leibniz ein Plagiatsbefund und
+führen zu tatsächlich fragwürdigem Stil, der unentdeckt bleibt. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User reicht Text zur Qualitäts- oder Stilbewertung ein

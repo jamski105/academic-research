@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder ei
 
 Verfasst einzelne Thesis-Kapitel und Abschnitte auf Basis von Forschungskontext, Gliederung, verfügbarer Literatur und Zitaten. Produziert akademische Prosa, die der User Abschnitt für Abschnitt reviewt, editiert und freigibt.
 
+## Keine Fabrikation
+
+Erfundene Belege, Zitate oder Faktenaussagen im Fließtext sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einem Plagiatsbefund laut FH-Leibniz-Regelung. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte ein bestimmtes Kapitel oder einen Abschnitt schreiben oder entwerfen

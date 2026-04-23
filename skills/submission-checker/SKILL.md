@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User vor der Abgabe seiner akad
 
 Prüft, ob eine akademische Arbeit alle formalen Abgabeanforderungen erfüllt: Seitenzahl, Formatierung, Quellenzahl, Pflichtabschnitte (Deckblatt, Inhaltsverzeichnis, Eidesstattliche Erklärung, Anhang) und hochschulspezifische Regeln.
 
+## Keine Fabrikation
+
+Erfundene Formalia-Bestätigungen sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einer Abgabe nicht-abgabefähiger Arbeit. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User fragt, ob seine Arbeit abgabefertig ist

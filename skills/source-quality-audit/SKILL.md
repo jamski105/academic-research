@@ -7,6 +7,13 @@ description: Dieser Skill wird genutzt, wenn der User Qualität, Balance und Ang
 
 Bewertet die Gesamtqualität, Balance, Aktualität und Diversität der Literaturbasis einer akademischen Arbeit. Scort jede Dimension (0-100), identifiziert Schwächen und liefert konkrete Verbesserungsempfehlungen.
 
+## Keine Fabrikation
+
+Erfundene Bewertungen oder Quellenangaben sind für die FH Leibniz ein Plagiatsbefund und
+führen zu einer Quellenprüfung, die der Arbeit die Zitierbarkeit entzieht. Arbeite ausschließlich mit Daten aus
+`literature_state.md` oder direkt geladenen PDFs. Fehlen Daten: frag den User,
+rate nicht.
+
 ## Aktivierung dieses Skills
 
 - Der User möchte die Qualität seiner Quellen oder Literaturbasis bewerten
