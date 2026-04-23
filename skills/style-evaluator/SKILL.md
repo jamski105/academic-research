@@ -1,6 +1,6 @@
 ---
 name: Style Evaluator
-description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, auf KI-Detektions-Muster prüfen oder seinen akademischen Stil verbessern möchte. Triggers on "Text pruefen", "Stil-Check", "KI-Erkennung", "Text verbessern", "Qualitaetskontrolle", "menschlich klingen", "style check", "AI detection", "text quality", "improve writing", "human-like", oder wenn Text zu künstlich oder schablonenhaft klingt.
+description: Dieser Skill wird genutzt, wenn der User Textqualität bewerten, auf KI-Detektions-Muster prüfen oder seinen akademischen Stil verbessern möchte. Triggers on "Text prüfen / Text pruefen", "Stil-Check", "KI-Erkennung", "Text verbessern", "Qualitätskontrolle / Qualitaetskontrolle", "menschlich klingen", "style check", "AI detection", "text quality", "improve writing", "human-like", oder wenn Text zu künstlich oder schablonenhaft klingt.
 ---
 
 # Stil-Evaluator

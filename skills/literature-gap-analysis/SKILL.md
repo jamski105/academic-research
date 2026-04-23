@@ -1,6 +1,6 @@
 ---
 name: Literature Gap Analysis
-description: Dieser Skill wird genutzt, wenn der User seine Literaturabdeckung analysieren, fehlende Quellen finden oder Lücken in seiner Forschungsbasis identifizieren möchte. Triggers on "Literaturlücken", "Coverage", "fehlende Quellen", "Gap Analysis", "Quellenabdeckung", "literature gaps", "missing sources", "Abdeckung prüfen", oder wenn ein anderer Skill erkennt, dass Kapitel nicht ausreichend quellengestützt sind.
+description: Dieser Skill wird genutzt, wenn der User seine Literaturabdeckung analysieren, fehlende Quellen finden oder Lücken in seiner Forschungsbasis identifizieren möchte. Triggers on "Literaturlücken / Literaturluecken", "Coverage", "fehlende Quellen", "Gap Analysis", "Quellenabdeckung", "literature gaps", "missing sources", "Abdeckung prüfen / Abdeckung pruefen", oder wenn ein anderer Skill erkennt, dass Kapitel nicht ausreichend quellengestützt sind.
 ---
 
 # Literatur-Lückenanalyse

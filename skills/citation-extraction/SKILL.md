@@ -1,6 +1,6 @@
 ---
 name: Citation Extraction
-description: Dieser Skill wird genutzt, wenn der User Zitate und Quellenangaben aus akademischen PDFs extrahieren, formatieren oder verwalten möchte. Triggers on "Zitate finden", "zitieren", "Quellenarbeit", "Belege suchen", "citations", "Zitate extrahieren", "quote extraction", "Literaturverzeichnis", "bibliography", oder wenn ein anderer Skill feststellt, dass Zitatdaten für ein Kapitel gebraucht werden.
+description: Dieser Skill wird genutzt, wenn der User Zitate und Quellenangaben aus akademischen PDFs extrahieren, formatieren oder verwalten möchte. Triggers on "Zitate finden", "zitieren", "Quellenarbeit", "Belege suchen", "citations", "Zitate extrahieren", "quote extraction", "Literaturverzeichnis prüfen / Literaturverzeichnis pruefen", "bibliography", oder wenn ein anderer Skill feststellt, dass Zitatdaten für ein Kapitel gebraucht werden.
 ---
 
 # Zitat-Extraktion

@@ -1,6 +1,6 @@
 ---
 name: Advisor
-description: Dieser Skill wird genutzt, wenn der User seine Gliederung aufbauen oder verfeinern, ein Exposé erstellen oder die Kapitelstruktur planen möchte. Triggers on "Gliederung", "Outline", "Expose", "Exposé", "Struktur", "Kapitelplanung", "thesis structure", "chapter planning", "Aufbau der Arbeit", oder wenn der User Hilfe braucht, seine akademische Arbeit in eine kohärente Struktur zu bringen.
+description: Dieser Skill wird genutzt, wenn der User seine Gliederung aufbauen oder verfeinern, ein Exposé erstellen oder die Kapitelstruktur planen möchte. Triggers on "Gliederung", "Outline", "Exposé / Expose", "Struktur", "Kapitelplanung", "thesis structure", "chapter planning", "Aufbau der Arbeit", "Gliederung prüfen / Gliederung pruefen", oder wenn der User Hilfe braucht, seine akademische Arbeit in eine kohärente Struktur zu bringen.
 ---
 
 # Advisor — Gliederungs- und Exposé-Builder

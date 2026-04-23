@@ -1,6 +1,6 @@
 ---
 name: Abstract Generator
-description: Dieser Skill wird genutzt, wenn der User ein Abstract, eine Zusammenfassung, eine Management Summary oder eine Keyword-Liste für seine akademische Arbeit braucht. Triggers on "Abstract schreiben", "Zusammenfassung", "Keywords", "Management Summary", "Abstract generieren", "paper summary", "Schlagwoerter", "executive summary", oder wenn die Arbeit fertig ist und Front-Matter-Texte benötigt werden.
+description: Dieser Skill wird genutzt, wenn der User ein Abstract, eine Zusammenfassung, eine Management Summary oder eine Keyword-Liste für seine akademische Arbeit braucht. Triggers on "Abstract schreiben", "Zusammenfassung", "Keywords", "Management Summary", "Abstract generieren", "paper summary", "Schlagwörter / Schlagwoerter", "executive summary", oder wenn die Arbeit fertig ist und Front-Matter-Texte benötigt werden.
 ---
 
 # Abstract-Generator

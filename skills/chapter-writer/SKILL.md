@@ -1,6 +1,6 @@
 ---
 name: Chapter Writer
-description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder einen Abschnitt schreiben, entwerfen oder formulieren möchte. Triggers on "Kapitel schreiben", "verfassen", "entwerfen", "Abschnitt schreiben", "write chapter", "draft section", "Kapitel formulieren", "Textarbeit", oder wenn der User Hilfe beim Verfassen akademischer Prosa für einen konkreten Teil seiner Arbeit braucht.
+description: Dieser Skill wird genutzt, wenn der User ein Thesis-Kapitel oder einen Abschnitt schreiben, entwerfen oder formulieren möchte. Triggers on "Kapitel schreiben", "verfassen", "entwerfen", "Abschnitt schreiben", "write chapter", "draft section", "Kapitel formulieren", "Textarbeit", "Kapitelentwurf prüfen / Kapitelentwurf pruefen", oder wenn der User Hilfe beim Verfassen akademischer Prosa für einen konkreten Teil seiner Arbeit braucht.
 ---
 
 # Kapitel-Autor

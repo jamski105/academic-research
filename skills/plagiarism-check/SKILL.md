@@ -1,6 +1,6 @@
 ---
 name: Plagiarism Check
-description: Dieser Skill wird genutzt, wenn der User Text auf unbeabsichtigtes Plagiat, zu nahe Paraphrasen oder Nähe zum Quellmaterial prüfen möchte. Triggers on "Plagiat pruefen", "Textaehnlichkeit", "Paraphrase checken", "plagiarism", "zu nah am Original", "Plagiatspruefung", "source similarity", "text similarity check", oder wenn der User Sorge um seine Paraphrasierungs-Qualität hat.
+description: Dieser Skill wird genutzt, wenn der User Text auf unbeabsichtigtes Plagiat, zu nahe Paraphrasen oder Nähe zum Quellmaterial prüfen möchte. Triggers on "Plagiat prüfen / Plagiat pruefen", "Textähnlichkeit / Textaehnlichkeit", "Paraphrase checken", "plagiarism", "zu nah am Original", "Plagiatsprüfung / Plagiatspruefung", "source similarity", "text similarity check", oder wenn der User Sorge um seine Paraphrasierungs-Qualität hat.
 ---
 
 # Plagiatsprüfung

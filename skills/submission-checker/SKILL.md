@@ -1,6 +1,6 @@
 ---
 name: Submission Checker
-description: Dieser Skill wird genutzt, wenn der User vor der Abgabe seiner akademischen Arbeit formale Anforderungen prüfen möchte. Triggers on "formale Pruefung", "Abgabe-Check", "Formatierung pruefen", "abgabefertig", "submission check", "formal requirements", "Deckblatt pruefen", "Eidesstattliche Erklaerung", "Seitenraender", "Formatvorlage", oder wenn der User sich auf die finale Abgabe vorbereitet.
+description: Dieser Skill wird genutzt, wenn der User vor der Abgabe seiner akademischen Arbeit formale Anforderungen prüfen möchte. Triggers on "formale Prüfung / formale Pruefung", "Abgabe-Check", "Formatierung prüfen / Formatierung pruefen", "abgabefertig", "submission check", "formal requirements", "Deckblatt prüfen / Deckblatt pruefen", "Eidesstattliche Erklärung / Eidesstattliche Erklaerung", "Seitenränder / Seitenraender", "Formatvorlage", oder wenn der User sich auf die finale Abgabe vorbereitet.
 ---
 
 # Abgabe-Prüfer
