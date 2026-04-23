@@ -1,4 +1,4 @@
-# Academic Research v4
+# Academic Research v5
 
 Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierende Skills, 5D-Scoring mit Cluster-Zuweisung, Excel-Export, Anti-KI-Stil-Erkennung und Multi-Source-Literatursuche.
 
@@ -288,7 +288,7 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | **Aktualität** | 20% | Exponentieller Verfall, 5-Jahre Halbwertzeit |
 | **Qualität** | 15% | Zitationen/Jahr mit Log-Skalierung |
 | **Autorität** | 15% | Venue-Reputation (IEEE=1.0, Mid=0.7, Other=0.4) |
-| **Zugang** | 15% | Open Access=1.0, Institutional=0.8, DOI=0.6, URL=0.2 |
+| **Zugang** | 15% | Open Access=1.0, Institutional=0.8, DOI=0.5, URL=0.2 |
 
 ### Cluster-Zuweisung
 
@@ -350,7 +350,7 @@ Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions
 
 ```
 academic-research/
-├── .claude-plugin/plugin.json       # Plugin-Manifest v4.0.0
+├── .claude-plugin/plugin.json       # Plugin-Manifest v5.0.0
 ├── skills/                          # 13 selbstaktivierende Skills
 │   ├── academic-context/SKILL.md
 │   ├── advisor/SKILL.md + expose-template.md

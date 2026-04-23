@@ -1,10 +1,10 @@
 ---
-description: Set up Python environment for academic research plugin v4
+description: Set up Python environment for academic research plugin v5
 disable-model-invocation: true
 allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(~/.academic-research/venv/bin/pip *)
 ---
 
-# Academic Research v4 Setup
+# Academic Research v5 Setup
 
 Set up the Python environment required by the academic research plugin.
 
