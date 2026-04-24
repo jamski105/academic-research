@@ -1,20 +1,28 @@
 ---
-name: Chapter Writer
-description: Use this skill when the user wants to write academic chapter prose. Triggers on "Kapitel schreiben", "Text verfassen", "Absatz zu Thema X", "chapter prose", "Einleitung schreiben", "Diskussions-Absatz", "Übergang zwischen Kapiteln / Uebergang zwischen Kapiteln", "übergänge formulieren / uebergaenge formulieren", or when a structural step produces prose. Schreibt Kapitel-Prosa mit Quellen-Einbindung; Für Zitat-Extraktion → `citation-extraction`.
+name: chapter-writer
+description: Use this skill when the user writes a chapter of an academic work. Triggers on "Einleitung schreiben", "Theorieteil / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Empirie / Ergebnisse darstellen", "Diskussion schreiben", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren", or when a chapter body with proper citations is needed. Schreibt vollständige Kapitelentwürfe; Für Abstract/Keywords → `abstract-generator`; für Zitations-Formatierung → `citation-extraction`.
+compatibility: Claude API mit documents[] und citations.enabled
+license: MIT
 ---
 
 # Kapitel-Autor
+
+## Übersicht
+
+Schreibt konkrete Kapitel (Einleitung, Theorieteil, Methodik, Empirie,
+Diskussion, Fazit) für akademische Arbeiten. Zieht Zitate aus
+`./literature_state.md` und folgt dem Disziplin-Register.
 
 Verfasst einzelne Thesis-Kapitel und Abschnitte auf Basis von Forschungskontext, Gliederung, verfügbarer Literatur und Zitaten. Produziert akademische Prosa, die der User Abschnitt für Abschnitt reviewt, editiert und freigibt.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Kapitelstruktur in `literature_state.md` kann ich keinen passenden
+"Ohne Kapitelstruktur in `./literature_state.md` kann ich keinen passenden
 Kapiteltext liefern, weil ich einen Kapiteltyp annehmen würde, der nicht zur
 Arbeit passt."
 
@@ -22,7 +30,7 @@ Arbeit passt."
 
 Erfundene Belege, Zitate oder Faktenaussagen im Fließtext sind laut FH-Leibniz-
 Prüfungsordnung ein Plagiatsbefund und führen zum Verlust der Prüfungsleistung
-(Note 5). Arbeite ausschließlich mit Zitaten aus `literature_state.md` und
+(Note 5). Arbeite ausschließlich mit Zitaten aus `./literature_state.md` und
 direkt geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -89,19 +97,19 @@ Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extractio
 
 ### Lesen
 
-- `academic_context.md` — Arbeitsprofil, Forschungsfrage, Gliederung, Schlüsselkonzepte
-- `literature_state.md` — Verfügbare Quellen, Kapitel-Quellen-Zuordnungen
-- `writing_state.md` — Aktueller Schreibfortschritt, Wortzahlen, Style-Scores
+- `./academic_context.md` — Arbeitsprofil, Forschungsfrage, Gliederung, Schlüsselkonzepte
+- `./literature_state.md` — Verfügbare Quellen, Kapitel-Quellen-Zuordnungen
+- `./writing_state.md` — Aktueller Schreibfortschritt, Wortzahlen, Style-Scores
 
 ### Schreiben
 
-- `writing_state.md` — Wortzahlen, aktuelles Kapitel und Fortschritt nach dem Schreiben aktualisieren
+- `./writing_state.md` — Wortzahlen, aktuelles Kapitel und Fortschritt nach dem Schreiben aktualisieren
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies alle drei Kontext-Dateien im Projekt-Ordner. Existiert `./academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Gibt es noch keine Gliederung, schlage vor, den Advisor-Skill zu triggern, bevor geschrieben wird.
+Lies alle drei Kontext-Dateien im Projekt-Ordner. Existiert `./academic_context.md` nicht, informiere den User und triggere zuerst den `academic-context`-Skill. Gibt es noch keine Gliederung, schlage vor, den `advisor`-Skill zu triggern, bevor geschrieben wird.
 
 Extrahiere: Ziel-Kapitel aus der Gliederung, zugeordnete Quellen aus dem Literaturstatus, Zitationsstil, Sprache der Arbeit und vorhandene Entwürfe.
 
@@ -145,7 +153,7 @@ Schreibe das Kapitel Abschnitt für Abschnitt. Für jeden Abschnitt:
 
 #### Quellenintegration
 
-Beim Zitieren die Daten aus dem Citation-Extraction-Skill nutzen (inline-formatiert nach dem in `academic_context.md` konfigurierten Stil). Paper über das formatierte Zitat referenzieren. Folgende Integrationsmuster werden unterstützt:
+Beim Zitieren die Daten aus dem `citation-extraction`-Skill nutzen (inline-formatiert nach dem in `./academic_context.md` konfigurierten Stil). Paper über das formatierte Zitat referenzieren. Folgende Integrationsmuster werden unterstützt:
 
 - **Direktzitat** — Exakter Wortlaut in Anführungszeichen mit Seitenzahl
 - **Paraphrase** — In eigenen Worten wiedergeben, mit Zitat
@@ -177,7 +185,7 @@ Nachdem alle Abschnitte reviewt und freigegeben sind:
 
 Nach der Freigabe des Kapitels durch den User:
 
-1. `writing_state.md` lesen (veraltete Überschreibungen vermeiden)
+1. `./writing_state.md` lesen (veraltete Überschreibungen vermeiden)
 2. Aktuelles Kapitel, Wortzahl und Fortschrittsstatus aktualisieren
 3. Kapitel im Fortschrittstracking als "draft complete" markieren
 
@@ -208,9 +216,9 @@ Befunde pro Unterfrage zusammenfassen. Die Hauptfrage beantworten. Limitationen 
 Beim Einweben von Zitaten in Kapitel-Prosa: Quellen-PDFs im `documents`-Parameter an Claude uebergeben, damit die API die Quellenbindung erzwingt. Jedes Paraphrase-Segment mit einem `citations[]`-Eintrag nachweisbar.
 
 **Workflow:**
-1. `literature_state.md` lesen — welche PDFs liegen im Session-Pfad?
+1. `./literature_state.md` lesen — welche PDFs liegen im Session-Pfad?
 2. API-Call mit `documents[]`-Anhaengen, `citations.enabled: true`
-3. Output-Text enthaelt `citations[]`-Bloecke — diese im Kapitel-Text als Inline-Zitate nach Variant-Zitierstil (aus `academic_context.md`) rendern.
+3. Output-Text enthaelt `citations[]`-Bloecke — diese im Kapitel-Text als Inline-Zitate nach Variant-Zitierstil (aus `./academic_context.md`) rendern.
 
 **Fallback:** Sind keine PDFs verfuegbar (nur Metadaten), nutze den herkoemmlichen Prompt-Workflow aus dem vorangehenden Abschnitt.
 
@@ -244,5 +252,5 @@ Agent(
 - **Nie Zitate fabrizieren** — Nur Quellen nutzen, die im Literaturstatus existieren
 - **User-Voice bewahren** — Wenn der User Notizen liefert, Formulierung und Intention respektieren
 - **Sprache der Arbeit einhalten** — In der Sprache schreiben, die im akademischen Kontext angegeben ist
-- **Fortschritt tracken** — Nach freigegebenen Drafts immer `writing_state.md` aktualisieren
+- **Fortschritt tracken** — Nach freigegebenen Drafts immer `./writing_state.md` aktualisieren
 - **Lücken flaggen** — Fehlt für einen Abschnitt eine Quelle, das melden und `/search` anbieten

@@ -23,6 +23,7 @@ description: |
   </commentary>
   </example>
 maxTurns: 3
+tools: []
 ---
 
 # Relevance-Scorer-Agent

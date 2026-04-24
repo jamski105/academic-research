@@ -1,27 +1,32 @@
 ---
-name: Style Evaluator
+name: style-evaluator
 description: Use this skill when the user wants to evaluate academic writing style (without source comparison). Triggers on "Stil prüfen / Stil pruefen", "Schreibstil", "Satzlänge / Satzlaenge", "Passiv-Quote", "Nominalstil", "style evaluation", or when a chapter draft needs stylistic review. Bewertet Stil-Qualität ohne Quellenbezug; Für Textähnlichkeit → `plagiarism-check`.
+license: MIT
 ---
 
 # Stil-Evaluator
 
-Bewertet akademischen Text nach Menschlichkeit, Anfälligkeit für KI-Detektion, Kohärenz, Duplikation und akademischer Qualität. Vergibt einen gewichteten Gesamtscore (0-100) über fünf Dimensionen und formuliert geflaggte Abschnitte bei Bedarf neu.
+## Übersicht
+
+Bewertet Menschlichkeit, KI-Detektions-Anfälligkeit, Kohärenz, Duplikation
+und akademische Qualität von Text. Gewichteter 0-100-Score über 5 Dimensionen.
+Bietet Rewrite-Vorschläge für geflaggte Stellen ohne Bedeutung zu verlieren.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Text-Korpus-Kontext in `writing_state.md` kann ich kein Stil-Urteil
+"Ohne Text-Korpus-Kontext in `./writing_state.md` kann ich kein Stil-Urteil
 liefern, weil ich gegen disziplinfremde Normen urteilen würde."
 
 ## Keine Fabrikation
 
 Erfundene Stil-Urteile über nicht gelesenen Text lassen tatsächlich fragwürdigen
 Stil unentdeckt und untergraben den Wert des Stil-Checks. Arbeite ausschließlich
-mit dem eingereichten User-Text und den Metriken aus `writing_state.md`.
+mit dem eingereichten User-Text und den Metriken aus `./writing_state.md`.
 Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -50,11 +55,11 @@ Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL.
 - Der User reicht Text zur Qualitäts- oder Stilbewertung ein
 - Der User befürchtet, dass der Text zu KI-generiert klingt
 - Der User bittet um Textverbesserung oder natürlicheres Schreiben
-- Ein anderer Skill (z. B. Chapter Writer) fordert ein Post-Write-Qualitätsgate an
+- Ein anderer Skill (z. B. `chapter-writer`) fordert ein Post-Write-Qualitätsgate an
 
 ## Variant-Selector
 
-Lies `academic_context.md`, Feld `Sprache`:
+Lies `./academic_context.md`, Feld `Sprache`:
 
 | Sprache | Referenz-Datei |
 |---------|----------------|
@@ -141,12 +146,12 @@ Prüfen auf:
 ## Evaluations-Workflow
 
 1. Den eingereichten Text lesen (vollständiges Kapitel, Abschnitt oder Absatz)
-2. `writing_state.md` und `academic_context.md` für Kontext lesen
+2. `./writing_state.md` und `./academic_context.md` für Kontext lesen
 3. Berechne quantitative Metriken inline aus dem Eingabetext (Satzlängen, Übergänge, n-Gramme, Vokabular-Diversität)
 4. Jede Dimension (0-100) nach Rubrik und Metriken scoren
 5. Gewichteten Gesamtwert berechnen: `total = 0.30*human + 0.25*anti_ai + 0.20*coherence + 0.15*duplication + 0.10*academic`
 6. Ergebnisse strukturiert präsentieren (siehe Output-Format unten)
-7. `writing_state.md` mit den neuen Scores aktualisieren
+7. `./writing_state.md` mit den neuen Scores aktualisieren
 
 ## Output-Format
 
@@ -190,5 +195,32 @@ Bei Bitte um Neuformulierung geflaggter Abschnitte:
 - Bei Rewrites immer Argumentation und Zitate des Autors erhalten
 - Konservativ scoren -- eine 100 ist für keinen Text realistisch
 - Flaggen ja, automatisch umschreiben ohne User-Zustimmung nein
-- Deutsche Labels im Output, wenn `academic_context.md` Deutsch als Sprache angibt
-- Score-Historie in `writing_state.md` pflegen, um Verbesserung über die Zeit zu zeigen
+- Deutsche Labels im Output, wenn `./academic_context.md` Deutsch als Sprache angibt
+- Score-Historie in `./writing_state.md` pflegen, um Verbesserung über die Zeit zu zeigen
+
+## Few-Shot-Beispiele
+
+### Stil: Anti-KI-Detektion
+
+**Schlecht** (Grund: uniforme Satzlänge, erwartbare Transitionen):
+
+> "Darüber hinaus ist Digitalisierung wichtig. Furthermore können
+> Unternehmen profitieren. Moreover ist Geschwindigkeit ein Faktor."
+
+**Gut** (Grund: variierte Syntax, natürliche Hedges):
+
+> "Digitalisierung bleibt zentral. Unternehmen profitieren — allerdings
+> nur, wenn Geschwindigkeit nicht das einzige Kriterium ist."
+
+### Stil: Rewrite mit Argument-Erhalt
+
+**Schlecht** (Grund: Rewrite verändert Argumentation):
+
+> Original: "Die Stichprobe ist klein (n=8), daher explorativ."
+> Rewrite: "Die Stichprobe ist klein, aber repräsentativ."
+
+**Gut** (Grund: Rewrite erhält Argumentation, variiert Struktur):
+
+> Original: "Die Stichprobe ist klein (n=8), daher explorativ."
+> Rewrite: "Mit n=8 bleibt die Studie explorativ — die Ergebnisse
+> skizzieren Hypothesen, sie prüfen sie nicht."

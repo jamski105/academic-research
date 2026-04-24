@@ -1,15 +1,22 @@
 ---
-name: Advisor
+name: advisor
 description: Use this skill when the user needs structural feedback on their outline, argumentation flow, or exposé. Triggers on "Gliederung prüfen / Gliederung pruefen", "Argumentationskette", "Kapitel-Feedback", "Exposé feedback", "Exposee-Bewertung", "outline review", or when another skill detects structural weaknesses. Baut die Gliederung und den Argumentations-Fluss; Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
+license: MIT
 ---
 
 # Advisor — Gliederungs- und Exposé-Builder
+
+## Übersicht
+
+Supervisor-Agent für die Gesamt-Gliederung einer Arbeit. Bewertet Struktur,
+schlägt Kapitel-Reorganisation vor, liefert Expose-Templates. Orchestriert
+andere Skills, wenn spezifische Themenbereiche vertieft werden müssen.
 
 Baut, verfeinert und validiert Gliederungen und Exposé-Dokumente im interaktiven Dialog. Führt den User vom Ausgangsthema zu einem strukturierten, gut begründeten Kapitelplan.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
@@ -21,8 +28,8 @@ Beratung liefern, weil ich gegen unbekannte Vorgaben beraten würde."
 
 Erfundene Kapitelstruktur-Standards oder Gliederungsempfehlungen führen zu
 nachträglichen Überarbeitungen nach Abgabe und gefährden den Zeitplan. Arbeite
-ausschließlich mit `academic_context.md` (Arbeitstyp, Forschungsfrage,
-Supervisor-Vorgaben) und `literature_state.md`. Fehlen Daten: frag den User,
+ausschließlich mit `./academic_context.md` (Arbeitstyp, Forschungsfrage,
+Supervisor-Vorgaben) und `./literature_state.md`. Fehlen Daten: frag den User,
 rate nicht.
 
 ## Abgrenzung
@@ -38,11 +45,11 @@ Zwischenstufen-Urteil:
 
 1. **Forschungsfrage formuliert** — ≤ 25 Wörter, eine W-Frage (Was/Wie/Warum/Inwiefern)
 2. **Outline mit ≥ 3 Kapiteln** — Haupt-Kapitel, nicht nur Gliederungspunkte
-3. **Literaturbasis ≥ 15 Quellen** in `literature_state.md`
+3. **Literaturbasis ≥ 15 Quellen** in `./literature_state.md`
 4. **Methodik benannt** — qualitativ / quantitativ / Mixed / Literatur-Review etc.
 5. **Zeitplan mit Meilensteinen** — mindestens 3 Meilensteine mit Datum
-6. **Supervisor identifiziert** — Name in `academic_context.md`
-7. **Abgabetermin fixiert** — konkretes Datum in `academic_context.md`
+6. **Supervisor identifiziert** — Name in `./academic_context.md`
+7. **Abgabetermin fixiert** — konkretes Datum in `./academic_context.md`
 
 Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
 
@@ -57,18 +64,18 @@ Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
 
 ### Lesen
 
-- `academic_context.md` — Arbeitsprofil, Forschungsfrage, Methodik, bestehende Gliederung
-- `literature_state.md` — Vorhandene Quellen und Kapitelzuordnungen (zur Literaturabdeckungs-Prüfung)
+- `./academic_context.md` — Arbeitsprofil, Forschungsfrage, Methodik, bestehende Gliederung
+- `./literature_state.md` — Vorhandene Quellen und Kapitelzuordnungen (zur Literaturabdeckungs-Prüfung)
 
 ### Schreiben
 
-- `academic_context.md` — Aktualisiere den Abschnitt `## Gliederung` nach Gliederungsänderungen
+- `./academic_context.md` — Aktualisiere den Abschnitt `## Gliederung` nach Gliederungsänderungen
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies `./academic_context.md` aus dem Projekt-Ordner. Existiert sie nicht, informiere den User und triggere den Academic-Context-Skill, um Grunddaten zu erheben, bevor fortgefahren wird.
+Lies `./academic_context.md` aus dem Projekt-Ordner. Existiert sie nicht, informiere den User und triggere den `academic-context`-Skill, um Grunddaten zu erheben, bevor fortgefahren wird.
 
 Extrahiere: Arbeitstyp, Thema, Forschungsfrage, Unterfragen, Methodik und eine eventuell vorhandene Gliederung.
 
@@ -104,7 +111,7 @@ Probleme als Warnungen mit Lösungsvorschlägen berichten.
 
 ### 4. Literatur-Abdeckungs-Check
 
-Falls `literature_state.md` existiert, Gliederung gegen vorhandene Quellen abgleichen. Pro Kapitel berichten:
+Falls `./literature_state.md` existiert, Gliederung gegen vorhandene Quellen abgleichen. Pro Kapitel berichten:
 
 - Anzahl zugeordneter Quellen
 - Ob Peer-Review-Quellen vorhanden sind
@@ -125,13 +132,13 @@ Fordert der User ein Exposé an, nutze das Template unter `${CLAUDE_PLUGIN_ROOT}
 - Zeitplan
 - Vorläufige Literaturliste
 
-Erzeuge den Zeitplan auf Basis des Abgabetermins aus `academic_context.md`. Rechne vom Abgabetermin rückwärts und teile grob auf: 20 % Recherche, 10 % Gliederung/Exposé, 50 % Schreiben, 10 % Revision, 10 % Puffer.
+Erzeuge den Zeitplan auf Basis des Abgabetermins aus `./academic_context.md`. Rechne vom Abgabetermin rückwärts und teile grob auf: 20 % Recherche, 10 % Gliederung/Exposé, 50 % Schreiben, 10 % Revision, 10 % Puffer.
 
 ### 6. Änderungen speichern
 
 Nachdem der User die Gliederung oder das Exposé bestätigt hat:
 
-1. `academic_context.md` erneut lesen (veraltete Überschreibungen vermeiden)
+1. `./academic_context.md` erneut lesen (veraltete Überschreibungen vermeiden)
 2. Nur den Abschnitt `## Gliederung` mit der neuen Gliederung aktualisieren
 3. `## Fortschritt` ergänzen, falls anwendbar
 
@@ -168,6 +175,44 @@ Agent(
 ```
 
 Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
+
+## Few-Shot-Beispiele
+
+### Stil: Gliederungs-Bewertung
+
+**Schlecht** (Grund: generischer Kommentar ohne konkrete Aktion):
+
+> "Die Gliederung könnte strukturierter sein, arbeite nochmal daran."
+
+**Gut** (Grund: benennt konkretes Problem + gibt Fix):
+
+> "Kapitel 3.2 (Methodik) und Kapitel 4.1 (Datenerhebung) überlappen
+> inhaltlich. Ich schlage vor, 4.1 in 3.2 zu integrieren und Kapitel 4
+> auf die reine Ergebnispräsentation zu beschränken."
+
+## Output-Format
+
+Der Advisor liefert strukturierten Markdown-Output:
+
+```
+## Gliederungs-Bewertung
+
+### PASS/FAIL-Tabelle
+| Kriterium | Status | Begründung |
+|-----------|--------|------------|
+| ...       | PASS   | ...        |
+
+### Gliederungsentwurf
+1. Einleitung (3-5 S.)
+   1.1 Problemstellung
+   ...
+
+### Warnungen & Empfehlungen
+- [Konkrete Warnung mit Lösungsvorschlag]
+
+### Nächste Schritte
+- [Priorisierte Aktionsliste]
+```
 
 ## Wichtige Regeln
 

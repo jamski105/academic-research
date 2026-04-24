@@ -1,20 +1,28 @@
 ---
-name: Plagiarism Check
+name: plagiarism-check
 description: Use this skill when the user wants to check text similarity against known sources. Triggers on "Plagiat prüfen / Plagiat pruefen", "Textähnlichkeit / Textaehnlichkeit", "N-Gramm-Overlap", "Similarity-Check", "Quellennähe prüfen / Quellennaehe pruefen", "plagiarism scan", or when a chapter draft may contain un-cited paraphrases. Prüft Textnähe via N-Gramm-Overlap gegen Quellen; Für stilistische Qualität → `style-evaluator`.
+license: MIT
 ---
 
 # Plagiatsprüfung
+
+## Übersicht
+
+Prüft Textähnlichkeit gegen die Quellen in `./literature_state.md`.
+Markiert wörtliche Übernahmen und paraphrasierte Passagen, die nicht
+ausreichend zitiert sind. Nicht zuständig für Stil-Bewertung allgemein
+(→ `style-evaluator`).
 
 Prüft akademischen Text auf unbeabsichtigte Nähe zum Quellmaterial. Erkennt zu nahe Paraphrasen, unzureichend umformulierte Passagen und fehlende Quellenangaben via N-Gramm-Overlap-Detection. Schlägt Umformulierungen für markierte Passagen vor.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenlisten in `literature_state.md` kann ich kein Similarity-Urteil
+"Ohne Quellenlisten in `./literature_state.md` kann ich kein Similarity-Urteil
 liefern, weil ich gegen unbekannte Quellen prüfen und False-Negatives
 produzieren würde."
 
@@ -23,7 +31,7 @@ produzieren würde."
 Erfundene Similarity-Urteile oder N-Gramm-Matches lassen unentdecktes Plagiat
 durch und führen dazu, dass Textstellen, die beim offiziellen Plagiats-Check
 der FH Leibniz auffliegen, hier unbemerkt geblieben sind. Arbeite ausschließlich
-mit dem User-Text und den PDF-Extrakten aus `literature_state.md`. Fehlen
+mit dem User-Text und den PDF-Extrakten aus `./literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -36,7 +44,7 @@ Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 - Der User reicht Text zur Prüfung gegen seine Quellen ein
 - Der User paraphrasiert eine Quelle und möchte verifizieren
 - Qualitätssicherung vor der finalen Abgabe
-- Ein anderer Skill (z. B. Chapter Writer) fordert ein Plagiats-Gate an
+- Ein anderer Skill (z. B. `chapter-writer`) fordert ein Plagiats-Gate an
 
 ## Kontext-Dateien
 
@@ -47,6 +55,9 @@ Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 ## Skripte
 
 Nutze `${CLAUDE_PLUGIN_ROOT}/scripts/text_utils.py` für Tokenisierung (`tokenize()`-Funktion) und Textnormalisierung.
+
+Hinweis: `text_utils.py` liefert deterministische Tokenisierung und
+n-gram-Matching. Inline-Berechnung wäre unzuverlässig (Reproducibility).
 
 ## Detektions-Methoden
 
@@ -86,7 +97,7 @@ Prüfen, ob der User-Text der Argumentationsstruktur der Quelle zu nahe folgt:
 
 Quelltexte in dieser Priorität suchen:
 1. In der aktuellen Session extrahierte PDF-Texte (im Kontext)
-2. In `literature_state.md` referenzierte Quellen-Snippets
+2. In `./literature_state.md` referenzierte Quellen-Snippets
 3. Vom User gelieferter Originaltext für Direktvergleich
 
 ### Wenn kein Quelltext verfügbar ist
@@ -166,3 +177,17 @@ Beim Vorschlagen von Umformulierungen für geflaggte Passagen:
 - Gängige akademische Phrasen ("in diesem Kontext", "die Ergebnisse zeigen") erzeugen erwarteten Overlap -- Standardkollokationen von der Flagging-Logik ausnehmen
 - Direktzitate mit korrekter Quellenangabe sind kein Plagiat -- richtig zitierte Passagen von der Analyse ausnehmen
 - Eine Liste fachspezifischer Standardphrasen pflegen, um False Positives zu reduzieren
+
+## Few-Shot-Beispiele
+
+### Stil: Paraphrase-Erkennung
+
+**Schlecht** (Grund: "Ähnlichkeit" ohne Threshold/Evidenz):
+
+> "Dieser Abschnitt wirkt etwas ähnlich zu Müller 2023."
+
+**Gut** (Grund: Satz-genauer Match mit Quelle):
+
+> "Zeile 42-44 zeigt 7-Wort-Match zu Müller (2023, S. 214):
+> 'Cloud-Migration verlangt iterative Einführung' → unzitiert.
+> Empfehlung: Direktzitat mit Seitenangabe oder Paraphrase."

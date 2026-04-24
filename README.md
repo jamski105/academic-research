@@ -9,7 +9,7 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 ## Was ist neu in v5?
 
 **v5.0.0** (Breaking) — Architektur-Bereinigung:
-- Browser-Automation von **Playwright-MCP auf `browser-use`-CLI** umgestellt (schnellerer Setup, weniger Dependencies).
+- Browser-Automation auf **`browser-use`-CLI** umgestellt (schnellerer Setup, weniger Dependencies).
 - Excel-Generierung an **externes `document-skills:xlsx` Plugin** delegiert statt eigener Python-Pipeline.
 - **Drei redundante Python-Skripte** (`citations.py`, `style_analysis.py`, `ranking.py`) gelöscht; Logik in Skills/Agents inlined.
 
@@ -19,6 +19,15 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 - `/academic-research:setup` erkennt leere Ordner und legt auf Rückfrage eine schlanke Facharbeit-Struktur an (`academic_context.md`-Stub, generierte `CLAUDE.md`, `.gitignore`, `kapitel/`, `literatur/`, `pdfs/`).
 - Akademischer Kontext wandert von Claude-Memory in projekt-lokale Dateien (`./academic_context.md` im Arbeitsordner). Migrations-Helper im `/setup` kopiert bestehenden Memory-Kontext einmalig ins Projekt.
 - Alle 13 Skills + `query-generator`-Agent lesen jetzt aus dem Projekt-Ordner.
+
+**v5.4.0** — Final Review / Cookbook-Alignment:
+- Skill-Namen auf kebab-case (Anthropic-Konvention, matches Ordnername).
+- `## Übersicht`-Section als erste H2 in allen 13 Skills.
+- Few-Shot-Beispiele (Schlecht/Gut) in 10 bisher few-shot-losen Skills.
+- Cross-Referenzen in Prosa auf `` `kebab-case` `` umgestellt.
+- Dead Code weg: `settings.json` (Root), `.mcp.json`, `templates/` (Root), `config/scoring.yaml`.
+- Neue Regression-Guards (`test_skill_naming`, `test_cross_references`).
+- Brainstorming-Artefakte (`docs/superpowers/specs/` + `plans/`) aus Git-Tracking.
 
 Vollständige Migration siehe [CHANGELOG.md](CHANGELOG.md).
 
@@ -162,7 +171,7 @@ mkdir ~/Facharbeit-XY && cd ~/Facharbeit-XY
 
 # 1. Akademischen Kontext einrichten (einmalig)
 "Ich schreibe eine Bachelorarbeit über IT Lean Governance an der Leibniz FH"
-→ Academic Context Skill aktiviert sich automatisch und füllt academic_context.md
+→ `academic-context` Skill aktiviert sich automatisch und füllt academic_context.md
 
 # 2. Literatur suchen
 /academic-research:search "DevOps Governance" --mode standard
@@ -172,7 +181,7 @@ mkdir ~/Facharbeit-XY && cd ~/Facharbeit-XY
 
 # 4. Stil prüfen
 "Prüfe diesen Text auf KI-Muster"
-→ Style Evaluator Skill aktiviert sich automatisch
+→ `style-evaluator` Skill aktiviert sich automatisch
 ```
 
 ---
@@ -261,34 +270,34 @@ Skills aktivieren sich **automatisch**, wenn Claude passende Keywords in der Kon
 
 | Skill | Aktiviert bei | Funktion | Ressourcen |
 |-------|-------------|----------|------------|
-| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) projekt-lokal in `./academic_context.md` | — |
-| **Advisor** | "Gliederung", "Exposé", "Struktur", "Kapitelplanung" | Interaktive Gliederungs- und Exposé-Erstellung im Dialog | `expose-template.md` |
-| **Chapter Writer** | "Kapitel schreiben", "verfassen", "entwerfen", "Textarbeit" | Kapitel-Entwurf mit Literatur, Zitaten und Kontext aus der Gliederung | — |
-| **Citation Extraction** | "Zitate finden", "zitieren", "Literaturverzeichnis" | Zitat-Extraktion aus PDFs, Formatierung in APA7/IEEE/Harvard/Chicago/BibTeX | `citation-styles.md` |
+| **`academic-context`** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) projekt-lokal in `./academic_context.md` | — |
+| **`advisor`** | "Gliederung", "Exposé", "Struktur", "Kapitelplanung" | Interaktive Gliederungs- und Exposé-Erstellung im Dialog | `expose-template.md` |
+| **`chapter-writer`** | "Kapitel schreiben", "verfassen", "entwerfen", "Textarbeit" | Kapitel-Entwurf mit Literatur, Zitaten und Kontext aus der Gliederung | — |
+| **`citation-extraction`** | "Zitate finden", "zitieren", "Literaturverzeichnis" | Zitat-Extraktion aus PDFs, Formatierung in APA7/IEEE/Harvard/Chicago/BibTeX | `citation-styles.md` |
 
 ### Qualitäts-Skills
 
 | Skill | Aktiviert bei | Funktion | Ressourcen |
 |-------|-------------|----------|------------|
-| **Style Evaluator** | "Text prüfen", "Stil-Check", "KI-Erkennung", "menschlich klingen" | 9-Metriken Textanalyse + Anti-AI-Detection mit Verbesserungsvorschlägen | `scoring-rubric.md` |
-| **Plagiarism Check** | "Plagiat prüfen", "Textähnlichkeit", "zu nah am Original" | Quellen-Nähe-Erkennung, Paraphrase-Check gegen Originaltexte | — |
-| **Submission Checker** | "formale Prüfung", "abgabefertig", "Formatierung prüfen" | Formale Anforderungen validieren (Leibniz FH spezifisch: Deckblatt, Ränder, Erklärung) | `leibniz-fh-requirements.md` |
-| **Source Quality Audit** | "Quellenqualität", "Quellen-Check", "peer-reviewed Anteil" | Quellenbalance-Analyse: Peer-Review-%, Alter, Diversität, Empfehlungen | — |
+| **`style-evaluator`** | "Text prüfen", "Stil-Check", "KI-Erkennung", "menschlich klingen" | 9-Metriken Textanalyse + Anti-AI-Detection mit Verbesserungsvorschlägen | `scoring-rubric.md` |
+| **`plagiarism-check`** | "Plagiat prüfen", "Textähnlichkeit", "zu nah am Original" | Quellen-Nähe-Erkennung, Paraphrase-Check gegen Originaltexte | — |
+| **`submission-checker`** | "formale Prüfung", "abgabefertig", "Formatierung prüfen" | Formale Anforderungen validieren (Leibniz FH spezifisch: Deckblatt, Ränder, Erklärung) | `references/fh-leibniz.md` |
+| **`source-quality-audit`** | "Quellenqualität", "Quellen-Check", "peer-reviewed Anteil" | Quellenbalance-Analyse: Peer-Review-%, Alter, Diversität, Empfehlungen | — |
 
 ### Planungs-Skills
 
 | Skill | Aktiviert bei | Funktion | Ressourcen |
 |-------|-------------|----------|------------|
-| **Literature Gap Analysis** | "Literaturlücken", "fehlende Quellen", "Abdeckung prüfen" | Per-Kapitel Abdeckungsbericht: welche Kapitel brauchen mehr Literatur | — |
-| **Methodology Advisor** | "Methodik", "Forschungsdesign", "qualitativ vs quantitativ" | Methodenwahl mit Vergleich, Begründungshilfe und Dokumentation | `methodology-catalog.md` |
-| **Research Question Refiner** | "Forschungsfrage formulieren", "Fragestellung präzisieren" | Forschungsfrage schärfen: zu breit/eng/unbeantwortbar erkennen, Teilfragen ableiten | — |
+| **`literature-gap-analysis`** | "Literaturlücken", "fehlende Quellen", "Abdeckung prüfen" | Per-Kapitel Abdeckungsbericht: welche Kapitel brauchen mehr Literatur | — |
+| **`methodology-advisor`** | "Methodik", "Forschungsdesign", "qualitativ vs quantitativ" | Methodenwahl mit Vergleich, Begründungshilfe und Dokumentation | `methodology-catalog.md` |
+| **`research-question-refiner`** | "Forschungsfrage formulieren", "Fragestellung präzisieren" | Forschungsfrage schärfen: zu breit/eng/unbeantwortbar erkennen, Teilfragen ableiten | — |
 
 ### Finalisierungs-Skills
 
 | Skill | Aktiviert bei | Funktion | Ressourcen |
 |-------|-------------|----------|------------|
-| **Title Generator** | "Titel suchen", "Titelvorschläge", "Arbeitstitel" | 5–7 Titeloptionen mit Begründung aus fertiger Arbeit generieren | — |
-| **Abstract Generator** | "Abstract schreiben", "Zusammenfassung", "Management Summary" | Abstract DE+EN, Keywords, Management Summary aus fertigem Text | — |
+| **`title-generator`** | "Titel suchen", "Titelvorschläge", "Arbeitstitel" | 5–7 Titeloptionen mit Begründung aus fertiger Arbeit generieren | — |
+| **`abstract-generator`** | "Abstract schreiben", "Zusammenfassung", "Management Summary" | Abstract DE+EN, Keywords, Management Summary aus fertigem Text | — |
 
 ---
 
@@ -373,7 +382,6 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 
 | Datei | Zweck |
 |-------|-------|
-| `config/scoring.yaml` | 5D-Gewichtungen und Cluster-Schwellwerte (anpassbar) |
 | `config/browser_guides/*.md` | `browser-use`-Hinweise pro Datenbank (URL, Auth, Anti-Scraping-Warnungen) |
 
 ## Kontext-Dateien (projekt-lokal ab v5.3.0)
@@ -423,7 +431,7 @@ academic-research/
 
 ### Scoring anpassen
 
-Bearbeite `config/scoring.yaml` — Gewichtungen und Cluster-Schwellwerte sind dort konfigurierbar.
+Die 5D-Scoring-Konfiguration ist inline im `relevance-scorer`-Agent dokumentiert.
 
 ### Evals (ab v5.2.0)
 
@@ -444,6 +452,13 @@ export ANTHROPIC_API_KEY=sk-ant-...
 
 ## Troubleshooting
 
+### Venv-Pfad-Contract
+
+Die Commands `/search` und `/history` erwarten die Python-Venv unter
+`~/.academic-research/venv/bin/python`. Dieser Pfad ist vom `setup.sh` fix
+vorgegeben. Wer die Venv woanders anlegen möchte, kann `commands/search.md`
+und `commands/history.md` entsprechend patchen.
+
 | Problem | Lösung |
 |---------|--------|
 | "Python venv not found" | `/academic-research:setup` ausführen |
@@ -456,3 +471,8 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ## Lizenz
 
 MIT
+
+## Weiterführend
+
+- [Anthropic Skill Spec](https://agentskills.io/specification) — offizielle Spec für Claude-Code-Skills
+- [Plugin auf GitHub](https://github.com/jamski105/academic-research)

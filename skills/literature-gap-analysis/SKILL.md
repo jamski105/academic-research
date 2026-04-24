@@ -1,36 +1,44 @@
 ---
-name: Literature Gap Analysis
+name: literature-gap-analysis
 description: Use this skill when the user wants to analyze literature coverage, find missing sources, or identify gaps. Triggers on "Literaturlücken / Literaturluecken", "Coverage", "fehlende Quellen", "Gap Analysis", "Quellenabdeckung", "literature gaps", "missing sources", "Abdeckung prüfen / Abdeckung pruefen", or when another skill detects under-sourced chapters. Bewertet Korpus-Vollständigkeit; Für einzelne Quellen-Qualität → `source-quality-audit`.
+license: MIT
 ---
 
 # Literatur-Lückenanalyse
+
+## Übersicht
+
+Analysiert die Literaturbasis auf Abdeckungslücken (fehlende Themen,
+Autor*innen-Gruppen, Methoden, Zeiträume). Identifiziert disziplinäre
+Blindstellen und liefert konkrete Such-Queries für `/search`. Ergänzt
+den `source-quality-audit` (der bewertet Einzelquellen, nicht Korpus).
 
 Analysiert die Thesis-Gliederung gegen die bestehende Literatursammlung und erzeugt einen kapitelweisen Abdeckungsbericht. Identifiziert gut abgedeckte Themen, fehlende Quellen, fehlende Gegenargumente und methodische Lücken. Bietet gezielte Suche zur Lückenschließung an.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Themenliste in `academic_context.md` kann ich keine Gap-Bewertung
+"Ohne Themenliste in `./academic_context.md` kann ich keine Gap-Bewertung
 liefern, weil ich gegen unbekannte Ziele vergleichen würde."
 
-Fehlt `literature_state.md` oder ist leer → schlage zuerst `/search` vor, um
+Fehlt `./literature_state.md` oder ist leer → schlage zuerst `/search` vor, um
 einen Quellenbestand aufzubauen, und trigger diesen Skill danach erneut.
 
 ## Keine Fabrikation
 
 Erfundene Abdeckungs-Statements oder Quellenlisten führen zu einem
 Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arbeite
-ausschließlich mit `literature_state.md` (Quelleninventar) und
-`academic_context.md` (Themenliste). Fehlen Daten: frag den User, rate nicht.
+ausschließlich mit `./literature_state.md` (Quelleninventar) und
+`./academic_context.md` (Themenliste). Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
 Dieser Skill bewertet **Korpus-Vollständigkeit**:
-- Fehlende Schlüsselthemen aus `academic_context.md`
+- Fehlende Schlüsselthemen aus `./academic_context.md`
 - Fehlende Autor*innen-Gruppen (Cluster-Diversität)
 - Fehlende Methoden-Perspektiven (qualitativ/quantitativ/mixed)
 - Fehlende Zeitperioden (Aktualitäts-Lücken)
@@ -39,7 +47,7 @@ Dieser Skill bewertet **Korpus-Vollständigkeit**:
 Für die Bewertung **einzelner Quellen** (Impact, Methodik der Einzelquelle,
 Peer-Review-Status) → `source-quality-audit`.
 
-Beide Skills greifen auf `literature_state.md` zu, aber mit unterschiedlichem
+Beide Skills greifen auf `./literature_state.md` zu, aber mit unterschiedlichem
 Fokus. Wenn der User „Peer-Review" oder „Quellenqualität einzelner Artikel"
 erwähnt → delegiere an `source-quality-audit`.
 
@@ -47,7 +55,7 @@ erwähnt → delegiere an `source-quality-audit`.
 
 Berechne und berichte jede dieser 3 Metriken:
 
-1. **Coverage** — Anteil abgedeckter Schlüsselthemen aus `academic_context.md`
+1. **Coverage** — Anteil abgedeckter Schlüsselthemen aus `./academic_context.md`
    - Schwelle: ≥ 80 %
    - Formel: `abgedeckte_Themen / gesamte_Schluesselthemen * 100`
 2. **Diversity** — Zahl eigenständiger Autor*innen-Gruppen (Co-Autor-Cluster)
@@ -64,25 +72,25 @@ Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehl
 
 - Der User fragt nach Literatur-Abdeckung oder Vollständigkeit
 - Der User möchte wissen, welche Kapitel mehr Quellen brauchen
-- Ein anderer Skill (Advisor, Chapter Writer, Citation Extraction) meldet unzureichende Quellenlage
+- Ein anderer Skill (`advisor`, `chapter-writer`, `citation-extraction`) meldet unzureichende Quellenlage
 - Der User bereitet ein Betreuer-Gespräch vor und möchte einen Statusüberblick
 
 ## Kontext-Dateien
 
 ### Lesen
 
-- `academic_context.md` — Gliederung, Forschungsfrage, Unterfragen, Schlüsselkonzepte
-- `literature_state.md` — Quelleninventar, Kapitelzuordnungen, PDF-Status, Zitatanzahlen
+- `./academic_context.md` — Gliederung, Forschungsfrage, Unterfragen, Schlüsselkonzepte
+- `./literature_state.md` — Quelleninventar, Kapitelzuordnungen, PDF-Status, Zitatanzahlen
 
 ### Schreiben
 
-- `literature_state.md` — Ergebnisse der Gap-Analyse und Coverage-Scores aktualisieren
+- `./literature_state.md` — Ergebnisse der Gap-Analyse und Coverage-Scores aktualisieren
 
 ## Core-Workflow
 
 ### 1. Laden und Gegenüberstellen
 
-Beide Kontext-Dateien im Projekt-Ordner lesen. Eine Matrix aufbauen:
+Beide Kontext-Dateien (`./academic_context.md`, `./literature_state.md`) im Projekt-Ordner lesen. Eine Matrix aufbauen:
 
 - **Zeilen** — Kapitel und Unterabschnitte aus der Gliederung
 - **Spalten** — Coverage-Dimensionen (siehe unten)
@@ -115,27 +123,7 @@ Jedes Kapitel entlang dieser Dimensionen bewerten:
 
 ### 3. Coverage-Report erstellen
 
-Einen strukturierten Report im folgenden Format erzeugen:
-
-```
-## Literatur-Coverage-Report
-
-### Gesamtbewertung
-- Quellen gesamt: [N]
-- Peer-reviewed: [N]%
-- Durchschnittsalter: [N] Jahre
-- Kapitel ohne Quellen: [N]
-- Gesamtabdeckung: [SCORE]%
-
-### Kapitelweise Analyse
-
-#### [Kapiteltitel]
-- Zugewiesene Quellen: [N]
-- Peer-reviewed: [N]%
-- Status: [KRITISCH / LÜCKE / AUSREICHEND / GUT]
-- Fehlend: [konkrete Lückenbeschreibung]
-- Empfehlung: [gezielte Aktion]
-```
+Einen strukturierten Report im Format aus `## Output-Format` (siehe unten) erzeugen.
 
 ### 4. Lücken-Klassifikation
 
@@ -181,7 +169,7 @@ Mit User-Freigabe `/search` für jede Lücke mit den empfohlenen Queries trigger
 
 Nach der Analyse:
 
-1. `literature_state.md` lesen (veraltete Überschreibungen vermeiden)
+1. `./literature_state.md` lesen (veraltete Überschreibungen vermeiden)
 2. Ergebnisse schreiben: pro-Kapitel-Coverage-Scores, identifizierte Lücken, Empfehlungen
 3. Zeitstempel der letzten Analyse aktualisieren
 
@@ -201,6 +189,53 @@ Typische Minima nach Arbeitstyp:
 | Bachelorarbeit | 25-35 | 60% |
 | Masterarbeit | 40-60 | 70% |
 | Hausarbeit | 10-20 | 50% |
+
+## Output-Format
+
+```
+## Literatur-Coverage-Report
+
+### Gesamtbewertung
+- Quellen gesamt: [N]
+- Peer-reviewed: [N]%
+- Durchschnittsalter: [N] Jahre
+- Kapitel ohne Quellen: [N]
+- Gesamtabdeckung: [SCORE]%
+
+### Kapitelweise Analyse
+
+#### [Kapiteltitel]
+- Zugewiesene Quellen: [N]
+- Peer-reviewed: [N]%
+- Status: [KRITISCH / LÜCKE / AUSREICHEND / GUT]
+- Fehlend: [konkrete Lückenbeschreibung]
+- Empfehlung: [gezielte Aktion]
+```
+
+## Few-Shot-Beispiele
+
+### Stil: Gap-Identifikation
+
+**Schlecht** (Grund: vage ohne konkrete Lücke):
+
+> "Es fehlen noch einige Quellen zu KI und Lehre."
+
+**Gut** (Grund: konkretes Konzept + Zahl + Such-Empfehlung):
+
+> "Unterversorgt: 'formative Bewertung mit KI' — nur 1 Quelle im Korpus.
+> Empfehlung: /search 'formative assessment AI higher education 2023-2024'
+> mit Modulen semanticscholar + openalex."
+
+### Stil: Corpus-Coverage
+
+**Schlecht** (Grund: unklar was abgedeckt ist):
+
+> "Literaturbasis ist okay."
+
+**Gut** (Grund: Coverage pro Forschungsfrage-Dimension):
+
+> "Abdeckung Forschungsfrage 1 (KI-Adoption): 12 Quellen OK.
+> Abdeckung Nebenfrage 2 (ethische Implikationen): 2 Quellen UNTER-SERVIERT."
 
 ## Wichtige Regeln
 

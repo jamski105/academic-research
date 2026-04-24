@@ -1,20 +1,27 @@
 ---
-name: Research Question Refiner
+name: research-question-refiner
 description: Use this skill when the user wants to refine, sharpen or evaluate their research question. Triggers on "Forschungsfrage formulieren", "Research Question", "Fragestellung / Fragestellung präzisieren", "Forschungsfrage schärfen / Forschungsfrage schaerfen", "research question refine", "Fragestellung präzisieren / Fragestellung praezisieren", or when another skill detects a question that is too broad, too narrow, or unanswerable. Fokus auf Verfeinerung bestehender Fragen; Erstanlage von Forschungsfrage, Thema oder Methodik übernimmt `academic-context`.
+license: MIT
 ---
 
 # Forschungsfragen-Schärfer
+
+## Übersicht
+
+Verfeinert bestehende Forschungsfragen auf Spezifität, Beantwortbarkeit,
+Falsifizierbarkeit und Einzigartigkeit. Liefert 2-3 Alternativen je
+Problem-Typ (zu weit / zu eng / nicht falsifizierbar / mehrdimensional).
 
 Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob eine Frage zu breit, zu eng oder nicht beantwortbar ist. Vergleicht mit ähnlichen Arbeiten, um Originalität und Machbarkeit sicherzustellen.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Thema und Kontext in `academic_context.md` kann ich keine Fragen-
+"Ohne Thema und Kontext in `./academic_context.md` kann ich keine Fragen-
 Schärfung liefern, weil ich gegen unbekannte Disziplin-Konventionen
 optimieren würde."
 
@@ -22,7 +29,7 @@ optimieren würde."
 
 Erfundene Bezüge zu Vorarbeiten oder Forschungslücken führen zu einer
 Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite
-ausschließlich mit `academic_context.md` und `literature_state.md`. Fehlen
+ausschließlich mit `./academic_context.md` und `./literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -86,23 +93,23 @@ Für Einbettung in die Gliederung → `advisor`.
 - Der User möchte eine bestehende Forschungsfrage verfeinern oder schärfen
 - Der User ist unsicher, ob seine Frage gut genug ist
 - Ein Betreuer hat die Forschungsfrage als problematisch markiert
-- Ein anderer Skill (Advisor, Academic Context) erkennt eine schwache Forschungsfrage
+- Ein anderer Skill (`advisor`, `academic-context`) erkennt eine schwache Forschungsfrage
 
 ## Kontext-Dateien
 
 ### Lesen
 
-- `academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
+- `./academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
 
 ### Schreiben
 
-- `academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
+- `./academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies `academic_context.md`. Existiert sie nicht, triggere den Academic-Context-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
+Lies `./academic_context.md`. Existiert sie nicht, triggere den `academic-context`-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
 
 ### 2. Aktuelle Frage bewerten
 
@@ -218,7 +225,7 @@ Verfeinerte Forschungsfrage und Unterfragen zur Freigabe präsentieren. Einschli
 
 Nach der Bestätigung durch den User:
 
-1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+1. `./academic_context.md` lesen (veraltete Überschreibungen vermeiden)
 2. `Forschungsfrage` mit der neuen Hauptfrage aktualisieren
 3. `Unterfragen` mit den neuen Unterfragen aktualisieren
 4. Entsprechen Unterfragen Kapiteln, `## Gliederung` anpassen
@@ -243,3 +250,4 @@ Diese Templates als Einstiege anbieten, wenn der User noch keine Frage hat:
 - **Thema des Users respektieren** — Innerhalb seines Gebiets verfeinern, nicht umleiten
 - **An Methodik anbinden** — Sicherstellen, dass die verfeinerte Frage mit der gewählten oder verfügbaren Methode beantwortbar ist
 - **Vor dem Speichern bestätigen** — Immer explizite Freigabe einholen, bevor in `./academic_context.md` geschrieben wird
+- **Methodik-Änderung → `methodology-advisor`** — Wenn die verfeinerte Frage eine andere Methodik erfordert, an `methodology-advisor` delegieren
