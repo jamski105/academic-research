@@ -63,11 +63,11 @@ Lies `academic_context.md`, Feld `Sprache`:
 
 Fehlt das Feld → `academic-de.md` als Default (Plugin-Default ist Deutsch). Unbekannte Sprache → Rueckfrage.
 
-## Memory-Dateien
+## Kontext-Dateien
 
-- Lies `writing_state.md` für aktuellen Kapitelkontext und frühere Scores
-- Lies `academic_context.md` für Zitationsstil, Sprache und Arbeitstyp
-- Aktualisiere `writing_state.md` nach jedem Lauf mit neuen Bewertungsscores
+- Lies `./writing_state.md` für aktuellen Kapitelkontext und frühere Scores
+- Lies `./academic_context.md` für Zitationsstil, Sprache und Arbeitstyp
+- Aktualisiere `./writing_state.md` nach jedem Lauf mit neuen Bewertungsscores
 
 ## Metriken
 

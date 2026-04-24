@@ -91,10 +91,10 @@ Für den Arbeitstitel selbst → `title-generator`.
 - Der User braucht eine Keyword-Liste
 - Der User fragt nach einer Zusammenfassung seiner Arbeit
 
-## Memory-Dateien
+## Kontext-Dateien
 
-- Lies `academic_context.md` für Universität, Arbeitstyp, Sprache, Forschungsfrage, Methodik und formale Anforderungen
-- Lies `writing_state.md` für den Fertigstellungsstatus der Kapitel und die während des Schreibens identifizierten Kernaussagen
+- Lies `./academic_context.md` für Universität, Arbeitstyp, Sprache, Forschungsfrage, Methodik und formale Anforderungen
+- Lies `./writing_state.md` für den Fertigstellungsstatus der Kapitel und die während des Schreibens identifizierten Kernaussagen
 
 ## Deliverables
 

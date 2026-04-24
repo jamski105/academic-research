@@ -4,6 +4,40 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [5.3.0] — 2026-04-24
+
+### ⚠️ BREAKING — Kontext-Ablage geändert
+
+Der akademische Kontext wandert von Claude-Memory (`~/.claude/projects/<hash>/memory/`) in projekt-lokale Dateien (`./academic_context.md` im Arbeitsordner). Alle 13 Skills und der `query-generator`-Agent lesen jetzt aus dem Projekt-Ordner, nicht mehr aus Memory.
+
+**Migration:**
+
+1. In deinen Facharbeit-Ordner wechseln: `cd ~/Pfad/zur/Arbeit`
+2. `/academic-research:setup` aufrufen
+3. Auf die Rückfrage *"Bestehenden Kontext in Claude-Memory gefunden. Kopieren?"* mit `y` antworten
+
+Die Memory-Dateien bleiben als Backup liegen — sie werden nur nicht mehr gelesen.
+Wenn du neu anfängst (keine Memory-Dateien): `/setup` im leeren Ordner aufrufen und *"Facharbeit initialisieren?"* bejahen.
+
+### Added
+
+- `/academic-research:setup` erweitert um Projekt-Bootstrap mit Auto-Detect: in leerem Ordner fragt das Setup nach Facharbeit-Init; in existierenden Facharbeit-Ordnern werden fehlende Artefakte idempotent nachgezogen; in Code-Repos bleibt es bei reinem Environment-Setup.
+- Minimale Projekt-Struktur beim Bootstrap: `academic_context.md` (Template-Stub mit TODO-Platzhaltern), `CLAUDE.md` (generierte Plugin-Anleitung), `.gitignore` (merge-sicher), Ordner `kapitel/`, `literatur/`, `pdfs/` mit `.gitkeep`.
+- Generierte `CLAUDE.md` mit Skill-Delegations-Tabelle, Slash-Command-Übersicht, Ordner-Konventionen und Anti-Fabrikations-Regel.
+- Migrations-Helper: `/setup` erkennt Memory-basierten Kontext und bietet einmaligen Copy ins Projekt an.
+- README-Sektion *Overhead in anderen Projekten reduzieren* erklärt projekt-spezifisches Deaktivieren via `.claude/settings.local.json`.
+- `scripts/project_bootstrap.py` (Python-Modul für Detection/Creation/Migration, voll getestet via `tests/test_project_bootstrap.py` — 12 Tests).
+- `scripts/templates/` — Templates für Stub, `CLAUDE.md`, gitignore-Fragment.
+
+### Changed
+
+- Alle 13 Skills + der `query-generator`-Agent lesen Kontext aus `./academic_context.md` im Projekt-Ordner statt aus Memory. Sektionsheadings `## Memory-Dateien` → `## Kontext-Dateien`; Formulierungen `aus dem Memory` → `aus dem Projekt-Ordner`.
+- `commands/search.md` und `commands/excel.md`: analog migriert, Memory-Verweise durch projekt-lokale Pfadangaben ersetzt.
+
+### Migration
+
+Siehe Breaking-Block oben. Memory-Dateien bleiben unangetastet (Backup). `/setup` ist idempotent und mehrfach aufrufbar.
+
 ## [5.2.0] — 2026-04-23
 
 ### Added

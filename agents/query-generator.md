@@ -140,7 +140,7 @@ Alle Queries dürfen maximal 120 Zeichen haben.
 ## Disambiguierung: "CS"-Abkürzung
 
 Der Buchstabencode "CS" ist mehrdeutig. Prüfe den Fachkontext aus
-`academic_context.md`, um zu entscheiden:
+`./academic_context.md`, um zu entscheiden:
 
 - **CS in Informatik, IT, Rechnerarchitektur, Software Engineering** →
   "Computer Science" (Synonyme für Query: "Informatik", "computer science",

@@ -88,7 +88,7 @@ Für Einbettung in die Gliederung → `advisor`.
 - Ein Betreuer hat die Forschungsfrage als problematisch markiert
 - Ein anderer Skill (Advisor, Academic Context) erkennt eine schwache Forschungsfrage
 
-## Memory-Dateien
+## Kontext-Dateien
 
 ### Lesen
 
@@ -242,4 +242,4 @@ Diese Templates als Einstiege anbieten, wenn der User noch keine Frage hat:
 - **Schwächen ehrlich benennen** — Ist eine Frage problematisch, klar erklären warum
 - **Thema des Users respektieren** — Innerhalb seines Gebiets verfeinern, nicht umleiten
 - **An Methodik anbinden** — Sicherstellen, dass die verfeinerte Frage mit der gewählten oder verfügbaren Methode beantwortbar ist
-- **Vor dem Speichern bestätigen** — Immer explizite Freigabe einholen, bevor in Memory geschrieben wird
+- **Vor dem Speichern bestätigen** — Immer explizite Freigabe einholen, bevor in `./academic_context.md` geschrieben wird

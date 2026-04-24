@@ -38,11 +38,11 @@ Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 - Qualitätssicherung vor der finalen Abgabe
 - Ein anderer Skill (z. B. Chapter Writer) fordert ein Plagiats-Gate an
 
-## Memory-Dateien
+## Kontext-Dateien
 
-- Lies `academic_context.md` für Zitationsstil und Sprache
-- Lies `literature_state.md` für die Liste der pro Kapitel genutzten Quellen
-- Lies `writing_state.md` für aktuellen Schreibkontext
+- Lies `./academic_context.md` für Zitationsstil und Sprache
+- Lies `./literature_state.md` für die Liste der pro Kapitel genutzten Quellen
+- Lies `./writing_state.md` für aktuellen Schreibkontext
 
 ## Skripte
 

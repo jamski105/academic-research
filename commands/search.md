@@ -113,4 +113,4 @@ Als `$SESSION_DIR/papers.json` speichern.
 Eine formatierte Tabelle mit Rang, Titel, Jahr, Score, Cluster und Quellmodul ausgeben.
 Pfad des Session-Verzeichnisses melden.
 
-Die Memory-Datei `literature_state.md` mit neuen Statistiken aktualisieren, falls akademischer Kontext vorliegt.
+Die Kontext-Datei `./literature_state.md` im Projekt-Ordner mit neuen Statistiken aktualisieren, falls akademischer Kontext vorliegt.

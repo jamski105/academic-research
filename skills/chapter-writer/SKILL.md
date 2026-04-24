@@ -85,7 +85,7 @@ Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extractio
 - Der User möchte Stichpunkte oder Notizen zu Fließtext ausbauen
 - Der User braucht Hilfe bei Übergängen zwischen Abschnitten
 
-## Memory-Dateien
+## Kontext-Dateien
 
 ### Lesen
 
@@ -101,7 +101,7 @@ Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extractio
 
 ### 1. Kontext laden
 
-Lies alle drei Memory-Dateien. Existiert `academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Gibt es noch keine Gliederung, schlage vor, den Advisor-Skill zu triggern, bevor geschrieben wird.
+Lies alle drei Kontext-Dateien im Projekt-Ordner. Existiert `./academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Gibt es noch keine Gliederung, schlage vor, den Advisor-Skill zu triggern, bevor geschrieben wird.
 
 Extrahiere: Ziel-Kapitel aus der Gliederung, zugeordnete Quellen aus dem Literaturstatus, Zitationsstil, Sprache der Arbeit und vorhandene Entwürfe.
 

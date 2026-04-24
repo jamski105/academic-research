@@ -44,11 +44,11 @@ Lies `academic_context.md`, Feld `Universitaet` und/oder `Arbeitstyp`:
 
 Fehlt das Feld → `fh-leibniz.md` als Default (Plugin-Default ist FH Leibniz). Unbekannt → Rueckfrage.
 
-## Memory- und Referenzdateien
+## Kontext- und Referenzdateien
 
-- Lies `academic_context.md` für Arbeitstyp, Universität, Studiengang und Zitationsstil
+- Lies `./academic_context.md` für Arbeitstyp, Universität, Studiengang und Zitationsstil
 - Lies `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` für hochschulspezifische Formalia
-- Lies `writing_state.md` für aktuelle Wortzahlen und Kapitelstatus
+- Lies `./writing_state.md` für aktuelle Wortzahlen und Kapitelstatus
 
 ## Checklisten-Dimensionen
 

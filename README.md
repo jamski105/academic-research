@@ -15,6 +15,11 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 
 **v5.0.1** — `/academic-research:setup` wurde zum vollständigen One-Click-Installer (installiert `browser-use` automatisch via `uv` oder `pipx`).
 
+**v5.3.0** (Breaking) — Projekt-Bootstrap + Kontext-Migration:
+- `/academic-research:setup` erkennt leere Ordner und legt auf Rückfrage eine schlanke Facharbeit-Struktur an (`academic_context.md`-Stub, generierte `CLAUDE.md`, `.gitignore`, `kapitel/`, `literatur/`, `pdfs/`).
+- Akademischer Kontext wandert von Claude-Memory in projekt-lokale Dateien (`./academic_context.md` im Arbeitsordner). Migrations-Helper im `/setup` kopiert bestehenden Memory-Kontext einmalig ins Projekt.
+- Alle 13 Skills + `query-generator`-Agent lesen jetzt aus dem Projekt-Ordner.
+
 Vollständige Migration siehe [CHANGELOG.md](CHANGELOG.md).
 
 <details>
@@ -107,7 +112,7 @@ claude --plugin-dir ~/Repos/academic-research
 /academic-research:setup
 ```
 
-Ein Aufruf, sechs Schritte: Datenverzeichnis, Python-venv, Python-Pakete, `browser-use` CLI, Skill/Plugin-Checks, Permissions. Jeder Schritt meldet `✅` oder `⚠️` mit konkretem Hinweis bei Fehlen. Idempotent — mehrfacher Aufruf ist sicher.
+Ein Aufruf, sieben Schritte: Datenverzeichnis, Python-venv, Python-Pakete, `browser-use` CLI, Skill/Plugin-Checks, Permissions und — wenn du in einem leeren Ordner bist — Projekt-Bootstrap (`academic_context.md`, `CLAUDE.md`, `.gitignore`, `kapitel/`, `literatur/`, `pdfs/`). Jeder Schritt meldet `✅` oder `⚠️` mit konkretem Hinweis bei Fehlen. Idempotent — mehrfacher Aufruf ist sicher.
 
 <details>
 <summary>Manueller Aufruf (ohne Slash-Command)</summary>
@@ -128,14 +133,36 @@ Einmalig in Claude Code:
 
 Das Setup warnt beim ersten Start, wenn das Plugin fehlt. Ohne das Plugin bleibt `/academic-research:excel` nicht nutzbar; alle anderen Commands laufen weiter.
 
+### Overhead in anderen Projekten reduzieren
+
+Das Plugin wird global installiert — das ist vom Claude-Code-Plugin-System so vorgesehen. Wenn du den Plugin-Overhead (Skills, SessionStart-Hooks, Permissions) nur im Facharbeit-Ordner haben willst, schalte es in anderen Projekten per `.claude/settings.local.json` explizit ab:
+
+```json
+{
+  "enabledPlugins": {
+    "academic-research@academic-research": false
+  }
+}
+```
+
+Die Datei ist `.gitignored` (persönliche Override, kein Team-Effekt). Im Facharbeit-Ordner bleibt das Plugin per Default aktiv — keine Extra-Konfiguration nötig.
+
+**Bestehenden Ordner nachträglich zur Facharbeit machen:** `touch academic_context.md` im Zielordner, dann `/academic-research:setup` aufrufen. Die Detection erkennt die Datei und ergänzt `CLAUDE.md`, `.gitignore`, Ordner — ohne Rückfrage, ohne vorhandene Daten zu überschreiben.
+
 ## Quick Start
 
 ```
 # In Claude Code:
 
+# 0. Neuen Facharbeit-Ordner aufsetzen (einmalig)
+mkdir ~/Facharbeit-XY && cd ~/Facharbeit-XY
+/academic-research:setup
+# → fragt "Hier einen Facharbeit-Arbeitsordner initialisieren?" → y
+# → legt academic_context.md, CLAUDE.md, .gitignore, kapitel/, literatur/, pdfs/ an
+
 # 1. Akademischen Kontext einrichten (einmalig)
 "Ich schreibe eine Bachelorarbeit über IT Lean Governance an der Leibniz FH"
-→ Academic Context Skill aktiviert sich automatisch
+→ Academic Context Skill aktiviert sich automatisch und füllt academic_context.md
 
 # 2. Literatur suchen
 /academic-research:search "DevOps Governance" --mode standard
@@ -234,7 +261,7 @@ Skills aktivieren sich **automatisch**, wenn Claude passende Keywords in der Kon
 
 | Skill | Aktiviert bei | Funktion | Ressourcen |
 |-------|-------------|----------|------------|
-| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) persistent in Claude Memory | — |
+| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) projekt-lokal in `./academic_context.md` | — |
 | **Advisor** | "Gliederung", "Exposé", "Struktur", "Kapitelplanung" | Interaktive Gliederungs- und Exposé-Erstellung im Dialog | `expose-template.md` |
 | **Chapter Writer** | "Kapitel schreiben", "verfassen", "entwerfen", "Textarbeit" | Kapitel-Entwurf mit Literatur, Zitaten und Kontext aus der Gliederung | — |
 | **Citation Extraction** | "Zitate finden", "zitieren", "Literaturverzeichnis" | Zitat-Extraktion aus PDFs, Formatierung in APA7/IEEE/Harvard/Chicago/BibTeX | `citation-styles.md` |
@@ -277,7 +304,7 @@ Agents werden von Commands/Skills als Subagents gestartet für Aufgaben, die LLM
 
 ---
 
-## Scripts (4 Python-Module)
+## Scripts (5 Python-Module)
 
 Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.academic-research/venv/`). Frühere Skripte für Scoring, Zitatformatierung, Excel und Stil-Analyse wurden in Skills/Agents verlagert (siehe CHANGELOG v5.0.0).
 
@@ -287,6 +314,7 @@ Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.acad
 | `dedup.py` | Deduplizierung nach DOI-Match + Titel-Ähnlichkeit (Levenshtein) |
 | `pdf.py` | PDF-Download (5-Tier-Fallback) + Textextraktion (PyPDF2) + TF-IDF-Volltextindex |
 | `text_utils.py` | Shared Text-Utilities (Normalisierung, Tokenisierung) |
+| `project_bootstrap.py` | Auto-Detect + Anlage der Facharbeit-Struktur (wird von `setup.sh` Schritt 7 aufgerufen) |
 
 ---
 
@@ -348,15 +376,17 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | `config/scoring.yaml` | 5D-Gewichtungen und Cluster-Schwellwerte (anpassbar) |
 | `config/browser_guides/*.md` | `browser-use`-Hinweise pro Datenbank (URL, Auth, Anti-Scraping-Warnungen) |
 
-## Memory-System
+## Kontext-Dateien (projekt-lokal ab v5.3.0)
 
-Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions:
+Der akademische Kontext liegt git-versionierbar im Projekt-Ordner:
 
 | Datei | Inhalt |
 |-------|--------|
-| `academic_context.md` | Thesis-Profil, Gliederung, Forschungsfrage, Fortschritt |
-| `literature_state.md` | Literatur-Statistik, Kapitelzuordnung, Lücken |
-| `writing_state.md` | Aktuelles Kapitel, Wortzahl, Style-Scores |
+| `./academic_context.md` | Thesis-Profil, Gliederung, Forschungsfrage, Fortschritt |
+| `./literature_state.md` | Literatur-Statistik, Kapitelzuordnung, Lücken (lazy von `citation-extraction` angelegt) |
+| `./writing_state.md` | Aktuelles Kapitel, Wortzahl, Style-Scores (lazy von `chapter-writer` angelegt) |
+
+Vor v5.3.0 lagen diese Dateien in Claude-Memory — die v5.3.0-Migration kopiert sie in den Projekt-Ordner. Siehe CHANGELOG.
 
 ## Verzeichnisstruktur
 
