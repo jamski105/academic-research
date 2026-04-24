@@ -6,11 +6,17 @@ license: MIT
 
 # Abstract-Generator
 
+## Übersicht
+
+Erzeugt Abstract, Keywords und Management-Summary aus einer abgeschlossenen
+akademischen Arbeit. Liefert konkrete Formulierungen, keine Platzhalter,
+und respektiert Hochschul-Längenvorgaben.
+
 Liest eine fertige oder nahezu fertige akademische Arbeit und erzeugt strukturierte Abstracts, Zusammenfassungen und Keyword-Listen. Produziert Output-Varianten passend zum Arbeitstyp und den Hochschul-Anforderungen.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
@@ -22,8 +28,8 @@ liefern, weil ich ein erfundenes Thema beschreiben würde."
 
 Erfundene Ergebnisse, Methoden oder Zahlen im Abstract sind ein Täuschungs-
 versuch nach FH-Leibniz-Prüfungsordnung und führen zum Verlust der Prüfungs-
-leistung. Arbeite ausschließlich mit Inhalten aus `writing_state.md`
-(Arbeitstext) und `academic_context.md` (Forschungsfrage, Methodik). Fehlen
+leistung. Arbeite ausschließlich mit Inhalten aus `./writing_state.md`
+(Arbeitstext) und `./academic_context.md` (Forschungsfrage, Methodik). Fehlen
 Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -112,7 +118,7 @@ Erzeuge auf Basis der User-Anfrage eine oder mehrere der folgenden Ausgaben. Fra
 5. **Schlussfolgerung** (1-2 Sätze) -- Wichtigste Implikation oder Beitrag nennen
 
 **Vorgaben:**
-- Länge: 150-250 Wörter (oder wie in `academic_context.md` spezifiziert)
+- Länge: 150-250 Wörter (oder wie in `./academic_context.md` spezifiziert)
 - Keine Zitate im Abstract
 - Keine nicht ausgeschriebenen Abkürzungen
 - Keine Verweise auf konkrete Kapitel, Abbildungen oder Tabellen
@@ -164,7 +170,7 @@ Erzeuge zwei Keyword-Sets:
 
 ## Generierungs-Workflow
 
-1. Lies `academic_context.md` für formale Anforderungen und Kontext
+1. Lies `./academic_context.md` für formale Anforderungen und Kontext
 2. Lies den kompletten Arbeitstext (oder alle verfügbaren Kapitel)
 3. Identifiziere: Forschungsfrage, Methodik, Kernergebnisse, Hauptbeitrag, Limitationen, Implikationen
 4. Entscheide auf Basis des Arbeitstyps, welche Deliverables zu erzeugen sind:
@@ -234,6 +240,33 @@ Agent(
 
 Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
 
+## Few-Shot-Beispiele
+
+### Stil: Abstract (deskriptiv)
+
+**Schlecht** (Grund: Buzzwords ohne Inhalt, keine Methodik sichtbar):
+
+> "Diese Arbeit untersucht digitale Transformation in modernen Unternehmen
+> und liefert wichtige Erkenntnisse für die Zukunft."
+
+**Gut** (Grund: Forschungsfrage + Methodik + Ergebnis + Scope):
+
+> "Diese Arbeit untersucht, wie Cloud-Migration das IT-Service-Management
+> in deutschen KMU verändert. Mittels zehn semi-strukturierter Interviews
+> 2024 zeigt die Analyse drei zentrale Erfolgsfaktoren: iterative
+> Einführung, Change-Kommunikation und Lieferantendiversität."
+
+### Stil: Keywords
+
+**Schlecht** (Grund: zu breit, nicht auffindbarkeitstauglich):
+
+> Digitalisierung, Unternehmen, Zukunft, KI
+
+**Gut** (Grund: spezifische Fachbegriffe, deutsche + englische Varianten):
+
+> Cloud-Migration, IT-Service-Management, KMU Deutschland,
+> Digitale Transformation, qualitative Interviews
+
 ## Wichtige Regeln
 
 - Immer den tatsächlichen Arbeitstext vor dem Generieren lesen -- niemals Abstracts nur aus der Gliederung erzeugen, wenn Text verfügbar ist
@@ -241,4 +274,4 @@ Bei REVISE Empfehlungen anwenden, max 2 Iterationen.
 - Wortzahlgrenzen strikt einhalten -- Hochschulen setzen diese oft durch
 - Das Abstract muss als eigenständiger Text für sich stehen können
 - Niemals persönliche Meinungen oder wertende Sprache einfügen, die über die Aussagen der Arbeit hinausgehen
-- Falls `academic_context.md` zusätzliche Anforderungen nennt (z. B. strukturiertes Abstract-Format), diesen Vorrang vor den Defaults geben
+- Falls `./academic_context.md` zusätzliche Anforderungen nennt (z. B. strukturiertes Abstract-Format), diesen Vorrang vor den Defaults geben
