@@ -1,22 +1,29 @@
 ---
 name: citation-extraction
-description: Use this skill when the user wants to extract or format citations. Triggers on "Zitat extrahieren", "Zitation formatieren / Zitation nach APA", "APA7 Eintrag", "Harvard-Zitat", "DIN 1505-2", "Chicago Author-Date", "Literaturverzeichnis prüfen / Literaturverzeichnis pruefen", "bibliographic entry", or when a chapter draft needs citation rendering. Extrahiert wörtliche Zitate und formatiert bibliografische Einträge; Für Kapitel-Prosa → `chapter-writer`.
+description: Use this skill when the user needs to extract or format citations. Triggers on "Literaturverzeichnis prüfen / erstellen / generieren", "Bibliographie formatieren", "Zitation prüfen", "citation extraction", "bibliography generation", or when raw PDFs need citation rendering (not chapter body writing — for that → `chapter-writer`). Extrahiert Zitate aus PDFs und liefert formatierte Bibliographien im Zitationsstil aus `./academic_context.md`.
 compatibility: Claude API mit documents[] und citations.enabled
 license: MIT
 ---
 
 # Zitat-Extraktion
 
+## Übersicht
+
+Extrahiert und formatiert Zitate aus PDFs und Volltexten. Liefert
+Literaturverzeichnisse im Zitationsstil aus `./academic_context.md`
+(APA7, IEEE, Harvard etc.). Arbeitet eng mit der Claude-API
+`documents[] + citations.enabled`.
+
 Extrahiert relevante Zitate aus akademischen PDFs, formatiert sie im gewünschten Stil und organisiert Zitatdaten nach Kapitel. Nutzt den Agent `quote-extractor` für die Extraktion und die Inline-Zitationslogik (siehe Abschnitt "Zitat-Formatierung" unten).
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenliste in `literature_state.md` kann ich keine Zitate mit
+"Ohne Quellenliste in `./literature_state.md` kann ich keine Zitate mit
 Zuordnung liefern, weil ich Zitate zu nicht-registrierten Quellen bauen
 würde."
 
@@ -24,14 +31,14 @@ würde."
 
 Erfundene Zitate, Seitenzahlen oder Quellenangaben werden in der Plagiats-
 prüfung als nicht-auffindbar markiert und gelten als Täuschungsversuch. Arbeite
-ausschließlich mit den geladenen PDFs und Einträgen aus `literature_state.md`.
+ausschließlich mit den geladenen PDFs und Einträgen aus `./literature_state.md`.
 Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
 Extrahiert und formatiert wörtliche Zitate aus PDFs für einzelne Belege.
 Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
-(ruft mich bei Bedarf auf).
+(ruft `citation-extraction` bei Bedarf auf).
 
 ## Aktivierung dieses Skills
 
@@ -42,7 +49,7 @@ Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 
 ## Variant-Selector
 
-Lies `academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Variant-Datei:
+Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Variant-Datei:
 
 | Zitationsstil | Referenz-Datei |
 |---------------|----------------|
@@ -81,7 +88,7 @@ Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der
 
 ## Voraussetzungen
 
-Existiert `academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Der Zitationsstil muss vor der Formatierung bekannt sein.
+Existiert `./academic_context.md` nicht, informiere den User und triggere zuerst den `academic-context`-Skill. Der Zitationsstil muss vor der Formatierung bekannt sein.
 
 ## Core-Workflow
 
@@ -96,7 +103,7 @@ Kläre, was der User braucht:
 
 ### 2. PDFs lokalisieren
 
-Lies `literature_state.md`, um zu ermitteln, welche Paper ein heruntergeladenes PDF haben. PDFs liegen unter `~/.academic-research/sessions/*/pdfs/`.
+Lies `./literature_state.md`, um zu ermitteln, welche Paper ein heruntergeladenes PDF haben. PDFs liegen unter `~/.academic-research/sessions/*/pdfs/`.
 
 Verweist der User auf Paper ohne PDFs, biete an, `/search` zu triggern, um sie zu finden und herunterzuladen.
 
@@ -117,7 +124,7 @@ Für jedes PDF den Agent `quote-extractor` spawnen (definiert in `${CLAUDE_PLUGI
 }
 ```
 
-Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus `academic_context.md` nutzen, um Paper zu Kapiteln zu matchen.
+Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus `./academic_context.md` nutzen, um Paper zu Kapiteln zu matchen.
 
 ### 4. Qualitätsprüfung
 
@@ -138,7 +145,7 @@ Extrahierte Zitate dem User gruppiert nach Quelle präsentieren, mit:
 
 ### 5. Zitat-Formatierung
 
-Formatiere Zitate inline nach dem in `academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
+Formatiere Zitate inline nach dem in `./academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
 
 #### Unterstützte Stile
 
@@ -172,7 +179,7 @@ Wenn Zitate für ein bestimmtes Kapitel extrahiert werden:
 
 Nach Extraktion und Formatierung:
 
-1. `literature_state.md` lesen (veraltete Überschreibungen vermeiden)
+1. `./literature_state.md` lesen (veraltete Überschreibungen vermeiden)
 2. Pro-Quelle-Felder aktualisieren: Zitatanzahl, Extraktionsqualität, zugewiesene Kapitel
 3. Aggregierte Statistiken aktualisieren: extrahierte Zitate gesamt, Coverage-Prozentsatz
 
@@ -185,7 +192,7 @@ Während der Extraktion auf diese Muster achten:
 - **Fehlende Gegenargumente** — Wenn alle Zitate dieselbe Position stützen, nach Gegenpositionen suchen
 - **Veraltete Quellen** — Zitate aus Quellen älter als 10 Jahre flaggen, außer es sind Standardwerke
 
-Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill "Literature Gap Analysis" für ein umfassendes Review triggern.
+Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill `literature-gap-analysis` für ein umfassendes Review triggern.
 
 ## Export-Formate
 
@@ -194,6 +201,32 @@ Diese Output-Formate werden unterstützt (inline generiert, kein externes Skript
 - **BibTeX** — für LaTeX-Integration
 - **Markdown** — für Review und manuelles Editieren
 - **JSON** — für die programmatische Nutzung durch andere Skills
+
+## Few-Shot-Beispiele
+
+### Stil: APA7-Zitation
+
+**Schlecht** (Grund: fehlende Autor-Initialen, keine DOI, unvollständig):
+
+> Müller, T. (2023). Cloud-Migration in KMU.
+
+**Gut** (Grund: vollständige APA7-Notation mit DOI):
+
+> Müller, T., & Schmidt, A. (2023). Cloud-Migration in deutschen
+> KMU: Eine empirische Studie. *Zeitschrift für Wirtschaftsinformatik*,
+> 65(3), 215–234. https://doi.org/10.1007/s11576-023-00012-x
+
+### Stil: Bibliography-Vollständigkeit
+
+**Schlecht** (Grund: Eintrag im Text ohne Literaturverzeichnis-Eintrag):
+
+> Text: "Müller (2023) argumentiert…"
+> Bibliography: (kein Müller-Eintrag)
+
+**Gut** (Grund: jeder In-Text-Zitat hat Bibliographie-Pendant):
+
+> Text: "Müller (2023) argumentiert…"
+> Bibliography: Müller, T. (2023). *Titel*. Verlag. DOI.
 
 ## Wichtige Regeln
 
