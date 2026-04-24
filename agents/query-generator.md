@@ -23,6 +23,7 @@ description: |
   </commentary>
   </example>
 maxTurns: 10
+tools: []
 ---
 
 # Query-Generator-Agent

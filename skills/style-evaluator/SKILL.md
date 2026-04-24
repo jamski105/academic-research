@@ -1,6 +1,7 @@
 ---
-name: Style Evaluator
+name: style-evaluator
 description: Use this skill when the user wants to evaluate academic writing style (without source comparison). Triggers on "Stil prüfen / Stil pruefen", "Schreibstil", "Satzlänge / Satzlaenge", "Passiv-Quote", "Nominalstil", "style evaluation", or when a chapter draft needs stylistic review. Bewertet Stil-Qualität ohne Quellenbezug; Für Textähnlichkeit → `plagiarism-check`.
+license: MIT
 ---
 
 # Stil-Evaluator

@@ -1,6 +1,7 @@
 ---
-name: Methodology Advisor
+name: methodology-advisor
 description: Use this skill when the user needs to choose or justify a research method. Triggers on "welche Methodik", "Methodenwahl", "Forschungsdesign", "qualitative vs quantitative", "Fallstudie oder Umfrage", "Literatur-Review als Methode", "Methodik prüfen / Methodik pruefen", "methodology fit", or when another skill detects unclear methodology. Empfiehlt Methoden mit 4-Dimensionen-Scoring; Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Gliederung → `advisor`.
+license: MIT
 ---
 
 # Methodik-Berater

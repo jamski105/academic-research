@@ -1,6 +1,7 @@
 ---
-name: Source Quality Audit
+name: source-quality-audit
 description: Use this skill when the user wants to verify individual source quality (peer-review, impact, methodology). Triggers on "Quellenqualität / Quellenqualitaet", "Peer-Review prüfen / Peer-Review pruefen", "source quality", "Predatory Journal", "Impact der Quelle", "Methodik der Quelle", or when another skill flags weak sources. Bewertet Einzelquellen; Für Korpus-Vollständigkeit → `literature-gap-analysis`.
+license: MIT
 ---
 
 # Quellenqualitäts-Audit
