@@ -373,7 +373,6 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 
 | Datei | Zweck |
 |-------|-------|
-| `config/scoring.yaml` | 5D-Gewichtungen und Cluster-Schwellwerte (anpassbar) |
 | `config/browser_guides/*.md` | `browser-use`-Hinweise pro Datenbank (URL, Auth, Anti-Scraping-Warnungen) |
 
 ## Kontext-Dateien (projekt-lokal ab v5.3.0)
@@ -423,7 +422,7 @@ academic-research/
 
 ### Scoring anpassen
 
-Bearbeite `config/scoring.yaml` — Gewichtungen und Cluster-Schwellwerte sind dort konfigurierbar.
+Die 5D-Scoring-Konfiguration ist inline im `relevance-scorer`-Agent dokumentiert.
 
 ### Evals (ab v5.2.0)
 
@@ -443,6 +442,13 @@ export ANTHROPIC_API_KEY=sk-ant-...
 **Kein CI-Trigger** — Evals laufen lokal vor jedem Release, Reports werden manuell unter `docs/evals/` committet (API-Kosten vermeiden).
 
 ## Troubleshooting
+
+### Venv-Pfad-Contract
+
+Die Commands `/search` und `/history` erwarten die Python-Venv unter
+`~/.academic-research/venv/bin/python`. Dieser Pfad ist vom `setup.sh` fix
+vorgegeben. Wer die Venv woanders anlegen möchte, kann `commands/search.md`
+und `commands/history.md` entsprechend patchen.
 
 | Problem | Lösung |
 |---------|--------|

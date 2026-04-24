@@ -40,7 +40,7 @@ def detect_mode(cwd: Path) -> str:
     return "skip"
 
 
-TEMPLATES_DIR = Path(__file__).parent / "templates"
+BOOTSTRAP_DIR = Path(__file__).parent / "bootstrap"
 
 SUBDIRS = ("kapitel", "literatur", "pdfs")
 
@@ -54,12 +54,12 @@ def create_structure(cwd: Path, stub: bool) -> None:
     kapitel/, literatur/, pdfs/ exist with .gitkeep.
     """
     if stub and not (cwd / "academic_context.md").exists():
-        stub_src = TEMPLATES_DIR / "academic_context.stub.md"
+        stub_src = BOOTSTRAP_DIR / "academic_context.stub.md"
         (cwd / "academic_context.md").write_text(stub_src.read_text(encoding="utf-8"))
 
     claude_md = cwd / "CLAUDE.md"
     if not claude_md.exists():
-        claude_md.write_text((TEMPLATES_DIR / "CLAUDE.md").read_text(encoding="utf-8"))
+        claude_md.write_text((BOOTSTRAP_DIR / "CLAUDE.md").read_text(encoding="utf-8"))
 
     for sub in SUBDIRS:
         (cwd / sub).mkdir(parents=True, exist_ok=True)
@@ -74,7 +74,7 @@ def merge_gitignore(cwd: Path) -> None:
     Preserves existing content; appends only missing lines, in fragment order.
     Creates the file if it doesn't exist.
     """
-    fragment = (TEMPLATES_DIR / "gitignore.fragment").read_text(encoding="utf-8")
+    fragment = (BOOTSTRAP_DIR / "gitignore.fragment").read_text(encoding="utf-8")
     fragment_lines = [ln for ln in fragment.splitlines() if ln.strip()]
 
     target = cwd / ".gitignore"

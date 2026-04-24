@@ -51,11 +51,11 @@ def test_detect_mode_idempotent_beats_code_repo(tmp_path):
     assert pb.detect_mode(tmp_path) == "idempotent"
 
 
-TEMPLATES = Path(__file__).resolve().parent.parent / "scripts" / "templates"
+TEMPLATES = Path(__file__).resolve().parent.parent / "scripts" / "bootstrap"
 
 
 def test_create_structure_stub_mode(tmp_path, monkeypatch):
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     pb.create_structure(tmp_path, stub=True)
     assert (tmp_path / "academic_context.md").exists()
     assert "Universität: TODO" in (tmp_path / "academic_context.md").read_text()
@@ -66,7 +66,7 @@ def test_create_structure_stub_mode(tmp_path, monkeypatch):
 
 
 def test_create_structure_skips_existing(tmp_path, monkeypatch):
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     (tmp_path / "academic_context.md").write_text("USER CONTENT — do not overwrite")
     pb.create_structure(tmp_path, stub=True)
     assert (tmp_path / "academic_context.md").read_text() == "USER CONTENT — do not overwrite"
@@ -74,7 +74,7 @@ def test_create_structure_skips_existing(tmp_path, monkeypatch):
 
 
 def test_create_structure_no_stub_when_stub_false(tmp_path, monkeypatch):
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     pb.create_structure(tmp_path, stub=False)
     assert not (tmp_path / "academic_context.md").exists()
     assert (tmp_path / "CLAUDE.md").exists()
@@ -82,7 +82,7 @@ def test_create_structure_no_stub_when_stub_false(tmp_path, monkeypatch):
 
 def test_create_structure_second_run_is_noop(tmp_path, monkeypatch):
     """Calling create_structure twice must not error or change anything."""
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     pb.create_structure(tmp_path, stub=True)
     stamp_before = (tmp_path / "academic_context.md").stat().st_mtime_ns
     pb.create_structure(tmp_path, stub=True)
@@ -91,7 +91,7 @@ def test_create_structure_second_run_is_noop(tmp_path, monkeypatch):
 
 
 def test_merge_gitignore_creates_new(tmp_path, monkeypatch):
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     pb.merge_gitignore(tmp_path)
     content = (tmp_path / ".gitignore").read_text()
     assert "pdfs/*" in content
@@ -100,7 +100,7 @@ def test_merge_gitignore_creates_new(tmp_path, monkeypatch):
 
 
 def test_merge_gitignore_appends_missing_lines(tmp_path, monkeypatch):
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     (tmp_path / ".gitignore").write_text("node_modules/\n.DS_Store\n")
     pb.merge_gitignore(tmp_path)
     lines = (tmp_path / ".gitignore").read_text().splitlines()
@@ -111,7 +111,7 @@ def test_merge_gitignore_appends_missing_lines(tmp_path, monkeypatch):
 
 
 def test_merge_gitignore_preserves_order_of_existing(tmp_path, monkeypatch):
-    monkeypatch.setattr(pb, "TEMPLATES_DIR", TEMPLATES)
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
     (tmp_path / ".gitignore").write_text("first\nsecond\n")
     pb.merge_gitignore(tmp_path)
     lines = (tmp_path / ".gitignore").read_text().splitlines()
