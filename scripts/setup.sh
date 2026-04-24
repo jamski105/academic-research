@@ -6,8 +6,7 @@
 #   2. Python-Pakete aus requirements.txt
 #   3. browser-use CLI (via uv oder pipx)
 #   4. Check: globaler browser-use Claude-Skill
-#   5. Check: document-skills Plugin (Install-Befehl bei Fehlen)
-#   6. Claude-Code-Permissions via configure_permissions.py
+#   5. Claude-Code-Permissions via configure_permissions.py
 
 set -e
 
@@ -87,22 +86,7 @@ fi
 echo ""
 
 # ---------------------------------------------------------------------------
-# 5. document-skills Plugin (für /academic-research:excel)
-# ---------------------------------------------------------------------------
-
-if [ -d "$HOME/.claude/plugins/cache/anthropic-agent-skills/document-skills" ]; then
-  echo "✅ document-skills Plugin: vorhanden"
-else
-  echo "⚠️  document-skills Plugin fehlt — /academic-research:excel wird ohne es abbrechen."
-  echo "   In Claude Code ausführen:"
-  echo "     /plugin install document-skills@anthropic-agent-skills"
-  echo "   (Plugin-zu-Plugin-Auto-Install wird von Claude Code nicht unterstützt.)"
-fi
-
-echo ""
-
-# ---------------------------------------------------------------------------
-# 6. Claude-Code-Permissions
+# 5. Claude-Code-Permissions
 # ---------------------------------------------------------------------------
 
 python3 "$SCRIPT_DIR/configure_permissions.py"

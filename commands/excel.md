@@ -1,5 +1,5 @@
 ---
-description: Generate or update a literature Excel spreadsheet via the document-skills:xlsx skill
+description: Generate or update a literature Excel spreadsheet via the vendored xlsx skill
 disable-model-invocation: true
 allowed-tools: Read, Write
 argument-hint: [--papers papers.json] [--output literature.xlsx] [--context]
@@ -7,7 +7,7 @@ argument-hint: [--papers papers.json] [--output literature.xlsx] [--context]
 
 # Literatur-Excel-Generator
 
-Erstellt ein formatiertes Excel-Workbook aus gescorten Papers. Die eigentliche Excel-Generierung übernimmt der extern installierte `document-skills:xlsx`-Skill (siehe README-Prerequisites).
+Erstellt ein formatiertes Excel-Workbook aus gescorten Papers. Die eigentliche Excel-Generierung übernimmt der plugin-intern vendorierte `xlsx`-Skill unter `${CLAUDE_PLUGIN_ROOT}/skills/xlsx/` — keine externe Plugin-Installation nötig.
 
 ## Verwendung
 
@@ -17,13 +17,7 @@ Erstellt ein formatiertes Excel-Workbook aus gescorten Papers. Die eigentliche E
 
 ## Voraussetzung
 
-`document-skills:xlsx` muss installiert sein:
-
-```
-/plugin install document-skills@anthropic-agent-skills
-```
-
-Wenn nicht installiert: SessionStart-Hook warnt beim Start; dieser Command bricht klar ab, wenn der Skill beim Aufruf fehlt.
+Der `xlsx`-Skill ist im Plugin eingebunden (`skills/xlsx/`) und steht ohne weitere Installation zur Verfügung. Das Setup benötigt `python3` mit `openpyxl` — wird über `/academic-research:setup` mit installiert.
 
 ## Erwartete Sheets
 
@@ -43,17 +37,7 @@ if [ -z "$PAPERS" ]; then
 fi
 ```
 
-### Schritt 2: Verfügbarkeit des xlsx-Skills prüfen
-
-```bash
-if [ ! -d "$HOME/.claude/plugins/cache/anthropic-agent-skills/document-skills" ]; then
-  echo "❌ document-skills:xlsx nicht installiert."
-  echo "   Install: /plugin install document-skills@anthropic-agent-skills"
-  exit 1
-fi
-```
-
-### Schritt 3: Input strukturieren
+### Schritt 2: Input strukturieren
 
 Lies die Paper-Daten aus `$PAPERS` (JSON-Array mit Feldern `title`, `authors`, `year`, `doi`, `total_score`, `cluster`, `relevance_score`, `recency_score`, `quality_score`, `authority_score`, `access_score`, `venue`, `source_module`).
 
@@ -61,11 +45,11 @@ Wenn `--context` gesetzt:
 - Lies `./academic_context.md` aus dem Projekt-Ordner; extrahiere die `Gliederung`
 - Berechne pro Paper die zugeordneten Kapitel (Keyword-Match zwischen `title`/`abstract` und Kapitelüberschriften)
 
-### Schritt 4: xlsx-Skill aktivieren
+### Schritt 3: xlsx-Skill aktivieren
 
-Rufe den `document-skills:xlsx`-Skill mit klarer Input/Output-Spezifikation auf:
+Der vendorierte `xlsx`-Skill liegt unter `${CLAUDE_PLUGIN_ROOT}/skills/xlsx/SKILL.md`. Wende ihn auf die strukturierten Paper-Daten an.
 
-**Input:** Strukturierte Paper-Daten (siehe Schritt 3) plus Sheet-Spezifikation (welche Sheets, welche Spalten, welche Farbcodierung).
+**Input:** Strukturierte Paper-Daten (siehe Schritt 2) plus Sheet-Spezifikation (welche Sheets, welche Spalten, welche Farbcodierung).
 
 **Output:** `$OUTPUT` (Default: `~/.academic-research/sessions/$LATEST/literature.xlsx`).
 
@@ -76,6 +60,6 @@ Rufe den `document-skills:xlsx`-Skill mit klarer Input/Output-Spezifikation auf:
 - **Kapitel-Zuordnung** (nur bei `--context`): Mapping Kapitel → Papers.
 - **Datenblatt**: Alle Rohdatenfelder in flachem Tabellenformat.
 
-### Schritt 5: Ergebnis präsentieren
+### Schritt 4: Ergebnis präsentieren
 
 Ausgabepfad und Zusammenfassung anzeigen (Anzahl Papers, Cluster-Verteilung, Dateigröße).

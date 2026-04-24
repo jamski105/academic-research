@@ -13,7 +13,10 @@ from pathlib import Path
 import pytest
 
 SKILLS_DIR = Path(__file__).parent.parent / "skills"
-ALL_SKILLS = sorted(SKILLS_DIR.glob("*/SKILL.md"))
+VENDORED_SKILLS = {"xlsx"}
+ALL_SKILLS = sorted(
+    p for p in SKILLS_DIR.glob("*/SKILL.md") if p.parent.name not in VENDORED_SKILLS
+)
 SKILLS_WITH_PRECONDITION = [p for p in ALL_SKILLS if p.parent.name != "academic-context"]
 
 
