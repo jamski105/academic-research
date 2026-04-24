@@ -17,7 +17,7 @@ Hilft bei Wahl, Begründung und Dokumentation der Forschungsmethodik. Vergleicht
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
@@ -30,7 +30,7 @@ beantworten."
 
 Erfundene Methodik-Standards, Begründungen oder Vergleiche führen zu Note 5
 für das Forschungsdesign und einer methodisch angreifbaren Arbeit. Arbeite
-ausschließlich mit `academic_context.md` und dem Methoden-Katalog unter
+ausschließlich mit `./academic_context.md` und dem Methoden-Katalog unter
 `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md`.
 Fehlen Daten: frag den User, rate nicht.
 

@@ -17,12 +17,12 @@ Prüft akademischen Text auf unbeabsichtigte Nähe zum Quellmaterial. Erkennt zu
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenlisten in `literature_state.md` kann ich kein Similarity-Urteil
+"Ohne Quellenlisten in `./literature_state.md` kann ich kein Similarity-Urteil
 liefern, weil ich gegen unbekannte Quellen prüfen und False-Negatives
 produzieren würde."
 
@@ -31,7 +31,7 @@ produzieren würde."
 Erfundene Similarity-Urteile oder N-Gramm-Matches lassen unentdecktes Plagiat
 durch und führen dazu, dass Textstellen, die beim offiziellen Plagiats-Check
 der FH Leibniz auffliegen, hier unbemerkt geblieben sind. Arbeite ausschließlich
-mit dem User-Text und den PDF-Extrakten aus `literature_state.md`. Fehlen
+mit dem User-Text und den PDF-Extrakten aus `./literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -97,7 +97,7 @@ Prüfen, ob der User-Text der Argumentationsstruktur der Quelle zu nahe folgt:
 
 Quelltexte in dieser Priorität suchen:
 1. In der aktuellen Session extrahierte PDF-Texte (im Kontext)
-2. In `literature_state.md` referenzierte Quellen-Snippets
+2. In `./literature_state.md` referenzierte Quellen-Snippets
 3. Vom User gelieferter Originaltext für Direktvergleich
 
 ### Wenn kein Quelltext verfügbar ist

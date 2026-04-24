@@ -16,12 +16,12 @@ Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob ei
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Thema und Kontext in `academic_context.md` kann ich keine Fragen-
+"Ohne Thema und Kontext in `./academic_context.md` kann ich keine Fragen-
 Schärfung liefern, weil ich gegen unbekannte Disziplin-Konventionen
 optimieren würde."
 
@@ -29,7 +29,7 @@ optimieren würde."
 
 Erfundene Bezüge zu Vorarbeiten oder Forschungslücken führen zu einer
 Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite
-ausschließlich mit `academic_context.md` und `literature_state.md`. Fehlen
+ausschließlich mit `./academic_context.md` und `./literature_state.md`. Fehlen
 Daten: frag den User, rate nicht.
 
 ## Abgrenzung

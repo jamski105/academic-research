@@ -17,19 +17,19 @@ Bewertet die Gesamtqualität, Balance, Aktualität und Diversität der Literatur
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenliste in `literature_state.md` kann ich kein Qualitätsurteil
+"Ohne Quellenliste in `./literature_state.md` kann ich kein Qualitätsurteil
 liefern, weil ich gegen leere Menge urteilen würde."
 
 ## Keine Fabrikation
 
 Erfundene Bewertungen oder Quellenangaben entziehen der Arbeit die
 Zitierbarkeit, wenn behauptete Quellen in der Nachprüfung nicht existieren.
-Arbeite ausschließlich mit den Einträgen aus `literature_state.md` und
+Arbeite ausschließlich mit den Einträgen aus `./literature_state.md` und
 geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
@@ -44,7 +44,7 @@ Für die Bewertung der **Korpus-Vollständigkeit** (fehlende Themen, fehlende
 Autor*innen-Gruppen, fehlende Methoden, fehlende Zeitperioden, disziplinäre
 Blindstellen) → `literature-gap-analysis`.
 
-Beide Skills greifen auf `literature_state.md` zu, aber mit unterschiedlichem
+Beide Skills greifen auf `./literature_state.md` zu, aber mit unterschiedlichem
 Fokus. Wenn der User „Coverage" oder „Gaps" erwähnt → delegiere an
 `literature-gap-analysis`.
 
@@ -138,7 +138,7 @@ Bewertet die Balance zwischen reinen Web-Quellen und klassischen akademischen Pu
 Bewertet, ob alle wichtigen Aspekte der Forschungsfrage durch Literatur abgedeckt sind.
 
 **Ablauf:**
-1. Schlüsselkonzepte aus Forschungsfrage und Gliederung (via `academic_context.md`) extrahieren
+1. Schlüsselkonzepte aus Forschungsfrage und Gliederung (via `./academic_context.md`) extrahieren
 2. Jedes Konzept den verfügbaren Quellen zuordnen
 3. Konzepte mit unzureichender Abdeckung identifizieren (<2 Quellen je Schlüsselkonzept)
 4. Prüfen, ob jedes Hauptkapitel ausreichend Literaturstütze hat
@@ -200,8 +200,8 @@ Status-Schwellen: OK >= 70, WARN 50-69, FAIL < 50.
 
 ## Wichtige Regeln
 
-- Audit auf tatsächlichen Daten aus `literature_state.md` basieren, nicht auf Annahmen
-- Ist `literature_state.md` unvollständig, den User um die Quellenliste bitten
+- Audit auf tatsächlichen Daten aus `./literature_state.md` basieren, nicht auf Annahmen
+- Ist `./literature_state.md` unvollständig, den User um die Quellenliste bitten
 - Klassifiziere Venues inline: 1.0 für Top-Venues (IEEE, ACM, Springer, Nature, Elsevier), 0.7 für indexierte Journals, 0.4 für Konferenzen, 0.2 sonst
 - Web-Quellen niemals pauschal ablehnen -- jede einzeln auf institutionelle Autorität prüfen
 - Standardwerke (z. B. Porter 1985, Rogers 2003) als "Grundlagenwerk" flaggen und von Aktualitätsabzügen ausnehmen
