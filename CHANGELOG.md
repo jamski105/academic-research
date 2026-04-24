@@ -4,6 +4,16 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unreleased] — xlsx-Skill vendoriert
+
+### Changed
+
+- **Excel-Skill plugin-intern vendoriert.** Der `xlsx`-Skill aus `anthropics/skills/document-skills/` liegt jetzt unter `skills/xlsx/` und wird mit dem Plugin ausgeliefert. Keine separate Installation von `document-skills@anthropic-agent-skills` mehr nötig. Updates des Upstream-Skills müssen manuell nachgezogen werden (Trade-off bewusst gewählt).
+- `scripts/requirements.txt`: `openpyxl>=3.1` und `pandas>=2.0` ergänzt (Dependencies des vendored xlsx-Skills).
+- `hooks/hooks.json`: SessionStart-Python-Env-Check prüft zusätzlich `openpyxl`; der separate `document-skills`-Plugin-Check entfällt.
+- `commands/excel.md`, `commands/setup.md`, `scripts/setup.sh`, `README.md`: alle `document-skills`-Install-Hinweise und Cache-Pfad-Checks entfernt.
+- `tests/test_skills_manifest.py`: vendorierte Skills (aktuell nur `xlsx`) vom projektspezifischen Manifest-Test (Vorbedingungen/Keine-Fabrikation/Umlaut-Paare) ausgeschlossen — Upstream-Skills folgen eigenen Conventions.
+
 ## [5.4.0] — 2026-04-24
 
 Finale Review-Runde gegen anthropics/skills Cookbook (Commit `5128e186`).

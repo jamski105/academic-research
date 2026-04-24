@@ -114,25 +114,15 @@ Dieser Command:
 
 1. Legt `~/.academic-research/` als Daten-Verzeichnis an (Sessions, PDFs).
 2. Erzeugt ein isoliertes Python-venv unter `~/.academic-research/venv/`.
-3. Installiert Python-Pakete (`httpx`, `PyPDF2`, `pyyaml`, `anthropic`).
+3. Installiert Python-Pakete (`httpx`, `PyPDF2`, `pyyaml`, `anthropic`, `openpyxl`, `pandas`).
 4. Installiert `browser-use`-CLI automatisch via `uv tool install browser-use` oder `pipx install browser-use`.
-5. Prüft, ob der `browser-use`-Claude-Skill und das `document-skills`-Plugin vorhanden sind, und warnt wenn nicht.
+5. Prüft, ob der `browser-use`-Claude-Skill vorhanden ist, und warnt wenn nicht.
 6. Trägt Permissions in `~/.claude/settings.local.json` ein.
 7. **Wenn der aktuelle Ordner leer ist:** fragt, ob eine Facharbeit-Struktur angelegt werden soll (*„Hier einen Facharbeit-Arbeitsordner initialisieren?"* → `y`). Legt dann `academic_context.md`, `CLAUDE.md`, `.gitignore`, `kapitel/`, `literatur/`, `pdfs/` an.
 
 Das Setup ist **idempotent** — du kannst es beliebig oft aufrufen, ohne etwas zu beschädigen.
 
-### Schritt 4 — document-skills installieren (für Excel-Export)
-
-Nur wenn du `/academic-research:excel` nutzen willst:
-
-```
-/plugin install document-skills@anthropic-agent-skills
-```
-
-Ohne dieses Plugin bleiben alle anderen Features funktionsfähig — nur der Excel-Export braucht es.
-
-### Schritt 5 — browser-use Skill (optional, für Google Scholar & Co.)
+### Schritt 4 — browser-use Skill (optional, für Google Scholar & Co.)
 
 Der `browser-use`-Claude-Skill liegt unter `~/.claude/skills/browser-use/`. Falls er fehlt, warnt das Setup. Er ermöglicht Suchen über Google Scholar, Springer, OECD, RePEc, OPAC, EBSCO und ProQuest. Anthropic distribuiert den Skill separat — eine Google-Suche nach *„claude browser-use skill"* führt zu den aktuellen Installationshinweisen.
 
@@ -169,7 +159,7 @@ Das stellt sicher, dass neue Dependencies (z. B. `anthropic>=0.40`) nachgezogen 
 v5.0.0 hat drei Dinge umgestellt:
 
 1. **Browser-Automation**: Playwright-MCP → `browser-use`-CLI.
-2. **Excel-Generierung**: eigene Python-Pipeline → externes `document-skills`-Plugin.
+2. **Excel-Generierung**: eigene Python-Pipeline → `xlsx`-Skill (ab v5.5 plugin-intern vendoriert, davor externes `document-skills`-Plugin).
 3. **Drei Python-Skripte gelöscht**: Logik ist jetzt in Skills/Agents inline.
 
 v5.3.0 hat zusätzlich den Kontext umgestellt:
@@ -188,13 +178,10 @@ v5.3.0 hat zusätzlich den Kontext umgestellt:
 # 3. Venv neu bauen (wegen openpyxl, das nicht mehr gebraucht wird)
 rm -rf ~/.academic-research/venv
 
-# 4. Setup neu laufen lassen — installiert browser-use, neue Deps
+# 4. Setup neu laufen lassen — installiert browser-use, neue Deps (inkl. openpyxl/pandas für den vendorierten xlsx-Skill)
 /academic-research:setup
 
-# 5. document-skills installieren (für Excel)
-/plugin install document-skills@anthropic-agent-skills
-
-# 6. Im Facharbeit-Ordner: Kontext aus Memory in Projekt migrieren
+# 5. Im Facharbeit-Ordner: Kontext aus Memory in Projekt migrieren
 cd ~/Pfad/zur/Arbeit
 /academic-research:setup
 # → fragt: "Bestehenden Kontext in Claude-Memory gefunden. Kopieren?" → y
@@ -220,7 +207,6 @@ Danach:
 /plugin marketplace add jamski105/academic-research
 /plugin install academic-research@academic-research
 /academic-research:setup
-/plugin install document-skills@anthropic-agent-skills
 ```
 
 ## Alte Dateien löschen
@@ -232,7 +218,7 @@ Wenn du von v3 oder v4 kommst (oder einfach aufräumen willst), sind das die Ste
 ```bash
 # macOS / Linux
 rm -rf ~/.claude/plugins/cache/academic-research      # falls vom /plugin uninstall nicht entfernt
-rm -rf ~/.claude/plugins/cache/anthropic-agent-skills/document-skills  # nur wenn du document-skills NICHT mehr willst
+rm -rf ~/.claude/plugins/cache/anthropic-agent-skills/document-skills  # optional: nur wenn du das alte externe document-skills-Plugin komplett loswerden willst (wird von academic-research v5.5+ nicht mehr benötigt)
 ```
 
 ### 2. Alte Python-Venv (aus v3/v4)
@@ -538,7 +524,7 @@ Nutzt die 5D-Scoring-Engine (siehe unten) und weist Cluster zu. Kann auf die let
 
 ### `/academic-research:excel`
 
-Professionelle Excel-Datei aus gescorten Papers generieren. **Benötigt das `document-skills`-Plugin.**
+Professionelle Excel-Datei aus gescorten Papers generieren. Nutzt den plugin-intern vendorierten `xlsx`-Skill — keine externe Plugin-Installation nötig.
 
 **Syntax:** `/academic-research:excel [--papers papers.json] [--output name.xlsx] [--context]`
 
@@ -704,7 +690,7 @@ Die Commands `/search` und `/history` erwarten die Python-Venv unter `~/.academi
 | Excel leer | Zuerst `/academic-research:search` ausführen |
 | Semantic Scholar 429-Fehler | `SS_API_KEY` Umgebungsvariable setzen |
 | Skill triggert nicht automatisch | Keyword aus Trigger-Liste verwenden (siehe Skill-Tabelle) oder Skill explizit ansprechen (*„Nutze den advisor-Skill …"*) |
-| `/academic-research:excel` scheitert mit *„document-skills nicht gefunden"* | `/plugin install document-skills@anthropic-agent-skills` |
+| `/academic-research:excel` meldet fehlendes `openpyxl` oder `pandas` | `~/.academic-research/venv/bin/pip install -r ${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt` oder `/academic-research:setup` erneut laufen lassen |
 | Kontext wird nicht geladen | `ls academic_context.md` — fehlt die Datei, `/academic-research:setup` in diesem Ordner laufen lassen |
 | Plugin soll in Code-Projekten nicht mehr laden | In `.claude/settings.local.json` des Code-Projekts: `{"enabledPlugins": {"academic-research@academic-research": false}}` |
 
@@ -743,7 +729,7 @@ Kein CI-Trigger — Evals laufen lokal vor jedem Release; Reports werden unter `
 
 **v5.0.0** (Breaking) — Architektur-Bereinigung:
 - Browser-Automation auf `browser-use`-CLI umgestellt.
-- Excel-Generierung an `document-skills:xlsx`-Plugin delegiert.
+- Excel-Generierung an den `xlsx`-Skill delegiert (ab v5.5 plugin-intern vendoriert, davor externes `document-skills`-Plugin).
 - Drei redundante Python-Skripte (`citations.py`, `style_analysis.py`, `ranking.py`) gelöscht.
 
 **v5.0.1** — `/academic-research:setup` wurde One-Click-Installer (Auto-Install via `uv`/`pipx`).
