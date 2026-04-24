@@ -58,7 +58,7 @@ fi
 Lies die Paper-Daten aus `$PAPERS` (JSON-Array mit Feldern `title`, `authors`, `year`, `doi`, `total_score`, `cluster`, `relevance_score`, `recency_score`, `quality_score`, `authority_score`, `access_score`, `venue`, `source_module`).
 
 Wenn `--context` gesetzt:
-- Lies `academic_context.md` aus Memory; extrahiere die `Gliederung`
+- Lies `./academic_context.md` aus dem Projekt-Ordner; extrahiere die `Gliederung`
 - Berechne pro Paper die zugeordneten Kapitel (Keyword-Match zwischen `title`/`abstract` und Kapitelüberschriften)
 
 ### Schritt 4: xlsx-Skill aktivieren
