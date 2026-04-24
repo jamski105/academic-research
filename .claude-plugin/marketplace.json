@@ -1,7 +1,9 @@
 {
   "name": "academic-research",
   "owner": {
-    "name": "Jonas"
+    "name": "Jonas Ahler",
+    "email": "jam@ahler.org",
+    "url": "https://github.com/jamski105"
   },
   "plugins": [
     {

@@ -9,7 +9,7 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 ## Was ist neu in v5?
 
 **v5.0.0** (Breaking) — Architektur-Bereinigung:
-- Browser-Automation von **Playwright-MCP auf `browser-use`-CLI** umgestellt (schnellerer Setup, weniger Dependencies).
+- Browser-Automation auf **`browser-use`-CLI** umgestellt (schnellerer Setup, weniger Dependencies).
 - Excel-Generierung an **externes `document-skills:xlsx` Plugin** delegiert statt eigener Python-Pipeline.
 - **Drei redundante Python-Skripte** (`citations.py`, `style_analysis.py`, `ranking.py`) gelöscht; Logik in Skills/Agents inlined.
 
@@ -456,3 +456,8 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ## Lizenz
 
 MIT
+
+## Weiterführend
+
+- [Anthropic Skill Spec](https://agentskills.io/specification) — offizielle Spec für Claude-Code-Skills
+- [Plugin auf GitHub](https://github.com/jamski105/academic-research)
