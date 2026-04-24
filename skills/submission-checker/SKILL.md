@@ -1,6 +1,7 @@
 ---
-name: Submission Checker
+name: submission-checker
 description: Use this skill when the user prepares final submission (formalia check). Triggers on "Abgabe prüfen / Abgabe pruefen", "FH-Leibniz-Formalia", "Formatierung", "Seitenränder / Seitenraender", "Zeilenabstand", "Schriftart", "submission check", or when the user nears deadline. Prüft institutsspezifische Formalia; Default-Profil FH Leibniz, weitere via `references/<variant>.md`.
+license: MIT
 ---
 
 # Abgabe-Prüfer

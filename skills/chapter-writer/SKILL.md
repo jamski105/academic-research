@@ -1,6 +1,8 @@
 ---
-name: Chapter Writer
+name: chapter-writer
 description: Use this skill when the user wants to write academic chapter prose. Triggers on "Kapitel schreiben", "Text verfassen", "Absatz zu Thema X", "chapter prose", "Einleitung schreiben", "Diskussions-Absatz", "Übergang zwischen Kapiteln / Uebergang zwischen Kapiteln", "übergänge formulieren / uebergaenge formulieren", or when a structural step produces prose. Schreibt Kapitel-Prosa mit Quellen-Einbindung; Für Zitat-Extraktion → `citation-extraction`.
+compatibility: Claude API mit documents[] und citations.enabled
+license: MIT
 ---
 
 # Kapitel-Autor

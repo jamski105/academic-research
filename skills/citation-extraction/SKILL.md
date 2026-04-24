@@ -1,6 +1,8 @@
 ---
-name: Citation Extraction
+name: citation-extraction
 description: Use this skill when the user wants to extract or format citations. Triggers on "Zitat extrahieren", "Zitation formatieren / Zitation nach APA", "APA7 Eintrag", "Harvard-Zitat", "DIN 1505-2", "Chicago Author-Date", "Literaturverzeichnis prüfen / Literaturverzeichnis pruefen", "bibliographic entry", or when a chapter draft needs citation rendering. Extrahiert wörtliche Zitate und formatiert bibliografische Einträge; Für Kapitel-Prosa → `chapter-writer`.
+compatibility: Claude API mit documents[] und citations.enabled
+license: MIT
 ---
 
 # Zitat-Extraktion

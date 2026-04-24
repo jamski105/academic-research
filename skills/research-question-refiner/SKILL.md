@@ -1,6 +1,7 @@
 ---
-name: Research Question Refiner
+name: research-question-refiner
 description: Use this skill when the user wants to refine, sharpen or evaluate their research question. Triggers on "Forschungsfrage formulieren", "Research Question", "Fragestellung / Fragestellung präzisieren", "Forschungsfrage schärfen / Forschungsfrage schaerfen", "research question refine", "Fragestellung präzisieren / Fragestellung praezisieren", or when another skill detects a question that is too broad, too narrow, or unanswerable. Fokus auf Verfeinerung bestehender Fragen; Erstanlage von Forschungsfrage, Thema oder Methodik übernimmt `academic-context`.
+license: MIT
 ---
 
 # Forschungsfragen-Schärfer

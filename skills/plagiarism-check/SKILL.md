@@ -1,6 +1,7 @@
 ---
-name: Plagiarism Check
+name: plagiarism-check
 description: Use this skill when the user wants to check text similarity against known sources. Triggers on "Plagiat prüfen / Plagiat pruefen", "Textähnlichkeit / Textaehnlichkeit", "N-Gramm-Overlap", "Similarity-Check", "Quellennähe prüfen / Quellennaehe pruefen", "plagiarism scan", or when a chapter draft may contain un-cited paraphrases. Prüft Textnähe via N-Gramm-Overlap gegen Quellen; Für stilistische Qualität → `style-evaluator`.
+license: MIT
 ---
 
 # Plagiatsprüfung

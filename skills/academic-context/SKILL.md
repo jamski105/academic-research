@@ -1,6 +1,7 @@
 ---
-name: Academic Context
+name: academic-context
 description: Use this skill whenever the user starts or updates a thesis, Bachelorarbeit, Masterarbeit, Hausarbeit, Facharbeit or academic paper. Triggers on "meine Arbeit", "mein Thema", "Forschungsfrage", "Gliederung", "thesis context", "academic profile", "akademischer Kontext prüfen / akademischer Kontext pruefen", or when another skill needs context that does not yet exist. Fokus auf Erstanlage und Verwaltung des Kontexts; Schärfung einer bestehenden Forschungsfrage übernimmt `research-question-refiner`.
+license: MIT
 ---
 
 # Akademischer Kontext
