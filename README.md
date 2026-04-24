@@ -107,7 +107,7 @@ claude --plugin-dir ~/Repos/academic-research
 /academic-research:setup
 ```
 
-Ein Aufruf, sechs Schritte: Datenverzeichnis, Python-venv, Python-Pakete, `browser-use` CLI, Skill/Plugin-Checks, Permissions. Jeder Schritt meldet `✅` oder `⚠️` mit konkretem Hinweis bei Fehlen. Idempotent — mehrfacher Aufruf ist sicher.
+Ein Aufruf, sieben Schritte: Datenverzeichnis, Python-venv, Python-Pakete, `browser-use` CLI, Skill/Plugin-Checks, Permissions und — wenn du in einem leeren Ordner bist — Projekt-Bootstrap (`academic_context.md`, `CLAUDE.md`, `.gitignore`, `kapitel/`, `literatur/`, `pdfs/`). Jeder Schritt meldet `✅` oder `⚠️` mit konkretem Hinweis bei Fehlen. Idempotent — mehrfacher Aufruf ist sicher.
 
 <details>
 <summary>Manueller Aufruf (ohne Slash-Command)</summary>
@@ -128,14 +128,36 @@ Einmalig in Claude Code:
 
 Das Setup warnt beim ersten Start, wenn das Plugin fehlt. Ohne das Plugin bleibt `/academic-research:excel` nicht nutzbar; alle anderen Commands laufen weiter.
 
+### Overhead in anderen Projekten reduzieren
+
+Das Plugin wird global installiert — das ist vom Claude-Code-Plugin-System so vorgesehen. Wenn du den Plugin-Overhead (Skills, SessionStart-Hooks, Permissions) nur im Facharbeit-Ordner haben willst, schalte es in anderen Projekten per `.claude/settings.local.json` explizit ab:
+
+```json
+{
+  "enabledPlugins": {
+    "academic-research@academic-research": false
+  }
+}
+```
+
+Die Datei ist `.gitignored` (persönliche Override, kein Team-Effekt). Im Facharbeit-Ordner bleibt das Plugin per Default aktiv — keine Extra-Konfiguration nötig.
+
+**Bestehenden Ordner nachträglich zur Facharbeit machen:** `touch academic_context.md` im Zielordner, dann `/academic-research:setup` aufrufen. Die Detection erkennt die Datei und ergänzt `CLAUDE.md`, `.gitignore`, Ordner — ohne Rückfrage, ohne vorhandene Daten zu überschreiben.
+
 ## Quick Start
 
 ```
 # In Claude Code:
 
+# 0. Neuen Facharbeit-Ordner aufsetzen (einmalig)
+mkdir ~/Facharbeit-XY && cd ~/Facharbeit-XY
+/academic-research:setup
+# → fragt "Hier einen Facharbeit-Arbeitsordner initialisieren?" → y
+# → legt academic_context.md, CLAUDE.md, .gitignore, kapitel/, literatur/, pdfs/ an
+
 # 1. Akademischen Kontext einrichten (einmalig)
 "Ich schreibe eine Bachelorarbeit über IT Lean Governance an der Leibniz FH"
-→ Academic Context Skill aktiviert sich automatisch
+→ Academic Context Skill aktiviert sich automatisch und füllt academic_context.md
 
 # 2. Literatur suchen
 /academic-research:search "DevOps Governance" --mode standard
@@ -348,15 +370,17 @@ Jedes Paper wird nach 5 Dimensionen bewertet:
 | `config/scoring.yaml` | 5D-Gewichtungen und Cluster-Schwellwerte (anpassbar) |
 | `config/browser_guides/*.md` | `browser-use`-Hinweise pro Datenbank (URL, Auth, Anti-Scraping-Warnungen) |
 
-## Memory-System
+## Kontext-Dateien (projekt-lokal ab v5.3.0)
 
-Der akademische Kontext wird in Claude Memory gespeichert und überlebt Sessions:
+Der akademische Kontext liegt git-versionierbar im Projekt-Ordner:
 
 | Datei | Inhalt |
 |-------|--------|
-| `academic_context.md` | Thesis-Profil, Gliederung, Forschungsfrage, Fortschritt |
-| `literature_state.md` | Literatur-Statistik, Kapitelzuordnung, Lücken |
-| `writing_state.md` | Aktuelles Kapitel, Wortzahl, Style-Scores |
+| `./academic_context.md` | Thesis-Profil, Gliederung, Forschungsfrage, Fortschritt |
+| `./literature_state.md` | Literatur-Statistik, Kapitelzuordnung, Lücken (lazy von `citation-extraction` angelegt) |
+| `./writing_state.md` | Aktuelles Kapitel, Wortzahl, Style-Scores (lazy von `chapter-writer` angelegt) |
+
+Vor v5.3.0 lagen diese Dateien in Claude-Memory — die v5.3.0-Migration kopiert sie in den Projekt-Ordner. Siehe CHANGELOG.
 
 ## Verzeichnisstruktur
 
