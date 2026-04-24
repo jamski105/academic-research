@@ -6,6 +6,18 @@ license: MIT
 
 # Akademischer Kontext
 
+## Übersicht
+
+Bootet den akademischen Kontext einer Arbeit: Thema, Forschungsfrage,
+Arbeitstyp, Methodik, Disziplin, Hochschule. Schreibt das Ergebnis in
+`./academic_context.md` als Single Source of Truth für alle anderen Skills.
+
+## Vorbedingungen
+
+Keine Vorbedingungen — dieser Skill bootet den Kontext. Alle anderen Skills
+setzen voraus, dass `./academic_context.md` existiert, und triggern diesen
+Skill bei Fehlen.
+
 Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verlassen. Dieser Skill liest und schreibt Kontext-Dateien im Projekt-Ordner, um Thema, Gliederung, Forschungsfrage, Methodik, Fortschritt und Schlüsselkonzepte der Arbeit des Users zu tracken.
 
 ## Keine Fabrikation
@@ -26,15 +38,15 @@ rate keine Werte, frag nach.
 
 Der gesamte Kontext liegt im aktuellen Projekt-Ordner (cwd). Drei Dateien werden verwaltet:
 
-### `academic_context.md` — Primäre Kontextdatei
+### `./academic_context.md` — Primäre Kontextdatei
 
 Enthält das Arbeitsprofil (Universität, Studiengang, Zitationsstil), die Arbeitsdetails (Typ, Thema, Forschungsfrage, Methodik, Betreuer, Abgabetermin), die Gliederungsstruktur, Schlüsselkonzepte und den Fortschritt.
 
-### `literature_state.md` — Literaturstatus
+### `./literature_state.md` — Literaturstatus
 
 Enthält Statistiken zu gesammelten Quellen (Gesamtzahl, Peer-Review-Anteil, Typenverteilung), Kapitel-Quellen-Zuordnung sowie identifizierte Lücken.
 
-### `writing_state.md` — Schreibfortschritt
+### `./writing_state.md` — Schreibfortschritt
 
 Enthält das aktuell geschriebene Kapitel, Wortzahlen und die jüngsten Style-Evaluator-Scores.
 
@@ -55,7 +67,7 @@ Existiert keine `./academic_context.md` im Projekt-Ordner, sammle im Gespräch f
 9. **Abgabetermin** — Datum (optional)
 10. **Gliederung** — Kapitelstruktur, falls schon geplant
 
-Schreibe die gesammelten Informationen in `academic_context.md` mit dieser Struktur:
+Schreibe die gesammelten Informationen in `./academic_context.md` mit dieser Struktur:
 
 ```markdown
 ---
@@ -64,13 +76,13 @@ description: Akademischer Kontext der aktuellen Abschlussarbeit
 type: project
 ---
 
-## Profil
+### Profil
 - Universität: [...]
 - Studiengang: [...]
 - Zitationsstil: [...]
 - Sprache: [...]
 
-## Arbeit
+### Arbeit
 - Typ: [...]
 - Thema: [...]
 - Forschungsfrage: [...]
@@ -79,13 +91,13 @@ type: project
 - Betreuer: [...]
 - Abgabetermin: [...]
 
-## Gliederung
+### Gliederung
 [Nummerierte Gliederung, falls vorhanden]
 
-## Schlüsselkonzepte
+### Schlüsselkonzepte
 [Schlüsselkonzepte mit Kurzbeschreibung]
 
-## Fortschritt
+### Fortschritt
 [Checkliste abgeschlossener/in Bearbeitung befindlicher Elemente]
 ```
 
@@ -102,12 +114,37 @@ Typische Updates:
 
 ### Unterstützung anderer Skills
 
-Wenn ein anderer Skill (Citation Extraction, Literature Gap Analysis, Advisor etc.) Kontext braucht:
+Wenn ein anderer Skill (`citation-extraction`, `literature-gap-analysis`, `advisor` etc.) Kontext braucht:
 
 1. Prüfe, ob `./academic_context.md` im Projekt-Ordner existiert
 2. Wenn ja — lies sie und nutze sie
 3. Wenn nein — informiere den User, dass Kontext benötigt wird, und biete das Setup an
 4. Gib nach dem Setup die Kontrolle an den aufrufenden Workflow zurück
+
+## Few-Shot-Beispiele
+
+### Stil: Forschungsfrage-Fixierung
+
+**Schlecht** (Grund: zu weit, nicht in Bachelor-Zeitrahmen beantwortbar):
+
+> "Wie wirkt sich Künstliche Intelligenz auf die Gesellschaft aus?"
+
+**Gut** (Grund: Scope + Kontext + messbare Dimensionen):
+
+> "Wie verändert der Einsatz generativer KI die Bewertungskriterien für
+> textbasierte Prüfungen an der FH Leibniz im Studienjahr 2024/25?"
+
+### Stil: Methodik-Notation
+
+**Schlecht** (Grund: Oberbegriff ohne Operationalisierung):
+
+> Methodik: Qualitative Forschung
+
+**Gut** (Grund: Konkret + zählbar + reproduzierbar):
+
+> Methodik: 12 semi-strukturierte Interviews (je 45 min) mit
+> Lehrenden an drei FH-Standorten, Auswertung per Inhaltsanalyse
+> nach Mayring.
 
 ## Wichtige Regeln
 
