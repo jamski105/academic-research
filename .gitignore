@@ -29,3 +29,7 @@ firebase-debug.log
 # Secrets
 .env
 .env.local
+
+# Brainstorming-Artefakte (persönliche Arbeitsprodukte, nicht Release-Inhalt)
+docs/superpowers/specs/
+docs/superpowers/plans/
