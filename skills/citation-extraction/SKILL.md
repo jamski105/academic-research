@@ -66,16 +66,16 @@ Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der
 
 **Output-Integration:** Die `citations[]`-Array-Eintraege der API enthalten `start_page_number` / `end_page_number` direkt — uebernimm sie in die Seitenangabe des Zitats (`S. X–Y`).
 
-## Memory-Dateien
+## Kontext-Dateien
 
 ### Lesen
 
-- `academic_context.md` — Gliederungsstruktur, Zitationsstil, Forschungsfrage
-- `literature_state.md` — Verfügbare Quellen, PDF-Download-Status, Kapitelzuordnungen
+- `./academic_context.md` — Gliederungsstruktur, Zitationsstil, Forschungsfrage
+- `./literature_state.md` — Verfügbare Quellen, PDF-Download-Status, Kapitelzuordnungen
 
 ### Schreiben
 
-- `literature_state.md` — Zitatanzahl und Extraktionsstatus pro Quelle aktualisieren
+- `./literature_state.md` — Zitatanzahl und Extraktionsstatus pro Quelle aktualisieren
 
 ## Voraussetzungen
 
