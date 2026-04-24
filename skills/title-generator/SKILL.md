@@ -6,11 +6,16 @@ license: MIT
 
 # Titel-Generator
 
-Analysiert eine fertige oder nahezu fertige akademische Arbeit und erzeugt 5-7 Titelvarianten mit Begründung. Liefert eine Mischung aus akademisch, kreativ und deskriptiv, abgestimmt auf Disziplin und Arbeitstyp.
+## Übersicht
+
+Schlägt 5-7 Titelvarianten vor (klassisch-akademisch, fragenbasiert,
+kreativ, ergebnisorientiert) mit Rationale und Stärke/Einschränkung.
+Basiert auf `./writing_state.md` (fertiger Text) und `./academic_context.md`
+(Forschungsfrage). Keine leeren Titel-Hülsen.
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
@@ -22,8 +27,8 @@ liefern, weil ich leere Titel-Hülsen ohne Verankerung liefern würde."
 
 In den Titel eingebaute Claims ohne Textbeleg machen die Arbeit vor der
 Korrektur angreifbar und riskieren Nachfragen im Kolloquium. Arbeite
-ausschließlich mit `writing_state.md` (fertiger Arbeitstext) und
-`academic_context.md` (Forschungsfrage, Kernergebnisse). Fehlen Daten: frag
+ausschließlich mit `./writing_state.md` (fertiger Arbeitstext) und
+`./academic_context.md` (Forschungsfrage, Kernergebnisse). Fehlen Daten: frag
 den User, rate nicht.
 
 ## Abgrenzung
@@ -126,7 +131,7 @@ Struktur: Titel als Forschungsfrage oder provokante Frage.
 
 Eigenschaften:
 - Spricht den Leser direkt an
-- Spiegelt die Forschungsfrage aus `academic_context.md`
+- Spiegelt die Forschungsfrage aus `./academic_context.md`
 - Passend für explorative oder argumentative Arbeiten
 
 ### Kategorie C: Konzeptuell / Kreativ (1-2 Titel)
@@ -182,7 +187,7 @@ Jeder generierte Titel ist zu prüfen auf:
 ## Wichtige Regeln
 
 - Den tatsächlichen Arbeitstext vor der Titelgenerierung lesen -- nie nur aus der Gliederung erzeugen, wenn Text da ist
-- Die in `academic_context.md` angegebene Sprache respektieren
+- Die in `./academic_context.md` angegebene Sprache respektieren
 - Niemals Clickbait oder sensationalistische Formulierungen vorschlagen
 - Titel vermeiden, die die Befunde überhöhen
 - Empfehlung mit Begründung an Hochschule und Arbeitstyp binden

@@ -6,24 +6,36 @@ license: MIT
 
 # Abgabe-Prüfer
 
-Prüft, ob eine akademische Arbeit alle formalen Abgabeanforderungen erfüllt: Seitenzahl, Formatierung, Quellenzahl, Pflichtabschnitte (Deckblatt, Inhaltsverzeichnis, Eidesstattliche Erklärung, Anhang) und hochschulspezifische Regeln.
+## Übersicht
+
+Prüft Formalia vor Abgabe: Pflichtabschnitte, Seitenumfang, Formatierung,
+Quellenzahl, Abbildungen/Tabellen, eidesstattliche Erklärung. Verwendet
+hochschulspezifische Regeln aus `references/<variant>.md` (Default:
+FH Leibniz).
 
 ## Vorbedingungen
 
-Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
 vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
 Skill und warte auf dessen Abschluss.
 
 Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne FH-Zuordnung in `academic_context.md` kann ich keinen Formalia-Check
+"Ohne FH-Zuordnung in `./academic_context.md` kann ich keinen Formalia-Check
 liefern, weil ich gegen falsches FH-Regelwerk prüfen würde."
 
 ## Keine Fabrikation
 
 Erfundene Formalia-Bestätigungen produzieren eine nicht-abgabefähige Arbeit,
 die bei Einreichung zurückgewiesen wird. Arbeite ausschließlich mit der
-Arbeits-PDF und den FH-Zuordnungen in `academic_context.md`. Fehlen Daten:
+Arbeits-PDF und den FH-Zuordnungen in `./academic_context.md`. Fehlen Daten:
 frag den User, rate nicht.
+
+## Abgrenzung
+
+Prüft Formalia der Enddatei gegen Hochschul-Regeln.
+Für Abstract, Keywords, Management-Summary → `abstract-generator`.
+Für den Titel selbst → `title-generator`.
+Für Kontextdaten (Arbeitstyp, Hochschule) → `academic-context`.
 
 ## Aktivierung dieses Skills
 
@@ -34,7 +46,7 @@ frag den User, rate nicht.
 
 ## Variant-Selector
 
-Lies `academic_context.md`, Feld `Universitaet` und/oder `Arbeitstyp`:
+Lies `./academic_context.md`, Feld `Universitaet` und/oder `Arbeitstyp`:
 
 | Kontext | Referenz-Datei |
 |---------|----------------|
@@ -48,7 +60,7 @@ Fehlt das Feld → `fh-leibniz.md` als Default (Plugin-Default ist FH Leibniz). 
 ## Kontext- und Referenzdateien
 
 - Lies `./academic_context.md` für Arbeitstyp, Universität, Studiengang und Zitationsstil
-- Lies `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` für hochschulspezifische Formalia
+- Lies `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` für hochschulspezifische Formalia
 - Lies `./writing_state.md` für aktuelle Wortzahlen und Kapitelstatus
 
 ## Checklisten-Dimensionen
@@ -77,7 +89,7 @@ Präsenz aller verpflichtenden Abschnitte in der korrekten Reihenfolge prüfen:
 
 ### 2. Seitenzahl und Umfang
 
-Gegen Anforderungen aus `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` prüfen:
+Gegen Anforderungen aus `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` prüfen:
 
 | Arbeitstyp       | Typischer Umfang (Seiten) |
 |------------------|---------------------------|
@@ -127,7 +139,7 @@ Prüfen:
 - Gesamtzahl eindeutiger Quellen in der Bibliografie
 - Alle In-Text-Zitate haben einen Eintrag im Literaturverzeichnis
 - Alle Literatureinträge werden im Text mindestens einmal zitiert
-- Zitierformat entspricht dem Stil aus `academic_context.md` (APA7, IEEE, Harvard etc.)
+- Zitierformat entspricht dem Stil aus `./academic_context.md` (APA7, IEEE, Harvard etc.)
 - Kein Kapitel ohne Zitate (Ausnahme: Strukturvorschau in der Einleitung und Ausblick im Fazit)
 
 ### 5. Abbildungen und Tabellen
@@ -143,15 +155,15 @@ Falls Abbildungen oder Tabellen vorhanden:
 
 Verifizieren:
 - Vorhanden als letzte Seite (oder gemäß hochschulspezifischer Platzierungsregel)
-- Enthält den geforderten Wortlaut gemäß `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md`
+- Enthält den geforderten Wortlaut gemäß `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md`
 - Enthält Ort-/Datum-Feld
 - Enthält Unterschriftenfeld
 
 ## Evaluations-Workflow
 
-1. `academic_context.md` lesen, um Arbeitstyp und Hochschule zu bestimmen
-2. `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` für spezifische Anforderungen lesen
-3. `writing_state.md` für den aktuellen Fertigstellungsgrad lesen
+1. `./academic_context.md` lesen, um Arbeitstyp und Hochschule zu bestimmen
+2. `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` für spezifische Anforderungen lesen
+3. `./writing_state.md` für den aktuellen Fertigstellungsgrad lesen
 4. Die Arbeit gegen die Checkliste prüfen
 5. Jede Dimension als PASS, PARTIAL oder FAIL scoren
 6. Ergebnisse strukturiert ausgeben
@@ -187,9 +199,23 @@ Verifizieren:
 
 ## Wichtige Regeln
 
-- Immer zuerst `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/leibniz-fh-requirements.md` prüfen -- hochschulspezifische Regeln überschreiben allgemeine Konventionen
+- Immer zuerst `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` prüfen -- hochschulspezifische Regeln überschreiben allgemeine Konventionen
 - Ist die Datei nicht verfügbar, deutsche Standard-Konventionen nutzen und vermerken, dass hochschulspezifische Prüfung nicht möglich war
 - Formatierung nie als korrekt annehmen ohne zu prüfen -- Formatfehler sind der häufigste Grund für Abgabeverzögerungen
 - Zwischen harten Anforderungen (FAIL = keine Abgabe möglich) und weichen Empfehlungen (PARTIAL = sollte behoben werden) unterscheiden
 - Ist die Arbeit noch nicht fertig, Check auf vorhandene Abschnitte laufen lassen und offene Prüfpunkte benennen
-- Ergebnisse auf Deutsch präsentieren, wenn `academic_context.md` Deutsch als Sprache angibt
+- Ergebnisse auf Deutsch präsentieren, wenn `./academic_context.md` Deutsch als Sprache angibt
+
+## Few-Shot-Beispiele
+
+### Stil: Formalia-Bewertung
+
+**Schlecht** (Grund: PASS ohne dokumentierte Prüfung):
+
+> "Formatierung ist OK."
+
+**Gut** (Grund: dimensionaler Score mit konkretem Prüfpunkt):
+
+> "Formatierung: PARTIAL. Zeilenabstand 1.0 statt geforderten 1.5
+> (Seiten 12-18). Fix: Absätze 12-18 markieren, Zeilenabstand in
+> Formatvorlage 'Standard' auf 1.5 setzen."
