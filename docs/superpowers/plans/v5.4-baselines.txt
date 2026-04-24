@@ -1,0 +1,138 @@
+skills/academic-context/SKILL.md:2:name: Academic Context
+skills/academic-context/SKILL.md:104:Wenn ein anderer Skill (Citation Extraction, Literature Gap Analysis, Advisor etc.) Kontext braucht:
+skills/chapter-writer/SKILL.md:2:name: Chapter Writer
+skills/submission-checker/SKILL.md:2:name: Submission Checker
+skills/title-generator/SKILL.md:2:name: Title Generator
+skills/source-quality-audit/SKILL.md:2:name: Source Quality Audit
+skills/literature-gap-analysis/SKILL.md:2:name: Literature Gap Analysis
+skills/literature-gap-analysis/SKILL.md:67:- Ein anderer Skill (Advisor, Chapter Writer, Citation Extraction) meldet unzureichende Quellenlage
+skills/methodology-advisor/SKILL.md:2:name: Methodology Advisor
+skills/plagiarism-check/SKILL.md:2:name: Plagiarism Check
+skills/plagiarism-check/SKILL.md:39:- Ein anderer Skill (z. B. Chapter Writer) fordert ein Plagiats-Gate an
+skills/style-evaluator/SKILL.md:2:name: Style Evaluator
+skills/style-evaluator/SKILL.md:53:- Ein anderer Skill (z. B. Chapter Writer) fordert ein Post-Write-Qualitätsgate an
+skills/abstract-generator/SKILL.md:2:name: Abstract Generator
+skills/citation-extraction/SKILL.md:2:name: Citation Extraction
+skills/citation-extraction/SKILL.md:186:Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill "Literature Gap Analysis" für ein umfassendes Review triggern.
+skills/research-question-refiner/SKILL.md:2:name: Research Question Refiner
+skills/research-question-refiner/SKILL.md:89:- Ein anderer Skill (Advisor, Academic Context) erkennt eine schwache Forschungsfrage
+README.md:165:→ Academic Context Skill aktiviert sich automatisch und füllt academic_context.md
+README.md:175:→ Style Evaluator Skill aktiviert sich automatisch
+README.md:264:| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) projekt-lokal in `./academic_context.md` | — |
+README.md:266:| **Chapter Writer** | "Kapitel schreiben", "verfassen", "entwerfen", "Textarbeit" | Kapitel-Entwurf mit Literatur, Zitaten und Kontext aus der Gliederung | — |
+README.md:267:| **Citation Extraction** | "Zitate finden", "zitieren", "Literaturverzeichnis" | Zitat-Extraktion aus PDFs, Formatierung in APA7/IEEE/Harvard/Chicago/BibTeX | `citation-styles.md` |
+README.md:273:| **Style Evaluator** | "Text prüfen", "Stil-Check", "KI-Erkennung", "menschlich klingen" | 9-Metriken Textanalyse + Anti-AI-Detection mit Verbesserungsvorschlägen | `scoring-rubric.md` |
+README.md:274:| **Plagiarism Check** | "Plagiat prüfen", "Textähnlichkeit", "zu nah am Original" | Quellen-Nähe-Erkennung, Paraphrase-Check gegen Originaltexte | — |
+README.md:275:| **Submission Checker** | "formale Prüfung", "abgabefertig", "Formatierung prüfen" | Formale Anforderungen validieren (Leibniz FH spezifisch: Deckblatt, Ränder, Erklärung) | `leibniz-fh-requirements.md` |
+README.md:276:| **Source Quality Audit** | "Quellenqualität", "Quellen-Check", "peer-reviewed Anteil" | Quellenbalance-Analyse: Peer-Review-%, Alter, Diversität, Empfehlungen | — |
+README.md:282:| **Literature Gap Analysis** | "Literaturlücken", "fehlende Quellen", "Abdeckung prüfen" | Per-Kapitel Abdeckungsbericht: welche Kapitel brauchen mehr Literatur | — |
+README.md:283:| **Methodology Advisor** | "Methodik", "Forschungsdesign", "qualitativ vs quantitativ" | Methodenwahl mit Vergleich, Begründungshilfe und Dokumentation | `methodology-catalog.md` |
+README.md:284:| **Research Question Refiner** | "Forschungsfrage formulieren", "Fragestellung präzisieren" | Forschungsfrage schärfen: zu breit/eng/unbeantwortbar erkennen, Teilfragen ableiten | — |
+README.md:290:| **Title Generator** | "Titel suchen", "Titelvorschläge", "Arbeitstitel" | 5–7 Titeloptionen mit Begründung aus fertiger Arbeit generieren | — |
+README.md:291:| **Abstract Generator** | "Abstract schreiben", "Zusammenfassung", "Management Summary" | Abstract DE+EN, Keywords, Management Summary aus fertigem Text | — |
+skills/academic-context/SKILL.md:28:### `academic_context.md` — Primäre Kontextdatei
+skills/academic-context/SKILL.md:32:### `literature_state.md` — Literaturstatus
+skills/academic-context/SKILL.md:36:### `writing_state.md` — Schreibfortschritt
+skills/academic-context/SKILL.md:57:Schreibe die gesammelten Informationen in `academic_context.md` mit dieser Struktur:
+skills/chapter-writer/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/chapter-writer/SKILL.md:17:"Ohne Kapitelstruktur in `literature_state.md` kann ich keinen passenden
+skills/chapter-writer/SKILL.md:25:(Note 5). Arbeite ausschließlich mit Zitaten aus `literature_state.md` und
+skills/chapter-writer/SKILL.md:92:- `academic_context.md` — Arbeitsprofil, Forschungsfrage, Gliederung, Schlüsselkonzepte
+skills/chapter-writer/SKILL.md:93:- `literature_state.md` — Verfügbare Quellen, Kapitel-Quellen-Zuordnungen
+skills/chapter-writer/SKILL.md:94:- `writing_state.md` — Aktueller Schreibfortschritt, Wortzahlen, Style-Scores
+skills/chapter-writer/SKILL.md:98:- `writing_state.md` — Wortzahlen, aktuelles Kapitel und Fortschritt nach dem Schreiben aktualisieren
+skills/chapter-writer/SKILL.md:148:Beim Zitieren die Daten aus dem Citation-Extraction-Skill nutzen (inline-formatiert nach dem in `academic_context.md` konfigurierten Stil). Paper über das formatierte Zitat referenzieren. Folgende Integrationsmuster werden unterstützt:
+skills/chapter-writer/SKILL.md:180:1. `writing_state.md` lesen (veraltete Überschreibungen vermeiden)
+skills/chapter-writer/SKILL.md:211:1. `literature_state.md` lesen — welche PDFs liegen im Session-Pfad?
+skills/chapter-writer/SKILL.md:213:3. Output-Text enthaelt `citations[]`-Bloecke — diese im Kapitel-Text als Inline-Zitate nach Variant-Zitierstil (aus `academic_context.md`) rendern.
+skills/chapter-writer/SKILL.md:247:- **Fortschritt tracken** — Nach freigegebenen Drafts immer `writing_state.md` aktualisieren
+skills/advisor/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/advisor/SKILL.md:24:ausschließlich mit `academic_context.md` (Arbeitstyp, Forschungsfrage,
+skills/advisor/SKILL.md:25:Supervisor-Vorgaben) und `literature_state.md`. Fehlen Daten: frag den User,
+skills/advisor/SKILL.md:41:3. **Literaturbasis ≥ 15 Quellen** in `literature_state.md`
+skills/advisor/SKILL.md:44:6. **Supervisor identifiziert** — Name in `academic_context.md`
+skills/advisor/SKILL.md:45:7. **Abgabetermin fixiert** — konkretes Datum in `academic_context.md`
+skills/advisor/SKILL.md:60:- `academic_context.md` — Arbeitsprofil, Forschungsfrage, Methodik, bestehende Gliederung
+skills/advisor/SKILL.md:61:- `literature_state.md` — Vorhandene Quellen und Kapitelzuordnungen (zur Literaturabdeckungs-Prüfung)
+skills/advisor/SKILL.md:65:- `academic_context.md` — Aktualisiere den Abschnitt `## Gliederung` nach Gliederungsänderungen
+skills/advisor/SKILL.md:107:Falls `literature_state.md` existiert, Gliederung gegen vorhandene Quellen abgleichen. Pro Kapitel berichten:
+skills/advisor/SKILL.md:128:Erzeuge den Zeitplan auf Basis des Abgabetermins aus `academic_context.md`. Rechne vom Abgabetermin rückwärts und teile grob auf: 20 % Recherche, 10 % Gliederung/Exposé, 50 % Schreiben, 10 % Revision, 10 % Puffer.
+skills/advisor/SKILL.md:134:1. `academic_context.md` erneut lesen (veraltete Überschreibungen vermeiden)
+skills/submission-checker/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/submission-checker/SKILL.md:17:"Ohne FH-Zuordnung in `academic_context.md` kann ich keinen Formalia-Check
+skills/submission-checker/SKILL.md:24:Arbeits-PDF und den FH-Zuordnungen in `academic_context.md`. Fehlen Daten:
+skills/submission-checker/SKILL.md:36:Lies `academic_context.md`, Feld `Universitaet` und/oder `Arbeitstyp`:
+skills/submission-checker/SKILL.md:129:- Zitierformat entspricht dem Stil aus `academic_context.md` (APA7, IEEE, Harvard etc.)
+skills/submission-checker/SKILL.md:151:1. `academic_context.md` lesen, um Arbeitstyp und Hochschule zu bestimmen
+skills/submission-checker/SKILL.md:153:3. `writing_state.md` für den aktuellen Fertigstellungsgrad lesen
+skills/submission-checker/SKILL.md:194:- Ergebnisse auf Deutsch präsentieren, wenn `academic_context.md` Deutsch als Sprache angibt
+skills/title-generator/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/title-generator/SKILL.md:24:ausschließlich mit `writing_state.md` (fertiger Arbeitstext) und
+skills/title-generator/SKILL.md:25:`academic_context.md` (Forschungsfrage, Kernergebnisse). Fehlen Daten: frag
+skills/title-generator/SKILL.md:128:- Spiegelt die Forschungsfrage aus `academic_context.md`
+skills/title-generator/SKILL.md:184:- Die in `academic_context.md` angegebene Sprache respektieren
+skills/source-quality-audit/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/source-quality-audit/SKILL.md:17:"Ohne Quellenliste in `literature_state.md` kann ich kein Qualitätsurteil
+skills/source-quality-audit/SKILL.md:24:Arbeite ausschließlich mit den Einträgen aus `literature_state.md` und
+skills/source-quality-audit/SKILL.md:39:Beide Skills greifen auf `literature_state.md` zu, aber mit unterschiedlichem
+skills/source-quality-audit/SKILL.md:133:1. Schlüsselkonzepte aus Forschungsfrage und Gliederung (via `academic_context.md`) extrahieren
+skills/source-quality-audit/SKILL.md:147:1. `literature_state.md` für das Quelleninventar lesen
+skills/source-quality-audit/SKILL.md:148:2. `academic_context.md` für den Forschungskontext lesen
+skills/source-quality-audit/SKILL.md:195:- Audit auf tatsächlichen Daten aus `literature_state.md` basieren, nicht auf Annahmen
+skills/source-quality-audit/SKILL.md:196:- Ist `literature_state.md` unvollständig, den User um die Quellenliste bitten
+skills/source-quality-audit/SKILL.md:202:- `literature_state.md` mit Audit-Ergebnissen und identifizierten Lücken aktualisieren
+skills/literature-gap-analysis/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/literature-gap-analysis/SKILL.md:17:"Ohne Themenliste in `academic_context.md` kann ich keine Gap-Bewertung
+skills/literature-gap-analysis/SKILL.md:20:Fehlt `literature_state.md` oder ist leer → schlage zuerst `/search` vor, um
+skills/literature-gap-analysis/SKILL.md:27:ausschließlich mit `literature_state.md` (Quelleninventar) und
+skills/literature-gap-analysis/SKILL.md:28:`academic_context.md` (Themenliste). Fehlen Daten: frag den User, rate nicht.
+skills/literature-gap-analysis/SKILL.md:33:- Fehlende Schlüsselthemen aus `academic_context.md`
+skills/literature-gap-analysis/SKILL.md:42:Beide Skills greifen auf `literature_state.md` zu, aber mit unterschiedlichem
+skills/literature-gap-analysis/SKILL.md:50:1. **Coverage** — Anteil abgedeckter Schlüsselthemen aus `academic_context.md`
+skills/literature-gap-analysis/SKILL.md:74:- `academic_context.md` — Gliederung, Forschungsfrage, Unterfragen, Schlüsselkonzepte
+skills/literature-gap-analysis/SKILL.md:75:- `literature_state.md` — Quelleninventar, Kapitelzuordnungen, PDF-Status, Zitatanzahlen
+skills/literature-gap-analysis/SKILL.md:79:- `literature_state.md` — Ergebnisse der Gap-Analyse und Coverage-Scores aktualisieren
+skills/literature-gap-analysis/SKILL.md:184:1. `literature_state.md` lesen (veraltete Überschreibungen vermeiden)
+skills/methodology-advisor/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/methodology-advisor/SKILL.md:25:ausschließlich mit `academic_context.md` und dem Methoden-Katalog unter
+skills/methodology-advisor/SKILL.md:60:- `academic_context.md` — Forschungsfrage, Unterfragen, Arbeitstyp, Thema, vorhandene Methodenwahl
+skills/methodology-advisor/SKILL.md:64:- `academic_context.md` — Methodik-Feld nach der Entscheidung aktualisieren
+skills/methodology-advisor/SKILL.md:178:1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+skills/plagiarism-check/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/plagiarism-check/SKILL.md:17:"Ohne Quellenlisten in `literature_state.md` kann ich kein Similarity-Urteil
+skills/plagiarism-check/SKILL.md:26:mit dem User-Text und den PDF-Extrakten aus `literature_state.md`. Fehlen
+skills/plagiarism-check/SKILL.md:89:2. In `literature_state.md` referenzierte Quellen-Snippets
+skills/style-evaluator/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/style-evaluator/SKILL.md:17:"Ohne Text-Korpus-Kontext in `writing_state.md` kann ich kein Stil-Urteil
+skills/style-evaluator/SKILL.md:24:mit dem eingereichten User-Text und den Metriken aus `writing_state.md`.
+skills/style-evaluator/SKILL.md:57:Lies `academic_context.md`, Feld `Sprache`:
+skills/style-evaluator/SKILL.md:144:2. `writing_state.md` und `academic_context.md` für Kontext lesen
+skills/style-evaluator/SKILL.md:149:7. `writing_state.md` mit den neuen Scores aktualisieren
+skills/style-evaluator/SKILL.md:193:- Deutsche Labels im Output, wenn `academic_context.md` Deutsch als Sprache angibt
+skills/style-evaluator/SKILL.md:194:- Score-Historie in `writing_state.md` pflegen, um Verbesserung über die Zeit zu zeigen
+skills/abstract-generator/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/abstract-generator/SKILL.md:24:leistung. Arbeite ausschließlich mit Inhalten aus `writing_state.md`
+skills/abstract-generator/SKILL.md:25:(Arbeitstext) und `academic_context.md` (Forschungsfrage, Methodik). Fehlen
+skills/abstract-generator/SKILL.md:114:- Länge: 150-250 Wörter (oder wie in `academic_context.md` spezifiziert)
+skills/abstract-generator/SKILL.md:166:1. Lies `academic_context.md` für formale Anforderungen und Kontext
+skills/abstract-generator/SKILL.md:243:- Falls `academic_context.md` zusätzliche Anforderungen nennt (z. B. strukturiertes Abstract-Format), diesen Vorrang vor den Defaults geben
+skills/citation-extraction/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/citation-extraction/SKILL.md:17:"Ohne Quellenliste in `literature_state.md` kann ich keine Zitate mit
+skills/citation-extraction/SKILL.md:25:ausschließlich mit den geladenen PDFs und Einträgen aus `literature_state.md`.
+skills/citation-extraction/SKILL.md:43:Lies `academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Variant-Datei:
+skills/citation-extraction/SKILL.md:82:Existiert `academic_context.md` nicht, informiere den User und triggere zuerst den Academic-Context-Skill. Der Zitationsstil muss vor der Formatierung bekannt sein.
+skills/citation-extraction/SKILL.md:97:Lies `literature_state.md`, um zu ermitteln, welche Paper ein heruntergeladenes PDF haben. PDFs liegen unter `~/.academic-research/sessions/*/pdfs/`.
+skills/citation-extraction/SKILL.md:118:Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus `academic_context.md` nutzen, um Paper zu Kapiteln zu matchen.
+skills/citation-extraction/SKILL.md:139:Formatiere Zitate inline nach dem in `academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
+skills/citation-extraction/SKILL.md:173:1. `literature_state.md` lesen (veraltete Überschreibungen vermeiden)
+skills/research-question-refiner/SKILL.md:12:Bevor du startest: Prüfe, ob `academic_context.md` und `literature_state.md`
+skills/research-question-refiner/SKILL.md:17:"Ohne Thema und Kontext in `academic_context.md` kann ich keine Fragen-
+skills/research-question-refiner/SKILL.md:25:ausschließlich mit `academic_context.md` und `literature_state.md`. Fehlen
+skills/research-question-refiner/SKILL.md:95:- `academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
+skills/research-question-refiner/SKILL.md:99:- `academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
+skills/research-question-refiner/SKILL.md:105:Lies `academic_context.md`. Existiert sie nicht, triggere den Academic-Context-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
+skills/research-question-refiner/SKILL.md:221:1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+--- Summary ---
+Title-Case Skill-Refs:       32
+Kontext-Datei-Refs OHNE ./:      102
+Kontext-Datei-Refs MIT ./:       24
