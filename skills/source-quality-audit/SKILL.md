@@ -6,6 +6,13 @@ license: MIT
 
 # Quellenqualitäts-Audit
 
+## Übersicht
+
+Bewertet Qualität, Balance, Aktualität und Diversität der Literaturbasis
+einer Arbeit. Scort 5 Dimensionen (0-100), identifiziert Schwächen,
+liefert priorisierte Verbesserungsempfehlungen. Fokus auf Einzelquellen
+— Korpus-Coverage macht `literature-gap-analysis`.
+
 Bewertet die Gesamtqualität, Balance, Aktualität und Diversität der Literaturbasis einer akademischen Arbeit. Scort jede Dimension (0-100), identifiziert Schwächen und liefert konkrete Verbesserungsempfehlungen.
 
 ## Vorbedingungen
@@ -145,8 +152,8 @@ Bewertet, ob alle wichtigen Aspekte der Forschungsfrage durch Literatur abgedeck
 
 ## Evaluations-Workflow
 
-1. `literature_state.md` für das Quelleninventar lesen
-2. `academic_context.md` für den Forschungskontext lesen
+1. `./literature_state.md` für das Quelleninventar lesen
+2. `./academic_context.md` für den Forschungskontext lesen
 3. Jede Quelle klassifizieren (peer-reviewt, semi-akademisch, nicht-akademisch, Web)
 4. Jede der 5 Dimensionen bepunkten
 5. Gewichteten Gesamtwert berechnen: `total = 0.25*peer_review + 0.20*recency + 0.20*diversity + 0.15*web_ratio + 0.20*coverage`
@@ -200,4 +207,30 @@ Status-Schwellen: OK >= 70, WARN 50-69, FAIL < 50.
 - Standardwerke (z. B. Porter 1985, Rogers 2003) als "Grundlagenwerk" flaggen und von Aktualitätsabzügen ausnehmen
 - Empfehlungen müssen spezifisch sein ("2-3 peer-reviewte Quellen zu [konkretes Thema] ergänzen"), nicht generisch ("mehr Quellen finden")
 - Disziplinnormen beachten: Informatik wertet Konferenzbeiträge hoch; BWL bevorzugt Journal-Artikel; Rechtswissenschaft schätzt Kommentare und Urteile
-- `literature_state.md` mit Audit-Ergebnissen und identifizierten Lücken aktualisieren
+- `./literature_state.md` mit Audit-Ergebnissen und identifizierten Lücken aktualisieren
+
+## Few-Shot-Beispiele
+
+### Stil: Peer-Review-Bewertung
+
+**Schlecht** (Grund: pauschale Aussage ohne Klassifikation):
+
+> "Quellen sehen ganz OK aus."
+
+**Gut** (Grund: Dimensionaler Score mit konkretem Problem):
+
+> "Peer-Review-Anteil: 62 % (Score 78). WARN: 3 nicht-akademische
+> Web-Quellen (Blog-Post, Unternehmens-Whitepaper) ohne
+> institutionelle Autorität — durch peer-reviewte Alternativen
+> ersetzen."
+
+### Stil: Aktualitäts-Bewertung
+
+**Schlecht** (Grund: ignoriert Grundlagenwerke):
+
+> "Porter 1985 ist alt, bitte aktuellere Quelle nutzen."
+
+**Gut** (Grund: erkennt Standardwerk-Status):
+
+> "Porter (1985) ist als Grundlagenwerk markiert — von Aktualitäts-
+> Abzügen ausgenommen. Kernquellen nach 2020 liegen bei 55 % → Score 82."

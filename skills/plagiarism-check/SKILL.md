@@ -6,6 +6,13 @@ license: MIT
 
 # Plagiatsprüfung
 
+## Übersicht
+
+Prüft Textähnlichkeit gegen die Quellen in `./literature_state.md`.
+Markiert wörtliche Übernahmen und paraphrasierte Passagen, die nicht
+ausreichend zitiert sind. Nicht zuständig für Stil-Bewertung allgemein
+(→ `style-evaluator`).
+
 Prüft akademischen Text auf unbeabsichtigte Nähe zum Quellmaterial. Erkennt zu nahe Paraphrasen, unzureichend umformulierte Passagen und fehlende Quellenangaben via N-Gramm-Overlap-Detection. Schlägt Umformulierungen für markierte Passagen vor.
 
 ## Vorbedingungen
@@ -37,7 +44,7 @@ Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 - Der User reicht Text zur Prüfung gegen seine Quellen ein
 - Der User paraphrasiert eine Quelle und möchte verifizieren
 - Qualitätssicherung vor der finalen Abgabe
-- Ein anderer Skill (z. B. Chapter Writer) fordert ein Plagiats-Gate an
+- Ein anderer Skill (z. B. `chapter-writer`) fordert ein Plagiats-Gate an
 
 ## Kontext-Dateien
 
@@ -48,6 +55,9 @@ Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 ## Skripte
 
 Nutze `${CLAUDE_PLUGIN_ROOT}/scripts/text_utils.py` für Tokenisierung (`tokenize()`-Funktion) und Textnormalisierung.
+
+Hinweis: `text_utils.py` liefert deterministische Tokenisierung und
+n-gram-Matching. Inline-Berechnung wäre unzuverlässig (Reproducibility).
 
 ## Detektions-Methoden
 
@@ -167,3 +177,17 @@ Beim Vorschlagen von Umformulierungen für geflaggte Passagen:
 - Gängige akademische Phrasen ("in diesem Kontext", "die Ergebnisse zeigen") erzeugen erwarteten Overlap -- Standardkollokationen von der Flagging-Logik ausnehmen
 - Direktzitate mit korrekter Quellenangabe sind kein Plagiat -- richtig zitierte Passagen von der Analyse ausnehmen
 - Eine Liste fachspezifischer Standardphrasen pflegen, um False Positives zu reduzieren
+
+## Few-Shot-Beispiele
+
+### Stil: Paraphrase-Erkennung
+
+**Schlecht** (Grund: "Ähnlichkeit" ohne Threshold/Evidenz):
+
+> "Dieser Abschnitt wirkt etwas ähnlich zu Müller 2023."
+
+**Gut** (Grund: Satz-genauer Match mit Quelle):
+
+> "Zeile 42-44 zeigt 7-Wort-Match zu Müller (2023, S. 214):
+> 'Cloud-Migration verlangt iterative Einführung' → unzitiert.
+> Empfehlung: Direktzitat mit Seitenangabe oder Paraphrase."
