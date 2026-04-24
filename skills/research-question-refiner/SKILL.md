@@ -6,6 +6,12 @@ license: MIT
 
 # Forschungsfragen-Schärfer
 
+## Übersicht
+
+Verfeinert bestehende Forschungsfragen auf Spezifität, Beantwortbarkeit,
+Falsifizierbarkeit und Einzigartigkeit. Liefert 2-3 Alternativen je
+Problem-Typ (zu weit / zu eng / nicht falsifizierbar / mehrdimensional).
+
 Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob eine Frage zu breit, zu eng oder nicht beantwortbar ist. Vergleicht mit ähnlichen Arbeiten, um Originalität und Machbarkeit sicherzustellen.
 
 ## Vorbedingungen
@@ -93,17 +99,17 @@ Für Einbettung in die Gliederung → `advisor`.
 
 ### Lesen
 
-- `academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
+- `./academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
 
 ### Schreiben
 
-- `academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
+- `./academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies `academic_context.md`. Existiert sie nicht, triggere den Academic-Context-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
+Lies `./academic_context.md`. Existiert sie nicht, triggere den `academic-context`-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
 
 ### 2. Aktuelle Frage bewerten
 
@@ -219,7 +225,7 @@ Verfeinerte Forschungsfrage und Unterfragen zur Freigabe präsentieren. Einschli
 
 Nach der Bestätigung durch den User:
 
-1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+1. `./academic_context.md` lesen (veraltete Überschreibungen vermeiden)
 2. `Forschungsfrage` mit der neuen Hauptfrage aktualisieren
 3. `Unterfragen` mit den neuen Unterfragen aktualisieren
 4. Entsprechen Unterfragen Kapiteln, `## Gliederung` anpassen
@@ -244,3 +250,4 @@ Diese Templates als Einstiege anbieten, wenn der User noch keine Frage hat:
 - **Thema des Users respektieren** — Innerhalb seines Gebiets verfeinern, nicht umleiten
 - **An Methodik anbinden** — Sicherstellen, dass die verfeinerte Frage mit der gewählten oder verfügbaren Methode beantwortbar ist
 - **Vor dem Speichern bestätigen** — Immer explizite Freigabe einholen, bevor in `./academic_context.md` geschrieben wird
+- **Methodik-Änderung → `methodology-advisor`** — Wenn die verfeinerte Frage eine andere Methodik erfordert, an `methodology-advisor` delegieren

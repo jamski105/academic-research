@@ -6,6 +6,13 @@ license: MIT
 
 # Methodik-Berater
 
+## Übersicht
+
+Berät bei der Methodenwahl: qualitativ, quantitativ, Mixed-Methods, oder
+spezielle Verfahren (Delphi, SLR, Grounded Theory). Mappt Forschungsfrage
+auf geeignete Methoden und skizziert Operationalisierung. Nicht zuständig
+für Schärfung der Forschungsfrage (→ `research-question-refiner`).
+
 Hilft bei Wahl, Begründung und Dokumentation der Forschungsmethodik. Vergleicht Ansätze, prüft die Passung zur Forschungsfrage und produziert Methodik-Texte, die akademischen Standards genügen.
 
 ## Vorbedingungen
@@ -26,6 +33,12 @@ für das Forschungsdesign und einer methodisch angreifbaren Arbeit. Arbeite
 ausschließlich mit `academic_context.md` und dem Methoden-Katalog unter
 `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md`.
 Fehlen Daten: frag den User, rate nicht.
+
+## Abgrenzung
+
+Wählt und begründet Methoden passend zur Forschungsfrage.
+Für Schärfung der Forschungsfrage selbst → `research-question-refiner`.
+Für Einbettung in die Gliederung → `advisor`.
 
 ## Methoden-Scoring-Matrix
 
@@ -58,11 +71,11 @@ Bei Gleichstand: Supervisor-Präferenz entscheidet. Dokumentiere Scoring in der 
 
 ### Lesen
 
-- `academic_context.md` — Forschungsfrage, Unterfragen, Arbeitstyp, Thema, vorhandene Methodenwahl
+- `./academic_context.md` — Forschungsfrage, Unterfragen, Arbeitstyp, Thema, vorhandene Methodenwahl
 
 ### Schreiben
 
-- `academic_context.md` — Methodik-Feld nach der Entscheidung aktualisieren
+- `./academic_context.md` — Methodik-Feld nach der Entscheidung aktualisieren
 
 ## Referenz
 
@@ -176,7 +189,7 @@ Empfohlene Struktur für das Methodik-Kapitel:
 
 Nach Bestätigung des Users:
 
-1. `academic_context.md` lesen (veraltete Überschreibungen vermeiden)
+1. `./academic_context.md` lesen (veraltete Überschreibungen vermeiden)
 2. Das Feld `Methodik` mit der gewählten Methodik aktualisieren
 3. Zentrale Methoden-Referenzen zu `## Schlüsselkonzepte` hinzufügen, falls noch nicht vorhanden
 
@@ -188,3 +201,19 @@ Nach Bestätigung des Users:
 - **Ehrlich zu Limitationen** — Jede Methode hat Schwächen; diese transparent darstellen
 - **Betreuer-Präferenzen berücksichtigen** — Wenn erwähnt, in die Empfehlung einbeziehen
 - **Bei Bedarf revidieren** — Die Methodik kann sich im Projektverlauf anpassen; das dem User mitteilen
+
+## Few-Shot-Beispiele
+
+### Stil: Fragentyp → Methode
+
+**Schlecht** (Grund: Methode ohne Passung zum Fragentyp):
+
+> Forschungsfrage: "Welche Faktoren erklären KI-Adoption in KMU?"
+> Methode: Experimentelles Design mit Kontrollgruppe.
+
+**Gut** (Grund: Methode folgt Fragentyp und Datenlage):
+
+> Forschungsfrage: "Welche Faktoren erklären KI-Adoption in KMU?"
+> Methode: Qualitative Interviews (8–12) + qualitative Inhaltsanalyse,
+> weil explorativer Fragentyp und geringe Vorstrukturierung bestehender
+> Theorie.
