@@ -4,6 +4,49 @@ Alle bemerkenswerten Änderungen an diesem Plugin werden hier dokumentiert.
 
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [5.4.0] — 2026-04-24
+
+Finale Review-Runde gegen anthropics/skills Cookbook (Commit `5128e186`).
+29 Findings aus Tri-Agent-Review (plugin-validator, Cross-Skill-Consistency,
+Cookbook-Gap-Analyse) in einem Release.
+
+### Changed
+
+- Skill-Namen auf kebab-case (alle 13 Skills): `Abstract Generator` → `abstract-generator` etc. Matches Ordnername (Anthropic-Konvention).
+- `./`-Prefix für Kontext-Datei-Referenzen durchgängig (`./academic_context.md`, `./literature_state.md`, `./writing_state.md`).
+- `## Übersicht` als erste H2 in allen 13 Skills (Cookbook-Pattern).
+- Few-Shot-Beispiele (Schlecht/Gut) in 10 bisher few-shot-losen Skills.
+- Skill-Cross-Referenzen in Prosa: Title Case → `` `kebab-case` ``.
+- `chapter-writer`, `citation-extraction` Trigger erweitert (Fazit/Methodik/Theorie/Literaturverzeichnis-erstellen).
+
+### Fixed
+
+- `submission-checker`: Legacy-Datei `leibniz-fh-requirements.md` entfernt, Variant-Selector (`references/<variant>.md`) aktiviert, `## Abgrenzung`-Block ergänzt.
+- `methodology-advisor`: Fehlender `## Abgrenzung`-Block ergänzt.
+- `agents/query-generator.md`, `agents/relevance-scorer.md`: `tools: []` Allowlist ergänzt (vorher: erbten alle Tools).
+- `commands/history.md`: `disable-model-invocation: true` ergänzt.
+- `agents/quality-reviewer.md`: ASCII-Umlaute (`fuer`, `Begruendung` etc.) zu echten Umlauten, Passiv-Regex enger gefasst (`\bwerden?\b` → `\bwerd(en|est|et)\b`).
+
+### Removed
+
+- `settings.json` (Root): wurde von Claude Code nicht geladen.
+- `.mcp.json` (Root): leer, Noise.
+- `templates/` (Root): toter Code, 0 Referenzen.
+- `config/scoring.yaml`: obsolet seit E2 (Scoring läuft inline im Agent).
+- `skills/submission-checker/leibniz-fh-requirements.md`: Legacy, durch Variant-Selector ersetzt.
+
+### Internal
+
+- `scripts/templates/` → `scripts/bootstrap/` umbenannt (Klarheit gegen Top-Level `templates/`).
+- `compatibility:`-Frontmatter-Feld bei API-abhängigen Skills (`chapter-writer`, `citation-extraction`).
+- `license: MIT` in allen 13 Skills.
+- `owner.email` + `owner.url` in beiden Manifesten.
+- `docs/superpowers/specs/` + `plans/` aus Git-Tracking entfernt (via `.gitignore`, lokal bleiben).
+- `.pytest_cache/` aus Tracking + `.gitignore`.
+- 2 neue Regression-Guards: `tests/test_skill_naming.py`, `tests/test_cross_references.py`.
+- Spec-Link `https://agentskills.io/specification` im README.
+- Venv-Pfad-Contract (`~/.academic-research/venv/`) im README dokumentiert.
+
 ## [5.3.0] — 2026-04-24
 
 ### ⚠️ BREAKING — Kontext-Ablage geändert

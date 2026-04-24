@@ -20,6 +20,15 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 - Akademischer Kontext wandert von Claude-Memory in projekt-lokale Dateien (`./academic_context.md` im Arbeitsordner). Migrations-Helper im `/setup` kopiert bestehenden Memory-Kontext einmalig ins Projekt.
 - Alle 13 Skills + `query-generator`-Agent lesen jetzt aus dem Projekt-Ordner.
 
+**v5.4.0** — Final Review / Cookbook-Alignment:
+- Skill-Namen auf kebab-case (Anthropic-Konvention, matches Ordnername).
+- `## Übersicht`-Section als erste H2 in allen 13 Skills.
+- Few-Shot-Beispiele (Schlecht/Gut) in 10 bisher few-shot-losen Skills.
+- Cross-Referenzen in Prosa auf `` `kebab-case` `` umgestellt.
+- Dead Code weg: `settings.json` (Root), `.mcp.json`, `templates/` (Root), `config/scoring.yaml`.
+- Neue Regression-Guards (`test_skill_naming`, `test_cross_references`).
+- Brainstorming-Artefakte (`docs/superpowers/specs/` + `plans/`) aus Git-Tracking.
+
 Vollständige Migration siehe [CHANGELOG.md](CHANGELOG.md).
 
 <details>
