@@ -15,6 +15,11 @@ Modulares akademisches Forschungs-Toolkit für Claude Code. 13 selbstaktivierend
 
 **v5.0.1** — `/academic-research:setup` wurde zum vollständigen One-Click-Installer (installiert `browser-use` automatisch via `uv` oder `pipx`).
 
+**v5.3.0** (Breaking) — Projekt-Bootstrap + Kontext-Migration:
+- `/academic-research:setup` erkennt leere Ordner und legt auf Rückfrage eine schlanke Facharbeit-Struktur an (`academic_context.md`-Stub, generierte `CLAUDE.md`, `.gitignore`, `kapitel/`, `literatur/`, `pdfs/`).
+- Akademischer Kontext wandert von Claude-Memory in projekt-lokale Dateien (`./academic_context.md` im Arbeitsordner). Migrations-Helper im `/setup` kopiert bestehenden Memory-Kontext einmalig ins Projekt.
+- Alle 13 Skills + `query-generator`-Agent lesen jetzt aus dem Projekt-Ordner.
+
 Vollständige Migration siehe [CHANGELOG.md](CHANGELOG.md).
 
 <details>
@@ -256,7 +261,7 @@ Skills aktivieren sich **automatisch**, wenn Claude passende Keywords in der Kon
 
 | Skill | Aktiviert bei | Funktion | Ressourcen |
 |-------|-------------|----------|------------|
-| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) persistent in Claude Memory | — |
+| **Academic Context** | "meine Arbeit", "mein Thema", "Thesis", "Forschungsfrage" | Speichert Thesis-Kontext (Thema, Gliederung, Methodik, Fortschritt) projekt-lokal in `./academic_context.md` | — |
 | **Advisor** | "Gliederung", "Exposé", "Struktur", "Kapitelplanung" | Interaktive Gliederungs- und Exposé-Erstellung im Dialog | `expose-template.md` |
 | **Chapter Writer** | "Kapitel schreiben", "verfassen", "entwerfen", "Textarbeit" | Kapitel-Entwurf mit Literatur, Zitaten und Kontext aus der Gliederung | — |
 | **Citation Extraction** | "Zitate finden", "zitieren", "Literaturverzeichnis" | Zitat-Extraktion aus PDFs, Formatierung in APA7/IEEE/Harvard/Chicago/BibTeX | `citation-styles.md` |
@@ -299,7 +304,7 @@ Agents werden von Commands/Skills als Subagents gestartet für Aufgaben, die LLM
 
 ---
 
-## Scripts (4 Python-Module)
+## Scripts (5 Python-Module)
 
 Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.academic-research/venv/`). Frühere Skripte für Scoring, Zitatformatierung, Excel und Stil-Analyse wurden in Skills/Agents verlagert (siehe CHANGELOG v5.0.0).
 
@@ -309,6 +314,7 @@ Deterministische Logik ohne LLM-Aufruf, ausgeführt im isolierten venv (`~/.acad
 | `dedup.py` | Deduplizierung nach DOI-Match + Titel-Ähnlichkeit (Levenshtein) |
 | `pdf.py` | PDF-Download (5-Tier-Fallback) + Textextraktion (PyPDF2) + TF-IDF-Volltextindex |
 | `text_utils.py` | Shared Text-Utilities (Normalisierung, Tokenisierung) |
+| `project_bootstrap.py` | Auto-Detect + Anlage der Facharbeit-Struktur (wird von `setup.sh` Schritt 7 aufgerufen) |
 
 ---
 
