@@ -87,7 +87,7 @@ Für Einbettung in die Gliederung → `advisor`.
 - Der User möchte eine bestehende Forschungsfrage verfeinern oder schärfen
 - Der User ist unsicher, ob seine Frage gut genug ist
 - Ein Betreuer hat die Forschungsfrage als problematisch markiert
-- Ein anderer Skill (Advisor, Academic Context) erkennt eine schwache Forschungsfrage
+- Ein anderer Skill (`advisor`, `academic-context`) erkennt eine schwache Forschungsfrage
 
 ## Kontext-Dateien
 

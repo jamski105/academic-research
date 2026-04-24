@@ -65,7 +65,7 @@ Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehl
 
 - Der User fragt nach Literatur-Abdeckung oder Vollständigkeit
 - Der User möchte wissen, welche Kapitel mehr Quellen brauchen
-- Ein anderer Skill (Advisor, Chapter Writer, Citation Extraction) meldet unzureichende Quellenlage
+- Ein anderer Skill (`advisor`, `chapter-writer`, `citation-extraction`) meldet unzureichende Quellenlage
 - Der User bereitet ein Betreuer-Gespräch vor und möchte einen Statusüberblick
 
 ## Kontext-Dateien

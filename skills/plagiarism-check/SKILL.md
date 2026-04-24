@@ -37,7 +37,7 @@ Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 - Der User reicht Text zur Prüfung gegen seine Quellen ein
 - Der User paraphrasiert eine Quelle und möchte verifizieren
 - Qualitätssicherung vor der finalen Abgabe
-- Ein anderer Skill (z. B. Chapter Writer) fordert ein Plagiats-Gate an
+- Ein anderer Skill (z. B. `chapter-writer`) fordert ein Plagiats-Gate an
 
 ## Kontext-Dateien
 

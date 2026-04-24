@@ -185,7 +185,7 @@ Während der Extraktion auf diese Muster achten:
 - **Fehlende Gegenargumente** — Wenn alle Zitate dieselbe Position stützen, nach Gegenpositionen suchen
 - **Veraltete Quellen** — Zitate aus Quellen älter als 10 Jahre flaggen, außer es sind Standardwerke
 
-Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill "Literature Gap Analysis" für ein umfassendes Review triggern.
+Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill `literature-gap-analysis` für ein umfassendes Review triggern.
 
 ## Export-Formate
 

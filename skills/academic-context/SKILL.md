@@ -102,7 +102,7 @@ Typische Updates:
 
 ### Unterstützung anderer Skills
 
-Wenn ein anderer Skill (Citation Extraction, Literature Gap Analysis, Advisor etc.) Kontext braucht:
+Wenn ein anderer Skill (`citation-extraction`, `literature-gap-analysis`, `advisor` etc.) Kontext braucht:
 
 1. Prüfe, ob `./academic_context.md` im Projekt-Ordner existiert
 2. Wenn ja — lies sie und nutze sie
