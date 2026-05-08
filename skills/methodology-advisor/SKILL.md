@@ -6,33 +6,17 @@ license: MIT
 
 # Methodik-Berater
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Berät bei der Methodenwahl: qualitativ, quantitativ, Mixed-Methods, oder
 spezielle Verfahren (Delphi, SLR, Grounded Theory). Mappt Forschungsfrage
 auf geeignete Methoden und skizziert Operationalisierung. Nicht zuständig
 für Schärfung der Forschungsfrage (→ `research-question-refiner`).
-
-Hilft bei Wahl, Begründung und Dokumentation der Forschungsmethodik. Vergleicht Ansätze, prüft die Passung zur Forschungsfrage und produziert Methodik-Texte, die akademischen Standards genügen.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Forschungsfrage und Datenzugriffs-Infos kann ich keine Methoden-
-Empfehlung liefern, weil ich Methoden empfehlen würde, die die Frage nicht
-beantworten."
-
-## Keine Fabrikation
-
-Erfundene Methodik-Standards, Begründungen oder Vergleiche führen zu Note 5
-für das Forschungsdesign und einer methodisch angreifbaren Arbeit. Arbeite
-ausschließlich mit `./academic_context.md` und dem Methoden-Katalog unter
-`${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md`.
-Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
@@ -60,32 +44,20 @@ Gesamt-Score = Summe der 4 Dimensionen (Min 4, Max 20).
 
 Bei Gleichstand: Supervisor-Präferenz entscheidet. Dokumentiere Scoring in der Ausgabe, nicht nur die Empfehlung.
 
-## Aktivierung dieses Skills
-
-- Der User muss eine Forschungsmethodik wählen
-- Der User möchte qualitative vs. quantitative Ansätze vergleichen
-- Der User muss seine Methodenwahl gegenüber Betreuer oder Exposé begründen
-- Der User schreibt das Methodik-Kapitel und braucht strukturelle Orientierung
-
 ## Kontext-Dateien
 
-### Lesen
-
-- `./academic_context.md` — Forschungsfrage, Unterfragen, Arbeitstyp, Thema, vorhandene Methodenwahl
-
-### Schreiben
-
-- `./academic_context.md` — Methodik-Feld nach der Entscheidung aktualisieren
+- Lesen: `./academic_context.md` (Forschungsfrage, Arbeitstyp, Methodik-Wahl)
+- Schreiben: `./academic_context.md` — Methodik-Feld aktualisieren
 
 ## Referenz
 
-Konsultiere den Methoden-Katalog unter `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md` für detaillierte Beschreibungen, Stärken, Schwächen und Einsatzszenarien jedes Methodentyps.
+Methoden-Katalog: `${CLAUDE_PLUGIN_ROOT}/skills/methodology-advisor/methodology-catalog.md`
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies `./academic_context.md`. Existiert sie nicht, triggere zuerst den Academic-Context-Skill. Extrahiere: Forschungsfrage, Unterfragen, Arbeitstyp, Thema und eine eventuell vorhandene Methodik-Wahl.
+Lies `./academic_context.md`. Fehlt sie: `academic-context`-Skill triggern. Extrahiere: Forschungsfrage, Unterfragen, Arbeitstyp, Thema, Methodik-Wahl.
 
 ### 2. Typ der Forschungsfrage einschätzen
 
@@ -187,11 +159,7 @@ Empfohlene Struktur für das Methodik-Kapitel:
 
 ### 7. Entscheidung speichern
 
-Nach Bestätigung des Users:
-
-1. `./academic_context.md` lesen (veraltete Überschreibungen vermeiden)
-2. Das Feld `Methodik` mit der gewählten Methodik aktualisieren
-3. Zentrale Methoden-Referenzen zu `## Schlüsselkonzepte` hinzufügen, falls noch nicht vorhanden
+Nach User-Bestätigung: `./academic_context.md` lesen, Feld `Methodik` aktualisieren, Methoden-Referenzen zu `## Schlüsselkonzepte` hinzufügen.
 
 ## Wichtige Regeln
 

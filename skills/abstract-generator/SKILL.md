@@ -6,31 +6,16 @@ license: MIT
 
 # Abstract-Generator
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Erzeugt Abstract, Keywords und Management-Summary aus einer abgeschlossenen
 akademischen Arbeit. Liefert konkrete Formulierungen, keine Platzhalter,
 und respektiert Hochschul-Längenvorgaben.
-
-Liest eine fertige oder nahezu fertige akademische Arbeit und erzeugt strukturierte Abstracts, Zusammenfassungen und Keyword-Listen. Produziert Output-Varianten passend zum Arbeitstyp und den Hochschul-Anforderungen.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Forschungsfrage und Methodik-Angabe kann ich kein belastbares Abstract
-liefern, weil ich ein erfundenes Thema beschreiben würde."
-
-## Keine Fabrikation
-
-Erfundene Ergebnisse, Methoden oder Zahlen im Abstract sind ein Täuschungs-
-versuch nach FH-Leibniz-Prüfungsordnung und führen zum Verlust der Prüfungs-
-leistung. Arbeite ausschließlich mit Inhalten aus `./writing_state.md`
-(Arbeitstext) und `./academic_context.md` (Forschungsfrage, Methodik). Fehlen
-Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
@@ -91,17 +76,10 @@ Für den Arbeitstitel selbst → `title-generator`.
 > keine Kausalaussage möglich. Folgeforschung sollte experimentelles Design
 > mit Kontrollgruppe prüfen."
 
-## Aktivierung dieses Skills
-
-- Der User fragt nach einem Abstract (deutsch oder englisch)
-- Der User braucht eine Management Summary bzw. Executive Summary
-- Der User braucht eine Keyword-Liste
-- Der User fragt nach einer Zusammenfassung seiner Arbeit
-
 ## Kontext-Dateien
 
-- Lies `./academic_context.md` für Universität, Arbeitstyp, Sprache, Forschungsfrage, Methodik und formale Anforderungen
-- Lies `./writing_state.md` für den Fertigstellungsstatus der Kapitel und die während des Schreibens identifizierten Kernaussagen
+- `./academic_context.md` — Universität, Arbeitstyp, Sprache, Forschungsfrage, Methodik, formale Anforderungen
+- `./writing_state.md` — Kapitelstatus, Kernaussagen
 
 ## Deliverables
 
@@ -170,16 +148,11 @@ Erzeuge zwei Keyword-Sets:
 
 ## Generierungs-Workflow
 
-1. Lies `./academic_context.md` für formale Anforderungen und Kontext
-2. Lies den kompletten Arbeitstext (oder alle verfügbaren Kapitel)
-3. Identifiziere: Forschungsfrage, Methodik, Kernergebnisse, Hauptbeitrag, Limitationen, Implikationen
-4. Entscheide auf Basis des Arbeitstyps, welche Deliverables zu erzeugen sind:
-   - Bachelor-/Masterarbeit: Abstract (DE), Abstract (EN), Management Summary, Keywords
-   - Haus-/Seminararbeit: Abstract (DE), Keywords
-   - Facharbeit: nur Abstract (DE) (kurze Version, 100-150 Wörter)
-5. Entwirf jedes Deliverable gemäß der oben beschriebenen Struktur und Vorgaben
-6. Gegencheck: Sicherstellen, dass das Abstract den tatsächlichen Inhalt der Arbeit widerspiegelt (nicht den geplanten Inhalt aus der Gliederung)
-7. Präsentiere alle Deliverables in strukturiertem Output
+1. Lies `./academic_context.md` + Arbeitstext
+2. Identifiziere: Forschungsfrage, Methodik, Kernergebnisse, Hauptbeitrag, Limitationen
+3. Deliverables nach Arbeitstyp: Bachelor-/Masterarbeit → DE+EN+ManSummary+Keywords; Hausarbeit → DE+Keywords; Facharbeit → nur DE (100-150W)
+4. Entwirf, dann Gegencheck: Abstract spiegelt tatsächlichen Inhalt (nicht Gliederungsplan)
+5. Strukturierten Output präsentieren
 
 ## Output-Format
 

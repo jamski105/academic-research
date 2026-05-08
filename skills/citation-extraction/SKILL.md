@@ -7,6 +7,11 @@ license: MIT
 
 # Zitat-Extraktion
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Extrahiert und formatiert Zitate aus PDFs und Volltexten. Liefert
@@ -14,38 +19,11 @@ Literaturverzeichnisse im Zitationsstil aus `./academic_context.md`
 (APA7, IEEE, Harvard etc.). Arbeitet eng mit der Claude-API
 `documents[] + citations.enabled`.
 
-Extrahiert relevante Zitate aus akademischen PDFs, formatiert sie im gewünschten Stil und organisiert Zitatdaten nach Kapitel. Nutzt den Agent `quote-extractor` für die Extraktion und die Inline-Zitationslogik (siehe Abschnitt "Zitat-Formatierung" unten).
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenliste in `./literature_state.md` kann ich keine Zitate mit
-Zuordnung liefern, weil ich Zitate zu nicht-registrierten Quellen bauen
-würde."
-
-## Keine Fabrikation
-
-Erfundene Zitate, Seitenzahlen oder Quellenangaben werden in der Plagiats-
-prüfung als nicht-auffindbar markiert und gelten als Täuschungsversuch. Arbeite
-ausschließlich mit den geladenen PDFs und Einträgen aus `./literature_state.md`.
-Fehlen Daten: frag den User, rate nicht.
-
 ## Abgrenzung
 
 Extrahiert und formatiert wörtliche Zitate aus PDFs für einzelne Belege.
 Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 (ruft `citation-extraction` bei Bedarf auf).
-
-## Aktivierung dieses Skills
-
-- Der User möchte Zitate oder Belege aus heruntergeladenen PDFs extrahieren
-- Der User braucht eine Bibliografie oder ein Literaturverzeichnis
-- Der User sucht Belege für eine konkrete Aussage oder ein bestimmtes Kapitel
-- Der User möchte Zitate nach Kapitel oder Thema ordnen
 
 ## Variant-Selector
 
@@ -58,9 +36,7 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 | Chicago | `references/chicago.md` |
 | DIN 1505-2 | `references/din1505.md` |
 
-Ist `Zitationsstil` leer → `apa.md` als Default. Ist der Wert unbekannt → Rueckfrage an User mit Varianten-Liste.
-
-**Wie laden:** `Read skills/citation-extraction/references/<variant>.md` — die Datei enthaelt alle Formatierungs-Regeln fuer Inline-Zitate und Literaturverzeichnis.
+Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
 
 ## Citations-API
 
@@ -77,18 +53,8 @@ Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der
 
 ## Kontext-Dateien
 
-### Lesen
-
-- `./academic_context.md` — Gliederungsstruktur, Zitationsstil, Forschungsfrage
-- `./literature_state.md` — Verfügbare Quellen, PDF-Download-Status, Kapitelzuordnungen
-
-### Schreiben
-
-- `./literature_state.md` — Zitatanzahl und Extraktionsstatus pro Quelle aktualisieren
-
-## Voraussetzungen
-
-Existiert `./academic_context.md` nicht, informiere den User und triggere zuerst den `academic-context`-Skill. Der Zitationsstil muss vor der Formatierung bekannt sein.
+- Lesen: `./academic_context.md` (Zitationsstil), `./literature_state.md` (Quellen, PDFs)
+- Schreiben: `./literature_state.md` (Zitatanzahl, Extraktionsstatus aktualisieren)
 
 ## Core-Workflow
 

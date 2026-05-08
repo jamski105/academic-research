@@ -6,6 +6,11 @@ license: MIT
 
 # Literatur-Lückenanalyse
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Analysiert die Literaturbasis auf Abdeckungslücken (fehlende Themen,
@@ -13,27 +18,9 @@ Autor*innen-Gruppen, Methoden, Zeiträume). Identifiziert disziplinäre
 Blindstellen und liefert konkrete Such-Queries für `/search`. Ergänzt
 den `source-quality-audit` (der bewertet Einzelquellen, nicht Korpus).
 
-Analysiert die Thesis-Gliederung gegen die bestehende Literatursammlung und erzeugt einen kapitelweisen Abdeckungsbericht. Identifiziert gut abgedeckte Themen, fehlende Quellen, fehlende Gegenargumente und methodische Lücken. Bietet gezielte Suche zur Lückenschließung an.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Themenliste in `./academic_context.md` kann ich keine Gap-Bewertung
-liefern, weil ich gegen unbekannte Ziele vergleichen würde."
-
-Fehlt `./literature_state.md` oder ist leer → schlage zuerst `/search` vor, um
-einen Quellenbestand aufzubauen, und trigger diesen Skill danach erneut.
-
-## Keine Fabrikation
-
-Erfundene Abdeckungs-Statements oder Quellenlisten führen zu einem
-Plagiatsverdacht, wenn behauptete Quellen nicht existieren. Arbeite
-ausschließlich mit `./literature_state.md` (Quelleninventar) und
-`./academic_context.md` (Themenliste). Fehlen Daten: frag den User, rate nicht.
+> **Skill-spezifische Vorbedingung:** Fehlt `./literature_state.md` oder ist
+> leer → schlage zuerst `/search` vor, um einen Quellenbestand aufzubauen,
+> und trigger diesen Skill danach erneut.
 
 ## Abgrenzung
 
@@ -68,32 +55,16 @@ Berechne und berichte jede dieser 3 Metriken:
 Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL + bei FAIL: konkreter
 Verbesserungsvorschlag (welches Thema, welche Autor*innen, welcher Zeitraum fehlt).
 
-## Aktivierung dieses Skills
-
-- Der User fragt nach Literatur-Abdeckung oder Vollständigkeit
-- Der User möchte wissen, welche Kapitel mehr Quellen brauchen
-- Ein anderer Skill (`advisor`, `chapter-writer`, `citation-extraction`) meldet unzureichende Quellenlage
-- Der User bereitet ein Betreuer-Gespräch vor und möchte einen Statusüberblick
-
 ## Kontext-Dateien
 
-### Lesen
-
-- `./academic_context.md` — Gliederung, Forschungsfrage, Unterfragen, Schlüsselkonzepte
-- `./literature_state.md` — Quelleninventar, Kapitelzuordnungen, PDF-Status, Zitatanzahlen
-
-### Schreiben
-
-- `./literature_state.md` — Ergebnisse der Gap-Analyse und Coverage-Scores aktualisieren
+- Lesen: `./academic_context.md` (Gliederung, Schlüsselkonzepte), `./literature_state.md` (Quelleninventar, Kapitelzuordnungen)
+- Schreiben: `./literature_state.md` — Coverage-Scores und Gap-Ergebnisse aktualisieren
 
 ## Core-Workflow
 
 ### 1. Laden und Gegenüberstellen
 
-Beide Kontext-Dateien (`./academic_context.md`, `./literature_state.md`) im Projekt-Ordner lesen. Eine Matrix aufbauen:
-
-- **Zeilen** — Kapitel und Unterabschnitte aus der Gliederung
-- **Spalten** — Coverage-Dimensionen (siehe unten)
+Beide Kontext-Dateien lesen. Matrix: Zeilen = Kapitel/Unterabschnitte, Spalten = Coverage-Dimensionen (siehe unten).
 
 ### 2. Coverage-Dimensionen
 
@@ -167,20 +138,11 @@ Mit User-Freigabe `/search` für jede Lücke mit den empfohlenen Queries trigger
 
 ### 7. Literaturstatus aktualisieren
 
-Nach der Analyse:
-
-1. `./literature_state.md` lesen (veraltete Überschreibungen vermeiden)
-2. Ergebnisse schreiben: pro-Kapitel-Coverage-Scores, identifizierte Lücken, Empfehlungen
-3. Zeitstempel der letzten Analyse aktualisieren
+`./literature_state.md` lesen, dann Coverage-Scores, Lücken, Empfehlungen und Zeitstempel schreiben.
 
 ## Vergleich mit ähnlichen Arbeiten
 
-Bei der Vollständigkeitsbewertung berücksichtigen:
-
-- **Standardreferenzen** — Sind die üblichen Grundlagenwerke des Felds enthalten?
-- **Aktuelle Reviews** — Gibt es aktuelle Literaturreviews oder Meta-Analysen?
-- **Methodenreferenzen** — Werden Standard-Methodenlehrbücher zitiert?
-- **Institutionelle Anforderungen** — Erfüllt die Quellenzahl das für den Arbeitstyp erwartete Minimum?
+Prüfen auf: Standardreferenzen des Felds, aktuelle Literaturreviews/Meta-Analysen, Methodenlehrbücher, institutionelle Mindest-Quellenzahl.
 
 Typische Minima nach Arbeitstyp:
 
