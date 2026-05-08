@@ -57,21 +57,21 @@ class VaultDB:
             return self._conn
         return self._open(self.db_path)
 
-    def load_vec_extension(self) -> bool:
+    def load_vec_extension(self, conn: Optional[sqlite3.Connection] = None) -> bool:
         """Versucht sqlite_vec Extension zu laden. Gibt True bei Erfolg zurueck."""
         vec_path = os.environ.get("SQLITE_VEC_PATH", "")
-        conn = self._get_conn()
-        conn.enable_load_extension(True)
+        target = conn if conn is not None else self._get_conn()
+        target.enable_load_extension(True)
         try:
             if vec_path:
-                conn.load_extension(vec_path)
+                target.load_extension(vec_path)
             else:
-                conn.load_extension("sqlite_vec")
+                target.load_extension("sqlite_vec")
             self.vec_available = True
         except Exception:
             self.vec_available = False
         finally:
-            conn.enable_load_extension(False)
+            target.enable_load_extension(False)
         return self.vec_available
 
     def init_schema(self) -> None:
@@ -80,8 +80,8 @@ class VaultDB:
         conn = self._get_conn()
         own_conn = self._conn is None
 
-        # vec-Extension laden (optional)
-        self.load_vec_extension()
+        # vec-Extension auf derselben Connection laden (optional)
+        self.load_vec_extension(conn)
 
         # Basis-Schema ausfuehren (ohne vec0-Block — der ist auskommentiert)
         conn.executescript(ddl)
