@@ -119,11 +119,13 @@ client.messages.create(
         {
             "type": "text",
             "text": "<Agent-System-Prompt aus dieser Datei>",
-            "cache_control": {"type": "ephemeral"},
+            "cache_control": {"type": "ephemeral", "ttl": "1h"},
         }
     ],
     messages=[{"role": "user", "content": json.dumps(batch_input)}],
 )
 ```
+
+**Wichtig:** Seit 2026-03-06 ist der Anthropic-Default-TTL 5 Minuten. Ohne explizites `"ttl": "1h"` verfaellt der Cache bei Batch-Pausen — daher immer `"ttl": "1h"` setzen.
 
 **Messbarer Nutzen:** Nach dem 2. Batch-Call liefert die API `cache_read_input_tokens > 0`. Token-Ersparnis skaliert linear mit Batch-Anzahl.
