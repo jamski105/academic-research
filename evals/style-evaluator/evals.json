@@ -1,8 +1,0 @@
-{
-  "component": "style-evaluator",
-  "component_type": "skill",
-  "prompts": [
-    {"id": "se-01", "input": "Text: 'Es wird durchgefuehrt und es wird analysiert und es wird evaluiert.' Wie hoch ist die Passiv-Quote?", "expected": {"type": "substring", "value": "Passiv"}, "mode": "both"},
-    {"id": "se-02", "input": "Berechne Satzlaengen-Median fuer: 'Kurz. Auch kurz. Sehr kurz.'", "expected": {"type": "regex", "value": "(Median|abgehackt)"}, "mode": "with_skill"}
-  ]
-}

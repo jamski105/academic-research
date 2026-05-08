@@ -1,8 +1,0 @@
-{
-  "component": "advisor",
-  "component_type": "skill",
-  "prompts": [
-    {"id": "ad-01", "input": "Bewerte diese Gliederung: 1 Einleitung, 2 Grundlagen, 3 Fazit", "expected": {"type": "substring", "value": "Methodik"}, "mode": "with_skill"},
-    {"id": "ad-02", "input": "Decken diese Kapitel die Forschungsfrage 'DevOps-Adoption in KMU' ab?", "expected": {"type": "substring", "value": "Kapitel"}, "mode": "both"}
-  ]
-}

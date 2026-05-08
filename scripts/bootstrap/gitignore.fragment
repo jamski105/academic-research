@@ -1,5 +1,0 @@
-# academic-research
-pdfs/*
-!pdfs/.gitkeep
-.DS_Store
-.claude/settings.local.json

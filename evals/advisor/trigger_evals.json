@@ -1,5 +1,0 @@
-{
-  "component": "advisor",
-  "should_trigger": ["Pruefe meine Gliederung", "Gliederung pruefen, bitte", "Ist meine Argumentation schluessig?", "Schau dir mein Exposee an", "Expose feedback", "outline review", "Hilf mir, die Kapitel zu strukturieren", "Review meiner Argumentationskette", "Pruefe, ob meine Unterkapitel sinnvoll sind", "Bewerte meinen Gliederungsentwurf"],
-  "should_not_trigger": ["Schärfe meine Forschungsfrage", "Welche Methodik passt?", "Schreib das Theorie-Kapitel", "Finde Paper zu meinem Thema", "Erzeuge Abstract", "Pruefe Formatierung", "Bewerte meinen Stil", "Welche Quellen fehlen?", "Gib mir einen Titel", "Pruefe Plagiat"]
-}

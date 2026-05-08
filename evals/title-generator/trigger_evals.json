@@ -1,5 +1,0 @@
-{
-  "component": "title-generator",
-  "should_trigger": ["Titelvorschlaege fuer meine Arbeit", "Arbeitstitel bitte", "Titel vorschlagen", "Thesis title Ideen", "Untertitel fuer Kapitel 3", "Welcher Titel passt?", "3 Titelvarianten generieren", "Kurzer und langer Titel", "Titel schaerfer formulieren", "Title suggestion"],
-  "should_not_trigger": ["Abstract erzeugen", "Keywords vorschlagen", "Gliederung pruefen", "Kapitel schreiben", "Zitat formatieren", "Forschungsfrage schaerfen", "Methodik waehlen", "Paper suchen", "Formatierung", "Plagiat pruefen"]
-}
