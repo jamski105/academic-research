@@ -7,7 +7,7 @@ github_label: null
 started_at: "2026-05-08T12:06:17Z"
 last_action_at: "2026-05-08T12:14:00Z"
 config_hash: "7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2"
-phase_global: decomposition
+phase_global: l1-dispatch
 lock:
   issue_number: null
   current_holder:
@@ -18,24 +18,90 @@ lock:
 state_branch:
   name: "mmp/state/v6.0"
   last_pushed_sha: null
-chunks: []
+chunks:
+  - id: A
+    summary: "Vault MCP-Server Skeleton"
+    tickets: [62]
+    branch: "feat/v6.0-A"
+    worktree: "/Users/j65674/Repos/academic-research-v6.0-A"
+    phase: brainstorming
+    depends_on: []
+  - id: B
+    summary: "F1 Token-Tracks (Files-API + 1h-TTL-Cache)"
+    tickets: [65, 66]
+    branch: "feat/v6.0-B"
+    worktree: "/Users/j65674/Repos/academic-research-v6.0-B"
+    phase: brainstorming
+    depends_on: []
+  - id: C
+    summary: "Skills schlanker — Shared preamble"
+    tickets: [67]
+    branch: "feat/v6.0-C"
+    worktree: "/Users/j65674/Repos/academic-research-v6.0-C"
+    phase: brainstorming
+    depends_on: []
+  - id: D
+    summary: "/humanize Slash-Command"
+    tickets: [69]
+    branch: "feat/v6.0-D"
+    worktree: "/Users/j65674/Repos/academic-research-v6.0-D"
+    phase: brainstorming
+    depends_on: []
+  - id: E
+    summary: "git init Auto-Setup im Bootstrap"
+    tickets: [70]
+    branch: "feat/v6.0-E"
+    worktree: "/Users/j65674/Repos/academic-research-v6.0-E"
+    phase: brainstorming
+    depends_on: []
+  - id: F
+    summary: "Vault-Pipeline-Integration"
+    tickets: [63]
+    branch: "feat/v6.0-F"
+    worktree: null
+    phase: pending
+    depends_on: [A, B, C]
+  - id: G
+    summary: "humanizer-de Pipeline-Integration"
+    tickets: [68]
+    branch: "feat/v6.0-G"
+    worktree: null
+    phase: pending
+    depends_on: [B, D]
+  - id: H
+    summary: "Vault Hook Verbatim-Guard"
+    tickets: [64]
+    branch: "feat/v6.0-H"
+    worktree: null
+    phase: pending
+    depends_on: [A, F, E]
+chunks_deferred:
+  - id: I
+    summary: "Baseline-Eval-Run v5.2.0"
+    tickets: [55]
+    reason: "Requires interactive ANTHROPIC_API_KEY; user-handled in later wave"
 open_questions:
   - source: "ticket-improver #65"
     text: "ensure_uploaded in scripts/ oder im Agenten-Prompt von quote-extractor.md eingebettet?"
+    deferred_to: "spec phase (L1)"
   - source: "ticket-improver #65"
     text: "Token-Vergleich für -75%-AC: existing eval, neuer pytest mit Token-Counter, oder Log-Vergleich?"
+    deferred_to: "spec phase (L1)"
   - source: "ticket-improver #67"
     text: "Welche Include-Syntax: Frontmatter `include:`, Symlink, Copy-on-build?"
+    deferred_to: "spec phase (L1)"
   - source: "ticket-improver #67"
     text: "-500 Token-Messung: kompilierter Skill-Prompt oder .md-Rohgröße?"
-  - source: "ticket-improver #69"
-    text: "Default-Modus für /humanize ohne --mode-Flag: normal oder deep?"
-  - source: "ticket-improver #69"
-    text: "humanizer-de fehlend: Hinweis+Abbruch oder weicher Skip?"
-  - source: "ticket-improver #70"
-    text: "git init auch im idempotent-Pfad (kein .git/, aber academic_context.md vorhanden), oder nur fresh?"
-  - source: "ticket-improver #70"
-    text: "Stop-Hook-Hinweis: nur mit Repo, oder immer (auch ohne git init)?"
+    deferred_to: "spec phase (L1)"
+user_decisions:
+  - q: "#69 /humanize Default-Modus ohne --mode-Flag"
+    a: "normal"
+  - q: "#69 humanizer-de fehlend: Verhalten"
+    a: "Auto-installieren von Marketplace"
+  - q: "#70 git init: Pfad-Scope"
+    a: "Nur fresh-Pfad"
+  - q: "#70 Stop-Hook-Hinweis"
+    a: "Nur wenn Git-Repo erkannt"
 ticket_improvements:
   - id: 65
     mode: live
