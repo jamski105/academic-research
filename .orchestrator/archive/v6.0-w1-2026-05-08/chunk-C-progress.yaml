@@ -1,0 +1,84 @@
+chunk_id: C
+ticket: "#67"
+milestone: v6.0-Wave-1
+branch: feat/v6.0-C
+worktree: /Users/j65674/Repos/academic-research-v6.0-C
+
+phase: ready-for-pr
+
+gate_b_revisions: 1
+last_commit_sha: "0084b8b"
+
+artifacts:
+  spec_path: specs/v6.0/C.md
+  plan_path: specs/v6.0/C-plan.md
+  preamble_file: skills/_common/preamble.md
+  baseline_json: tests/baselines/skill_sizes.json
+
+open_questions:
+  - id: C-Q3
+    chunk_id: C
+    phase: spec
+    status: RESOLVED
+    resolution: "AC gelockert auf -350T/Skill (= 1400 Zeichen) per L0-Decision 2026-05-08"
+
+test_results:
+  total: 123
+  passed: 123
+  failed: 0
+  skipped: 113
+
+decisions_made:
+  - id: Q1-include-mechanism
+    question: "Welche Include-Mechanik?"
+    decision: "Explizite Read-Anweisung im SKILL.md Body-Anfang. Kein nativer Include-Support in plugin.json. Kein Build-Skript."
+    rationale: "plugin.json hat kein include:-Feld. Symlinks nicht portierbar. Copy-on-build braucht Build-System. Read-Anweisung ist sofort wirksam."
+
+  - id: Q2-token-measurement
+    question: "-500 Token-Messung: kompilierter Prompt oder .md-Rohgröße?"
+    decision: ".md-Rohgröße als Proxy. ~4 Zeichen = 1 Token (cl100k-Näherung)."
+    rationale: "Kein Build-Compiler vorhanden. Skills werden direkt als .md gelesen."
+
+  - id: gate-b-r1-finding1
+    question: "Pfad A oder B für bestehende Tests (test_no_fabrication_section, test_precondition_section)?"
+    decision: "Pfad A: Tests umgestellt auf Preamble-Reference-Check (Blockquote-Pattern)."
+    rationale: "Saubere Trennung, größere Token-Ersparnis. Pfad B hält unnötigen Redundanztest aufrecht."
+
+scope_findings:
+  skills_count: 13  # xlsx vendored, excluded
+  skills_list:
+    - abstract-generator
+    - academic-context
+    - advisor
+    - chapter-writer
+    - citation-extraction
+    - literature-gap-analysis
+    - methodology-advisor
+    - plagiarism-check
+    - research-question-refiner
+    - source-quality-audit
+    - style-evaluator
+    - submission-checker
+    - title-generator
+  files_total: 17  # +2 vs. vorher: tests/baselines/skill_sizes.json + tests/_capture_skill_sizes.py
+  browser_dom_note: "Browser-DOM-Code liegt in commands/search.md (außerhalb Dateiboundary). Chunk C fügt nur Hinweis in preamble.md ein."
+  token_analysis:
+    method: "len(SKILL.md text) / 4 (cl100k proxy)"
+    all_4_blocks_removable_min: 391  # academic-context, title-generator
+    all_4_blocks_removable_max: 786  # literature-gap-analysis
+    all_4_blocks_removable_avg: 525
+    skills_reaching_500T: 3  # literature-gap-analysis, research-question-refiner, source-quality-audit
+    skills_below_500T: 10
+    current_test_threshold_T: 350  # pending L0 decision on C-Q3
+
+blockers: []
+
+summary: |
+  Gate-B-Revision 1 abgeschlossen. 3 Findings behoben:
+  (1) Pfad A: test_no_fabrication_section + test_precondition_section auf
+      Preamble-Reference-Check umgestellt. §4.2 + §5 aktualisiert.
+  (2) tests/baselines/skill_sizes.json + tests/_capture_skill_sizes.py zur
+      Dateiboundary §7 hinzugefügt. Erzeugungsprotokoll in §5 dokumentiert.
+  (3) Token-Analyse: -500T/Skill nicht erreichbar (10/13 Skills: 391-497T).
+      Als open_question C-Q3 an L0 eskaliert. Empfehlung: AC auf -350T/Skill
+      lockern. Test-Threshold bis Entscheidung: 350T/Skill.

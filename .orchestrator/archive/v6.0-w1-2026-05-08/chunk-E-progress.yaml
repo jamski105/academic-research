@@ -1,0 +1,27 @@
+chunk_id: E
+ticket: "#70"
+milestone: v6.0 Wave 1
+branch: feat/v6.0-E
+worktree: /Users/j65674/Repos/academic-research-v6.0-E
+
+phase: ready-for-pr
+
+artifacts:
+  spec_path: specs/v6.0/E.md
+  plan_path: specs/v6.0/E-plan.md
+  last_commit_sha: eaa5ea5
+
+open_questions: []
+
+blockers: []
+
+summary: |
+  Implementation abgeschlossen. 5 Tasks erledigt:
+  - Task 1: gitignore.fragment um sessions/ und credentials.json erweitert
+  - Task 2: init_git_repo(cwd, env=None) implementiert mit graceful-skip fuer fehlendes git
+  - Task 3: Git-Prompt im fresh-Pfad von main() nach merge_gitignore()
+  - Task 4: Stop-Hook in hooks.json (JSON-validiert)
+  - Task 5: Vollsuite 24/24 gruen, keine Regressions
+  Phase 4: code-simplifier (Optional->dict|None, sys-import nach oben),
+  code-review (2 Findings medium/minor: subprocess.os.environ und blank-line-before-decorator) - beide gefixt.
+  Letzter Commit: eaa5ea5

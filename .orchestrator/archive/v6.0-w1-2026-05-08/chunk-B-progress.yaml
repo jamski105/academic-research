@@ -1,0 +1,79 @@
+chunk_id: B
+milestone: v6.0
+branch: feat/v6.0-B
+worktree: /Users/j65674/Repos/academic-research-v6.0-B
+phase: ready-for-pr
+last_updated: "2026-05-08T15:30:00Z"
+last_commit_sha: 89b83bc
+
+gate_b_revisions: 1
+
+artifacts:
+  spec_path: specs/v6.0/B.md
+  plan_path: specs/v6.0/B-plan.md
+
+open_questions: []
+
+resolved_questions:
+  - id: OQ-B-1
+    text: "ensure_uploaded() in scripts/ oder eingebettet im Agenten-Prompt?"
+    answer: "scripts/files_api_helper.py — eigenständiges Modul. Konsistent mit scripts/-Pattern, testbar mit Mocks."
+  - id: OQ-B-2
+    text: "Token-Vergleich -75%-AC: eval, pytest Token-Counter oder Log-Vergleich?"
+    answer: "pytest-Assertion: bei use_files_api=True werden 0 base64-Bytes an API gesendet. Architektonisch garantiert."
+  - id: OQ-B-3
+    text: "Test-Anker fuer cache_read_input_tokens (#66 AC)?"
+    answer: "extract_cache_read_tokens(response) + test_cache_read_path_validates_cached_tokens mit Mock-Response."
+
+commits:
+  - sha: b83c4d0
+    msg: "test: failing TDD-Anker fuer files_api_helper + agent cache_control"
+  - sha: 0bfa3b0
+    msg: "feat(#65): scripts/files_api_helper.py — ensure_uploaded() mit SHA-256-Cache"
+  - sha: 5334869
+    msg: "feat(#66): relevance-scorer — cache_control ttl=1h"
+  - sha: 3ec6eba
+    msg: "feat(#65,#66): quote-extractor — Files-API source.type:file + ttl=1h cache"
+  - sha: 58fd9ea
+    msg: "feat(#66): quality-reviewer — Cache-Strategie-Block mit ttl=1h"
+  - sha: eaf63e6
+    msg: "feat(#66): extract_cache_read_tokens() + Test-Anker fuer cache_read_input_tokens"
+  - sha: 4691e9d
+    msg: "docs(spec/B): add F3 cache_read test anchor (Gate B revision)"
+  - sha: 89b83bc
+    msg: "chore: code-simplifier polish"
+
+test_results:
+  total: 99
+  passed: 99
+  failed: 0
+  suite: "pytest tests/ --ignore=tests/evals"
+  python: "/opt/homebrew/bin/python3 (3.14.4)"
+
+phase4_results:
+  simplifier:
+    changed_files:
+      - tests/test_files_api_helper.py
+    changes:
+      - "_write_pdf: `or` -> `if content is not None` (korrekter None-Check fuer bytes)"
+      - "Tests 6/7/8 zu @pytest.mark.parametrize zusammengefasst (DRY, -21 Zeilen)"
+    tests_after: "99/99 gruen"
+  code_review:
+    findings_count: 7
+    severity_range: "15-45"
+    blockers_ge_80: 0
+    iterations_used: 0
+    notes: "Kein Finding >=80. Alle Minor/Style. Kein Fix-Loop noetig."
+
+summary: |
+  Phase 4 abgeschlossen. 8 Commits gesamt, 99/99 Tests gruen.
+  Simplifier: 2 Vereinfachungen in test_files_api_helper.py (None-Check + parametrize).
+  Code-Review: 7 Findings, max Severity 45, keine Blocker >=80.
+  - scripts/files_api_helper.py: ensure_uploaded() + SHA-256-Cache + TTL + Feature-Flag
+  - tests/test_files_api_helper.py: 11 Tests (nach Simplifier: parametrisiert)
+  - agents/quote-extractor.md: Files-API Primaerpfad + base64-Fallback + ttl=1h
+  - agents/relevance-scorer.md: ttl=1h
+  - agents/quality-reviewer.md: Cache-Strategie-Block mit ttl=1h
+  Bereit fuer PR (L0 Phase 5).
+
+blockers: []

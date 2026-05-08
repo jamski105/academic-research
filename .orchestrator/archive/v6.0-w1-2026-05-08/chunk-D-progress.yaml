@@ -1,0 +1,48 @@
+chunk_id: D
+milestone: v6.0
+phase: ready-for-pr
+
+artifacts:
+  spec_path: specs/v6.0/D.md
+  plan_path: specs/v6.0/D-plan.md
+  last_commit_sha: 3501cfc
+
+open_questions: []
+
+blockers: []
+
+gate_b_revisions: 0
+gate_c_revisions: 0
+
+pending_post_merge:
+  - task: "Add 'humanizer-de' to VENDORED_SKILLS in tests/test_skills_manifest.py"
+    detail: >
+      Change line: VENDORED_SKILLS = {"xlsx"}
+      To:          VENDORED_SKILLS = {"xlsx", "humanizer-de"}
+      Reason: deferred to avoid merge conflict with chunk-C which also
+      modifies test_skills_manifest.py. L0 applies at merge time after
+      chunk-C is in.
+    file: tests/test_skills_manifest.py
+    line: 16
+
+commits:
+  - sha: e42448d
+    message: "vendor: add humanizer-de skill (v3.2.4-de.1-vendored) from marmbiz/humanizer-de"
+  - sha: b2ac416
+    message: "test(red): add failing tests for humanize command and vendored skill"
+  - sha: ccc1aa2
+    message: "feat(D): add /humanize command and wire humanizer-de vendored skill"
+  - sha: 3501cfc
+    message: "chore: code-simplifier polish (chunk D)"
+
+test_results:
+  chunk_tests: "15 passed, 0 failed"
+  full_suite: "111 passed, 3 failed (all 3 are test_skills_manifest.py[humanizer-de] — fixed by pending_post_merge)"
+
+summary: >
+  Chunk D vollständig implementiert. Vier Commits auf feat/v6.0-D:
+  (1) vendor artefakte, (2) failing tests, (3) commands/humanize.md,
+  (4) code-simplifier polish. 15/15 Chunk-D-Tests grün. Die 3 Failures
+  in test_skills_manifest.py betreffen ausschließlich humanizer-de und
+  werden durch VENDORED_SKILLS-Ergänzung post-merge (nach chunk-C)
+  behoben — per Orchestrator-Instruktion deferred.
