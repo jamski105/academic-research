@@ -1,6 +1,7 @@
 """Tests for scripts/project_bootstrap.py — detection logic."""
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -185,6 +186,7 @@ def test_merge_gitignore_includes_sessions_and_credentials(tmp_path, monkeypatch
 # init_git_repo
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not in PATH")
 def test_init_git_repo_success(tmp_path):
     """git init + initial commit: .git/ exists, at least 1 commit in log."""
@@ -195,7 +197,7 @@ def test_init_git_repo_success(tmp_path):
         "GIT_AUTHOR_EMAIL": "test@example.com",
         "GIT_COMMITTER_NAME": "Test",
         "GIT_COMMITTER_EMAIL": "test@example.com",
-        "PATH": subprocess.os.environ.get("PATH", ""),
+        "PATH": os.environ.get("PATH", ""),
     }
     # Lay down required files
     (tmp_path / "academic_context.md").write_text("# context")
