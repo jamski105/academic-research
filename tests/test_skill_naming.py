@@ -7,6 +7,7 @@ import yaml
 REPO_ROOT = Path(__file__).parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 KEBAB_CASE = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
+VENDORED_SKILLS = {"xlsx", "_common"}
 
 
 def _load_frontmatter(skill_md: Path) -> dict:
@@ -18,7 +19,7 @@ def _load_frontmatter(skill_md: Path) -> dict:
 
 def test_all_skill_names_are_kebab_case():
     for skill_dir in sorted(SKILLS_DIR.iterdir()):
-        if not skill_dir.is_dir():
+        if not skill_dir.is_dir() or skill_dir.name in VENDORED_SKILLS:
             continue
         skill_md = skill_dir / "SKILL.md"
         assert skill_md.exists(), f"Missing SKILL.md in {skill_dir}"
@@ -30,7 +31,7 @@ def test_all_skill_names_are_kebab_case():
 
 def test_skill_name_matches_directory():
     for skill_dir in sorted(SKILLS_DIR.iterdir()):
-        if not skill_dir.is_dir():
+        if not skill_dir.is_dir() or skill_dir.name in VENDORED_SKILLS:
             continue
         skill_md = skill_dir / "SKILL.md"
         fm = _load_frontmatter(skill_md)

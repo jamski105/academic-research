@@ -6,31 +6,17 @@ license: MIT
 
 # Quellenqualitäts-Audit
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Bewertet Qualität, Balance, Aktualität und Diversität der Literaturbasis
 einer Arbeit. Scort 5 Dimensionen (0-100), identifiziert Schwächen,
 liefert priorisierte Verbesserungsempfehlungen. Fokus auf Einzelquellen
 — Korpus-Coverage macht `literature-gap-analysis`.
-
-Bewertet die Gesamtqualität, Balance, Aktualität und Diversität der Literaturbasis einer akademischen Arbeit. Scort jede Dimension (0-100), identifiziert Schwächen und liefert konkrete Verbesserungsempfehlungen.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenliste in `./literature_state.md` kann ich kein Qualitätsurteil
-liefern, weil ich gegen leere Menge urteilen würde."
-
-## Keine Fabrikation
-
-Erfundene Bewertungen oder Quellenangaben entziehen der Arbeit die
-Zitierbarkeit, wenn behauptete Quellen in der Nachprüfung nicht existieren.
-Arbeite ausschließlich mit den Einträgen aus `./literature_state.md` und
-geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
@@ -48,17 +34,10 @@ Beide Skills greifen auf `./literature_state.md` zu, aber mit unterschiedlichem
 Fokus. Wenn der User „Coverage" oder „Gaps" erwähnt → delegiere an
 `literature-gap-analysis`.
 
-## Aktivierung dieses Skills
-
-- Der User möchte die Qualität seiner Quellen oder Literaturbasis bewerten
-- Der User ist unsicher, ob seine Quellen ausreichen
-- Qualitätsgate vor der Abgabe für die Literatur
-- Nach einer Literatursuche, um den gesammelten Pool zu bewerten
-
 ## Kontext-Dateien
 
-- Lies `./literature_state.md` für das aktuelle Quelleninventar (Gesamtzahl, Typenverteilung, Kapitelzuordnungen, identifizierte Lücken)
-- Lies `./academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage und Zitationsstil
+- `./literature_state.md` — Quelleninventar, Typenverteilung, Kapitelzuordnungen
+- `./academic_context.md` — Arbeitstyp, Disziplin, Forschungsfrage, Zitationsstil
 
 ## Scoring-Dimensionen
 
@@ -129,19 +108,13 @@ Bewertet die Balance zwischen reinen Web-Quellen und klassischen akademischen Pu
 - 30-49: Web-Quellen 30-50 %, mehrere nicht verifizierbar
 - 0-29: Web-Quellen >50 %, viele ohne institutionelle Autorität
 
-**Akzeptable Web-Quellen:** Behördenstatistiken (destatis.de), offizielle Reports (EU, OECD, WHO), etablierte Datenanbieter (Statista), Geschäftsberichte.
+**Akzeptabel:** Behörden (destatis.de), EU/OECD/WHO-Reports, Statista, Geschäftsberichte.
 
-**Problematische Web-Quellen:** Persönliche Blogs, undatierte Seiten, Seiten ohne klare Autorenschaft, Wikipedia als Primärquelle.
+**Problematisch:** Blogs, undatierte Seiten, Wikipedia als Primärquelle.
 
 ### 5. Thematische Abdeckung (Gewicht: 0.20)
 
-Bewertet, ob alle wichtigen Aspekte der Forschungsfrage durch Literatur abgedeckt sind.
-
-**Ablauf:**
-1. Schlüsselkonzepte aus Forschungsfrage und Gliederung (via `./academic_context.md`) extrahieren
-2. Jedes Konzept den verfügbaren Quellen zuordnen
-3. Konzepte mit unzureichender Abdeckung identifizieren (<2 Quellen je Schlüsselkonzept)
-4. Prüfen, ob jedes Hauptkapitel ausreichend Literaturstütze hat
+Schlüsselkonzepte aus `./academic_context.md` extrahieren, Quellen zuordnen, Konzepte mit <2 Quellen flaggen, Kapitelabdeckung prüfen.
 
 **Scoring:**
 - 90-100: Alle Schlüsselkonzepte durch 3+ Quellen abgedeckt, keine Lücken
@@ -152,13 +125,10 @@ Bewertet, ob alle wichtigen Aspekte der Forschungsfrage durch Literatur abgedeck
 
 ## Evaluations-Workflow
 
-1. `./literature_state.md` für das Quelleninventar lesen
-2. `./academic_context.md` für den Forschungskontext lesen
-3. Jede Quelle klassifizieren (peer-reviewt, semi-akademisch, nicht-akademisch, Web)
-4. Jede der 5 Dimensionen bepunkten
-5. Gewichteten Gesamtwert berechnen: `total = 0.25*peer_review + 0.20*recency + 0.20*diversity + 0.15*web_ratio + 0.20*coverage`
-6. Konkrete Empfehlungen für jede Dimension mit Score unter 70 erstellen
-7. Ergebnisse im strukturierten Format präsentieren
+1. Beide Kontext-Dateien lesen
+2. Quellen klassifizieren (peer-reviewt / semi-akademisch / nicht-akademisch / Web)
+3. 5 Dimensionen scoren, Gesamt: `0.25*peer_review + 0.20*recency + 0.20*diversity + 0.15*web_ratio + 0.20*coverage`
+4. Empfehlungen für Dimensionen mit Score < 70, strukturiert präsentieren
 
 ## Output-Format
 

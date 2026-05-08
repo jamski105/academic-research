@@ -6,31 +6,16 @@ license: MIT
 
 # Forschungsfragen-Schärfer
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Verfeinert bestehende Forschungsfragen auf Spezifität, Beantwortbarkeit,
 Falsifizierbarkeit und Einzigartigkeit. Liefert 2-3 Alternativen je
 Problem-Typ (zu weit / zu eng / nicht falsifizierbar / mehrdimensional).
-
-Hilft beim präzisen Formulieren von Hauptfrage und Unterfragen. Bewertet, ob eine Frage zu breit, zu eng oder nicht beantwortbar ist. Vergleicht mit ähnlichen Arbeiten, um Originalität und Machbarkeit sicherzustellen.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Thema und Kontext in `./academic_context.md` kann ich keine Fragen-
-Schärfung liefern, weil ich gegen unbekannte Disziplin-Konventionen
-optimieren würde."
-
-## Keine Fabrikation
-
-Erfundene Bezüge zu Vorarbeiten oder Forschungslücken führen zu einer
-Fragestellung, die beim ersten Supervisor-Feedback kollabiert. Arbeite
-ausschließlich mit `./academic_context.md` und `./literature_state.md`. Fehlen
-Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
@@ -87,29 +72,16 @@ Für Einbettung in die Gliederung → `advisor`.
 > Mitarbeiterzufriedenheit in KMU der Metallverarbeitung 2023 am besten?
 > (Nebenaspekte: Einführungskosten, Akzeptanzraten)"
 
-## Aktivierung dieses Skills
-
-- Der User möchte eine neue Forschungsfrage formulieren
-- Der User möchte eine bestehende Forschungsfrage verfeinern oder schärfen
-- Der User ist unsicher, ob seine Frage gut genug ist
-- Ein Betreuer hat die Forschungsfrage als problematisch markiert
-- Ein anderer Skill (`advisor`, `academic-context`) erkennt eine schwache Forschungsfrage
-
 ## Kontext-Dateien
 
-### Lesen
-
-- `./academic_context.md` — Aktuelle Forschungsfrage, Thema, Arbeitstyp, Methodik, Gliederung
-
-### Schreiben
-
-- `./academic_context.md` — Forschungsfrage und Unterfragen nach der Verfeinerung aktualisieren
+- Lesen: `./academic_context.md` (Forschungsfrage, Thema, Arbeitstyp, Methodik)
+- Schreiben: `./academic_context.md` — Forschungsfrage + Unterfragen aktualisieren
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies `./academic_context.md`. Existiert sie nicht, triggere den `academic-context`-Skill, um Basisdaten zu erheben. Extrahiere: Thema, aktuelle Forschungsfrage (falls vorhanden), Unterfragen, Arbeitstyp und Methodik.
+Lies `./academic_context.md`. Fehlt sie: `academic-context`-Skill triggern. Extrahiere: Thema, Forschungsfrage, Unterfragen, Arbeitstyp, Methodik.
 
 ### 2. Aktuelle Frage bewerten
 
@@ -214,21 +186,11 @@ Bei signifikantem Überlapp Differenzierungsoptionen vorschlagen:
 
 ### 6. Finale Formulierung
 
-Verfeinerte Forschungsfrage und Unterfragen zur Freigabe präsentieren. Einschließen:
-
-- Finale Hauptfrage
-- 2-4 Unterfragen mit Kapitelzuordnung
-- Kurze Begründung, warum diese Formulierung funktioniert
-- Vergleich mit der ursprünglichen Frage (falls vorhanden)
+Verfeinerte Hauptfrage + 2-4 Unterfragen mit Kapitelzuordnung, Begründung und Vergleich zur Ausgangsfrage präsentieren.
 
 ### 7. Änderungen speichern
 
-Nach der Bestätigung durch den User:
-
-1. `./academic_context.md` lesen (veraltete Überschreibungen vermeiden)
-2. `Forschungsfrage` mit der neuen Hauptfrage aktualisieren
-3. `Unterfragen` mit den neuen Unterfragen aktualisieren
-4. Entsprechen Unterfragen Kapiteln, `## Gliederung` anpassen
+Nach User-Bestätigung: `./academic_context.md` lesen, `Forschungsfrage` + `Unterfragen` aktualisieren, ggf. `## Gliederung` anpassen.
 
 ## Forschungsfragen-Templates
 

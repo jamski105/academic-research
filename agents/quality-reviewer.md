@@ -97,3 +97,28 @@ BLOCKIERT_VON: <none | iteration-limit>
 - **Passiv-Quote:** Anteil Sätze mit `werden`-Hilfsverb + Partizip II (Regex: `\bwerd(en|est|et)\b.*?(ge\w+|\w+iert)\b`).
 - **Nominalstil:** Anteil Saetze mit ≥ 2 Substantiven auf -ung/-heit/-keit/-ion.
 - **Quellen pro 1000 Wörter:** Zählung Inline-Zitat-Marker (`(X, YYYY)` oder `[1]`) relativ zur Gesamtwortzahl.
+
+---
+
+## Cache-Strategie (Prompt-Caching)
+
+Der System-Prompt (Rolle, Kriterien-Erklaerung, Metrik-Hinweise) ist pro Session konstant — nur der Review-Input variiert pro Call.
+
+**Implementierung im API-Call:**
+
+```python
+client.messages.create(
+    model="claude-sonnet-4-6",
+    system=[
+        {
+            "type": "text",
+            "text": "<Agent-System-Prompt aus dieser Datei>",
+            "cache_control": {"type": "ephemeral", "ttl": "1h"},
+        }
+    ],
+    # Cache-Breakpoint VOR messages[] — Eingabe variiert, Prompt bleibt gecacht.
+    messages=[{"role": "user", "content": json.dumps(input)}],
+)
+```
+
+**Seit 2026-03-06 ist der Anthropic-Default-TTL 5 Minuten.** Ohne `"ttl": "1h"` laeuft der Cache ab — bei mehreren Revisions-Runden kostet jeder Folgecall den vollen Cache-Write-Aufschlag.

@@ -6,28 +6,16 @@ license: MIT
 
 # Stil-Evaluator
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Bewertet Menschlichkeit, KI-Detektions-Anfälligkeit, Kohärenz, Duplikation
 und akademische Qualität von Text. Gewichteter 0-100-Score über 5 Dimensionen.
 Bietet Rewrite-Vorschläge für geflaggte Stellen ohne Bedeutung zu verlieren.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Text-Korpus-Kontext in `./writing_state.md` kann ich kein Stil-Urteil
-liefern, weil ich gegen disziplinfremde Normen urteilen würde."
-
-## Keine Fabrikation
-
-Erfundene Stil-Urteile über nicht gelesenen Text lassen tatsächlich fragwürdigen
-Stil unentdeckt und untergraben den Wert des Stil-Checks. Arbeite ausschließlich
-mit dem eingereichten User-Text und den Metriken aus `./writing_state.md`.
-Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
@@ -50,13 +38,6 @@ diese 5 Schwellen:
 
 Ausgabe: Tabelle Metrik + Ist-Wert + Schwelle + PASS/FAIL.
 
-## Aktivierung dieses Skills
-
-- Der User reicht Text zur Qualitäts- oder Stilbewertung ein
-- Der User befürchtet, dass der Text zu KI-generiert klingt
-- Der User bittet um Textverbesserung oder natürlicheres Schreiben
-- Ein anderer Skill (z. B. `chapter-writer`) fordert ein Post-Write-Qualitätsgate an
-
 ## Variant-Selector
 
 Lies `./academic_context.md`, Feld `Sprache`:
@@ -66,17 +47,16 @@ Lies `./academic_context.md`, Feld `Sprache`:
 | Deutsch (Default) | `references/academic-de.md` |
 | English | `references/academic-en.md` |
 
-Fehlt das Feld → `academic-de.md` als Default (Plugin-Default ist Deutsch). Unbekannte Sprache → Rueckfrage.
+Fehlt Feld → `academic-de.md`. Unbekannt → Rueckfrage.
 
 ## Kontext-Dateien
 
-- Lies `./writing_state.md` für aktuellen Kapitelkontext und frühere Scores
-- Lies `./academic_context.md` für Zitationsstil, Sprache und Arbeitstyp
-- Aktualisiere `./writing_state.md` nach jedem Lauf mit neuen Bewertungsscores
+- `./writing_state.md` — Kapitelkontext, frühere Scores (nach Lauf aktualisieren)
+- `./academic_context.md` — Zitationsstil, Sprache, Arbeitstyp
 
 ## Metriken
 
-Die quantitativen Metriken (Satzlängenverteilung, Übergangsfrequenz, Vokabular-Diversität, n-Gramm-Wiederholung) berechnet Claude direkt aus dem Eingabetext — keine externe Pipeline. Siehe Rubrik unten für konkrete Messvorschriften pro Dimension.
+Satzlängenverteilung, Übergangsfrequenz, Vokabular-Diversität, n-Gramm-Wiederholung — Claude berechnet direkt aus Eingabetext (keine externe Pipeline).
 
 ## Scoring-Rubrik (0-100)
 
@@ -93,15 +73,11 @@ Indikatoren für NIEDRIGE Menschlichkeit (Abzüge):
 - Keine rhetorischen Fragen, Einschübe oder Ich-Perspektive, wo angemessen
 - Absatzlängen zu uniform (alle innerhalb 10 % des Durchschnitts)
 
-Indikatoren für HOHE Menschlichkeit (Pluspunkte):
-- Natürliche Variation der Satzlänge (kurz und lang gemischt)
-- Gelegentliche informelle Konnektoren neben formalen
-- Topic Sentences variieren zwischen Absätzen
-- Spürbare persönliche analytische Stimme
+Plus: natürliche Satzlängen-Variation, gelegentliche informelle Konnektoren, variierende Topic Sentences, analytische Stimme.
 
 ### 2. Anti-KI-Detektion (Gewicht: 0.25)
 
-Muster flaggen, die KI-Detektoren (GPTZero, Turnitin AI, Originality.ai) häufig identifizieren.
+Muster flaggen, die KI-Detektoren (GPTZero, Turnitin AI, Originality.ai) identifizieren.
 
 Prüfen auf:
 - **Uniforme Satzlängen** -- Standardabweichung berechnen; flag bei < 5 Wörtern
@@ -145,13 +121,10 @@ Prüfen auf:
 
 ## Evaluations-Workflow
 
-1. Den eingereichten Text lesen (vollständiges Kapitel, Abschnitt oder Absatz)
-2. `./writing_state.md` und `./academic_context.md` für Kontext lesen
-3. Berechne quantitative Metriken inline aus dem Eingabetext (Satzlängen, Übergänge, n-Gramme, Vokabular-Diversität)
-4. Jede Dimension (0-100) nach Rubrik und Metriken scoren
-5. Gewichteten Gesamtwert berechnen: `total = 0.30*human + 0.25*anti_ai + 0.20*coherence + 0.15*duplication + 0.10*academic`
-6. Ergebnisse strukturiert präsentieren (siehe Output-Format unten)
-7. `./writing_state.md` mit den neuen Scores aktualisieren
+1. Text + beide Kontext-Dateien lesen
+2. Metriken inline berechnen (Satzlängen, Übergänge, n-Gramme, Vokabular)
+3. 5 Dimensionen scoren, Gesamt: `0.30*human + 0.25*anti_ai + 0.20*coherence + 0.15*duplication + 0.10*academic`
+4. Strukturiert präsentieren, `./writing_state.md` mit neuen Scores aktualisieren
 
 ## Output-Format
 
