@@ -33,3 +33,13 @@ firebase-debug.log
 # Brainstorming-Artefakte (persönliche Arbeitsprodukte, nicht Release-Inhalt)
 docs/superpowers/specs/
 docs/superpowers/plans/
+
+# mmp orchestrator state — track config, archives, original ticket backups; ignore runtime
+.orchestrator/*
+.orchestrator/.sync/
+!.orchestrator/config.yaml
+!.orchestrator/README.md
+!.orchestrator/archive/
+!.orchestrator/improved-tickets/
+.orchestrator/improved-tickets/*
+!.orchestrator/improved-tickets/*.original.md

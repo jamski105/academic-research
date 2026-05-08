@@ -1,0 +1,70 @@
+# .orchestrator/config.yaml
+# Project-specific config for mmp. Plugin defaults apply for any field omitted.
+
+ticket_source:
+  strategy: milestone           # milestone | label | project
+  milestone_pattern: "{name}"
+  label_pattern: "milestone:{name}"
+  project_number: null
+  state: open
+
+docs:
+  paths:
+    - "docs/milestones/{name}.md"
+    - "docs/{name}.md"
+
+branching:
+  pattern: "feat/{milestone}-{chunk_id}"
+  base: main
+
+ci:
+  provider: github-actions
+  poll_timeout_minutes: 30
+
+decomposition:
+  max_files_per_chunk: 15
+  max_loc_per_chunk: 500
+  max_hours_per_chunk: 8
+
+caps:
+  review_fix_iterations: 3
+  spec_revision_rounds: 2
+  plan_revision_rounds: 2
+  ci_fix_iterations: 3
+  coverage_fix_rounds: 2
+
+required_plugins:
+  # Plain plugin names (no owner/marketplace prefix). The pre-flight glob
+  # `~/.claude/plugins/cache/*/<name>/` resolves them regardless of which
+  # marketplace they came from.
+  - superpowers
+  - code-simplifier
+  - code-review
+
+ticket_improvement:
+  enabled: true
+  mode: live                    # live | local | ask
+  skip_labels:
+    - well-defined
+    - spec-ready
+    - wip
+    - do-not-improve
+  diff_preview: per_ticket      # per_ticket (required if mode=live) | batched | none
+
+gates:
+  # question_buffer_seconds is INFORMATIONAL only — L0 is single-threaded
+  # and cannot wait by clock. Q&A batching happens naturally per
+  # Tool-Result block / phase boundary. See skill reference gates.md.
+  question_buffer_seconds: 30
+  question_buffer_count: 5
+
+pr:
+  draft_initially: true
+  title_pattern: "{milestone}: {chunk_summary}"
+  body_template_path: null
+
+concurrency:
+  lock_timeout_hours: 8        # 1-24 (hard timeout for stale lock detection)
+  steal_on_expired: true       # auto-take expired locks; false → require /mmp:unlock
+  state_sync_branch_prefix: "mmp/state"
+  archive_branch_prefix: "mmp/archive"
