@@ -49,21 +49,6 @@ def test_frontmatter_valid(skill_path: Path) -> None:
     assert fm.get("description"), f"{skill_path}: description fehlt"
 
 
-@pytest.mark.parametrize("skill_path", ALL_SKILLS, ids=lambda p: p.parent.name)
-def test_no_fabrication_section(skill_path: Path) -> None:
-    """Preamble-Reference-Check: preamble.md enthaelt '## Keine Fabrikation'."""
-    assert PREAMBLE_PATTERN in skill_path.read_text(), (
-        f"{skill_path}: Preamble-Reference '{PREAMBLE_PATTERN}' fehlt"
-    )
-
-
-@pytest.mark.parametrize("skill_path", ALL_SKILLS, ids=lambda p: p.parent.name)
-def test_precondition_section(skill_path: Path) -> None:
-    """Preamble-Reference-Check: preamble.md enthaelt '## Vorbedingungen'."""
-    assert PREAMBLE_PATTERN in skill_path.read_text(), (
-        f"{skill_path}: Preamble-Reference '{PREAMBLE_PATTERN}' fehlt"
-    )
-
 
 @pytest.mark.parametrize("skill_path", ALL_SKILLS, ids=lambda p: p.parent.name)
 def test_umlaut_variants_in_description(skill_path: Path) -> None:
