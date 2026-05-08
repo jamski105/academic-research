@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 SKILLS_DIR = Path(__file__).parent.parent / "skills"
-VENDORED_SKILLS = {"xlsx", "_common"}
+VENDORED_SKILLS = {"xlsx", "_common", "humanizer-de"}
 ALL_SKILLS = sorted(
     p for p in SKILLS_DIR.glob("*/SKILL.md") if p.parent.name not in VENDORED_SKILLS
 )
