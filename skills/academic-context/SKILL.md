@@ -6,49 +6,27 @@ license: MIT
 
 # Akademischer Kontext
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
+> **Override Vorbedingungen:** Keine Vorbedingungen — dieser Skill bootet den
+> Kontext. Alle anderen Skills setzen voraus, dass `./academic_context.md`
+> existiert, und triggern diesen Skill bei Fehlen.
+
 ## Übersicht
 
 Bootet den akademischen Kontext einer Arbeit: Thema, Forschungsfrage,
 Arbeitstyp, Methodik, Disziplin, Hochschule. Schreibt das Ergebnis in
 `./academic_context.md` als Single Source of Truth für alle anderen Skills.
 
-## Vorbedingungen
-
-Keine Vorbedingungen — dieser Skill bootet den Kontext. Alle anderen Skills
-setzen voraus, dass `./academic_context.md` existiert, und triggern diesen
-Skill bei Fehlen.
-
-Pflegt einen persistenten akademischen Kontext, auf den sich andere Skills verlassen. Dieser Skill liest und schreibt Kontext-Dateien im Projekt-Ordner, um Thema, Gliederung, Forschungsfrage, Methodik, Fortschritt und Schlüsselkonzepte der Arbeit des Users zu tracken.
-
-## Keine Fabrikation
-
-Erfundene Kontextangaben (Thema, Methodik, Fragestellung) produzieren eine
-vergiftete Kontext-Basis, die alle nachgelagerten Skills wertlos macht. Arbeite
-ausschließlich mit Angaben, die der User im Gespräch explizit bestätigt hat —
-rate keine Werte, frag nach.
-
-## Aktivierung dieses Skills
-
-- Der User erwähnt seine Abschlussarbeit, Hausarbeit oder akademische Arbeit
-- Der User liefert oder aktualisiert Forschungsthema, Gliederung oder Forschungsfrage
-- Ein anderer Skill braucht akademischen Kontext, aber es ist noch keiner vorhanden
-- Der User fragt explizit nach einer Aktualisierung seines akademischen Profils
-
 ## Kontext-Dateien
 
-Der gesamte Kontext liegt im aktuellen Projekt-Ordner (cwd). Drei Dateien werden verwaltet:
-
-### `./academic_context.md` — Primäre Kontextdatei
-
-Enthält das Arbeitsprofil (Universität, Studiengang, Zitationsstil), die Arbeitsdetails (Typ, Thema, Forschungsfrage, Methodik, Betreuer, Abgabetermin), die Gliederungsstruktur, Schlüsselkonzepte und den Fortschritt.
-
-### `./literature_state.md` — Literaturstatus
-
-Enthält Statistiken zu gesammelten Quellen (Gesamtzahl, Peer-Review-Anteil, Typenverteilung), Kapitel-Quellen-Zuordnung sowie identifizierte Lücken.
-
-### `./writing_state.md` — Schreibfortschritt
-
-Enthält das aktuell geschriebene Kapitel, Wortzahlen und die jüngsten Style-Evaluator-Scores.
+Alle im aktuellen Projekt-Ordner (cwd):
+- `./academic_context.md` — Arbeitsprofil, Forschungsfrage, Methodik, Gliederung, Fortschritt
+- `./literature_state.md` — Quellen-Inventar, Kapitelzuordnungen, Lücken
+- `./writing_state.md` — Kapitelstatus, Wortzahlen, Style-Scores
 
 ## Core-Workflow
 
@@ -103,23 +81,11 @@ type: project
 
 ### Update-Aktivierung (Kontext existiert bereits)
 
-Existiert schon Kontext, lies die aktuelle `./academic_context.md` aus dem Projekt-Ordner. Identifiziere auf Basis des Gesprächs, was sich geändert hat, und aktualisiere nur die betroffenen Abschnitte. Bewahre alle bestehenden Daten, die nicht explizit geändert wurden.
-
-Typische Updates:
-- **Gliederungsänderungen** — User hat die Kapitelstruktur verfeinert
-- **Fortschrittsupdates** — User hat ein Kapitel oder einen Abschnitt abgeschlossen
-- **Neue Konzepte** — User hat neue Schlüsselbegriffe eingeführt
-- **Forschungsfragen-Schärfung** — User hat den Fokus präzisiert
-- **Methodik-Entscheidung** — User hat einen Ansatz gewählt oder geändert
+Lies `./academic_context.md`, identifiziere Änderungen aus dem Gespräch, aktualisiere nur betroffene Abschnitte. Typische Updates: Gliederung, Fortschritt, neue Konzepte, Forschungsfragen-Schärfung, Methodik-Entscheidung.
 
 ### Unterstützung anderer Skills
 
-Wenn ein anderer Skill (`citation-extraction`, `literature-gap-analysis`, `advisor` etc.) Kontext braucht:
-
-1. Prüfe, ob `./academic_context.md` im Projekt-Ordner existiert
-2. Wenn ja — lies sie und nutze sie
-3. Wenn nein — informiere den User, dass Kontext benötigt wird, und biete das Setup an
-4. Gib nach dem Setup die Kontrolle an den aufrufenden Workflow zurück
+Braucht ein anderer Skill Kontext: Prüfe ob `./academic_context.md` existiert. Wenn ja — nutze sie. Wenn nein — informiere den User und biete Setup an.
 
 ## Few-Shot-Beispiele
 

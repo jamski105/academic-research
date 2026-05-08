@@ -6,31 +6,16 @@ license: MIT
 
 # Advisor — Gliederungs- und Exposé-Builder
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Supervisor-Agent für die Gesamt-Gliederung einer Arbeit. Bewertet Struktur,
 schlägt Kapitel-Reorganisation vor, liefert Expose-Templates. Orchestriert
 andere Skills, wenn spezifische Themenbereiche vertieft werden müssen.
-
-Baut, verfeinert und validiert Gliederungen und Exposé-Dokumente im interaktiven Dialog. Führt den User vom Ausgangsthema zu einem strukturierten, gut begründeten Kapitelplan.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Forschungsfrage und Kapitelstruktur kann ich keine fundierte Outline-
-Beratung liefern, weil ich gegen unbekannte Vorgaben beraten würde."
-
-## Keine Fabrikation
-
-Erfundene Kapitelstruktur-Standards oder Gliederungsempfehlungen führen zu
-nachträglichen Überarbeitungen nach Abgabe und gefährden den Zeitplan. Arbeite
-ausschließlich mit `./academic_context.md` (Arbeitstyp, Forschungsfrage,
-Supervisor-Vorgaben) und `./literature_state.md`. Fehlen Daten: frag den User,
-rate nicht.
 
 ## Abgrenzung
 
@@ -53,31 +38,16 @@ Zwischenstufen-Urteil:
 
 Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
 
-## Aktivierung dieses Skills
-
-- Der User möchte eine Gliederung erstellen oder überarbeiten
-- Der User muss ein Exposé oder Forschungsproposal schreiben
-- Der User fragt nach Kapitelstruktur, Reihenfolge oder logischem Aufbau
-- Der User möchte planen, welche Themen in welches Kapitel gehören
-
 ## Kontext-Dateien
 
-### Lesen
-
-- `./academic_context.md` — Arbeitsprofil, Forschungsfrage, Methodik, bestehende Gliederung
-- `./literature_state.md` — Vorhandene Quellen und Kapitelzuordnungen (zur Literaturabdeckungs-Prüfung)
-
-### Schreiben
-
-- `./academic_context.md` — Aktualisiere den Abschnitt `## Gliederung` nach Gliederungsänderungen
+- Lesen: `./academic_context.md` (Forschungsfrage, Methodik, Gliederung), `./literature_state.md` (Quellen, Kapitelzuordnungen)
+- Schreiben: `./academic_context.md` — Abschnitt `## Gliederung` nach Änderungen aktualisieren
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies `./academic_context.md` aus dem Projekt-Ordner. Existiert sie nicht, informiere den User und triggere den `academic-context`-Skill, um Grunddaten zu erheben, bevor fortgefahren wird.
-
-Extrahiere: Arbeitstyp, Thema, Forschungsfrage, Unterfragen, Methodik und eine eventuell vorhandene Gliederung.
+Lies `./academic_context.md`. Fehlt sie: `academic-context`-Skill triggern. Extrahiere: Arbeitstyp, Thema, Forschungsfrage, Unterfragen, Methodik, Gliederung.
 
 ### 2. Interaktiver Gliederungsdialog
 
@@ -117,7 +87,7 @@ Falls `./literature_state.md` existiert, Gliederung gegen vorhandene Quellen abg
 - Ob Peer-Review-Quellen vorhanden sind
 - Lücken, in denen keine Literatur zugewiesen ist
 
-Bei Lücken biete an, `/search` für einzelne Kapitel zu triggern — mit gezielten Queries aus Kapiteltiteln und Schlüsselkonzepten.
+Bei Lücken: `/search` mit Queries aus Kapiteltiteln und Schlüsselkonzepten anbieten.
 
 ### 5. Exposé-Generierung
 
@@ -136,11 +106,7 @@ Erzeuge den Zeitplan auf Basis des Abgabetermins aus `./academic_context.md`. Re
 
 ### 6. Änderungen speichern
 
-Nachdem der User die Gliederung oder das Exposé bestätigt hat:
-
-1. `./academic_context.md` erneut lesen (veraltete Überschreibungen vermeiden)
-2. Nur den Abschnitt `## Gliederung` mit der neuen Gliederung aktualisieren
-3. `## Fortschritt` ergänzen, falls anwendbar
+Nach User-Bestätigung: `./academic_context.md` lesen, Abschnitt `## Gliederung` aktualisieren, `## Fortschritt` ergänzen.
 
 ## Verfeinerung einer bestehenden Gliederung
 

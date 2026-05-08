@@ -7,31 +7,16 @@ license: MIT
 
 # Kapitel-Autor
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Schreibt konkrete Kapitel (Einleitung, Theorieteil, Methodik, Empirie,
 Diskussion, Fazit) für akademische Arbeiten. Zieht Zitate aus
 `./literature_state.md` und folgt dem Disziplin-Register.
-
-Verfasst einzelne Thesis-Kapitel und Abschnitte auf Basis von Forschungskontext, Gliederung, verfügbarer Literatur und Zitaten. Produziert akademische Prosa, die der User Abschnitt für Abschnitt reviewt, editiert und freigibt.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Kapitelstruktur in `./literature_state.md` kann ich keinen passenden
-Kapiteltext liefern, weil ich einen Kapiteltyp annehmen würde, der nicht zur
-Arbeit passt."
-
-## Keine Fabrikation
-
-Erfundene Belege, Zitate oder Faktenaussagen im Fließtext sind laut FH-Leibniz-
-Prüfungsordnung ein Plagiatsbefund und führen zum Verlust der Prüfungsleistung
-(Note 5). Arbeite ausschließlich mit Zitaten aus `./literature_state.md` und
-direkt geladenen PDFs. Fehlen Daten: frag den User, rate nicht.
 
 ## Abgrenzung
 
@@ -86,32 +71,16 @@ Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extractio
 > Metallverarbeitung (hohe Arbeitsteilung) dämpfen Führungseffekte —
 > konsistent mit Liao & Chuang (2007)."
 
-## Aktivierung dieses Skills
-
-- Der User möchte ein bestimmtes Kapitel oder einen Abschnitt schreiben oder entwerfen
-- Der User bittet um Hilfe beim Formulieren akademischen Texts für seine Arbeit
-- Der User möchte Stichpunkte oder Notizen zu Fließtext ausbauen
-- Der User braucht Hilfe bei Übergängen zwischen Abschnitten
-
 ## Kontext-Dateien
 
-### Lesen
-
-- `./academic_context.md` — Arbeitsprofil, Forschungsfrage, Gliederung, Schlüsselkonzepte
-- `./literature_state.md` — Verfügbare Quellen, Kapitel-Quellen-Zuordnungen
-- `./writing_state.md` — Aktueller Schreibfortschritt, Wortzahlen, Style-Scores
-
-### Schreiben
-
-- `./writing_state.md` — Wortzahlen, aktuelles Kapitel und Fortschritt nach dem Schreiben aktualisieren
+- Lesen: `./academic_context.md` (Forschungsfrage, Gliederung), `./literature_state.md` (Quellen), `./writing_state.md` (Fortschritt)
+- Schreiben: `./writing_state.md` — Wortzahlen und Kapitelstatus aktualisieren
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies alle drei Kontext-Dateien im Projekt-Ordner. Existiert `./academic_context.md` nicht, informiere den User und triggere zuerst den `academic-context`-Skill. Gibt es noch keine Gliederung, schlage vor, den `advisor`-Skill zu triggern, bevor geschrieben wird.
-
-Extrahiere: Ziel-Kapitel aus der Gliederung, zugeordnete Quellen aus dem Literaturstatus, Zitationsstil, Sprache der Arbeit und vorhandene Entwürfe.
+Lies alle drei Kontext-Dateien. Fehlt `./academic_context.md`: `academic-context`-Skill triggern. Fehlt Gliederung: `advisor`-Skill vorschlagen. Extrahiere Ziel-Kapitel, Quellen, Zitationsstil, Sprache, vorhandene Entwürfe.
 
 ### 2. Ziel-Kapitel bestimmen
 
