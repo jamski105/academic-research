@@ -5,9 +5,9 @@ milestone:
 github_milestone: "v6.0"
 github_label: null
 started_at: "2026-05-08T12:06:17Z"
-last_action_at: "2026-05-08T12:06:17Z"
+last_action_at: "2026-05-08T12:14:00Z"
 config_hash: "7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2"
-phase_global: ticket-improvement
+phase_global: decomposition
 lock:
   issue_number: null
   current_holder:
@@ -19,8 +19,40 @@ state_branch:
   name: "mmp/state/v6.0"
   last_pushed_sha: null
 chunks: []
-open_questions: []
-ticket_improvements: []
+open_questions:
+  - source: "ticket-improver #65"
+    text: "ensure_uploaded in scripts/ oder im Agenten-Prompt von quote-extractor.md eingebettet?"
+  - source: "ticket-improver #65"
+    text: "Token-Vergleich für -75%-AC: existing eval, neuer pytest mit Token-Counter, oder Log-Vergleich?"
+  - source: "ticket-improver #67"
+    text: "Welche Include-Syntax: Frontmatter `include:`, Symlink, Copy-on-build?"
+  - source: "ticket-improver #67"
+    text: "-500 Token-Messung: kompilierter Skill-Prompt oder .md-Rohgröße?"
+  - source: "ticket-improver #69"
+    text: "Default-Modus für /humanize ohne --mode-Flag: normal oder deep?"
+  - source: "ticket-improver #69"
+    text: "humanizer-de fehlend: Hinweis+Abbruch oder weicher Skip?"
+  - source: "ticket-improver #70"
+    text: "git init auch im idempotent-Pfad (kein .git/, aber academic_context.md vorhanden), oder nur fresh?"
+  - source: "ticket-improver #70"
+    text: "Stop-Hook-Hinweis: nur mit Repo, oder immer (auch ohne git init)?"
+ticket_improvements:
+  - id: 65
+    mode: live
+    backup_comment_url: "https://github.com/jamski105/academic-research/issues/65#issuecomment-4406332783"
+    applied_at: "2026-05-08T12:14:00Z"
+  - id: 67
+    mode: live
+    backup_comment_url: "https://github.com/jamski105/academic-research/issues/67#issuecomment-4406333026"
+    applied_at: "2026-05-08T12:14:00Z"
+  - id: 69
+    mode: live
+    backup_comment_url: "https://github.com/jamski105/academic-research/issues/69#issuecomment-4406333392"
+    applied_at: "2026-05-08T12:14:00Z"
+  - id: 70
+    mode: live
+    backup_comment_url: "https://github.com/jamski105/academic-research/issues/70#issuecomment-4406333692"
+    applied_at: "2026-05-08T12:14:00Z"
 tickets_in_scope:
   - 55
   - 62
