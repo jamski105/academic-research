@@ -38,7 +38,7 @@ def _make_pdf_bytes() -> bytes:
 
 def _write_pdf(tmp_path: Path, content: bytes = None) -> Path:
     p = tmp_path / "test.pdf"
-    p.write_bytes(content or _make_pdf_bytes())
+    p.write_bytes(content if content is not None else _make_pdf_bytes())
     return p
 
 
@@ -170,41 +170,20 @@ def test_beta_header_present(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Test 6: relevance-scorer.md enthaelt ttl=1h
+# Tests 6/7/8: Alle drei Agenten muessen cache_control ttl=1h enthalten
 # ---------------------------------------------------------------------------
 
-def test_agent_cache_ttl_1h_relevance_scorer():
-    agent_file = Path(__file__).parent.parent / "agents" / "relevance-scorer.md"
+@pytest.mark.parametrize("agent_name", [
+    "relevance-scorer",
+    "quote-extractor",
+    "quality-reviewer",
+])
+def test_agent_cache_ttl_1h(agent_name):
+    agent_file = Path(__file__).parent.parent / "agents" / f"{agent_name}.md"
     assert agent_file.exists(), f"Datei nicht gefunden: {agent_file}"
     content = agent_file.read_text()
     assert '"ttl": "1h"' in content or "'ttl': '1h'" in content, (
-        "relevance-scorer.md muss cache_control mit ttl=1h enthalten"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Test 7: quote-extractor.md enthaelt ttl=1h
-# ---------------------------------------------------------------------------
-
-def test_agent_cache_ttl_1h_quote_extractor():
-    agent_file = Path(__file__).parent.parent / "agents" / "quote-extractor.md"
-    assert agent_file.exists(), f"Datei nicht gefunden: {agent_file}"
-    content = agent_file.read_text()
-    assert '"ttl": "1h"' in content or "'ttl': '1h'" in content, (
-        "quote-extractor.md muss cache_control mit ttl=1h enthalten"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Test 8: quality-reviewer.md enthaelt ttl=1h
-# ---------------------------------------------------------------------------
-
-def test_agent_cache_ttl_1h_quality_reviewer():
-    agent_file = Path(__file__).parent.parent / "agents" / "quality-reviewer.md"
-    assert agent_file.exists(), f"Datei nicht gefunden: {agent_file}"
-    content = agent_file.read_text()
-    assert '"ttl": "1h"' in content or "'ttl': '1h'" in content, (
-        "quality-reviewer.md muss cache_control mit ttl=1h enthalten"
+        f"{agent_name}.md muss cache_control mit ttl=1h enthalten"
     )
 
 
