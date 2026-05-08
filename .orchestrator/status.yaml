@@ -24,7 +24,10 @@ chunks:
     tickets: [62]
     branch: "feat/v6.0-A"
     worktree: "/Users/j65674/Repos/academic-research-v6.0-A"
-    phase: brainstorming
+    phase: plan-ready-for-review
+    spec_path: "specs/v6.0/A.md"
+    plan_path: "specs/v6.0/A-plan.md"
+    gate_c_revisions: 1
     depends_on: []
   - id: B
     summary: "F1 Token-Tracks (Files-API + 1h-TTL-Cache)"
@@ -41,7 +44,10 @@ chunks:
     tickets: [67]
     branch: "feat/v6.0-C"
     worktree: "/Users/j65674/Repos/academic-research-v6.0-C"
-    phase: brainstorming
+    phase: plan-ready-for-review
+    spec_path: "specs/v6.0/C.md"
+    plan_path: "specs/v6.0/C-plan.md"
+    gate_c_revisions: 0
     depends_on: []
   - id: D
     summary: "/humanize Slash-Command"
@@ -55,7 +61,10 @@ chunks:
     tickets: [70]
     branch: "feat/v6.0-E"
     worktree: "/Users/j65674/Repos/academic-research-v6.0-E"
-    phase: brainstorming
+    phase: plan-ready-for-review
+    spec_path: "specs/v6.0/E.md"
+    plan_path: "specs/v6.0/E-plan.md"
+    gate_c_revisions: 1
     depends_on: []
   - id: F
     summary: "Vault-Pipeline-Integration"
@@ -96,6 +105,19 @@ open_questions:
   - source: "ticket-improver #67"
     text: "-500 Token-Messung: kompilierter Skill-Prompt oder .md-Rohgröße?"
     deferred_to: "spec phase (L1)"
+  - id: C-Q3
+    chunk_id: C
+    source: "chunk-C-gate-b-revision-1"
+    text: |
+      AC-Wert '-500 Token vs. main' literal 'pro Skill'. Gründliche Analyse:
+      Vollständige Extraktion aller 4 Blöcke ergibt 391–786T pro Skill.
+      10 von 13 Skills erreichen -500T nicht (Minimum 391T, Ø 525T).
+      Vorschlag A (empfohlen): AC lockern auf -350T/Skill (für alle 13 erreichbar).
+      Vorschlag B: 'durchschnittlich -500T über 13 Skills' (Ø 525T erreichbar).
+      Vorschlag C: Aggressives Kürzen skill-spezifischer Inhalte — mehr Scope/Risiko.
+      Bis Entscheidung: Test-Threshold 350T/Skill.
+    status: resolved
+    resolution: "AC gelockert auf -350T/Skill (= 1400 Zeichen) per L0-Decision 2026-05-08"
 user_decisions:
   - q: "#69 /humanize Default-Modus ohne --mode-Flag"
     a: "normal"
