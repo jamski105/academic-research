@@ -1,0 +1,34 @@
+schema_version: 2
+milestone:
+  name: v6.0
+  wave: 1
+github_milestone: "v6.0"
+github_label: null
+started_at: "2026-05-08T12:06:17Z"
+last_action_at: "2026-05-08T12:06:17Z"
+config_hash: "7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2"
+phase_global: ticket-improvement
+lock:
+  issue_number: null
+  current_holder:
+    machine: null
+    session: null
+    acquired_at: null
+    expires_at: null
+state_branch:
+  name: "mmp/state/v6.0"
+  last_pushed_sha: null
+chunks: []
+open_questions: []
+ticket_improvements: []
+tickets_in_scope:
+  - 55
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
