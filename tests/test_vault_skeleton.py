@@ -105,19 +105,30 @@ def test_add_paper_and_get():
 
 @pytest.mark.skipif(not _DB_AVAILABLE, reason="db.py noch nicht implementiert")
 def test_search_returns_results():
-    """vault.search(query) gibt >= 1 Ergebnis zurueck."""
+    """vault.search(query) gibt >= 1 Ergebnis zurueck und liegt unter 500ms (AC #62)."""
+    import time
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
         db_path = f.name
     try:
         db = VaultDB(db_path)
         db.init_schema()
-        csl = '{"title": "DevOps Governance Study", "abstract": "About DevOps in enterprise."}'
-        db.add_paper("p-search", csl)
+        # Seed 50 Papers fuer realistische FTS5-Bedingungen (AC: <500ms bei >=50)
+        for i in range(50):
+            csl = (
+                '{"title": "DevOps Governance Study %d",'
+                ' "abstract": "Paper %d about DevOps in enterprise."}'
+            ) % (i, i)
+            db.add_paper("p-search-%d" % i, csl)
 
         from mcp.academic_vault.server import search_papers
+        start = time.perf_counter()
         results = search_papers(db_path, "DevOps Governance", k=5)
+        elapsed = time.perf_counter() - start
+
         assert len(results) >= 1
         assert "paper_id" in results[0]
+        # AC #62: Performance-Ziel <500ms bei mind. 50 Papers
+        assert elapsed < 0.5, "search took %.3fs, expected <0.5s" % elapsed
     finally:
         os.unlink(db_path)
 
