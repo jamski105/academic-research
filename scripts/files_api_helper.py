@@ -27,6 +27,23 @@ _FILES_API_BETA_HEADER = "files-api-2025-04-14"
 _DEFAULT_CACHE_FILE = "pdf_status.json"
 
 
+def extract_cache_read_tokens(response) -> int:
+    """
+    Liest cache_read_input_tokens aus einem API-Response-usage-Objekt.
+
+    Gibt 0 zurueck wenn das Attribut fehlt (robuster Fallback).
+    Einsatz: AC #66 — Folgecall innerhalb 1h muss cache_read_input_tokens > 0 liefern.
+
+    Beispiel:
+        tokens = extract_cache_read_tokens(response)
+        assert tokens > 0, "Cache-Hit erwartet"
+    """
+    try:
+        return getattr(response.usage, "cache_read_input_tokens", 0) or 0
+    except AttributeError:
+        return 0
+
+
 def should_use_files_api() -> bool:
     """Gibt True zurueck wenn Files-API aktiviert ist (ACADEMIC_FILES_API != '0')."""
     return os.environ.get("ACADEMIC_FILES_API", "1") != "0"

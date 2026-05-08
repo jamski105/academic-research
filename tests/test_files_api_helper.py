@@ -235,3 +235,32 @@ def test_quote_extractor_base64_fallback_documented():
     assert "Fallback" in content or "fallback" in content, (
         "quote-extractor.md muss Fallback-Begriff enthalten"
     )
+
+
+# ---------------------------------------------------------------------------
+# Test 11: extract_cache_read_tokens() — AC #66 cache_read_input_tokens > 0
+# ---------------------------------------------------------------------------
+
+def test_cache_read_path_validates_cached_tokens():
+    """
+    Verifiziert extract_cache_read_tokens(response):
+    - Cache-Hit (cache_read_input_tokens=42) -> 42
+    - Kein Cache-Hit (cache_read_input_tokens=0) -> 0
+    - Kein usage-Attribut -> 0
+    """
+    from scripts.files_api_helper import extract_cache_read_tokens
+
+    # Cache-Hit
+    response_hit = MagicMock()
+    response_hit.usage.cache_read_input_tokens = 42
+    assert extract_cache_read_tokens(response_hit) == 42
+
+    # Kein Cache-Hit
+    response_miss = MagicMock()
+    response_miss.usage.cache_read_input_tokens = 0
+    assert extract_cache_read_tokens(response_miss) == 0
+
+    # Kein usage-Attribut (robustness)
+    response_noattr = MagicMock()
+    del response_noattr.usage
+    assert extract_cache_read_tokens(response_noattr) == 0
