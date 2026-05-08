@@ -1,0 +1,3 @@
+anthropic>=0.40
+mcp>=1.0
+sqlite-vec>=0.1.0
