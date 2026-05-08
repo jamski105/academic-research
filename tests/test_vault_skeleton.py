@@ -199,7 +199,7 @@ def test_ensure_file_caches():
         db.add_paper("p-file", '{"title": "File Paper"}', pdf_path=pdf_path)
 
         mock_upload = MagicMock()
-        mock_upload.return_value = MagicMock(id="file-abc123")
+        mock_upload.return_value = "file-abc123"
 
         client = FilesAPIClient(anthropic_api_key="test-key", cache_db_path=db_path)
 
