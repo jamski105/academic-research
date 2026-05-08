@@ -167,3 +167,11 @@ def test_copy_memory_files_skips_existing(tmp_path):
 
     pb.copy_memory_files([source / "academic_context.md"], cwd)
     assert (cwd / "academic_context.md").read_text() == "ALREADY HERE"
+
+
+def test_merge_gitignore_includes_sessions_and_credentials(tmp_path, monkeypatch):
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
+    pb.merge_gitignore(tmp_path)
+    lines = (tmp_path / ".gitignore").read_text().splitlines()
+    assert "sessions/" in lines
+    assert "credentials.json" in lines
