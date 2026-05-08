@@ -1,6 +1,6 @@
 -- academic_vault SQLite Schema
 -- Tabellen: papers, papers_fts, quotes, quote_embeddings, decisions, notes
--- FTS5-Content-Table-Trigger: papers_ai, papers_ad, papers_au
+-- FTS5-Trigger: papers_ai, papers_ad, papers_au
 
 CREATE TABLE IF NOT EXISTS papers (
   paper_id              TEXT PRIMARY KEY,
@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS papers (
   updated_at            INTEGER NOT NULL
 );
 
+-- FTS5 als eigenstaendige virtuelle Tabelle (kein content=, manuell befuellt).
+-- Trigger halten papers_fts synchron mit papers.
 CREATE VIRTUAL TABLE IF NOT EXISTS papers_fts USING fts5(
-  paper_id UNINDEXED,
+  paper_id,
   title,
   abstract,
-  fulltext,
-  content='papers',
-  content_rowid='rowid'
+  fulltext
 );
 
 CREATE TABLE IF NOT EXISTS quotes (
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS quotes (
 );
 
 -- vec0 Virtual Table: optional, nur wenn sqlite-vec Extension geladen ist.
--- Wird in db.py per try/except erstellt; Fehler wird ignoriert.
+-- Wird in db.py per try/except erstellt.
 -- CREATE VIRTUAL TABLE IF NOT EXISTS quote_embeddings USING vec0(
 --   quote_id TEXT PRIMARY KEY,
 --   embedding FLOAT[384]
@@ -64,11 +64,10 @@ CREATE TABLE IF NOT EXISTS notes (
   created_at INTEGER NOT NULL
 );
 
--- FTS5-Content-Table-Trigger: halten papers_fts synchron mit papers
+-- FTS5-Trigger: befuellen papers_fts manuell via json_extract
 CREATE TRIGGER IF NOT EXISTS papers_ai AFTER INSERT ON papers BEGIN
-  INSERT INTO papers_fts(rowid, paper_id, title, abstract, fulltext)
+  INSERT INTO papers_fts(paper_id, title, abstract, fulltext)
   VALUES (
-    new.rowid,
     new.paper_id,
     json_extract(new.csl_json, '$.title'),
     json_extract(new.csl_json, '$.abstract'),
@@ -77,30 +76,13 @@ CREATE TRIGGER IF NOT EXISTS papers_ai AFTER INSERT ON papers BEGIN
 END;
 
 CREATE TRIGGER IF NOT EXISTS papers_ad AFTER DELETE ON papers BEGIN
-  INSERT INTO papers_fts(papers_fts, rowid, paper_id, title, abstract, fulltext)
-  VALUES (
-    'delete',
-    old.rowid,
-    old.paper_id,
-    json_extract(old.csl_json, '$.title'),
-    json_extract(old.csl_json, '$.abstract'),
-    NULL
-  );
+  DELETE FROM papers_fts WHERE paper_id = old.paper_id;
 END;
 
 CREATE TRIGGER IF NOT EXISTS papers_au AFTER UPDATE ON papers BEGIN
-  INSERT INTO papers_fts(papers_fts, rowid, paper_id, title, abstract, fulltext)
+  DELETE FROM papers_fts WHERE paper_id = old.paper_id;
+  INSERT INTO papers_fts(paper_id, title, abstract, fulltext)
   VALUES (
-    'delete',
-    old.rowid,
-    old.paper_id,
-    json_extract(old.csl_json, '$.title'),
-    json_extract(old.csl_json, '$.abstract'),
-    NULL
-  );
-  INSERT INTO papers_fts(rowid, paper_id, title, abstract, fulltext)
-  VALUES (
-    new.rowid,
     new.paper_id,
     json_extract(new.csl_json, '$.title'),
     json_extract(new.csl_json, '$.abstract'),
