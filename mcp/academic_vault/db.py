@@ -25,10 +25,7 @@ class VaultDB:
     # ------------------------------------------------------------------
 
     def __enter__(self) -> "VaultDB":
-        self._conn = sqlite3.connect(self.db_path)
-        self._conn.row_factory = sqlite3.Row
-        self._conn.execute("PRAGMA journal_mode=WAL")
-        self._conn.execute("PRAGMA foreign_keys=ON")
+        self._conn = self._open(self.db_path)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -45,15 +42,20 @@ class VaultDB:
     # Schema-Initialisierung
     # ------------------------------------------------------------------
 
-    def _get_conn(self) -> sqlite3.Connection:
-        """Gibt bestehende oder neue Verbindung zurueck."""
-        if self._conn is not None:
-            return self._conn
-        conn = sqlite3.connect(self.db_path)
+    @staticmethod
+    def _open(db_path: str) -> sqlite3.Connection:
+        """Oeffnet eine neue Verbindung mit Standard-Pragmas."""
+        conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA foreign_keys=ON")
         return conn
+
+    def _get_conn(self) -> sqlite3.Connection:
+        """Gibt bestehende oder neue Verbindung zurueck."""
+        if self._conn is not None:
+            return self._conn
+        return self._open(self.db_path)
 
     def load_vec_extension(self) -> bool:
         """Versucht sqlite_vec Extension zu laden. Gibt True bei Erfolg zurueck."""

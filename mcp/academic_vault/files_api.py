@@ -3,6 +3,7 @@
 Gibt file_id zurueck (gecacht mit 1h-TTL in papers-Tabelle).
 Fallback: bei fehlendem Upload wird Exception nach oben durchgereicht.
 """
+import sqlite3
 import time
 from pathlib import Path
 from typing import Optional
@@ -50,37 +51,29 @@ class FilesAPIClient:
         Bei Ablauf oder fehlendem file_id wird re-uploaded.
         """
         now = int(time.time())
-        db = VaultDB(self.cache_db_path)
 
-        # Cache-Lookup: suche Paper mit passendem pdf_path und gueltiger file_id
-        import sqlite3
-        conn = sqlite3.connect(self.cache_db_path)
-        conn.row_factory = sqlite3.Row
-        row = conn.execute(
-            "SELECT paper_id, file_id, file_id_expires_at FROM papers "
-            "WHERE pdf_path = ? AND file_id IS NOT NULL AND file_id_expires_at > ?",
-            (pdf_path, now),
-        ).fetchone()
-        conn.close()
+        conn = VaultDB._open(self.cache_db_path)
+        try:
+            row = conn.execute(
+                "SELECT paper_id, file_id FROM papers "
+                "WHERE pdf_path = ? AND file_id IS NOT NULL AND file_id_expires_at > ?",
+                (pdf_path, now),
+            ).fetchone()
+            if row is not None:
+                return row["file_id"]
 
-        if row is not None:
-            return row["file_id"]
+            paper_row = conn.execute(
+                "SELECT paper_id FROM papers WHERE pdf_path = ?", (pdf_path,)
+            ).fetchone()
+        finally:
+            conn.close()
 
         # Cache-Miss: hochladen
         file_id = self._upload_file(pdf_path)
-        expires_at = now + _TTL
-
-        # paper_id fuer diesen pdf_path ermitteln
-        conn = sqlite3.connect(self.cache_db_path)
-        conn.row_factory = sqlite3.Row
-        paper_row = conn.execute(
-            "SELECT paper_id FROM papers WHERE pdf_path = ?", (pdf_path,)
-        ).fetchone()
-        conn.close()
-
         if paper_row is not None:
-            db.set_file_id(paper_row["paper_id"], file_id, expires_at)
-
+            VaultDB(self.cache_db_path).set_file_id(
+                paper_row["paper_id"], file_id, now + _TTL
+            )
         return file_id
 
     @staticmethod
@@ -90,9 +83,8 @@ class FilesAPIClient:
 
         token_savings_estimate = cached_files * (AVG_BASE64_TOKENS_PER_PDF - FILE_ID_OVERHEAD)
         """
-        import sqlite3
         now = int(time.time())
-        conn = sqlite3.connect(db_path)
+        conn = VaultDB._open(db_path)
         paper_count = conn.execute("SELECT COUNT(*) FROM papers").fetchone()[0]
         quote_count = conn.execute("SELECT COUNT(*) FROM quotes").fetchone()[0]
         cached_files = conn.execute(
