@@ -1,11 +1,15 @@
 """Tests for scripts/project_bootstrap.py — detection logic."""
 from __future__ import annotations
 
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import project_bootstrap as pb  # noqa: E402
+
+import pytest  # noqa: E402
 
 
 def test_detect_mode_on_code_repo(tmp_path):
@@ -175,3 +179,45 @@ def test_merge_gitignore_includes_sessions_and_credentials(tmp_path, monkeypatch
     lines = (tmp_path / ".gitignore").read_text().splitlines()
     assert "sessions/" in lines
     assert "credentials.json" in lines
+
+
+# ---------------------------------------------------------------------------
+# init_git_repo
+# ---------------------------------------------------------------------------
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git not in PATH")
+def test_init_git_repo_success(tmp_path):
+    """git init + initial commit: .git/ exists, at least 1 commit in log."""
+    # Provide git identity so commit does not fail in CI without global config
+    env = {
+        "HOME": str(tmp_path),
+        "GIT_AUTHOR_NAME": "Test",
+        "GIT_AUTHOR_EMAIL": "test@example.com",
+        "GIT_COMMITTER_NAME": "Test",
+        "GIT_COMMITTER_EMAIL": "test@example.com",
+        "PATH": subprocess.os.environ.get("PATH", ""),
+    }
+    # Lay down required files
+    (tmp_path / "academic_context.md").write_text("# context")
+    (tmp_path / "CLAUDE.md").write_text("# claude")
+    (tmp_path / ".gitignore").write_text("pdfs/*\n")
+
+    result = pb.init_git_repo(tmp_path, env=env)
+
+    assert result is True
+    assert (tmp_path / ".git").is_dir()
+    log = subprocess.run(
+        ["git", "log", "--oneline"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert len(log.stdout.strip().splitlines()) >= 1
+
+
+def test_init_git_repo_no_git_in_path(tmp_path, monkeypatch):
+    """Returns False gracefully when git is not in PATH."""
+    monkeypatch.setattr(shutil, "which", lambda _: None)
+    result = pb.init_git_repo(tmp_path)
+    assert result is False

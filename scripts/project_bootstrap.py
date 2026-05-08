@@ -7,7 +7,10 @@ context into project-local files.
 """
 from __future__ import annotations
 
+import shutil
+import subprocess
 from pathlib import Path
+from typing import Optional
 
 CODE_REPO_SIGNATURES = (
     "package.json",
@@ -116,6 +119,40 @@ def copy_memory_files(sources: list[Path], cwd: Path) -> None:
         if target.exists():
             continue
         target.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+
+
+def init_git_repo(cwd: Path, env: Optional[dict] = None) -> bool:
+    """git init + initial commit. Returns True on success, False on graceful skip.
+
+    Args:
+        cwd: Directory to initialise as a git repo.
+        env: Optional environment dict passed to subprocess (useful in tests to
+             supply GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL without a global gitconfig).
+    """
+    if shutil.which("git") is None:
+        print("ℹ️  git nicht im PATH — git-Repo übersprungen")
+        return False
+    try:
+        subprocess.run(["git", "init"], cwd=cwd, check=True, capture_output=True, env=env)
+        subprocess.run(
+            ["git", "add", "academic_context.md", "CLAUDE.md", ".gitignore"],
+            cwd=cwd,
+            check=True,
+            capture_output=True,
+            env=env,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "chore: initial project setup via academic-research"],
+            cwd=cwd,
+            check=True,
+            capture_output=True,
+            env=env,
+        )
+        print(f"✅ git-Repo initialisiert und erster Commit angelegt: {cwd}")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  git init fehlgeschlagen: {e}")
+        return False
 
 
 def _prompt_yes_no(question: str, default_yes: bool = False) -> bool:
