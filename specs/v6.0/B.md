@@ -67,6 +67,24 @@ Breakpoint VOR dem `documents[]`-Array.
 - Integration-Test-Dokumentation in `tests/test_files_api_helper.py` erklärt,
   wie ein manueller Eval-Lauf (mit Key) die Token-Zahlen prüft.
 
+### F3: Test-Anker für `cache_read_input_tokens` (#66 AC)
+
+**Entscheidung: Unit-Test `test_cache_read_path_validates_cached_tokens`** mit gemocktem Response-Objekt (Pfad a).
+
+**Begründung:**
+- Das AC aus #66 "Folgecall innerhalb 1h: `cache_read_input_tokens > 0`" ist deterministisch
+  testbar: Der Code-Pfad, der einen API-Response auswertet, kann mit einem synthetischen
+  `usage`-Objekt geprüft werden — kein Live-API-Key nötig.
+- Mock-Pattern analog F2 (monkeypatch / `unittest.mock`), konsistent mit den übrigen
+  `test_files_api_helper.py`-Tests.
+- Test-Struktur: Erstelle ein Mock-Response-Objekt mit
+  `usage.cache_read_input_tokens = 42`, übergib es an die Auswertungs-Logik,
+  assert `result > 0`. Parallele Assertions mit `cache_read_input_tokens = 0`
+  prüfen den Nicht-Cache-Hit-Pfad.
+- Testname: `test_cache_read_path_validates_cached_tokens`
+- Abgedeckter Codepfad: Helper/Utility-Funktion `extract_cache_read_tokens(response) -> int`,
+  die `getattr(response.usage, "cache_read_input_tokens", 0)` wraps.
+
 ---
 
 ## 4 · Design: `scripts/files_api_helper.py`
@@ -139,6 +157,7 @@ Neuer Block `## Cache-Strategie` (fehlt noch vollständig):
 | `quote-extractor.md` enthält `"ttl": "1h"` | grep-Test |
 | `quality-reviewer.md` enthält `"ttl": "1h"` | grep-Test |
 | Breakpoint VOR `documents[]` | Dokumentiert in Agenten-Dateien, grep-Test |
+| Folgecall innerhalb 1h: `cache_read_input_tokens > 0` | `test_files_api_helper.py::test_cache_read_path_validates_cached_tokens` (Mock: `usage.cache_read_input_tokens=42` → `extract_cache_read_tokens()` returns >0; `cache_read_input_tokens=0` → returns 0) |
 
 ---
 
