@@ -31,7 +31,10 @@ chunks:
     tickets: [65, 66]
     branch: "feat/v6.0-B"
     worktree: "/Users/j65674/Repos/academic-research-v6.0-B"
-    phase: brainstorming
+    phase: ready-for-pr
+    spec_path: "specs/v6.0/B.md"
+    plan_path: "specs/v6.0/B-plan.md"
+    last_commit_sha: "eaf63e6"
     depends_on: []
   - id: C
     summary: "Skills schlanker — Shared preamble"
