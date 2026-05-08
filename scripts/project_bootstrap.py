@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import sys
 from pathlib import Path
-from typing import Optional
 
 CODE_REPO_SIGNATURES = (
     "package.json",
@@ -121,7 +121,7 @@ def copy_memory_files(sources: list[Path], cwd: Path) -> None:
         target.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
 
 
-def init_git_repo(cwd: Path, env: Optional[dict] = None) -> bool:
+def init_git_repo(cwd: Path, env: dict | None = None) -> bool:
     """git init + initial commit. Returns True on success, False on graceful skip.
 
     Args:
@@ -157,7 +157,6 @@ def init_git_repo(cwd: Path, env: Optional[dict] = None) -> bool:
 
 def _prompt_yes_no(question: str, default_yes: bool = False) -> bool:
     """Interactive y/n prompt. Returns default_yes on non-interactive stdin."""
-    import sys
     if not sys.stdin.isatty():
         return default_yes
     suffix = "[Y/n]" if default_yes else "[y/N]"
