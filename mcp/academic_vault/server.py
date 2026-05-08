@@ -6,7 +6,6 @@ add_quote/find_quotes/get_quote/stats bereit.
 Start via: python -m mcp.academic_vault.server
 """
 import os
-import sqlite3
 from uuid import uuid4
 from typing import Optional
 
@@ -45,7 +44,6 @@ def add_quote(
         )
     quote_id = str(uuid4())
     db = VaultDB(db_path)
-    db.init_schema()
     db.add_quote(
         quote_id=quote_id,
         paper_id=paper_id,
@@ -74,37 +72,38 @@ def search_papers(
     k: int = 5,
 ) -> list[dict]:
     """FTS5-Suche in papers_fts. Gibt [{paper_id, snippet, score}] zurueck."""
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    if type_filter:
-        rows = conn.execute(
-            """
-            SELECT f.paper_id,
-                   snippet(papers_fts, 1, '<b>', '</b>', '...', 10) AS snippet,
-                   rank AS score
-            FROM papers_fts f
-            JOIN papers p ON p.paper_id = f.paper_id
-            WHERE papers_fts MATCH ?
-              AND p.type = ?
-            ORDER BY rank
-            LIMIT ?
-            """,
-            (query, type_filter, k),
-        ).fetchall()
-    else:
-        rows = conn.execute(
-            """
-            SELECT paper_id,
-                   snippet(papers_fts, 1, '<b>', '</b>', '...', 10) AS snippet,
-                   rank AS score
-            FROM papers_fts
-            WHERE papers_fts MATCH ?
-            ORDER BY rank
-            LIMIT ?
-            """,
-            (query, k),
-        ).fetchall()
-    conn.close()
+    conn = VaultDB._open(db_path)
+    try:
+        if type_filter:
+            rows = conn.execute(
+                """
+                SELECT f.paper_id,
+                       snippet(papers_fts, 1, '<b>', '</b>', '...', 10) AS snippet,
+                       rank AS score
+                FROM papers_fts f
+                JOIN papers p ON p.paper_id = f.paper_id
+                WHERE papers_fts MATCH ?
+                  AND p.type = ?
+                ORDER BY rank
+                LIMIT ?
+                """,
+                (query, type_filter, k),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """
+                SELECT paper_id,
+                       snippet(papers_fts, 1, '<b>', '</b>', '...', 10) AS snippet,
+                       rank AS score
+                FROM papers_fts
+                WHERE papers_fts MATCH ?
+                ORDER BY rank
+                LIMIT ?
+                """,
+                (query, k),
+            ).fetchall()
+    finally:
+        conn.close()
     return [dict(r) for r in rows]
 
 
