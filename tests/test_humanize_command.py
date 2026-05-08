@@ -4,10 +4,8 @@ Tests command file existence, frontmatter, and pure-logic helpers.
 No LLM calls required.
 """
 
-import re
 from pathlib import Path
 
-import pytest
 import yaml
 
 REPO_ROOT = Path(__file__).parent.parent
