@@ -6,6 +6,11 @@ license: MIT
 
 # Plagiatsprüfung
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Prüft Textähnlichkeit gegen die Quellen in `./literature_state.md`.
@@ -13,51 +18,20 @@ Markiert wörtliche Übernahmen und paraphrasierte Passagen, die nicht
 ausreichend zitiert sind. Nicht zuständig für Stil-Bewertung allgemein
 (→ `style-evaluator`).
 
-Prüft akademischen Text auf unbeabsichtigte Nähe zum Quellmaterial. Erkennt zu nahe Paraphrasen, unzureichend umformulierte Passagen und fehlende Quellenangaben via N-Gramm-Overlap-Detection. Schlägt Umformulierungen für markierte Passagen vor.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Quellenlisten in `./literature_state.md` kann ich kein Similarity-Urteil
-liefern, weil ich gegen unbekannte Quellen prüfen und False-Negatives
-produzieren würde."
-
-## Keine Fabrikation
-
-Erfundene Similarity-Urteile oder N-Gramm-Matches lassen unentdecktes Plagiat
-durch und führen dazu, dass Textstellen, die beim offiziellen Plagiats-Check
-der FH Leibniz auffliegen, hier unbemerkt geblieben sind. Arbeite ausschließlich
-mit dem User-Text und den PDF-Extrakten aus `./literature_state.md`. Fehlen
-Daten: frag den User, rate nicht.
-
 ## Abgrenzung
 
 Prüft Textnähe zu bekannten Quellen via N-Gramm-Overlap und Sentence-Similarity.
 Für stilistische Qualität des Textes ohne Quellenbezug → `style-evaluator`.
 
-## Aktivierung dieses Skills
-
-- Der User reicht Text zur Prüfung gegen seine Quellen ein
-- Der User paraphrasiert eine Quelle und möchte verifizieren
-- Qualitätssicherung vor der finalen Abgabe
-- Ein anderer Skill (z. B. `chapter-writer`) fordert ein Plagiats-Gate an
-
 ## Kontext-Dateien
 
-- Lies `./academic_context.md` für Zitationsstil und Sprache
-- Lies `./literature_state.md` für die Liste der pro Kapitel genutzten Quellen
-- Lies `./writing_state.md` für aktuellen Schreibkontext
+- `./academic_context.md` — Zitationsstil, Sprache
+- `./literature_state.md` — Quellen pro Kapitel
+- `./writing_state.md` — Schreibkontext
 
 ## Skripte
 
-Nutze `${CLAUDE_PLUGIN_ROOT}/scripts/text_utils.py` für Tokenisierung (`tokenize()`-Funktion) und Textnormalisierung.
-
-Hinweis: `text_utils.py` liefert deterministische Tokenisierung und
-n-gram-Matching. Inline-Berechnung wäre unzuverlässig (Reproducibility).
+`${CLAUDE_PLUGIN_ROOT}/scripts/text_utils.py` — `tokenize()`-Funktion für deterministische Tokenisierung und n-gram-Matching.
 
 ## Detektions-Methoden
 
@@ -93,20 +67,7 @@ Prüfen, ob der User-Text der Argumentationsstruktur der Quelle zu nahe folgt:
 
 ## Quellmaterial-Handling
 
-### Verfügbare Quellen
-
-Quelltexte in dieser Priorität suchen:
-1. In der aktuellen Session extrahierte PDF-Texte (im Kontext)
-2. In `./literature_state.md` referenzierte Quellen-Snippets
-3. Vom User gelieferter Originaltext für Direktvergleich
-
-### Wenn kein Quelltext verfügbar ist
-
-Sind keine Quell-PDFs oder Texte zugänglich:
-1. Dem User mitteilen, dass der Vergleich auf interne Analyse beschränkt ist
-2. Interne Duplikationsprüfung dennoch durchführen (wiederholte Passagen im Text)
-3. Passagen flaggen, die Hinweise auf enges Paraphrasieren zeigen (steife Formulierungen, untypisches Vokabular im Kontext)
-4. Anbieten, zu vergleichen, wenn der User den Originaltext bereitstellt
+Priorität: (1) Session-PDFs, (2) `./literature_state.md`-Snippets, (3) User-Originaltext. Fehlt Quelltext: interne Duplikationsprüfung + steife Formulierungen flaggen, Originaltext anbieten.
 
 ## Evaluations-Workflow
 

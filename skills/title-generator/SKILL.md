@@ -6,30 +6,17 @@ license: MIT
 
 # Titel-Generator
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Schlägt 5-7 Titelvarianten vor (klassisch-akademisch, fragenbasiert,
 kreativ, ergebnisorientiert) mit Rationale und Stärke/Einschränkung.
 Basiert auf `./writing_state.md` (fertiger Text) und `./academic_context.md`
 (Forschungsfrage). Keine leeren Titel-Hülsen.
-
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne Forschungsfrage und Kernergebnisse kann ich keine Titel-Vorschläge
-liefern, weil ich leere Titel-Hülsen ohne Verankerung liefern würde."
-
-## Keine Fabrikation
-
-In den Titel eingebaute Claims ohne Textbeleg machen die Arbeit vor der
-Korrektur angreifbar und riskieren Nachfragen im Kolloquium. Arbeite
-ausschließlich mit `./writing_state.md` (fertiger Arbeitstext) und
-`./academic_context.md` (Forschungsfrage, Kernergebnisse). Fehlen Daten: frag
-den User, rate nicht.
 
 ## Abgrenzung
 
@@ -71,45 +58,14 @@ Für Abstract, Keywords, Management Summary → `abstract-generator`.
 > "Wie beeinflusst regelmäßige KI-Nutzung die Prüfungsnoten in BWL- und
 > Informatik-Studiengängen? Eine Erhebung an der FH Leibniz 2024"
 
-## Aktivierung dieses Skills
-
-- Der User fragt nach Titelvorschlägen oder möchte seinen Arbeitstitel ändern
-- Der User hat einen Entwurf fertig und braucht einen finalen Titel
-- Der User sammelt in der Planungsphase Thesis-Titel-Ideen
-
 ## Kontext-Dateien
 
-- Lies `./academic_context.md` für Arbeitstyp, Disziplin, Forschungsfrage, Methodik, Sprache und Hochschulanforderungen
-- Lies `./writing_state.md` für abgeschlossene Kapitel und während des Schreibens identifizierte Kernargumente
+- `./academic_context.md` — Arbeitstyp, Disziplin, Forschungsfrage, Methodik, Sprache
+- `./writing_state.md` — abgeschlossene Kapitel, identifizierte Kernargumente
 
 ## Analyse-Phase
 
-Vor der Titelgenerierung die Arbeit entlang dieser Dimensionen analysieren:
-
-### 1. Inhaltliche Struktur
-
-- Zentrale These oder Kernargument identifizieren
-- Haupttheorie oder Analyserahmen extrahieren
-- Scope notieren (Einzelfall, Vergleich, branchenweit)
-- Abhängige und unabhängige Variablen bzw. Schlüsselkonzepte bestimmen
-
-### 2. Kernaussagen
-
-- Die 3-5 stärksten Claims der Arbeit extrahieren
-- Den originellsten Beitrag oder Befund identifizieren
-- Unerwartete Ergebnisse oder Gegenpositionen notieren
-
-### 3. Methodik-Signatur
-
-- Forschungsansatz identifizieren (qualitativ, quantitativ, Mixed, Literaturreview)
-- Methoden notieren, die die Arbeit auszeichnen (z. B. Delphi, SLR, Grounded Theory)
-- Prüfen, ob die Methodik selbst titelwürdig ist
-
-### 4. Keywords und Terminologie
-
-- Domänenspezifische Keywords aus der Arbeit extrahieren
-- Häufigste Fachbegriffe identifizieren
-- Selbst geprägte Begriffe oder Framework-Namen notieren
+Analysiere: (1) These/Kernargument, Analyserahmen, Scope, Schlüsselkonzepte; (2) 3-5 stärkste Claims, originellsten Befund, Gegenpositionen; (3) Forschungsansatz, auszeichnende Methoden; (4) domänenspezifische Keywords, häufige Fachbegriffe.
 
 ## Titel-Generierung
 
@@ -117,41 +73,19 @@ Genau 5-7 Titelvarianten über diese Kategorien erzeugen:
 
 ### Kategorie A: Klassisch-Akademisch (2 Titel)
 
-Struktur: `[Thema]: [Untertitel mit Scope/Methode]`
-
-Eigenschaften:
-- Formal, deskriptiv, eindeutig
-- Enthält Kernthema und Methodik oder Scope
-- Typisch für deutsche Abschlussarbeiten
-- Beispielmuster: "Digitale Transformation im Mittelstand: Eine qualitative Analyse der Erfolgsfaktoren"
+`[Thema]: [Untertitel mit Scope/Methode]` — formal, deskriptiv, typisch deutsch.
 
 ### Kategorie B: Fragenbasiert (1-2 Titel)
 
-Struktur: Titel als Forschungsfrage oder provokante Frage.
-
-Eigenschaften:
-- Spricht den Leser direkt an
-- Spiegelt die Forschungsfrage aus `./academic_context.md`
-- Passend für explorative oder argumentative Arbeiten
+Titel als Forschungsfrage — spricht Leser an, spiegelt `./academic_context.md`.
 
 ### Kategorie C: Konzeptuell / Kreativ (1-2 Titel)
 
-Struktur: Kurze, einprägsame Phrase mit akademischem Untertitel.
-
-Eigenschaften:
-- Nutzt Metapher, Paradox oder prägnante Formulierung
-- Immer mit klärendem Untertitel
-- Häufiger in Sozial- und Geisteswissenschaften
-- Muss professionell bleiben
+Kurze Phrase + akademischer Untertitel — Metapher/Paradox, immer mit Untertitel.
 
 ### Kategorie D: Ergebnisorientiert (1 Titel)
 
-Struktur: Titel, der das zentrale Ergebnis andeutet oder benennt.
-
-Eigenschaften:
-- Kündigt die Schlussfolgerung an
-- Passend, wenn der Befund klar und stark ist
-- In deutscher Tradition weniger üblich, aber zunehmend akzeptiert
+Kündigt Schlussfolgerung an — passend bei klarem, starkem Befund.
 
 ## Output-Format
 

@@ -6,6 +6,11 @@ license: MIT
 
 # Abgabe-Prüfer
 
+> **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
+> Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
+> fortfährst.
+
 ## Übersicht
 
 Prüft Formalia vor Abgabe: Pflichtabschnitte, Seitenumfang, Formatierung,
@@ -13,36 +18,12 @@ Quellenzahl, Abbildungen/Tabellen, eidesstattliche Erklärung. Verwendet
 hochschulspezifische Regeln aus `references/<variant>.md` (Default:
 FH Leibniz).
 
-## Vorbedingungen
-
-Bevor du startest: Prüfe, ob `./academic_context.md` und `./literature_state.md`
-vorhanden und aktuell sind. Fehlt Kontext → triggere den `academic-context`-
-Skill und warte auf dessen Abschluss.
-
-Lehnt der User den Trigger ab → brich diesen Skill ab und erkläre:
-"Ohne FH-Zuordnung in `./academic_context.md` kann ich keinen Formalia-Check
-liefern, weil ich gegen falsches FH-Regelwerk prüfen würde."
-
-## Keine Fabrikation
-
-Erfundene Formalia-Bestätigungen produzieren eine nicht-abgabefähige Arbeit,
-die bei Einreichung zurückgewiesen wird. Arbeite ausschließlich mit der
-Arbeits-PDF und den FH-Zuordnungen in `./academic_context.md`. Fehlen Daten:
-frag den User, rate nicht.
-
 ## Abgrenzung
 
 Prüft Formalia der Enddatei gegen Hochschul-Regeln.
 Für Abstract, Keywords, Management-Summary → `abstract-generator`.
 Für den Titel selbst → `title-generator`.
 Für Kontextdaten (Arbeitstyp, Hochschule) → `academic-context`.
-
-## Aktivierung dieses Skills
-
-- Der User fragt, ob seine Arbeit abgabefertig ist
-- Der User möchte Formatierung oder formale Anforderungen verifizieren
-- Qualitätssicherung vor der Abgabe
-- Der User fragt nach konkreten formalen Elementen (Deckblatt, Eidesstattliche Erklärung etc.)
 
 ## Variant-Selector
 
@@ -59,9 +40,9 @@ Fehlt das Feld → `fh-leibniz.md` als Default (Plugin-Default ist FH Leibniz). 
 
 ## Kontext- und Referenzdateien
 
-- Lies `./academic_context.md` für Arbeitstyp, Universität, Studiengang und Zitationsstil
-- Lies `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` für hochschulspezifische Formalia
-- Lies `./writing_state.md` für aktuelle Wortzahlen und Kapitelstatus
+- `./academic_context.md` — Arbeitstyp, Universität, Zitationsstil
+- `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` — hochschulspezifische Formalia
+- `./writing_state.md` — Wortzahlen, Kapitelstatus
 
 ## Checklisten-Dimensionen
 
@@ -106,23 +87,11 @@ Verifizieren:
 
 ### 3. Formatierung
 
-Compliance mit gängigen Formatierungsregeln prüfen:
+**Typografie:** Schrift Times New Roman 12pt/Arial 11pt, Zeilenabstand 1.5, Ränder links 3cm/rechts 2.5cm/oben+unten 2.5cm/2cm, Blocksatz, Seitenzahlen arabisch ab Einleitung.
 
-**Typografie:**
-- Schrift: Times New Roman 12pt oder Arial 11pt (je nach Hochschule)
-- Zeilenabstand: 1.5
-- Ränder: links 3 cm (Bindung), rechts 2.5 cm, oben 2.5 cm, unten 2 cm
-- Blocksatz
-- Seitenzahlen: arabisch ab Einleitung (Front Matter in römischen Ziffern)
+**Überschriften:** Konsistente Hierarchie, nummeriert (max. 3 Ebenen), keine Schuster-Überschriften.
 
-**Überschriften:**
-- Konsistente Hierarchie (keine übersprungenen Ebenen)
-- Nummerierte Überschriften (1, 1.1, 1.1.1 -- max. 3 Ebenen)
-- Keine Schuster-Überschriften (Überschrift am Seitenende, Text beginnt erst auf der nächsten Seite)
-
-**Absätze:**
-- Keine Einzelsatz-Absätze
-- Konsistente Absatz-Einrückung oder -Abstände
+**Absätze:** Keine Einzelsatz-Absätze, konsistente Einrückung.
 
 ### 4. Quellenzahl und Zitationsqualität
 
@@ -135,12 +104,7 @@ Ausreichende Quellennutzung prüfen:
 | Hausarbeit       | 10-20           |
 | Seminararbeit    | 15-25           |
 
-Prüfen:
-- Gesamtzahl eindeutiger Quellen in der Bibliografie
-- Alle In-Text-Zitate haben einen Eintrag im Literaturverzeichnis
-- Alle Literatureinträge werden im Text mindestens einmal zitiert
-- Zitierformat entspricht dem Stil aus `./academic_context.md` (APA7, IEEE, Harvard etc.)
-- Kein Kapitel ohne Zitate (Ausnahme: Strukturvorschau in der Einleitung und Ausblick im Fazit)
+Prüfen: Quellenzahl, In-Text↔Bibliographie-Abgleich, Zitierformat (aus `./academic_context.md`), kein zitatfreies Kapitel (außer Intro-Vorschau + Ausblick).
 
 ### 5. Abbildungen und Tabellen
 
@@ -161,13 +125,9 @@ Verifizieren:
 
 ## Evaluations-Workflow
 
-1. `./academic_context.md` lesen, um Arbeitstyp und Hochschule zu bestimmen
-2. `${CLAUDE_PLUGIN_ROOT}/skills/submission-checker/references/fh-leibniz.md` für spezifische Anforderungen lesen
-3. `./writing_state.md` für den aktuellen Fertigstellungsgrad lesen
-4. Die Arbeit gegen die Checkliste prüfen
-5. Jede Dimension als PASS, PARTIAL oder FAIL scoren
-6. Ergebnisse strukturiert ausgeben
-7. Fixes nach Schweregrad priorisieren
+1. Kontext-Dateien lesen (academic_context → Arbeitstyp/Hochschule, fh-leibniz.md → Anforderungen, writing_state → Fertigstellung)
+2. Arbeit gegen Checkliste prüfen, Dimensionen PASS/PARTIAL/FAIL scoren
+3. Strukturiert ausgeben, Fixes nach Schweregrad priorisieren
 
 ## Output-Format
 
