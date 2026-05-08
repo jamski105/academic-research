@@ -46,7 +46,29 @@ Du bist ein präziser akademischer Textanalyst, spezialisiert auf das Extrahiere
 
 **Statt Heuristik-Guard:** Der Agent erhält PDFs über den `documents`-Parameter der Claude-API. Die API erzwingt, dass jede Antwort `citations[]` enthält, die auf `page_location` (PDF) oder `char_location` (Text) zeigen.
 
-**API-Call-Schema (Input):**
+**API-Call-Schema (Files-API, Primärpfad):**
+```python
+# file_id einmalig hochladen, dann cachen (scripts/files_api_helper.py)
+file_id = ensure_uploaded(pdf_path, client)  # cached in pdf_status.json
+
+client.beta.messages.create(
+    model="claude-sonnet-4-6",
+    system=[{
+        "type": "text",
+        "text": AGENT_SYSTEM_PROMPT,
+        "cache_control": {"type": "ephemeral", "ttl": "1h"},
+    }],
+    documents=[{
+        "type": "document",
+        "source": {"type": "file", "file_id": file_id},
+        "citations": {"enabled": True},
+    }],
+    extra_headers={"anthropic-beta": "files-api-2025-04-14"},
+    messages=[{"role": "user", "content": f"Extrahiere 2 Zitate zur Query '<query>', max 25 Woerter."}],
+)
+```
+
+**Fallback (base64) wenn Feature-Flag OFF oder `ensure_uploaded()` gibt `None` zurück:**
 ```json
 {
   "model": "claude-sonnet-4-6",
@@ -62,6 +84,9 @@ Du bist ein präziser akademischer Textanalyst, spezialisiert auf das Extrahiere
   "messages": [{"role": "user", "content": "Extrahiere 2 Zitate zur Query '<query>', max 25 Woerter pro Zitat."}]
 }
 ```
+
+**Feature-Flag:** `ACADEMIC_FILES_API=0` → base64-Fallback ohne API-Overhead.
+`should_use_files_api()` aus `scripts/files_api_helper.py` prüft das Flag.
 
 **Output mit Citations:** Jeder `content`-Block mit `text` enthält ein `citations[]`-Array mit Objekten wie:
 ```json
@@ -163,18 +188,23 @@ Beim Batch-Extrahieren aus mehreren PDFs ist der System-Prompt (Rolle, Strategie
 **Implementierung:**
 
 ```python
-client.messages.create(
+client.beta.messages.create(
     model="claude-sonnet-4-6",
     system=[
         {
             "type": "text",
             "text": "<Agent-System-Prompt>",
-            "cache_control": {"type": "ephemeral"},
+            "cache_control": {"type": "ephemeral", "ttl": "1h"},
         }
     ],
-    documents=[{"type": "document", "source": {...}, "citations": {"enabled": true}}],
+    # Cache-Breakpoint ist VOR documents[] — der Agent-Prompt wird gecacht,
+    # das PDF-Dokument variiert pro Call ohne Cache-Invalidierung.
+    documents=[{"type": "document", "source": {"type": "file", "file_id": file_id}, "citations": {"enabled": true}}],
+    extra_headers={"anthropic-beta": "files-api-2025-04-14"},
     messages=[{"role": "user", "content": f"Extrahiere 2 Zitate zur Query '{query}'"}],
 )
 ```
+
+**Seit 2026-03-06 ist der Anthropic-Default-TTL 5 Minuten.** Ohne `"ttl": "1h"` laeuft der Cache bei Batch-Pausen ab — daher immer explizit setzen.
 
 Bei 5+ PDFs spart der Cache die Agent-Instruktion-Tokens pro Folgecall. Kombiniert mit Citations-API liefert dies halluzinationssichere + guenstige Zitat-Extraktion.
