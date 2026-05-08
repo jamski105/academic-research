@@ -201,6 +201,8 @@ def main() -> None:
         print(f"✅ Memory-Kontext kopiert nach {cwd} (Original bleibt als Backup)")
     merge_gitignore(cwd)
     print(f"✅ Facharbeit-Arbeitsordner initialisiert: {cwd}")
+    if _prompt_yes_no("Git aktivieren?", default_yes=False):
+        init_git_repo(cwd)
 
 
 if __name__ == "__main__":

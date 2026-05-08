@@ -221,3 +221,42 @@ def test_init_git_repo_no_git_in_path(tmp_path, monkeypatch):
     monkeypatch.setattr(shutil, "which", lambda _: None)
     result = pb.init_git_repo(tmp_path)
     assert result is False
+
+
+# ---------------------------------------------------------------------------
+# main() fresh-path git-prompt
+# ---------------------------------------------------------------------------
+
+def test_main_fresh_git_yes(tmp_path, monkeypatch):
+    """fresh-path: when user confirms git-init prompt, init_git_repo is called."""
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
+    monkeypatch.chdir(tmp_path)
+
+    # Both prompts return True (first: init workspace, second: git aktivieren)
+    prompts = iter([True, True])
+    monkeypatch.setattr(pb, "_prompt_yes_no", lambda *a, **kw: next(prompts))
+
+    git_called_with = []
+    monkeypatch.setattr(pb, "init_git_repo", lambda cwd: git_called_with.append(cwd) or True)
+
+    pb.main()
+
+    assert len(git_called_with) == 1
+    assert git_called_with[0] == tmp_path
+
+
+def test_main_fresh_git_no(tmp_path, monkeypatch):
+    """fresh-path: when user declines git-init prompt, init_git_repo is NOT called."""
+    monkeypatch.setattr(pb, "BOOTSTRAP_DIR", TEMPLATES)
+    monkeypatch.chdir(tmp_path)
+
+    # First prompt True (init workspace), second False (no git)
+    prompts = iter([True, False])
+    monkeypatch.setattr(pb, "_prompt_yes_no", lambda *a, **kw: next(prompts))
+
+    git_called = []
+    monkeypatch.setattr(pb, "init_git_repo", lambda cwd: git_called.append(cwd) or True)
+
+    pb.main()
+
+    assert git_called == []
