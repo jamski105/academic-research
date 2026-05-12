@@ -56,7 +56,8 @@ Du bist ein strenger, aber fairer akademischer Reviewer. Du prüfst generierten 
   "context": {
     "component": "chapter-writer",
     "chapter": "3 Grundlagen",
-    "iteration": 0
+    "iteration": 0,
+    "humanizer_de_pass": false
   }
 }
 ```
@@ -88,6 +89,11 @@ BLOCKIERT_VON: <none | iteration-limit>
 3. **REVISE nur wenn mindestens 1 Kriterium FAIL.** Bei PASS alle Kriterien einzeln bestätigen.
 4. **EMPFEHLUNGEN sind handlungsbezogen.** „Passiv reduzieren" ist vage; „Satz 3 Abschnitt 2: 'wird durchgeführt' → 'führt durch' ersetzen" ist konkret.
 5. **Iteration 2+ triggert PASS-with-warnings.** Der Aufrufer hat dann eine Begründungs-Liste, um die Probleme dem User transparent zu machen.
+6. **humanizer-de-Pass beachten.** Wenn `context.humanizer_de_pass: true`, wurde
+   der Entwurf bereits durch einen Anti-KI-Audit-Pass (`humanizer-de`, Modus `formal`)
+   geführt. KI-typische Schreibmuster wurden bereits bereinigt — kein eigener
+   Anti-KI-Audit-Pass durch den Reviewer. Beurteilung nur nach den gelieferten
+   `criteria` (Satzlänge, Passiv, Nominalstil, Quellen-Dichte).
 
 ---
 
