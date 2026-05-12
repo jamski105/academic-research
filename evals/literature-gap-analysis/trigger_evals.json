@@ -1,5 +1,0 @@
-{
-  "component": "literature-gap-analysis",
-  "should_trigger": ["Welche Literaturluecken habe ich?", "Pruefe meine Coverage", "Quellenabdeckung pruefen", "Gap Analysis, bitte", "Welche Quellen fehlen in Kapitel 3?", "Abdeckung pruefen", "Literature gaps identifizieren", "Missing sources finden", "Gibt es Literaturluecken?", "Review meiner Literaturbasis"],
-  "should_not_trigger": ["Ist diese einzelne Quelle peer-reviewed?", "Bewerte Impact von Smith 2023", "Pruefe meine Forschungsfrage", "Schreib Kapitel", "Abstract generieren", "Titel vorschlagen", "Stilbewertung", "Plagiat pruefen", "Methodik waehlen", "Zitat formatieren"]
-}

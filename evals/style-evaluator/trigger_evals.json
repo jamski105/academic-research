@@ -1,5 +1,0 @@
-{
-  "component": "style-evaluator",
-  "should_trigger": ["Pruefe meinen Schreibstil", "Stilbewertung fuer Kapitel 2", "Satzlaenge und Passiv-Quote", "Ist mein Nominalstil zu hoch?", "Style evaluation meines Entwurfs", "Stil pruefen, bitte", "Fuellwoerter-Analyse", "Akademisch genug?", "Wortanzahl und Lesbarkeit", "Pruefe meinen Duktus"],
-  "should_not_trigger": ["Plagiat pruefen", "Textaehnlichkeit", "Zitat formatieren", "Forschungsfrage schaerfen", "Gliederung pruefen", "Methodik waehlen", "Abstract erzeugen", "Titel", "Paper suchen", "Quellenabdeckung"]
-}

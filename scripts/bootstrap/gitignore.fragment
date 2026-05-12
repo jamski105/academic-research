@@ -1,7 +1,0 @@
-# academic-research
-pdfs/*
-!pdfs/.gitkeep
-sessions/
-credentials.json
-.DS_Store
-.claude/settings.local.json

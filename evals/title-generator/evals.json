@@ -1,8 +1,0 @@
-{
-  "component": "title-generator",
-  "component_type": "skill",
-  "prompts": [
-    {"id": "tg-01", "input": "Thema: DevOps Governance in KMU. Schlage 3 Arbeitstitel vor.", "expected": {"type": "regex", "value": "(Titel|DevOps)"}, "mode": "with_skill"},
-    {"id": "tg-02", "input": "Erzeuge einen Titel mit Untertitel fuer 'Zero Trust in Healthcare'.", "expected": {"type": "substring", "value": ":"}, "mode": "with_skill"}
-  ]
-}
