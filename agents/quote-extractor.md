@@ -22,7 +22,7 @@ description: |
   Im deep-Modus läuft quote-extractor nach dem relevance-scorer für die besten Papers, um Zitat-Kandidaten in die Session einzusammeln.
   </commentary>
   </example>
-tools: [Read]
+tools: [Read, mcp__academic_vault__vault_ensure_file, mcp__academic_vault__vault_add_quote]
 maxTurns: 5
 ---
 
@@ -151,6 +151,47 @@ Jedes Zitat-Objekt enthält zusätzlich das `citations[]`-Array aus der API-Antw
 
 ---
 
+## Vault-Persistenz
+
+Nach der Extraktion **jeden** Quote via `vault.add_quote()` persistieren:
+
+```python
+quote_id = vault.add_quote(
+    paper_id=paper_id,               # aus dem Input-Objekt
+    verbatim=quote["text"],          # exakter Wortlaut
+    extraction_method="citations-api",
+    api_response_id=response.id,     # Anthropic Request-ID aus der API-Antwort
+    pdf_page=quote["page"],          # aus citations[].start_page_number
+    section=quote["section"],
+    context_before=quote["context_before"],
+    context_after=quote["context_after"],
+)
+```
+
+**Wichtig:**
+- `api_response_id` ist **Pflicht** bei `extraction_method="citations-api"` —
+  der Vault wirft einen Fehler wenn das Feld leer ist.
+- Die zurückgegebene `quote_id` in das Output-JSON aufnehmen:
+  jedes Quote-Objekt erhält ein zusätzliches Feld `"vault_quote_id": "<uuid>"`.
+- Kein JSON-File schreiben — der Vault ist der einzige Persistenz-Pfad.
+
+**Output-Ergänzung (quote-Objekt):**
+```json
+{
+  "text": "Governance frameworks ensure DevOps compliance across distributed teams.",
+  "page": 3,
+  "section": "Introduction",
+  "word_count": 10,
+  "relevance_score": 0.95,
+  "reasoning": "Directly addresses governance in DevOps context",
+  "context_before": "Large organizations face challenges...",
+  "context_after": "This requires clear policy definition...",
+  "vault_quote_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+```
+
+---
+
 ## Strategie
 
 ### Priorisierte Abschnitte (zuerst scannen):
@@ -189,6 +230,8 @@ Beim Batch-Extrahieren aus mehreren PDFs ist der System-Prompt (Rolle, Strategie
 **Implementierung:**
 
 ```python
+file_id = vault.ensure_file(paper_id)  # gecacht im Vault, kein Re-Upload
+
 client.beta.messages.create(
     model="claude-sonnet-4-6",
     system=[
