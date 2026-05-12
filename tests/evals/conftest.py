@@ -127,7 +127,7 @@ _FAKE_PAPERS = {
     "mueller2021": {
         "paper_id": "mueller2021",
         "title": "Agile Entscheidungsfindung",
-        "doi": "10.1109/MS.2022.1234567",
+        "doi": "10.1109/MS.2021.7654321",
         "pdf_path": "/fake/mueller2021.pdf",
         "_seed_quotes": [
             {

@@ -1,5 +1,6 @@
 """Evals fuer quote-extractor-Agent (Block B + A)."""
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -57,7 +58,6 @@ def test_mock_vault_add_quote_returns_uuid(mock_vault):
     assert quote_id, "quote_id darf nicht leer sein"
     assert isinstance(quote_id, str)
     # UUID-Format (8-4-4-4-12 Hex)
-    import re
     assert re.match(
         r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         quote_id,
