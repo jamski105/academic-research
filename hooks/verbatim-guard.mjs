@@ -28,6 +28,7 @@ const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(HOOK_DIR);
 const VAULT_SRC = join(REPO_ROOT, 'mcp');
 const VAULT_DB = process.env.VAULT_DB_PATH || join(REPO_ROOT, 'vault.db');
+// Mindestlänge eines Zitat-Spans (in Zeichen). Muss mit den Regex-Quantifizierern übereinstimmen.
 const MIN_QUOTE_LEN = 10;
 
 // ---------------------------------------------------------------------------
@@ -79,21 +80,18 @@ function isProtectedPath(filePath) {
  */
 function extractQuoteSpans(content) {
   const spans = [];
+  const q = MIN_QUOTE_LEN;
+  // Jedes Pattern als Konstruktor — dadurch wird lastIndex isoliert pro Durchlauf.
   const patterns = [
-    /"([^"]{10,})"/g,          // ASCII "…"
-    /„([^"]{10,})"/g,          // Deutsche „…"
-    /«([^»]{10,})»/g,          // Guillemets «…»
-    /``([^']{10,})''/g,        // LaTeX ``…''
+    new RegExp(`"([^"]{${q},})"`, 'g'),           // ASCII "…"
+    new RegExp(`„([^“]{${q},})“`, 'g'), // Deutsche „…" (U+201E…U+201C)
+    new RegExp(`«([^»]{${q},})»`, 'g'), // Guillemets «…» (U+00AB…U+00BB)
+    new RegExp(`\`\`([^']{${q},})''`, 'g'),        // LaTeX ``…''
   ];
-  for (const re of patterns) {
+  for (const r of patterns) {
     let match;
-    // Neues RegExp-Objekt pro Durchlauf, damit lastIndex zurueckgesetzt wird
-    const r = new RegExp(re.source, re.flags);
     while ((match = r.exec(content)) !== null) {
-      const inner = match[1];
-      if (inner && inner.length >= MIN_QUOTE_LEN) {
-        spans.push(inner);
-      }
+      if (match[1]) spans.push(match[1]);
     }
   }
   return spans;
