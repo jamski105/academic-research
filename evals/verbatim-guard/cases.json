@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "type": "real",
+    "description": "Echter Vault-Quote — vollständig verbatim",
+    "quote_text": "Die Digitalisierung verändert grundlegend die Art und Weise, wie Wissen produziert und verbreitet wird.",
+    "in_vault": true,
+    "expected": "pass"
+  },
+  {
+    "id": 2,
+    "type": "real",
+    "description": "Echter Vault-Quote — Teilmatch (Hook erhält gekürzten Span)",
+    "quote_text": "kritische Reflexion über methodische Grundlagen",
+    "in_vault": true,
+    "expected": "pass"
+  },
+  {
+    "id": 3,
+    "type": "real",
+    "description": "Echter Vault-Quote — mit Sonderzeichen",
+    "quote_text": "Qualitative Forschung ist kein Defizitmodell quantitativer Methoden.",
+    "in_vault": true,
+    "expected": "pass"
+  },
+  {
+    "id": 4,
+    "type": "real",
+    "description": "Echter Vault-Quote — LaTeX-Span-Typ (backtick-style)",
+    "quote_text": "Der hermeneutische Zirkel beschreibt das Wechselverhältnis von Teil und Ganzem.",
+    "in_vault": true,
+    "expected": "pass"
+  },
+  {
+    "id": 5,
+    "type": "real",
+    "description": "Echter Vault-Quote — Guillemets-Span-Typ",
+    "quote_text": "Erkenntnistheorie ist die Grundlage jeder wissenschaftlichen Methodik.",
+    "in_vault": true,
+    "expected": "pass"
+  },
+  {
+    "id": 6,
+    "type": "invented",
+    "description": "Erfundenes Zitat — klingt akademisch, existiert nicht im Vault",
+    "quote_text": "Die kumulative Wissensakkumulation folgt einer exponentiellen Wachstumskurve seit 1950.",
+    "in_vault": false,
+    "expected": "block"
+  },
+  {
+    "id": 7,
+    "type": "invented",
+    "description": "Erfundenes Zitat — falsch attribuiert",
+    "quote_text": "Wissenschaftlicher Fortschritt entsteht ausschließlich durch kollaborative Netzwerke.",
+    "in_vault": false,
+    "expected": "block"
+  },
+  {
+    "id": 8,
+    "type": "invented",
+    "description": "Erfundenes Zitat — plausibel klingend, aber halluziniert",
+    "quote_text": "Interdisziplinarität ist keine Methode, sondern eine epistemische Haltung.",
+    "in_vault": false,
+    "expected": "block"
+  },
+  {
+    "id": 9,
+    "type": "invented",
+    "description": "Erfundenes Zitat — falsches Datum suggeriert",
+    "quote_text": "Seit dem Paradigmenwechsel von 1987 dominiert der konstruktivistische Ansatz.",
+    "in_vault": false,
+    "expected": "block"
+  },
+  {
+    "id": 10,
+    "type": "invented",
+    "description": "Erfundenes Zitat — eloquent formuliert, nicht verifizierbar",
+    "quote_text": "Reflexivität und Intersubjektivität bilden den epistemischen Kern qualitativer Sozialforschung.",
+    "in_vault": false,
+    "expected": "block"
+  }
+]

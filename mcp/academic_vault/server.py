@@ -107,6 +107,12 @@ def search_papers(
     return [dict(r) for r in rows]
 
 
+def search_quote_text(db_path: str, verbatim: str, k: int = 5) -> list[dict]:
+    """LIKE-Suche in quotes.verbatim. Gibt [{quote_id, verbatim, paper_id}] zurueck."""
+    db = VaultDB(db_path)
+    return db.search_quote_text(verbatim, k)
+
+
 def find_quotes(
     db_path: str,
     paper_id: str,
@@ -225,6 +231,11 @@ def _build_mcp_server():
             context_before=context_before,
             context_after=context_after,
         )
+
+    @mcp.tool(name="vault.search_quote_text")
+    def _vault_search_quote_text(verbatim: str, k: int = 5) -> list[dict]:
+        """LIKE-Suche in quotes.verbatim. Prueft ob ein Zitat im Vault existiert."""
+        return search_quote_text(db_path, verbatim, k)
 
     @mcp.tool(name="vault.find_quotes")
     def _vault_find_quotes(paper_id: str, query: str = None, k: int = 10) -> list[dict]:
