@@ -4,31 +4,31 @@
   "prompts": [
     {
       "id": "qe-01",
-      "input": "Paper-Title: 'DevOps Governance Frameworks'. PDF-Text: 'Governance frameworks ensure DevOps compliance across distributed teams. This requires clear policy definition and shared accountability...' Extrahiere 2 verbatime Zitate, max 25 Woerter.",
-      "expected": {"type": "regex", "value": "\"quotes\"\\s*:\\s*\\["},
-      "mode": "both"
+      "input": "{\"paper\": {\"paper_id\": \"devops2022\", \"title\": \"DevOps Governance Frameworks\", \"doi\": \"10.1109/MS.2022.1234567\"}, \"research_query\": \"DevOps Governance\", \"max_quotes\": 2, \"max_words_per_quote\": 25}",
+      "expected": {"type": "json_field", "path": "$.quotes[0].vault_quote_id", "check": "non_empty"},
+      "mode": "with_skill"
     },
     {
       "id": "qe-02",
-      "input": "Paper-Title: 'Zero Trust Networks'. PDF-Text: 'Zero trust assumes no implicit trust. Every access request is verified regardless of origin.' Extrahiere 2 Zitate zur Query 'Zero Trust Prinzipien', max 25 Woerter pro Zitat.",
-      "expected": {"type": "substring", "value": "Zero trust"},
+      "input": "{\"paper\": {\"paper_id\": \"zerotrust2024\", \"title\": \"Zero Trust Networks\", \"doi\": \"10.1109/MS.2024.9876543\"}, \"research_query\": \"Zero Trust Prinzipien\", \"max_quotes\": 2, \"max_words_per_quote\": 25}",
+      "expected": {"type": "regex", "value": "vault_quote_id|Zero [Tt]rust"},
       "mode": "with_skill"
     },
     {
       "id": "qe-03",
-      "input": "Paper-Title: 'Machine Learning Ops'. Das gelieferte PDF enthaelt ausschliesslich gescannte Bilder ohne OCR-Text. Extrahiere Zitate zur Query 'MLOps'.",
+      "input": "{\"paper\": {\"paper_id\": \"mlops_scan_only\", \"title\": \"Machine Learning Ops\", \"doi\": null}, \"research_query\": \"MLOps\", \"max_quotes\": 2, \"max_words_per_quote\": 25}",
       "expected": {"type": "regex", "value": "extraction_quality.*(failed|low)|keine verwertbaren"},
       "mode": "with_skill"
     },
     {
       "id": "qe-04",
-      "input": "Paper-Title: 'Agile at Scale'. PDF-Text: 'Scaled agile frameworks coordinate multiple teams through quarterly planning increments.' Query: 'SAFe Coordination'. Extrahiere 1 Zitat.",
-      "expected": {"type": "substring", "value": "quarterly"},
+      "input": "{\"paper\": {\"paper_id\": \"agile2023\", \"title\": \"Agile at Scale\", \"doi\": \"10.1109/MS.2023.1122334\"}, \"research_query\": \"SAFe Coordination\", \"max_quotes\": 1, \"max_words_per_quote\": 25}",
+      "expected": {"type": "json_field", "path": "$.extraction_quality", "check": "exists"},
       "mode": "both"
     },
     {
       "id": "qe-05",
-      "input": "Paper-Title: 'Quantum Computing'. PDF-Text: 'Lorem ipsum dolor sit amet.' Query: 'Post-Quantum Cryptography'. Keine relevanten Zitate erwartet.",
+      "input": "{\"paper\": {\"paper_id\": \"quantum2021\", \"title\": \"Quantum Computing\", \"doi\": null}, \"research_query\": \"Post-Quantum Cryptography\", \"max_quotes\": 2, \"max_words_per_quote\": 25}",
       "expected": {"type": "regex", "value": "\"quotes\"\\s*:\\s*\\[\\s*\\]|total_quotes_extracted.*0"},
       "mode": "with_skill"
     }

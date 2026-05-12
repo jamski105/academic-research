@@ -35,6 +35,15 @@ def test_quote_extractor_eval(prompt, mode):
 # Vault-Mock-Tests (kein API-Key benoetigt)
 # ---------------------------------------------------------------------------
 
+def test_quote_extractor_evals_use_paper_id_input():
+    """Alle qe-Prompts muessen paper_id im Input haben (Vault-Interface, kein pdf_text)."""
+    for prompt in EVALS["prompts"]:
+        inp = prompt["input"]
+        assert '"paper_id"' in inp or "'paper_id'" in inp, (
+            f"Prompt {prompt['id']} enthaelt noch kein paper_id-Feld im Input: {inp[:100]}"
+        )
+
+
 def test_mock_vault_add_quote_returns_uuid(mock_vault):
     """mock_vault.add_quote() gibt eine nicht-leere UUID-artige Zeichenkette zurueck."""
     quote_id = mock_vault.add_quote(
