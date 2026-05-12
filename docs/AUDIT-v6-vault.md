@@ -288,10 +288,12 @@ Total: ~1700 Token statt 10000+ → ~83 % Ersparnis pro Kapitel-Iteration.
   `vault.ensure_file`
 - Migration-Skript: `literature_state.md` + PDFs → SQLite-Initial-Seed
 
-**Phase 2 — Skill-Anpassung (Sprint v6.0)**
-- `quote-extractor` schreibt in `vault.add_quote()` statt JSON-File
-- `chapter-writer` liest via `vault.find_quotes()`
-- Hook für Verbatim-Validation
+**Phase 2 — Skill-Anpassung (Sprint v6.0)** ✅ implementiert in W2-A (feat/v6.0-W2-A)
+- `quote-extractor` schreibt in `vault.add_quote()` statt JSON-File ✅
+- `chapter-writer` liest via `vault.find_quotes()` + `vault.search()` ✅
+- PDFs via `vault.ensure_file()` als file_id ✅
+- `literature_state.md` nur noch read-only Snapshot-Export ✅
+- Hook für Verbatim-Validation → Phase 2b / W2-B (#64)
 
 **Phase 3 — Bridges (Sprint v6.3)**
 - `zotero-import` (pyzotero pull-only)

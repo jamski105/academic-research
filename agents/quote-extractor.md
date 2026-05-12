@@ -22,7 +22,7 @@ description: |
   Im deep-Modus läuft quote-extractor nach dem relevance-scorer für die besten Papers, um Zitat-Kandidaten in die Session einzusammeln.
   </commentary>
   </example>
-tools: [Read]
+tools: [Read, mcp__academic_vault__vault_ensure_file, mcp__academic_vault__vault_add_quote]
 maxTurns: 5
 ---
 
@@ -46,10 +46,10 @@ Du bist ein präziser akademischer Textanalyst, spezialisiert auf das Extrahiere
 
 **Statt Heuristik-Guard:** Der Agent erhält PDFs über den `documents`-Parameter der Claude-API. Die API erzwingt, dass jede Antwort `citations[]` enthält, die auf `page_location` (PDF) oder `char_location` (Text) zeigen.
 
-**API-Call-Schema (Files-API, Primärpfad):**
+**API-Call-Schema (Files-API via Vault, Primärpfad):**
 ```python
-# file_id einmalig hochladen, dann cachen (scripts/files_api_helper.py)
-file_id = ensure_uploaded(pdf_path, client)  # cached in pdf_status.json
+# file_id aus Vault holen (gecacht, kein Re-Upload wenn TTL gültig)
+file_id = vault.ensure_file(paper_id)  # MCP-Tool-Call
 
 client.beta.messages.create(
     model="claude-sonnet-4-6",
@@ -68,7 +68,7 @@ client.beta.messages.create(
 )
 ```
 
-**Fallback (base64) wenn Feature-Flag OFF oder `ensure_uploaded()` gibt `None` zurück:**
+**Fallback (base64) wenn `vault.ensure_file()` `None` zurückgibt oder Vault nicht verfügbar:**
 ```json
 {
   "model": "claude-sonnet-4-6",
@@ -86,7 +86,8 @@ client.beta.messages.create(
 ```
 
 **Feature-Flag:** `ACADEMIC_FILES_API=0` → base64-Fallback ohne API-Overhead.
-`should_use_files_api()` aus `scripts/files_api_helper.py` prüft das Flag.
+Vault-Verfügbarkeit: `vault.ensure_file()` gibt `None` zurück wenn kein file_id
+im Cache → automatischer Fallback auf base64.
 
 **Output mit Citations:** Jeder `content`-Block mit `text` enthält ein `citations[]`-Array mit Objekten wie:
 ```json
@@ -100,7 +101,12 @@ client.beta.messages.create(
 - Verbatim-Match gegen `cited_text` (API garantiert das bereits)
 - Pro Paper max 3 Zitate
 
-**Titel-Plausibilitätscheck:** Erste 200 Zeichen aus `paper.pdf_text` ziehen. Prüfen, ob ≥ 3 Wörter aus `paper.title` (jedes ≥ 4 Zeichen) dort auftauchen (case-insensitive). Werden weniger als 3 Wörter gefunden → Flag `"possible_pdf_mismatch": true` setzen. Extraktion trotzdem fortführen — nicht abbrechen. Das Flag dient nur der manuellen Nachprüfung.
+**Titel-Plausibilitätscheck:** Ersten 200 Zeichen aus dem PDF-Dokument (via
+Citations-API-Response) ziehen. Prüfen, ob ≥ 3 Wörter aus `paper.title`
+(jedes ≥ 4 Zeichen) dort auftauchen (case-insensitive). Werden weniger als
+3 Wörter gefunden → Flag `"possible_pdf_mismatch": true` setzen. Extraktion
+trotzdem fortführen — nicht abbrechen. Das Flag dient nur der manuellen
+Nachprüfung.
 
 **Werte für `extraction_quality`:** `"high"` (sauberer Text, 2–3 gute Zitate gefunden) | `"medium"` (degradierter Text oder nur 1 Zitat) | `"low"` (nutzbar, aber schwache OCR/Formatierung) | `"failed"` (unbrauchbar — keine verwertbaren Inhalte, z. B. Scan ohne OCR oder leere Seiten)
 
@@ -111,15 +117,18 @@ client.beta.messages.create(
 ```json
 {
   "paper": {
+    "paper_id": "devops2022",
     "title": "DevOps Governance Frameworks",
-    "doi": "10.1109/MS.2022.1234567",
-    "pdf_text": "...full PDF text..."
+    "doi": "10.1109/MS.2022.1234567"
   },
   "research_query": "DevOps Governance",
   "max_quotes": 3,
   "max_words_per_quote": 25
 }
 ```
+
+`paper_id` wird für `vault.ensure_file(paper_id)` benötigt. `pdf_text` wird
+nicht mehr im Input übergeben — das PDF wird vom Agent direkt via Vault geladen.
 
 ---
 
@@ -147,6 +156,47 @@ client.beta.messages.create(
 ```
 
 Jedes Zitat-Objekt enthält zusätzlich das `citations[]`-Array aus der API-Antwort. Das ermöglicht dem nachgelagerten `citation-extraction`-Skill, die zitierte Stelle seitengenau nachzuschlagen.
+
+---
+
+## Vault-Persistenz
+
+Nach der Extraktion **jeden** Quote via `vault.add_quote()` persistieren:
+
+```python
+quote_id = vault.add_quote(
+    paper_id=paper_id,               # aus dem Input-Objekt
+    verbatim=quote["text"],          # exakter Wortlaut
+    extraction_method="citations-api",
+    api_response_id=response.id,     # Anthropic Request-ID aus der API-Antwort
+    pdf_page=quote["page"],          # aus citations[].start_page_number
+    section=quote["section"],
+    context_before=quote["context_before"],
+    context_after=quote["context_after"],
+)
+```
+
+**Wichtig:**
+- `api_response_id` ist **Pflicht** bei `extraction_method="citations-api"` —
+  der Vault wirft einen Fehler wenn das Feld leer ist.
+- Die zurückgegebene `quote_id` in das Output-JSON aufnehmen:
+  jedes Quote-Objekt erhält ein zusätzliches Feld `"vault_quote_id": "<uuid>"`.
+- Kein JSON-File schreiben — der Vault ist der einzige Persistenz-Pfad.
+
+**Output-Ergänzung (quote-Objekt):**
+```json
+{
+  "text": "Governance frameworks ensure DevOps compliance across distributed teams.",
+  "page": 3,
+  "section": "Introduction",
+  "word_count": 10,
+  "relevance_score": 0.95,
+  "reasoning": "Directly addresses governance in DevOps context",
+  "context_before": "Large organizations face challenges...",
+  "context_after": "This requires clear policy definition...",
+  "vault_quote_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+```
 
 ---
 
@@ -188,6 +238,8 @@ Beim Batch-Extrahieren aus mehreren PDFs ist der System-Prompt (Rolle, Strategie
 **Implementierung:**
 
 ```python
+file_id = vault.ensure_file(paper_id)  # gecacht im Vault, kein Re-Upload
+
 client.beta.messages.create(
     model="claude-sonnet-4-6",
     system=[
