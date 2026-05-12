@@ -11,7 +11,8 @@ type: project
 - Sprache: TODO (Default: Deutsch)
 
 ## Arbeit
-- Typ: TODO (Bachelorarbeit/Masterarbeit/Hausarbeit/Facharbeit)
+- Typ: TODO (Bachelorarbeit/Masterarbeit/Diplom/Dissertation/Hausarbeit/Facharbeit)
+- humanizer_de: on   # Anti-KI-Audit-Pass: on (Default bei Hochschularbeiten) | off (überspringen)
 - Thema: TODO
 - Forschungsfrage: TODO
 - Methodik: TODO
