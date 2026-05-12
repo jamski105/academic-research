@@ -46,10 +46,10 @@ Du bist ein präziser akademischer Textanalyst, spezialisiert auf das Extrahiere
 
 **Statt Heuristik-Guard:** Der Agent erhält PDFs über den `documents`-Parameter der Claude-API. Die API erzwingt, dass jede Antwort `citations[]` enthält, die auf `page_location` (PDF) oder `char_location` (Text) zeigen.
 
-**API-Call-Schema (Files-API, Primärpfad):**
+**API-Call-Schema (Files-API via Vault, Primärpfad):**
 ```python
-# file_id einmalig hochladen, dann cachen (scripts/files_api_helper.py)
-file_id = ensure_uploaded(pdf_path, client)  # cached in pdf_status.json
+# file_id aus Vault holen (gecacht, kein Re-Upload wenn TTL gültig)
+file_id = vault.ensure_file(paper_id)  # MCP-Tool-Call
 
 client.beta.messages.create(
     model="claude-sonnet-4-6",
@@ -68,7 +68,7 @@ client.beta.messages.create(
 )
 ```
 
-**Fallback (base64) wenn Feature-Flag OFF oder `ensure_uploaded()` gibt `None` zurück:**
+**Fallback (base64) wenn `vault.ensure_file()` `None` zurückgibt oder Vault nicht verfügbar:**
 ```json
 {
   "model": "claude-sonnet-4-6",
@@ -86,7 +86,8 @@ client.beta.messages.create(
 ```
 
 **Feature-Flag:** `ACADEMIC_FILES_API=0` → base64-Fallback ohne API-Overhead.
-`should_use_files_api()` aus `scripts/files_api_helper.py` prüft das Flag.
+Vault-Verfügbarkeit: `vault.ensure_file()` gibt `None` zurück wenn kein file_id
+im Cache → automatischer Fallback auf base64.
 
 **Output mit Citations:** Jeder `content`-Block mit `text` enthält ein `citations[]`-Array mit Objekten wie:
 ```json
