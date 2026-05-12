@@ -31,6 +31,18 @@
       "input": "Mehrere Autoren: Smith, Jones, Taylor, Brown, Davis (2023). APA7-Erstzitat im Text.",
       "expected": {"type": "regex", "value": "Smith et al\\., 2023|Smith, Jones, Taylor, Brown, & Davis"},
       "mode": "with_skill"
+    },
+    {
+      "id": "ce-vault-01",
+      "input": "Nutze vault.find_quotes(paper_id=\"devops2022\", query=\"DevOps Governance\", k=3) um Zitate zu laden. Formatiere das erste Zitat als APA7-Inline-Beleg (Autor: Smith, Jahr: 2023, Seite: 42). quote_id: \"q-fake-001\"",
+      "expected": {"type": "regex", "value": "Smith.*2023|vault\\.find_quotes"},
+      "mode": "with_skill"
+    },
+    {
+      "id": "ce-vault-02",
+      "input": "Nutze vault.get_quote(quote_id=\"q-fake-001\") um den vollstaendigen Quote-Record zu laden. Das Zitat stammt von Mueller, A. (2022). Formatiere als Harvard-Eintrag.",
+      "expected": {"type": "regex", "value": "Mueller.*2022|Mueller, A\\.|vault\\.get_quote"},
+      "mode": "with_skill"
     }
   ]
 }

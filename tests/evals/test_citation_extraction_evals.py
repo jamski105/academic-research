@@ -29,3 +29,15 @@ def test_citation_extraction_eval(prompt, mode):
     assert check_expected(output, prompt["expected"]), (
         f"[{mode}] {prompt['id']}: expected={prompt['expected']} actual={output[:200]}"
     )
+
+
+def test_citation_extraction_evals_has_vault_cases():
+    """Mindestens zwei ce-Prompts muessen vault.find_quotes() oder vault.get_quote() exercisen."""
+    vault_prompts = [
+        p for p in EVALS["prompts"]
+        if "vault" in p["input"].lower() or "quote_id" in p["input"]
+    ]
+    assert len(vault_prompts) >= 2, (
+        f"Erwartet >= 2 Vault-Cases, gefunden: {len(vault_prompts)}. "
+        "ce-vault-01 und ce-vault-02 werden erwartet."
+    )
