@@ -101,7 +101,12 @@ im Cache → automatischer Fallback auf base64.
 - Verbatim-Match gegen `cited_text` (API garantiert das bereits)
 - Pro Paper max 3 Zitate
 
-**Titel-Plausibilitätscheck:** Erste 200 Zeichen aus `paper.pdf_text` ziehen. Prüfen, ob ≥ 3 Wörter aus `paper.title` (jedes ≥ 4 Zeichen) dort auftauchen (case-insensitive). Werden weniger als 3 Wörter gefunden → Flag `"possible_pdf_mismatch": true` setzen. Extraktion trotzdem fortführen — nicht abbrechen. Das Flag dient nur der manuellen Nachprüfung.
+**Titel-Plausibilitätscheck:** Ersten 200 Zeichen aus dem PDF-Dokument (via
+Citations-API-Response) ziehen. Prüfen, ob ≥ 3 Wörter aus `paper.title`
+(jedes ≥ 4 Zeichen) dort auftauchen (case-insensitive). Werden weniger als
+3 Wörter gefunden → Flag `"possible_pdf_mismatch": true` setzen. Extraktion
+trotzdem fortführen — nicht abbrechen. Das Flag dient nur der manuellen
+Nachprüfung.
 
 **Werte für `extraction_quality`:** `"high"` (sauberer Text, 2–3 gute Zitate gefunden) | `"medium"` (degradierter Text oder nur 1 Zitat) | `"low"` (nutzbar, aber schwache OCR/Formatierung) | `"failed"` (unbrauchbar — keine verwertbaren Inhalte, z. B. Scan ohne OCR oder leere Seiten)
 
@@ -112,15 +117,18 @@ im Cache → automatischer Fallback auf base64.
 ```json
 {
   "paper": {
+    "paper_id": "devops2022",
     "title": "DevOps Governance Frameworks",
-    "doi": "10.1109/MS.2022.1234567",
-    "pdf_text": "...full PDF text..."
+    "doi": "10.1109/MS.2022.1234567"
   },
   "research_query": "DevOps Governance",
   "max_quotes": 3,
   "max_words_per_quote": 25
 }
 ```
+
+`paper_id` wird für `vault.ensure_file(paper_id)` benötigt. `pdf_text` wird
+nicht mehr im Input übergeben — das PDF wird vom Agent direkt via Vault geladen.
 
 ---
 
