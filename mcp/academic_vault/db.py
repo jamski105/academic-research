@@ -214,6 +214,18 @@ class VaultDB:
             conn.close()
         return dict(row) if row is not None else None
 
+    def search_quote_text(self, verbatim: str, k: int = 5) -> list[dict]:
+        """LIKE-Suche in quotes.verbatim. Gibt [{quote_id, verbatim, paper_id}] zurueck."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        rows = conn.execute(
+            "SELECT quote_id, verbatim, paper_id FROM quotes WHERE verbatim LIKE ? LIMIT ?",
+            (f"%{verbatim}%", k),
+        ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
     def find_quotes(
         self,
         paper_id: str,
