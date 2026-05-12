@@ -29,3 +29,15 @@ def test_chapter_writer_eval(prompt, mode):
     assert check_expected(output, prompt["expected"]), (
         f"[{mode}] {prompt['id']}: expected={prompt['expected']} actual={output[:200]}"
     )
+
+
+def test_chapter_writer_evals_has_vault_case():
+    """Mindestens ein cw-Prompt muss einen Vault-Search-Pfad exercisen (paper_ids oder vault)."""
+    vault_prompts = [
+        p for p in EVALS["prompts"]
+        if "paper_ids" in p["input"] or "vault" in p["input"].lower()
+    ]
+    assert len(vault_prompts) >= 1, (
+        "Kein einziger chapter-writer-Prompt referenziert paper_ids oder vault — "
+        "mindestens cw-vault-01 wird erwartet"
+    )
