@@ -1,5 +1,0 @@
-{
-  "component": "methodology-advisor",
-  "should_trigger": ["Welche Methodik passt zu meinem Thema?", "Soll ich qualitativ oder quantitativ arbeiten?", "Methodenwahl fuer meine Forschungsfrage", "Ist eine Fallstudie hier sinnvoll?", "Passt ein Literatur-Review als Methode?", "Methodology fit check", "Forschungsdesign entwickeln", "Mixed Methods fuer mein Thema?", "Qualitative Inhaltsanalyse nach Mayring oder Gruppendiskussion?", "Welche Methode liefert belastbare Daten?"],
-  "should_not_trigger": ["Schärfe meine Forschungsfrage", "Pruefe meine Gliederung", "Schreib Methodik-Kapitel", "Erzeuge Abstract", "Finde Paper", "Bewerte meinen Stil", "Erstelle einen Literatur-Gap-Report", "Pruefe meine Zitationen", "Setze meinen academic_context auf", "Pruefe die FH-Leibniz-Formalia"]
-}

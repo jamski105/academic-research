@@ -1,8 +1,0 @@
-{
-  "component": "submission-checker",
-  "component_type": "skill",
-  "prompts": [
-    {"id": "sc-01", "input": "FH Leibniz, Seitenraender 2,5 cm, Times 12pt, Zeilenabstand 1,5 — erfuellt das die Formalia?", "expected": {"type": "regex", "value": "(PASS|erfuellt|konform)"}, "mode": "with_skill"},
-    {"id": "sc-02", "input": "Meine Arbeit hat keine ehrenwoertliche Erklaerung am Ende. Ist das ein FAIL?", "expected": {"type": "substring", "value": "Erklaerung"}, "mode": "both"}
-  ]
-}

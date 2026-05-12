@@ -1,8 +1,0 @@
-{
-  "component": "query-generator",
-  "component_type": "agent",
-  "prompts": [
-    {"id": "qg-01", "input": "Thema: DevOps Governance. Generiere 3 Suchqueries fuer akademische Datenbanken.", "expected": {"type": "regex", "value": "(DevOps|Governance|compliance)"}, "mode": "with_skill"},
-    {"id": "qg-02", "input": "Engere Query zu Zero Trust Healthcare, Fokus: Zugriffskontrolle.", "expected": {"type": "substring", "value": "Zero Trust"}, "mode": "both"}
-  ]
-}
