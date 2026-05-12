@@ -1,0 +1,107 @@
+schema_version: 3
+milestone:
+  name: "v6.0"
+  wave: 2
+  github_milestone: "v6.0"
+  github_label: null
+started_at: "2026-05-12T12:16:02Z"
+last_action_at: "2026-05-12T19:15:00Z"
+config_hash: "7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2"
+phase_global: archive
+lock:
+  issue_number: null
+  current_holder:
+    machine: "MAC-06094C41"
+    session: "148FA4F0-D500-48C8-932F-95AEAD1A20FA"
+    acquired_at: "2026-05-12T12:16:02Z"
+    expires_at: "2026-05-12T20:16:02Z"
+state_branch:
+  name: "mmp/state/v6.0"
+  last_pushed_sha: null
+chunks:
+  - id: W2-A
+    tickets: [63]
+    branch: feat/v6.0-W2-A
+    worktree: null
+    phase: merged
+    depends_on: []
+    started_at: "2026-05-12T15:00:00Z"
+    last_action_at: "2026-05-12T17:50:00Z"
+    last_commit: "5ae0a2d"
+    pr_number: 118
+    pr_url: "https://github.com/jamski105/academic-research/pull/118"
+    pre_pr_review: PASS
+    coverage_verdict: PASS_WITH_OVERRIDE
+    coverage_summary: "3/7 PASS (AC5-AC7); 4/7 strict-FAIL (AC1-AC4 — test-drift, follow-up #119)"
+    followup_issue: 119
+    merge_sha: "9564b5c"
+    artifacts:
+      spec_path: specs/v6.0/W2-A.md
+      plan_path: specs/v6.0/W2-A-plan.md
+      token_before_est: "~8000–15000 Token (Laufzeit-Boilerplate, v5.4)"
+      token_after_est: "~1700 Token (vault.search + vault.find_quotes)"
+      reduction_pct: "~83%"
+  - id: W2-B
+    tickets: [64]
+    branch: feat/v6.0-W2-B
+    worktree: null
+    phase: merged
+    depends_on: []
+    started_at: "2026-05-12T15:00:00Z"
+    last_action_at: "2026-05-12T17:50:00Z"
+    last_commit: "7e64de1"
+    pr_number: 117
+    pr_url: "https://github.com/jamski105/academic-research/pull/117"
+    pre_pr_review: PASS
+    coverage_verdict: PASS
+    coverage_summary: "8/8 ACs pass; no blockers"
+    merge_sha: "e027afb"
+    artifacts:
+      spec_path: specs/v6.0/W2-B.md
+      plan_path: specs/v6.0/W2-B-plan.md
+      eval_pass_rate: "10/10 (FPR 0%)"
+  - id: W2-C
+    tickets: [68]
+    branch: feat/v6.0-W2-C
+    worktree: null
+    phase: merged
+    depends_on: [W2-A]
+    started_at: "2026-05-12T17:55:00Z"
+    last_action_at: "2026-05-12T19:15:00Z"
+    last_commit: "80b4970"
+    pr_number: 120
+    pr_url: "https://github.com/jamski105/academic-research/pull/120"
+    pre_pr_review: PASS
+    pre_pr_review_summary: "0 Blocker, W2-A Vault refs INTACT (9x)"
+    coverage_verdict: PASS
+    coverage_summary: "7/7 ACs pass; no blockers"
+    merge_sha: "c7161aa"
+    artifacts:
+      spec_path: specs/v6.0/W2-C.md
+      plan_path: specs/v6.0/W2-C-plan.md
+      eval_state: "skeleton — 3 Drafts + Vergleichs-Template; manueller Run erforderlich"
+open_questions:
+  - chunk_id: W2-B
+    ts: "2026-05-12T16:30:00Z"
+    note: >
+      Boundary-Expansion: vault.search_quote_text() fehlte in Wave 1 Vault.
+      Funktion wurde zu mcp/academic_vault/db.py und server.py hinzugefuegt
+      (per Chunk-Instruktionen erlaubt: 'you MAY add it to mcp/academic-vault/').
+      Keine anderen Dateien ausserhalb der Chunk-Boundary beruehrt.
+ticket_improvements:
+  - issue: 68
+    score: 7
+    verdict: NEEDS_IMPROVEMENT
+    mode: live
+    backup_comment_id: "4430681705"
+    applied_at: "2026-05-12T14:50:00Z"
+  - issue: 64
+    score: 9
+    verdict: GOOD
+    mode: skip
+  - issue: 63
+    score: 7
+    verdict: NEEDS_IMPROVEMENT
+    mode: live
+    backup_comment_id: "4430681847"
+    applied_at: "2026-05-12T14:50:00Z"
