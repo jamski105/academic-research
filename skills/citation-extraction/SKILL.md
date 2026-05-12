@@ -53,8 +53,11 @@ Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der
 
 ## Kontext-Dateien
 
-- Lesen: `./academic_context.md` (Zitationsstil), `./literature_state.md` (Quellen, PDFs)
-- Schreiben: `./literature_state.md` (Zitatanzahl, Extraktionsstatus aktualisieren)
+- Lesen: `./academic_context.md` (Zitationsstil)
+- Vault-Queries: `vault.find_quotes(paper_id, query)` für Zitate,
+  `vault.get_quote(quote_id)` für Volldetails
+- `./literature_state.md` nur lesen (read-only Snapshot-Export aus dem Vault —
+  für manuellen Überblick; nicht schreiben)
 
 ## Core-Workflow
 
@@ -67,22 +70,34 @@ Kläre, was der User braucht:
 - **Quellenbezogen** — Aus einem oder mehreren bestimmten Papern extrahieren
 - **Themenbezogen** — Zitate zu einem Konzept über alle Quellen hinweg suchen
 
-### 2. PDFs lokalisieren
+### 2. Relevante Paper aus Vault laden
 
-Lies `./literature_state.md`, um zu ermitteln, welche Paper ein heruntergeladenes PDF haben. PDFs liegen unter `~/.academic-research/sessions/*/pdfs/`.
+Rufe `vault.search(query, k=5)` auf, um die relevantesten Paper-IDs zur
+Recherche-Query zu ermitteln. Für jeden paper_id:
 
-Verweist der User auf Paper ohne PDFs, biete an, `/search` zu triggern, um sie zu finden und herunterzuladen.
+1. `vault.find_quotes(paper_id, query=research_query, k=10)` aufrufen →
+   liefert `[{quote_id, verbatim, pdf_page, section, ...}]`
+2. Für detaillierte Zitat-Metadaten: `vault.get_quote(quote_id)`
+
+Sind für ein Paper noch keine Vault-Zitate vorhanden (leere Liste), den
+`quote-extractor`-Agent spawnen, um Zitate aus dem PDF zu ziehen und via
+`vault.add_quote()` zu persistieren. PDFs werden via `vault.ensure_file(paper_id)`
+als `file_id` übergeben — kein direktes `pdf_path` im Context.
 
 ### 3. Zitat-Extraktion
 
-Für jedes PDF den Agent `quote-extractor` spawnen (definiert in `${CLAUDE_PLUGIN_ROOT}/agents/quote-extractor.md`). Übergebe:
+Wenn Vault-Zitate für ein Paper vorhanden sind, diese direkt verwenden — kein
+Agent-Spawn nötig.
+
+Fehlen Vault-Zitate, den Agent `quote-extractor` spawnen (definiert in
+`${CLAUDE_PLUGIN_ROOT}/agents/quote-extractor.md`). Übergebe:
 
 ```json
 {
   "paper": {
+    "paper_id": "mueller2023",
     "title": "Paper Title",
-    "doi": "10.xxxx/xxxxx",
-    "pdf_text": "...extracted PDF text..."
+    "doi": "10.xxxx/xxxxx"
   },
   "research_query": "derived from chapter title or user query",
   "max_quotes": 3,
@@ -90,7 +105,14 @@ Für jedes PDF den Agent `quote-extractor` spawnen (definiert in `${CLAUDE_PLUGI
 }
 ```
 
-Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus `./academic_context.md` nutzen, um Paper zu Kapiteln zu matchen.
+Der `quote-extractor`-Agent holt das PDF via `vault.ensure_file(paper_id)` —
+kein `pdf_text` im Context mehr nötig. Extrahierte Zitate werden vom Agent
+automatisch via `vault.add_quote()` persistiert und mit `vault_quote_id` im
+Output zurückgegeben.
+
+Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und
+Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus
+`./academic_context.md` nutzen, um Paper zu Kapiteln zu matchen.
 
 ### 4. Qualitätsprüfung
 
@@ -141,13 +163,18 @@ Wenn Zitate für ein bestimmtes Kapitel extrahiert werden:
 3. Unterabschnitte identifizieren, in denen noch stützende Evidenz fehlt
 4. Bei Lücken weitere Literatursuche anbieten
 
-### 7. Literaturstatus aktualisieren
+### 7. Literaturstatus
 
-Nach Extraktion und Formatierung:
+Nach Extraktion und Formatierung: Der Vault ist die Quelle der Wahrheit.
+`./literature_state.md` ist ein read-only Snapshot-Export — nicht beschreiben.
 
-1. `./literature_state.md` lesen (veraltete Überschreibungen vermeiden)
-2. Pro-Quelle-Felder aktualisieren: Zitatanzahl, Extraktionsqualität, zugewiesene Kapitel
-3. Aggregierte Statistiken aktualisieren: extrahierte Zitate gesamt, Coverage-Prozentsatz
+Zum Regenerieren des Snapshots:
+```bash
+node scripts/export-literature-state.mjs
+```
+
+Der Snapshot dient nur zur manuellen Übersicht. Zitatanzahlen und Coverage
+werden im Vault über `vault.stats()` abgefragt.
 
 ## Lückenerkennung
 
