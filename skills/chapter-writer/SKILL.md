@@ -15,8 +15,8 @@ license: MIT
 ## Übersicht
 
 Schreibt konkrete Kapitel (Einleitung, Theorieteil, Methodik, Empirie,
-Diskussion, Fazit) für akademische Arbeiten. Zieht Zitate aus
-`./literature_state.md` und folgt dem Disziplin-Register.
+Diskussion, Fazit) für akademische Arbeiten. Zieht Zitate via
+`vault.search()` + `vault.find_quotes()` und folgt dem Disziplin-Register.
 
 ## Abgrenzung
 
@@ -73,14 +73,25 @@ Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extractio
 
 ## Kontext-Dateien
 
-- Lesen: `./academic_context.md` (Forschungsfrage, Gliederung), `./literature_state.md` (Quellen), `./writing_state.md` (Fortschritt)
+- Lesen: `./academic_context.md` (Forschungsfrage, Gliederung, Zitationsstil),
+  `./writing_state.md` (Fortschritt)
+- Vault-Queries: `vault.search(query, k=5)` für relevante Paper,
+  `vault.find_quotes(paper_id, query, k=3)` für Zitat-Kandidaten
 - Schreiben: `./writing_state.md` — Wortzahlen und Kapitelstatus aktualisieren
+- `./literature_state.md` nicht laden (ist read-only Snapshot — bei Bedarf
+  via `node scripts/export-literature-state.mjs` regenerieren)
 
 ## Core-Workflow
 
 ### 1. Kontext laden
 
-Lies alle drei Kontext-Dateien. Fehlt `./academic_context.md`: `academic-context`-Skill triggern. Fehlt Gliederung: `advisor`-Skill vorschlagen. Extrahiere Ziel-Kapitel, Quellen, Zitationsstil, Sprache, vorhandene Entwürfe.
+Lies `./academic_context.md` und `./writing_state.md`.
+Fehlt `./academic_context.md`: `academic-context`-Skill triggern.
+Fehlt Gliederung: `advisor`-Skill vorschlagen.
+
+Quellen nicht aus `literature_state.md` laden — stattdessen Vault-Queries
+verwenden (Schritt 3 unten). So werden nur relevante Quellen geladen,
+nicht die komplette Literaturliste.
 
 ### 2. Ziel-Kapitel bestimmen
 
@@ -96,7 +107,16 @@ Frage den User, welches Kapitel oder welcher Abschnitt geschrieben werden soll, 
 Bevor geschrieben wird, erstelle einen kurzen internen Plan:
 
 1. **Abschnitts-Aufbau** — Unterabschnitte mit 2-3 Sätzen Inhaltsbeschreibung
-2. **Quellen-Mapping** — Welche Quellen stützen welche Abschnitte
+2. **Quellen-Mapping via Vault** — Vault-Queries pro Unterabschnitt:
+   ```
+   vault.search("<Kapitelthema>", k=5)
+   → [paper_id, snippet] für relevante Paper
+
+   vault.find_quotes(paper_id, query="<Unterabschnitts-Frage>", k=3)
+   → [verbatim, page, quote_id] für Zitat-Kandidaten
+   ```
+   Ergebnis: maximal ~1700 Token Quellen-Kontext statt vollständigem
+   `literature_state.md`-Dump (~8–15 k Token).
 3. **Argumentationsfluss** — Wie das Kapitel seinen Beitrag zur Forschungsfrage aufbaut
 4. **Schlüsseldefinitionen** — Begriffe, die eingeführt oder referenziert werden müssen
 
@@ -185,11 +205,16 @@ Befunde pro Unterfrage zusammenfassen. Die Hauptfrage beantworten. Limitationen 
 Beim Einweben von Zitaten in Kapitel-Prosa: Quellen-PDFs im `documents`-Parameter an Claude uebergeben, damit die API die Quellenbindung erzwingt. Jedes Paraphrase-Segment mit einem `citations[]`-Eintrag nachweisbar.
 
 **Workflow:**
-1. `./literature_state.md` lesen — welche PDFs liegen im Session-Pfad?
-2. API-Call mit `documents[]`-Anhaengen, `citations.enabled: true`
-3. Output-Text enthaelt `citations[]`-Bloecke — diese im Kapitel-Text als Inline-Zitate nach Variant-Zitierstil (aus `./academic_context.md`) rendern.
+1. `vault.search("<Kapitelthema>", k=5)` → relevante `paper_id`s
+2. Pro paper_id: `vault.find_quotes(paper_id, query, k=3)` → Zitat-Kandidaten
+3. Pro Paper: `vault.ensure_file(paper_id)` → `file_id` für Citations-API
+4. API-Call mit `documents[]` (file_id), `citations.enabled: true`
+5. Output-Text enthält `citations[]`-Blöcke — als Inline-Zitate nach
+   Variant-Zitierstil aus `./academic_context.md` rendern.
 
-**Fallback:** Sind keine PDFs verfuegbar (nur Metadaten), nutze den herkoemmlichen Prompt-Workflow aus dem vorangehenden Abschnitt.
+**Fallback:** Gibt `vault.ensure_file()` `None` zurück (kein PDF im Vault),
+nutze den Vault-Zitat-Text (`verbatim`) direkt als Prompt-basiertes Zitat
+ohne Citations-API-Erzwingung.
 
 ## Qualitaets-Review vor finalem Output
 
