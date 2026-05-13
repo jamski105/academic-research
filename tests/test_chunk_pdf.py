@@ -150,3 +150,38 @@ class TestCLI:
             capture_output=True, text=True
         )
         assert result.returncode == 1
+
+
+LARGE_BOOK_PDF = Path(__file__).parent / "fixtures" / "large_book.pdf"
+
+
+class TestLargeBook:
+    def test_write_all_chapters_400_pages_8_chapters(self):
+        """AC1: 1 OA-Buch >= 400 Seiten -> 8 Kapitel-PDFs (8 x 55 = 440 Seiten)."""
+        from PyPDF2 import PdfReader
+
+        m = _get_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            isbn = "978-3-large-test"
+            paths = m.write_all_chapters(
+                str(LARGE_BOOK_PDF), tmpdir, isbn=isbn
+            )
+            # Genau 8 Output-Dateien
+            assert len(paths) == 8, f"Erwartet 8 Kapitel, erhalten: {len(paths)}"
+
+            # Namenskonvention: <isbn>-ch<n>.pdf (n=1..8)
+            safe_isbn = "978-3-large-test"
+            for i, p in enumerate(paths, start=1):
+                basename = os.path.basename(p)
+                assert basename == f"{safe_isbn}-ch{i}.pdf", (
+                    f"Unerwarteter Dateiname: {basename}"
+                )
+                assert os.path.exists(p), f"Datei existiert nicht: {p}"
+
+            # Gesamtseitenanzahl >= 400
+            total_pages = sum(
+                len(PdfReader(p).pages) for p in paths
+            )
+            assert total_pages >= 400, (
+                f"Gesamtseitenanzahl zu niedrig: {total_pages}"
+            )
