@@ -227,6 +227,29 @@ def update_pdf_path(db_path: str, paper_id: str, new_path: str) -> None:
     db.update_pdf_path(paper_id, new_path)
 
 
+def set_page_offset(db_path: str, paper_id: str, offset: int) -> None:
+    """Setzt page_offset fuer ein Paper im Vault."""
+    db = VaultDB(db_path)
+    db.set_page_offset(paper_id, offset)
+
+
+def get_printed_page(db_path: str, paper_id: str, pdf_page: int) -> int:
+    """Berechnet gedruckte Seitenzahl: printed_page = pdf_page - page_offset.
+
+    Args:
+        db_path: Pfad zur Vault-DB.
+        paper_id: Paper-ID im Vault.
+        pdf_page: Seitenzahl aus Citations-API (1-basiert ab erster PDF-Seite).
+
+    Returns:
+        Gedruckte Seitenzahl (>= 1).
+    """
+    db = VaultDB(db_path)
+    offset = db.get_page_offset(paper_id)
+    printed = pdf_page - offset
+    return max(1, printed)  # Nie kleiner als 1
+
+
 # ---------------------------------------------------------------------------
 # MCP-Server (optional: nur wenn mcp-SDK verfuegbar)
 # ---------------------------------------------------------------------------
@@ -358,6 +381,16 @@ def _build_mcp_server():
     def _vault_update_pdf_path(paper_id: str, new_path: str) -> None:
         """Aktualisiert den PDF-Pfad nach OCR."""
         update_pdf_path(db_path, paper_id, new_path)
+
+    @mcp.tool(name="vault.set_page_offset")
+    def _vault_set_page_offset(paper_id: str, offset: int) -> None:
+        """Setzt page_offset fuer ein Paper (Buecher mit Vorseiten/Vorwort)."""
+        set_page_offset(db_path, paper_id, offset)
+
+    @mcp.tool(name="vault.get_printed_page")
+    def _vault_get_printed_page(paper_id: str, pdf_page: int) -> int:
+        """Berechnet gedruckte Seitenzahl: printed_page = pdf_page - page_offset."""
+        return get_printed_page(db_path, paper_id, pdf_page)
 
     return mcp
 
