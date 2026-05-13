@@ -137,6 +137,7 @@ def add_paper(
     page_first: Optional[int] = None,
     page_last: Optional[int] = None,
     container_title: Optional[str] = None,
+    parent_paper_id: Optional[str] = None,
 ) -> None:
     """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter."""
     db = VaultDB(db_path)
@@ -147,7 +148,45 @@ def add_paper(
         editor=editor, chapter=chapter,
         page_first=page_first, page_last=page_last,
         container_title=container_title,
+        parent_paper_id=parent_paper_id,
     )
+
+
+def add_chapter(
+    db_path: str,
+    parent_paper_id: str,
+    chapter_number: int,
+    csl_json: str,
+    paper_id: Optional[str] = None,
+    pdf_path: Optional[str] = None,
+    page_first: Optional[int] = None,
+    page_last: Optional[int] = None,
+) -> str:
+    """Legt ein Kapitel als Kind-Paper in den Vault. Gibt paper_id zurueck.
+
+    Setzt type=chapter automatisch falls nicht in csl_json angegeben.
+    """
+    import json as _json
+    if paper_id is None:
+        paper_id = f"{parent_paper_id}-ch{chapter_number}"
+    # Sicherstellen dass type=chapter in csl_json gesetzt ist
+    try:
+        csl = _json.loads(csl_json)
+        csl.setdefault("type", "chapter")
+        csl_json = _json.dumps(csl, ensure_ascii=False)
+    except Exception:
+        pass
+    add_paper(
+        db_path=db_path,
+        paper_id=paper_id,
+        csl_json=csl_json,
+        pdf_path=pdf_path,
+        chapter=str(chapter_number),
+        page_first=page_first,
+        page_last=page_last,
+        parent_paper_id=parent_paper_id,
+    )
+    return paper_id
 
 
 def get_paper(db_path: str, paper_id: str) -> Optional[dict]:
@@ -213,14 +252,38 @@ def _build_mcp_server():
         page_first: int = None,
         page_last: int = None,
         container_title: str = None,
+        parent_paper_id: str = None,
     ) -> None:
-        """Upsert eines Papers in den Vault. type aus csl_json; book|chapter|article-journal erlaubt."""
+        """Upsert eines Papers. type aus csl_json; book|chapter|article-journal erlaubt."""
         add_paper(
             db_path, paper_id, csl_json,
             pdf_path=pdf_path, doi=doi, isbn=isbn, page_offset=page_offset,
             editor=editor, chapter=chapter,
             page_first=page_first, page_last=page_last,
             container_title=container_title,
+            parent_paper_id=parent_paper_id,
+        )
+
+    @mcp.tool(name="vault.add_chapter")
+    def _vault_add_chapter(
+        parent_paper_id: str,
+        chapter_number: int,
+        csl_json: str,
+        paper_id: str = None,
+        pdf_path: str = None,
+        page_first: int = None,
+        page_last: int = None,
+    ) -> str:
+        """Legt Kapitel als Kind-Paper an. Gibt paper_id zurueck."""
+        return add_chapter(
+            db_path=db_path,
+            parent_paper_id=parent_paper_id,
+            chapter_number=chapter_number,
+            csl_json=csl_json,
+            paper_id=paper_id,
+            pdf_path=pdf_path,
+            page_first=page_first,
+            page_last=page_last,
         )
 
     @mcp.tool(name="vault.ensure_file")
