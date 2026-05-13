@@ -158,6 +158,31 @@ def run_migration(
     return {"inserted": inserted, "skipped": skipped, "errors": errors}
 
 
+def add_book_columns(db_path: str) -> None:
+    """Fuegt book/chapter-Spalten zu papers hinzu. Idempotent (try/except pro Spalte).
+
+    Aufruf-Sicher: Kann mehrfach auf derselben DB ausgefuehrt werden.
+    """
+    import sqlite3 as _sqlite3
+    new_cols = [
+        ("editor", "TEXT"),
+        ("chapter", "TEXT"),
+        ("page_first", "INTEGER"),
+        ("page_last", "INTEGER"),
+        ("container_title", "TEXT"),
+    ]
+    conn = _sqlite3.connect(db_path)
+    try:
+        for col, coltype in new_cols:
+            try:
+                conn.execute(f"ALTER TABLE papers ADD COLUMN {col} {coltype}")
+            except _sqlite3.OperationalError:
+                pass  # Spalte existiert bereits -- idempotent
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Seed-Migration: literature_state.md -> academic_vault SQLite"

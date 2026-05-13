@@ -4,7 +4,8 @@
 
 CREATE TABLE IF NOT EXISTS papers (
   paper_id              TEXT PRIMARY KEY,
-  type                  TEXT NOT NULL DEFAULT 'article-journal',
+  type                  TEXT NOT NULL DEFAULT 'article-journal'
+                          CHECK(type IN ('article-journal','book','chapter')),
   csl_json              TEXT NOT NULL,
   doi                   TEXT,
   isbn                  TEXT,
@@ -13,6 +14,11 @@ CREATE TABLE IF NOT EXISTS papers (
   file_id_expires_at    INTEGER,
   page_offset           INTEGER DEFAULT 0,
   ocr_done              INTEGER DEFAULT 0,
+  editor                TEXT,
+  chapter               TEXT,
+  page_first            INTEGER,
+  page_last             INTEGER,
+  container_title       TEXT,
   added_at              INTEGER NOT NULL,
   updated_at            INTEGER NOT NULL
 );
