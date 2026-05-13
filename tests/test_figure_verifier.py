@@ -214,6 +214,18 @@ def test_data_extracted_json_valid(db_path, paper_id):
     assert parsed[0]["col1"] == "A"
 
 
+def test_evals_json_valid():
+    """evals/figure-verifier/evals.json muss valides JSON mit 5 Cases sein."""
+    evals_path = Path(__file__).parent.parent / "evals" / "figure-verifier" / "evals.json"
+    assert evals_path.exists(), f"evals.json fehlt: {evals_path}"
+    with open(evals_path, encoding="utf-8") as f:
+        data = json.load(f)
+    assert isinstance(data, list), "evals.json muss ein JSON-Array sein"
+    assert len(data) == 5, f"Erwartet 5 Cases, gefunden: {len(data)}"
+    ids = [c["id"] for c in data]
+    assert ids == ["fv-01", "fv-02", "fv-03", "fv-04", "fv-05"]
+
+
 def test_figure_verifier_agent_frontmatter():
     """figure-verifier.md muss valides Frontmatter mit Pflichtfeldern haben."""
     import re

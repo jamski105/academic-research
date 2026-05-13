@@ -1,0 +1,64 @@
+[
+  {
+    "id": "fv-01",
+    "description": "Agent mit valider paper_id und Seite → figure_id non-empty",
+    "type": "trigger",
+    "input": {
+      "paper_id": "test-paper-001",
+      "page": 1
+    },
+    "expected": {
+      "figure_id_non_empty": true
+    }
+  },
+  {
+    "id": "fv-02",
+    "description": "Caption ≥ 50 Zeichen in vlm_description",
+    "type": "trigger",
+    "input": {
+      "paper_id": "test-paper-001",
+      "page": 2
+    },
+    "expected": {
+      "vlm_description_min_length": 50
+    }
+  },
+  {
+    "id": "fv-03",
+    "description": "Tabelle → data_extracted_json ist valides JSON-Array",
+    "type": "trigger",
+    "input": {
+      "paper_id": "test-paper-001",
+      "page": 3,
+      "is_table": true
+    },
+    "expected": {
+      "data_extracted_json_is_array": true
+    }
+  },
+  {
+    "id": "fv-04",
+    "description": "Unbekannte Paper-ID → graceful error",
+    "type": "trigger",
+    "input": {
+      "paper_id": "nonexistent-paper-xyz",
+      "page": 1
+    },
+    "expected": {
+      "error_graceful": true
+    }
+  },
+  {
+    "id": "fv-05",
+    "description": "Mehrere Figures auf einer Seite → alle mit figure_id",
+    "type": "trigger",
+    "input": {
+      "paper_id": "test-paper-001",
+      "page": 4,
+      "multiple_figures": true
+    },
+    "expected": {
+      "all_figures_have_id": true
+    }
+  }
+]
