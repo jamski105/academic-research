@@ -1,1 +1,42 @@
-{}
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LibraryProfile",
+  "description": "Per-Uni-Profil fuer academic-research book-fetcher (F16.5)",
+  "type": "object",
+  "required": ["uni", "auth_type", "auth_url", "licensed_sites", "bib_pickup_url"],
+  "additionalProperties": true,
+  "properties": {
+    "uni": {
+      "type": "string",
+      "description": "Maschinen-lesbarer Schluessel (slug-format, z.B. tum)"
+    },
+    "auth_type": {
+      "type": "string",
+      "enum": ["Shibboleth", "EZproxy", "HAN", "oa-only"],
+      "description": "Auth-Mechanismus der Hochschule"
+    },
+    "auth_url": {
+      "type": "string",
+      "description": "URL des WAYF/IdP/HAN-Endpoints"
+    },
+    "licensed_sites": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "Allowlist der lizenzierten Hosts fuer auth-helper"
+    },
+    "bib_pickup_url": {
+      "type": "string",
+      "description": "OPAC-URL fuer Abholung oder Fernleihe-Formular"
+    },
+    "proxy_pattern": {
+      "type": "string",
+      "description": "Proxy-URL-Muster (nur HAN/EZproxy, z.B. https://{site}.han.example.de)"
+    },
+    "credentials_keys": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Schluessel fuer OS-Keychain (nur HAN/EZproxy)"
+    }
+  }
+}

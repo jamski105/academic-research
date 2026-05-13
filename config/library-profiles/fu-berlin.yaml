@@ -1,0 +1,14 @@
+# FU Berlin — Shibboleth (DFN-AAI)
+uni: fu-berlin
+auth_type: Shibboleth
+auth_url: https://idm.fu-berlin.de/idp/shibboleth
+licensed_sites:
+  - link.springer.com
+  - degruyter.com
+  - ebookcentral.proquest.com
+  - tib.eu
+  - jstor.org
+  - wiley.com
+  - tandfonline.com
+  - sciencedirect.com
+bib_pickup_url: https://www.ub.fu-berlin.de/service/fernleihe/

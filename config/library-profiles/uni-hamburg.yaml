@@ -1,0 +1,14 @@
+# Uni Hamburg — Shibboleth (DFN-AAI)
+uni: uni-hamburg
+auth_type: Shibboleth
+auth_url: https://idp.uni-hamburg.de/idp/shibboleth
+licensed_sites:
+  - link.springer.com
+  - degruyter.com
+  - ebookcentral.proquest.com
+  - tib.eu
+  - jstor.org
+  - wiley.com
+  - tandfonline.com
+  - sciencedirect.com
+bib_pickup_url: https://www.sub.uni-hamburg.de/recherche/fernleihe.html
