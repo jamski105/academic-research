@@ -1,0 +1,80 @@
+{
+  "component": "book-handler",
+  "component_type": "skill",
+  "cases": [
+    {
+      "id": "bh-01",
+      "description": "OA-Buch via DOAB (Open Access, URL-Input)",
+      "type": "book_resolve",
+      "input": {
+        "url": "https://directory.doab.org/doab?func=search&query=isbn:9783963175718",
+        "source": "doab"
+      },
+      "fixture": null,
+      "expected": {
+        "type": "json_field",
+        "path": "$.isbn",
+        "check": "non_empty"
+      }
+    },
+    {
+      "id": "bh-02",
+      "description": "ISBN-only ohne PDF -- ISBN-13 Format",
+      "type": "book_resolve",
+      "input": {
+        "isbn": "978-3-16-148410-0"
+      },
+      "fixture": "fixtures/bh-02-isbn-only.json",
+      "expected": {
+        "type": "json_field",
+        "path": "$.title",
+        "check": "non_empty"
+      }
+    },
+    {
+      "id": "bh-03",
+      "description": "ISBN-only ohne PDF -- ISBN-10 Format",
+      "type": "book_resolve",
+      "input": {
+        "isbn": "0-306-40615-2"
+      },
+      "fixture": "fixtures/bh-03-isbn-only-2.json",
+      "expected": {
+        "type": "json_field",
+        "path": "$.authors",
+        "check": "non_empty"
+      }
+    },
+    {
+      "id": "bh-04",
+      "description": "Scan-PDF -- OCR-Pfad wird getriggert",
+      "type": "book_resolve",
+      "input": {
+        "pdf_path": "fixtures/bh-04-scan.pdf",
+        "is_scan": true
+      },
+      "fixture": "fixtures/bh-04-scan.pdf",
+      "expected": {
+        "type": "json_field",
+        "path": "$.ocr_triggered",
+        "check": "exists"
+      }
+    },
+    {
+      "id": "bh-05",
+      "description": "Sammelband mit 3 Editor-Kapiteln",
+      "type": "book_resolve",
+      "input": {
+        "pdf_path": "fixtures/bh-05-sammelband.pdf",
+        "editors": ["Schmidt", "Mueller", "Weber"],
+        "is_edited_volume": true
+      },
+      "fixture": "fixtures/bh-05-sammelband.pdf",
+      "expected": {
+        "type": "json_field",
+        "path": "$.chapters",
+        "check": "non_empty"
+      }
+    }
+  ]
+}

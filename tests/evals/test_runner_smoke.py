@@ -46,3 +46,24 @@ def test_json_field_invalid_path_raises():
             '{"a": "x"}',
             {"type": "json_field", "path": "a", "check": "exists"},
         )
+
+
+def test_write_and_read_token_baseline(tmp_path):
+    """write_token_baseline schreibt, read_token_baseline liest korrekt."""
+    from tests.evals.eval_runner import read_token_baseline, write_token_baseline
+
+    baseline_file = tmp_path / "tokens.json"
+    write_token_baseline("my-suite", "case-01", 1000, 200, baseline_file=baseline_file)
+    data = read_token_baseline(baseline_file=baseline_file)
+    assert data["my-suite"]["case-01"] == {"tokens_in": 1000, "tokens_out": 200}
+
+
+def test_write_token_baseline_merges(tmp_path):
+    """Zweiter write_token_baseline ueberschreibt nur den eigenen Eintrag."""
+    from tests.evals.eval_runner import read_token_baseline, write_token_baseline
+
+    baseline_file = tmp_path / "tokens.json"
+    write_token_baseline("suite-a", "c1", 100, 20, baseline_file=baseline_file)
+    write_token_baseline("suite-b", "c2", 200, 40, baseline_file=baseline_file)
+    data = read_token_baseline(baseline_file=baseline_file)
+    assert "suite-a" in data and "suite-b" in data

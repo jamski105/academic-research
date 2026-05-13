@@ -20,6 +20,7 @@ except ImportError:
 EVALS_ROOT = Path(__file__).parent.parent.parent / "evals"
 SKILLS_ROOT = Path(__file__).parent.parent.parent / "skills"
 AGENTS_ROOT = Path(__file__).parent.parent.parent / "agents"
+BASELINES_ROOT = Path(__file__).parent.parent / "baselines"
 
 
 def load_eval_file(component: str, filename: str) -> dict[str, Any]:
@@ -74,6 +75,66 @@ def check_expected(output: str, expected: dict[str, Any]) -> bool:
             return False
         return _jsonpath_check(parsed, expected)
     raise ValueError(f"Unbekannter expected.type: {t}")
+
+
+def read_token_baseline(baseline_file: Path | None = None) -> dict[str, Any]:
+    """Liest tests/baselines/tokens.json (oder angegebene Datei).
+
+    Gibt {} zurueck wenn Datei fehlt oder leer.
+    """
+    path = baseline_file or (BASELINES_ROOT / "tokens.json")
+    if not path.exists():
+        return {}
+    text = path.read_text().strip()
+    if not text:
+        return {}
+    return json.loads(text)
+
+
+def write_token_baseline(
+    suite: str,
+    case_id: str,
+    tokens_in: int,
+    tokens_out: int,
+    baseline_file: Path | None = None,
+) -> None:
+    """Schreibt tokens_in/tokens_out fuer eine Suite+Case in tokens.json.
+
+    Mergt mit vorhandenen Daten (ueberschreibt nur den eigenen Eintrag).
+    """
+    path = baseline_file or (BASELINES_ROOT / "tokens.json")
+    data = read_token_baseline(baseline_file=path)
+    if suite not in data:
+        data[suite] = {}
+    data[suite][case_id] = {"tokens_in": tokens_in, "tokens_out": tokens_out}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+
+
+def call_claude_with_tokens(
+    system: str,
+    user: str,
+    model: str = "claude-sonnet-4-6",
+) -> tuple[str, int, int]:
+    """Ruft Claude auf und gibt (text, tokens_in, tokens_out) zurueck.
+
+    Benoetigt ANTHROPIC_API_KEY. Ohne Key: pytest.skip().
+    """
+    if anthropic is None:
+        pytest.skip("anthropic-Package nicht installiert")
+    assert anthropic is not None
+    key = require_api_key()
+    client = anthropic.Anthropic(api_key=key)
+    resp = client.messages.create(
+        model=model,
+        max_tokens=2048,
+        system=system,
+        messages=[{"role": "user", "content": user}],
+    )
+    text = "".join(getattr(block, "text", "") for block in resp.content)
+    tokens_in = resp.usage.input_tokens if resp.usage else 0
+    tokens_out = resp.usage.output_tokens if resp.usage else 0
+    return text, tokens_in, tokens_out
 
 
 def _jsonpath_check(obj: Any, expected: dict[str, Any]) -> bool:
