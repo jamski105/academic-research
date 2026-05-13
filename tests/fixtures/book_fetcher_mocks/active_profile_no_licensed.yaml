@@ -1,0 +1,5 @@
+uni: test-uni
+auth_type: oa-only
+auth_url: ""
+licensed_sites: []
+bib_pickup_url: https://lib.test-uni.de/fernleihe

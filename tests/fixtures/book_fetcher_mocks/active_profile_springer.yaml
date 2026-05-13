@@ -1,0 +1,7 @@
+uni: tum
+auth_type: Shibboleth
+auth_url: https://login.tum.de/idp/
+licensed_sites:
+  - link.springer.com
+  - degruyter.com
+bib_pickup_url: https://www.ub.tum.de/fernleihe
