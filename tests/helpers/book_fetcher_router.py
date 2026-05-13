@@ -6,7 +6,6 @@ damit wir sie mit unittest.mock testen koennen ohne echte Subagenten aufzurufen.
 """
 import re
 import datetime
-from typing import Any
 
 
 # Subagent-Reihenfolgen (aus L0-Notes und Spec G.md)
@@ -62,13 +61,13 @@ class BookFetcherRouter:
         if re.match(r"10\.\d{4,}/", text):
             return ("doi", text)
 
-        # ISBN-13 (mit oder ohne Bindestriche)
-        if re.match(r"^97[89][- ]?\d{1,5}[- ]?\d{1,7}[- ]?\d{1,7}[- ]?\d$", text):
+        # ISBN-13: 13 Ziffern (mit oder ohne Bindestriche/Leerzeichen), beginnt mit 978 oder 979
+        digits_only = re.sub(r"[- ]", "", text)
+        if re.match(r"^97[89]\d{10}$", digits_only):
             return ("isbn", text)
 
-        # ISBN-10 (10 Ziffern, letztes Zeichen darf X sein)
-        cleaned = text.replace("-", "")
-        if re.match(r"^\d{9}[\dX]$", cleaned):
+        # ISBN-10: 10 Ziffern (letztes Zeichen darf X sein), mit oder ohne Bindestriche
+        if re.match(r"^\d{9}[\dX]$", digits_only):
             return ("isbn", text)
 
         # Freitext / Titel

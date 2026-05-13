@@ -179,12 +179,17 @@ class TestBookFetcherRouting(unittest.TestCase):
 class TestBookFetcherAgentMarkdown(unittest.TestCase):
     """Validate the agent Markdown file has correct frontmatter."""
 
+    @staticmethod
+    def _agent_path() -> pathlib.Path:
+        # Robust: resolve from test file location upward to repo root
+        return pathlib.Path(__file__).parent.parent / "agents" / "book-fetcher.md"
+
     def test_agent_file_exists(self):
-        agent_path = pathlib.Path("agents/book-fetcher.md")
-        self.assertTrue(agent_path.exists(), "agents/book-fetcher.md not found")
+        agent_path = self._agent_path()
+        self.assertTrue(agent_path.exists(), f"agents/book-fetcher.md not found at {agent_path}")
 
     def test_frontmatter_fields(self):
-        agent_path = pathlib.Path("agents/book-fetcher.md")
+        agent_path = self._agent_path()
         content = agent_path.read_text()
         # Extract YAML frontmatter between --- delimiters
         lines = content.split("\n")
@@ -201,7 +206,7 @@ class TestBookFetcherAgentMarkdown(unittest.TestCase):
                                 "maxTurns must be >= 8")
 
     def test_no_bash_in_tools(self):
-        agent_path = pathlib.Path("agents/book-fetcher.md")
+        agent_path = self._agent_path()
         content = agent_path.read_text()
         lines = content.split("\n")
         end = lines.index("---", 1)
