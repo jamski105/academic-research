@@ -28,6 +28,8 @@ except ImportError as _e:
 # ---------------------------------------------------------------------------
 
 DNB_SRU_URL = "https://services.dnb.de/sru/dnb"
+_MARC_NS = "http://www.loc.gov/MARC21/slim"
+_SRW_NS = "http://www.loc.gov/zing/srw/"
 
 
 def _marc_field(record_el, tag: str, subfield_code: str, ns: str) -> Optional[str]:
@@ -57,25 +59,22 @@ def _parse_name(raw: str) -> dict:
     return {"literal": raw.strip()}
 
 
-def _dnb_record_to_csl(record_el, ns: str) -> dict:
+def _dnb_record_to_csl(record_el) -> dict:
     """Wandelt ein MARC21-Record-Element in CSL-JSON-Dict um."""
+    ns = _MARC_NS
     csl: dict = {"type": "book"}
 
-    # Titel (245 $a + optional $b)
     title_a = _marc_field(record_el, "245", "a", ns) or ""
     title_b = _marc_field(record_el, "245", "b", ns) or ""
     csl["title"] = (title_a + (" " + title_b if title_b else "")).rstrip(": /,").strip()
 
-    # Autoren (100 + 700 $a)
     authors = []
     for tag in ("100", "700"):
-        names = _marc_all_fields(record_el, tag, "a", ns)
-        for n in names:
+        for n in _marc_all_fields(record_el, tag, "a", ns):
             authors.append(_parse_name(n))
     if authors:
         csl["author"] = authors
 
-    # Editoren (700 $e = 'Hrsg.' oder 'editor')
     editors = []
     for df in record_el.findall(f".//{{{ns}}}datafield[@tag='700']"):
         role_sf = df.find(f"{{{ns}}}subfield[@code='e']")
@@ -87,7 +86,6 @@ def _dnb_record_to_csl(record_el, ns: str) -> dict:
     if editors:
         csl["editor"] = editors
 
-    # Verlag + Jahr (264 $b + $c)
     publisher = _marc_field(record_el, "264", "b", ns)
     if publisher:
         csl["publisher"] = publisher.rstrip(",").strip()
@@ -97,12 +95,10 @@ def _dnb_record_to_csl(record_el, ns: str) -> dict:
         if year_digits:
             csl["issued"] = {"date-parts": [[int(year_digits)]]}
 
-    # ISBN (020 $a)
     isbn = _marc_field(record_el, "020", "a", ns)
     if isbn:
         csl["ISBN"] = isbn.replace("-", "").strip()
 
-    # DOI (024 $a wenn $2 = doi)
     for df in record_el.findall(f".//{{{ns}}}datafield[@tag='024']"):
         type_sf = df.find(f"{{{ns}}}subfield[@code='2']")
         id_sf = df.find(f"{{{ns}}}subfield[@code='a']")
@@ -137,17 +133,15 @@ def resolve_dnb(isbn: Optional[str] = None, title: Optional[str] = None) -> Opti
         print(f"[WARN] DNB SRU Fehler: {exc}", file=sys.stderr)
         return None
 
-    ns = "http://www.loc.gov/MARC21/slim"
-    srw_ns = "http://www.loc.gov/zing/srw/"
     try:
         root = etree.fromstring(resp.content)
-        records = root.findall(f".//{{{srw_ns}}}numberOfRecords")
+        records = root.findall(f".//{{{_SRW_NS}}}numberOfRecords")
         if not records or records[0].text == "0":
             return None
-        record_els = root.findall(f".//{{{ns}}}record")
+        record_els = root.findall(f".//{{{_MARC_NS}}}record")
         if not record_els:
             return None
-        return _dnb_record_to_csl(record_els[0], ns)
+        return _dnb_record_to_csl(record_els[0])
     except Exception as exc:
         print(f"[WARN] DNB XML-Parse-Fehler: {exc}", file=sys.stderr)
         return None
@@ -331,28 +325,30 @@ def resolve(
 
     Gibt CSL-JSON-Dict zurueck (evtl. leer bei totalem Fehlschlag).
     """
+    # ISBN einmalig normalisieren (Bindestriche entfernen)
+    norm_isbn = isbn.replace("-", "") if isbn else None
+
     csl: Optional[dict] = None
 
     # 1. DNB SRU
-    csl = resolve_dnb(isbn=isbn, title=title)
+    csl = resolve_dnb(isbn=norm_isbn, title=title)
 
     # 2. OpenLibrary (Fallback)
-    if not csl and isbn:
-        csl = resolve_openlibrary(isbn=isbn)
+    if not csl and norm_isbn:
+        csl = resolve_openlibrary(isbn=norm_isbn)
 
     # 3. GoogleBooks (Fallback)
     if not csl:
-        csl = resolve_googlebooks(isbn=isbn, title=title)
+        csl = resolve_googlebooks(isbn=norm_isbn, title=title)
 
     if csl is None:
         csl = {}
 
-    # DOI eintragen falls ueber Parameter uebergeben
     if doi and "DOI" not in csl:
         csl["DOI"] = doi
 
     # DOAB OA-Check (ergaenzend)
-    oa_info = check_doab(isbn=isbn, doi=doi or csl.get("DOI"))
+    oa_info = check_doab(isbn=norm_isbn, doi=doi or csl.get("DOI"))
     if oa_info:
         csl["open_access"] = oa_info.get("open_access", False)
         if oa_info.get("download_url"):

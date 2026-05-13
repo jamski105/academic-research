@@ -2,6 +2,7 @@
 
 Context-Manager-Klasse mit sqlite-vec-Fallback und FTS5-Volltext-Suche.
 """
+import json
 import os
 import sqlite3
 import time
@@ -10,6 +11,8 @@ from typing import Optional
 
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
+
+VALID_PAPER_TYPES = frozenset({"article-journal", "book", "chapter"})
 
 
 class VaultDB:
@@ -104,8 +107,6 @@ class VaultDB:
     # Papers CRUD
     # ------------------------------------------------------------------
 
-    VALID_PAPER_TYPES = frozenset({"article-journal", "book", "chapter"})
-
     def add_paper(
         self,
         paper_id: str,
@@ -124,17 +125,15 @@ class VaultDB:
 
         type wird aus csl_json extrahiert. Erlaubte Werte: article-journal, book, chapter.
         """
-        import json as _json
-
         try:
-            csl = _json.loads(csl_json)
+            csl = json.loads(csl_json)
             paper_type = csl.get("type", "article-journal")
         except Exception:
             paper_type = "article-journal"
 
-        if paper_type not in self.VALID_PAPER_TYPES:
+        if paper_type not in VALID_PAPER_TYPES:
             raise ValueError(
-                f"Ungueltiger type '{paper_type}' -- erlaubt: {sorted(self.VALID_PAPER_TYPES)}"
+                f"Ungueltiger type '{paper_type}' -- erlaubt: {sorted(VALID_PAPER_TYPES)}"
             )
 
         now = int(time.time())
