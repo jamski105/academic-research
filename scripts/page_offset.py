@@ -13,7 +13,6 @@ Kein LLM-Aufruf. Deterministisch und schnell.
 CLI: python scripts/page_offset.py <pdf_path> [--sample-pages N]
 """
 import re
-import sys
 from typing import Optional
 
 
