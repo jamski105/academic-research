@@ -64,7 +64,7 @@ def test_linkstyle_stroke_width_for_weight3(cluster_data):
 
 def test_graceful_degradation_no_mmdc(cluster_data, tmp_path):
     from render_mermaid import render_cluster
-    with patch("shutil.which", return_value=None):
+    with patch("render_mermaid.shutil.which", return_value=None):
         result = render_cluster(cluster_data, output_dir=tmp_path)
     assert result["png_path"] is None
     assert result["note"] is not None
