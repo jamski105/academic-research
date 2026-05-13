@@ -1,0 +1,204 @@
+# Auto-Download Eval — 20 kuratierte Test-Quellen
+# Felder:
+#   id:              Eindeutiger Bezeichner
+#   type:            paper | book | chapter
+#   doi:             DOI (optional)
+#   isbn:            ISBN-13 (optional, fuer Buecher)
+#   title:           Titel
+#   expected_tier:   Welcher Tier soll treffen (erwarteter Wert)
+#   expected_hit:    true = PDF-URL erwartet, false = kein Treffer erwartet
+#   domain:          biomed | book | general | oa
+#   notes:           Freitext
+
+sources:
+
+  # --- 5 Buecher (aus v6.1-Eval-Material) ---
+
+  - id: book-01
+    type: book
+    isbn: "9780262035613"
+    title: "Artificial Intelligence: A Modern Approach"
+    doi: "10.7551/mitpress/11111.001.0001"
+    expected_tier: doab
+    expected_hit: false
+    domain: book
+    notes: "AIMA — kein OA-Buch, DOAB kein Treffer erwartet"
+
+  - id: book-02
+    type: book
+    isbn: "9780262731492"
+    title: "The Society of Mind"
+    doi: null
+    expected_tier: doab
+    expected_hit: false
+    domain: book
+    notes: "Minsky — proprietaer, kein DOAB-Eintrag"
+
+  - id: book-03
+    type: book
+    isbn: "9783030569075"
+    title: "Foundations of Machine Learning"
+    doi: "10.7551/mitpress/14136.001.0001"
+    expected_tier: doab
+    expected_hit: false
+    domain: book
+    notes: "Kein OA bei DOAB — MIT Press proprietaer"
+
+  - id: book-04
+    type: book
+    isbn: "9789048523245"
+    title: "Open Access"
+    doi: "10.7551/mitpress/9286.001.0001"
+    expected_tier: doab
+    expected_hit: true
+    domain: book
+    notes: "Peter Suber 'Open Access' — OA bei MIT Press und DOAB"
+
+  - id: book-05
+    type: chapter
+    isbn: "9789048523245"
+    title: "What is Open Access"
+    doi: null
+    expected_tier: doab
+    expected_hit: true
+    domain: book
+    notes: "Kapitel aus Suber 'Open Access'"
+
+  # --- 8 Biomedizin-Paper ---
+
+  - id: biomed-01
+    type: paper
+    doi: "10.1371/journal.pbio.1002055"
+    title: "Ribosome-profiling reveals the what, when, where and how of protein synthesis"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "PLOS Biology — Open Access"
+
+  - id: biomed-02
+    type: paper
+    doi: "10.1371/journal.pmed.1001744"
+    title: "The Epidemiology and Pathogenesis of Coronavirus Disease (COVID-19) Outbreak"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "PLOS Medicine — OA"
+
+  - id: biomed-03
+    type: paper
+    doi: "10.1186/s12864-021-07421-4"
+    title: "Genome-wide association study identifies novel loci"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "BMC Genomics — OA"
+
+  - id: biomed-04
+    type: paper
+    doi: "10.1186/s13073-021-00977-8"
+    title: "Single-cell RNA sequencing reveals cell type diversity"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "Genome Medicine (BMC) — OA"
+
+  - id: biomed-05
+    type: paper
+    doi: "10.3390/ijms22168580"
+    title: "Molecular Mechanisms of SARS-CoV-2"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "MDPI IJMS — OA"
+
+  - id: biomed-06
+    type: paper
+    doi: "10.3390/biology10070678"
+    title: "Cell Death Mechanisms in Neurodegeneration"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "MDPI Biology — OA"
+
+  - id: biomed-07
+    type: paper
+    doi: "10.1016/j.cell.2020.02.052"
+    title: "A SARS-CoV-2 protein interaction map reveals targets for drug repurposing"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "Elsevier Cell — OA via PMC"
+
+  - id: biomed-08
+    type: paper
+    doi: "10.1016/j.molcel.2019.06.015"
+    title: "Structural basis for translational stalling by human cytomegalovirus"
+    expected_tier: europepmc
+    expected_hit: true
+    domain: biomed
+    notes: "Molecular Cell Elsevier — OA via PMC"
+
+  # --- 7 allgemeine OA-Paper ---
+
+  - id: general-01
+    type: paper
+    doi: "10.48550/arXiv.2303.08774"
+    title: "GPT-4 Technical Report"
+    expected_tier: arxiv
+    expected_hit: true
+    domain: general
+    notes: "arXiv — direkter Tier-5-Treffer erwartet"
+
+  - id: general-02
+    type: paper
+    doi: "10.48550/arXiv.1706.03762"
+    title: "Attention Is All You Need"
+    expected_tier: arxiv
+    expected_hit: true
+    domain: general
+    notes: "Transformer-Paper — arXiv"
+
+  - id: general-03
+    type: paper
+    doi: "10.48550/arXiv.2005.14165"
+    title: "Language Models are Few-Shot Learners"
+    expected_tier: arxiv
+    expected_hit: true
+    domain: general
+    notes: "GPT-3 — arXiv"
+
+  - id: general-04
+    type: paper
+    doi: "10.18653/v1/2020.acl-main.463"
+    title: "Don't Stop Pretraining"
+    expected_tier: openaccessbutton
+    expected_hit: true
+    domain: general
+    notes: "ACL Anthology — OA"
+
+  - id: general-05
+    type: paper
+    doi: "10.1145/3442188.3445922"
+    title: "On the Dangers of Stochastic Parrots"
+    expected_tier: openaccessbutton
+    expected_hit: true
+    domain: general
+    notes: "ACM FAccT — OA via OAButton"
+
+  - id: general-06
+    type: paper
+    doi: "10.9999/nonexistent-paper-xyz"
+    title: "Fictional Paper That Does Not Exist"
+    expected_tier: null
+    expected_hit: false
+    domain: general
+    notes: "Kontroll-Quelle — kein Treffer erwartet"
+
+  - id: general-07
+    type: paper
+    doi: "10.48550/arXiv.2204.01691"
+    title: "Training language models to follow instructions with human feedback"
+    expected_tier: arxiv
+    expected_hit: true
+    domain: general
+    notes: "InstructGPT — arXiv OA"
