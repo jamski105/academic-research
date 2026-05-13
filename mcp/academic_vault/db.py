@@ -104,6 +104,8 @@ class VaultDB:
     # Papers CRUD
     # ------------------------------------------------------------------
 
+    VALID_PAPER_TYPES = frozenset({"article-journal", "book", "chapter"})
+
     def add_paper(
         self,
         paper_id: str,
@@ -112,25 +114,58 @@ class VaultDB:
         isbn: Optional[str] = None,
         pdf_path: Optional[str] = None,
         page_offset: int = 0,
+        editor: Optional[str] = None,
+        chapter: Optional[str] = None,
+        page_first: Optional[int] = None,
+        page_last: Optional[int] = None,
+        container_title: Optional[str] = None,
     ) -> None:
-        """Upsert eines Papers in die papers-Tabelle."""
+        """Upsert eines Papers in die papers-Tabelle.
+
+        type wird aus csl_json extrahiert. Erlaubte Werte: article-journal, book, chapter.
+        """
+        import json as _json
+
+        try:
+            csl = _json.loads(csl_json)
+            paper_type = csl.get("type", "article-journal")
+        except Exception:
+            paper_type = "article-journal"
+
+        if paper_type not in self.VALID_PAPER_TYPES:
+            raise ValueError(
+                f"Ungueltiger type '{paper_type}' -- erlaubt: {sorted(self.VALID_PAPER_TYPES)}"
+            )
+
         now = int(time.time())
         conn = self._get_conn()
         own_conn = self._conn is None
         conn.execute(
             """
             INSERT INTO papers
-              (paper_id, csl_json, doi, isbn, pdf_path, page_offset, added_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              (paper_id, type, csl_json, doi, isbn, pdf_path, page_offset,
+               editor, chapter, page_first, page_last, container_title,
+               added_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(paper_id) DO UPDATE SET
-              csl_json   = excluded.csl_json,
-              doi        = excluded.doi,
-              isbn       = excluded.isbn,
-              pdf_path   = excluded.pdf_path,
-              page_offset= excluded.page_offset,
-              updated_at = excluded.updated_at
+              type           = excluded.type,
+              csl_json       = excluded.csl_json,
+              doi            = excluded.doi,
+              isbn           = excluded.isbn,
+              pdf_path       = excluded.pdf_path,
+              page_offset    = excluded.page_offset,
+              editor         = excluded.editor,
+              chapter        = excluded.chapter,
+              page_first     = excluded.page_first,
+              page_last      = excluded.page_last,
+              container_title= excluded.container_title,
+              updated_at     = excluded.updated_at
             """,
-            (paper_id, csl_json, doi, isbn, pdf_path, page_offset, now, now),
+            (
+                paper_id, paper_type, csl_json, doi, isbn, pdf_path, page_offset,
+                editor, chapter, page_first, page_last, container_title,
+                now, now,
+            ),
         )
         if own_conn:
             conn.commit()
