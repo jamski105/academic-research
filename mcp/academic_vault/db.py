@@ -202,6 +202,31 @@ class VaultDB:
             conn.commit()
             conn.close()
 
+    def set_page_offset(self, paper_id: str, offset: int) -> None:
+        """Setzt page_offset fuer ein Paper."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            "UPDATE papers SET page_offset = ?, updated_at = ? WHERE paper_id = ?",
+            (offset, int(time.time()), paper_id),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+
+    def get_page_offset(self, paper_id: str) -> int:
+        """Gibt page_offset fuer ein Paper zurueck. Fallback: 0."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        row = conn.execute(
+            "SELECT page_offset FROM papers WHERE paper_id = ?", (paper_id,)
+        ).fetchone()
+        if own_conn:
+            conn.close()
+        if row is None:
+            return 0
+        return int(row["page_offset"] or 0)
+
     # ------------------------------------------------------------------
     # Quotes CRUD
     # ------------------------------------------------------------------
