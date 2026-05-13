@@ -38,6 +38,17 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 
 Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
 
+**Typ-basierte Erweiterung:** Falls die Quelle `type: chapter` hat (Buchkapitel aus Sammelband),
+lade zusaetzlich `references/book-chapter-de.md` und nutze die dort definierten
+Formatierungsregeln fuer den aktiven Zitierstil (DIN 1505, Harvard-de oder APA-7).
+Die Regeln in `book-chapter-de.md` haben Vorrang vor den generischen Artikel-Regeln.
+
+| Quellen-Typ | Zusaetzliche Referenz |
+|-------------|----------------------|
+| `type: chapter` | `references/book-chapter-de.md` |
+| `type: book` | `references/din1505.md` (Monografie-Sektion) |
+| `type: article-journal` | (keine Zusatz-Referenz) |
+
 ## Citations-API
 
 Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der Claude-API statt Prompt-basierter Zitation. Vorteil: Zitate sind seitengenau, die API erzwingt die Quellenbindung.
