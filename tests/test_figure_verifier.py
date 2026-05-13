@@ -138,3 +138,77 @@ def test_find_figures_by_caption_with_paper_id_filter(db_path, paper_id):
     hits_filtered = db.find_figures_by_caption("Abb. 3.4", paper_id=paper_id)
     assert len(hits_filtered) == 1
     assert hits_filtered[0]["paper_id"] == paper_id
+
+
+def test_server_add_figure_returns_figure_id(db_path, paper_id):
+    """server.add_figure() gibt figure_id-String zurueck."""
+    from mcp.academic_vault import server
+    fig_id = server.add_figure(
+        db_path=db_path,
+        paper_id=paper_id,
+        page=7,
+        caption="Fig. 2.3: Systemarchitektur",
+        vlm_description="Blockdiagramm zeigt drei Schichten: UI, Logik, Daten.",
+        data_extracted=None,
+    )
+    assert isinstance(fig_id, str) and len(fig_id) > 0
+
+
+def test_server_get_figure(db_path, paper_id):
+    """server.get_figure() gibt Record oder None zurueck."""
+    from mcp.academic_vault import server
+    fig_id = server.add_figure(
+        db_path=db_path,
+        paper_id=paper_id,
+        page=1,
+        caption="Abb. 1.1: Einleitung",
+        vlm_description="Foto eines Labors mit Messgeraeten.",
+        data_extracted=None,
+    )
+    record = server.get_figure(db_path=db_path, figure_id=fig_id)
+    assert record is not None
+    assert record["caption"] == "Abb. 1.1: Einleitung"
+
+    missing = server.get_figure(db_path=db_path, figure_id="does-not-exist")
+    assert missing is None
+
+
+def test_server_list_figures(db_path, paper_id):
+    """server.list_figures() gibt Liste aller Figures fuer ein Paper."""
+    from mcp.academic_vault import server
+    server.add_figure(db_path=db_path, paper_id=paper_id, page=2, caption="Abb. A", vlm_description="X", data_extracted=None)
+    server.add_figure(db_path=db_path, paper_id=paper_id, page=1, caption="Abb. B", vlm_description="Y", data_extracted=None)
+    figures = server.list_figures(db_path=db_path, paper_id=paper_id)
+    assert len(figures) == 2
+    assert figures[0]["page"] == 1  # sortiert nach page
+
+
+def test_server_find_figure_by_caption(db_path, paper_id):
+    """server.find_figure_by_caption() gibt Vault-Lookup-Ergebnis."""
+    from mcp.academic_vault import server
+    server.add_figure(db_path=db_path, paper_id=paper_id, page=3, caption="Abb. 3.4: Messwerte", vlm_description="Grafik", data_extracted=None)
+
+    hits = server.find_figure_by_caption(db_path=db_path, caption_fragment="Abb. 3.4")
+    assert len(hits) == 1
+
+    no_hits = server.find_figure_by_caption(db_path=db_path, caption_fragment="Abb. 99")
+    assert no_hits == []
+
+
+def test_data_extracted_json_valid(db_path, paper_id):
+    """data_extracted_json wird als valides JSON gespeichert und zurueckgelesen."""
+    from mcp.academic_vault import server
+    table_data = json.dumps([{"col1": "A", "val": 1}, {"col1": "B", "val": 2}])
+    fig_id = server.add_figure(
+        db_path=db_path,
+        paper_id=paper_id,
+        page=9,
+        caption="Tab. 2.1: Ergebnisse",
+        vlm_description="Tabelle mit zwei Spalten und zwei Zeilen.",
+        data_extracted=table_data,
+    )
+    record = server.get_figure(db_path=db_path, figure_id=fig_id)
+    assert record is not None
+    parsed = json.loads(record["data_extracted_json"])
+    assert isinstance(parsed, list)
+    assert parsed[0]["col1"] == "A"

@@ -125,6 +125,55 @@ def find_quotes(
     return db.find_quotes(paper_id, query, k)
 
 
+# ---------------------------------------------------------------------------
+# Figure-Funktionen (rein, testbar ohne MCP-Framework)
+# ---------------------------------------------------------------------------
+
+def add_figure(
+    db_path: str,
+    paper_id: str,
+    page: Optional[int],
+    caption: Optional[str],
+    vlm_description: Optional[str],
+    data_extracted: Optional[str],
+) -> str:
+    """Fuegt Figure in Vault ein. Gibt figure_id zurueck."""
+    db = VaultDB(db_path)
+    return db.add_figure(
+        paper_id=paper_id,
+        page=page,
+        caption=caption,
+        vlm_description=vlm_description,
+        data_extracted_json=data_extracted,
+    )
+
+
+def get_figure(db_path: str, figure_id: str) -> Optional[dict]:
+    """Gibt vollstaendigen Figure-Record als dict oder None."""
+    db = VaultDB(db_path)
+    return db.get_figure(figure_id)
+
+
+def list_figures(db_path: str, paper_id: str) -> list[dict]:
+    """Gibt alle Figures fuer ein Paper, nach page sortiert."""
+    db = VaultDB(db_path)
+    return db.list_figures(paper_id)
+
+
+def find_figure_by_caption(
+    db_path: str,
+    caption_fragment: str,
+    paper_id: Optional[str] = None,
+) -> list[dict]:
+    """LIKE-Suche in figures.caption. Kein MCP-Tool-Dekorator.
+
+    Wird ausschliesslich aus dem verbatim-guard-Hook via Python-Subprocess
+    aufgerufen (analog zu search_quote_text).
+    """
+    db = VaultDB(db_path)
+    return db.find_figures_by_caption(caption_fragment, paper_id=paper_id)
+
+
 def add_paper(
     db_path: str,
     paper_id: str,
@@ -391,6 +440,27 @@ def _build_mcp_server():
     def _vault_get_printed_page(paper_id: str, pdf_page: int) -> int:
         """Berechnet gedruckte Seitenzahl: printed_page = pdf_page - page_offset."""
         return get_printed_page(db_path, paper_id, pdf_page)
+
+    @mcp.tool(name="vault.add_figure")
+    def _vault_add_figure(
+        paper_id: str,
+        page: int = None,
+        caption: str = None,
+        vlm_description: str = None,
+        data_extracted_json: str = None,
+    ) -> str:
+        """Fuegt Figure/Tabelle in Vault ein. Gibt figure_id zurueck."""
+        return add_figure(db_path, paper_id, page, caption, vlm_description, data_extracted_json)
+
+    @mcp.tool(name="vault.get_figure")
+    def _vault_get_figure(figure_id: str) -> Optional[dict]:
+        """Gibt Figure-Record zurueck oder None."""
+        return get_figure(db_path, figure_id)
+
+    @mcp.tool(name="vault.list_figures")
+    def _vault_list_figures(paper_id: str) -> list[dict]:
+        """Gibt alle Figures fuer ein Paper, nach page sortiert."""
+        return list_figures(db_path, paper_id)
 
     return mcp
 
