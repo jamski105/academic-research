@@ -1,0 +1,32 @@
+{
+  "cluster_id": "test_cluster_8",
+  "papers": [
+    {"id": "smith2021", "title": "Advances in NLP", "year": 2021,
+     "citations": ["jones2020", "lee2019", "chen2022"]},
+    {"id": "jones2020", "title": "Deep Learning Survey", "year": 2020,
+     "citations": ["smith2021", "lee2019", "wang2018"]},
+    {"id": "lee2019",   "title": "Transformer Models", "year": 2019,
+     "citations": ["smith2021", "jones2020", "kim2023"]},
+    {"id": "chen2022",  "title": "BERT Extensions", "year": 2022,
+     "citations": ["smith2021", "lee2019"]},
+    {"id": "wang2018",  "title": "Attention Mechanisms", "year": 2018,
+     "citations": ["jones2020", "kim2023"]},
+    {"id": "kim2023",   "title": "LLM Evaluation", "year": 2023,
+     "citations": ["lee2019", "chen2022", "patel2017"]},
+    {"id": "patel2017", "title": "Sequence to Sequence", "year": 2017,
+     "citations": ["kim2023", "mueller2016"]},
+    {"id": "mueller2016","title": "Recurrent Networks: A Review", "year": 2016,
+     "citations": ["patel2017"]}
+  ],
+  "edges": [
+    {"from": "smith2021", "to": "jones2020", "weight": 3},
+    {"from": "smith2021", "to": "lee2019",   "weight": 2},
+    {"from": "jones2020", "to": "lee2019",   "weight": 2},
+    {"from": "jones2020", "to": "wang2018",  "weight": 1},
+    {"from": "lee2019",   "to": "chen2022",  "weight": 2},
+    {"from": "lee2019",   "to": "kim2023",   "weight": 1},
+    {"from": "wang2018",  "to": "kim2023",   "weight": 1},
+    {"from": "kim2023",   "to": "patel2017", "weight": 2},
+    {"from": "patel2017", "to": "mueller2016","weight": 1}
+  ]
+}
