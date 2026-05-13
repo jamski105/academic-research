@@ -163,9 +163,10 @@ def extract_chapters(pdf_path: str) -> list[dict]:
     return _assign_end_pages(chapters, total)
 
 
-def write_chapter(pdf_path: str, chapter: dict, output_path: str) -> None:
-    """Schreibt Seiten eines Kapitels als neues PDF nach output_path."""
-    reader = PdfReader(pdf_path)
+def _write_chapter_from_reader(
+    reader: PdfReader, chapter: dict, output_path: str
+) -> None:
+    """Schreibt Seiten eines Kapitels mit vorhandenem PdfReader-Objekt."""
     writer = PdfWriter()
     start = chapter["start_page"]
     end = chapter["end_page"]
@@ -177,20 +178,29 @@ def write_chapter(pdf_path: str, chapter: dict, output_path: str) -> None:
         writer.write(f)
 
 
+def write_chapter(pdf_path: str, chapter: dict, output_path: str) -> None:
+    """Schreibt Seiten eines Kapitels als neues PDF nach output_path."""
+    _write_chapter_from_reader(PdfReader(pdf_path), chapter, output_path)
+
+
 def write_all_chapters(
     pdf_path: str,
     output_dir: str,
     isbn: str = "book",
 ) -> list[str]:
-    """Schreibt alle Kapitel als separate PDFs. Gibt Liste der Pfade zurueck."""
+    """Schreibt alle Kapitel als separate PDFs. Gibt Liste der Pfade zurueck.
+
+    Oeffnet das Quell-PDF einmalig fuer alle Kapitel (kein N+1-Overhead).
+    """
     chapters = extract_chapters(pdf_path)
+    reader = PdfReader(pdf_path)  # einmalig oeffnen
     os.makedirs(output_dir, exist_ok=True)
     safe_isbn = re.sub(r"[^a-zA-Z0-9_-]", "-", isbn)
     paths = []
     for i, ch in enumerate(chapters, start=1):
         fname = f"{safe_isbn}-ch{i}.pdf"
         out_path = os.path.join(output_dir, fname)
-        write_chapter(pdf_path, ch, out_path)
+        _write_chapter_from_reader(reader, ch, out_path)
         paths.append(out_path)
     return paths
 
