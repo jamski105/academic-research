@@ -97,12 +97,6 @@ als `file_id` übergeben — kein direktes `pdf_path` im Context.
 
 ### 3. Zitat-Extraktion
 
-> **Kapitel-PDF-Modus:** Wenn `vault.get_paper(paper_id)["parent_paper_id"]`
-> gesetzt ist, liegt ein Kapitel-PDF vor (erzeugt von `chunk_pdf.py`). Uebergib
-> statt des Gesamt-Buches nur dieses Kapitel-PDF als `file_id` via
-> `vault.ensure_file(paper_id)`. Das reduziert den Token-Footprint um typisch
-> 90-95 % gegenueber dem Gesamtbuch.
-
 Wenn Vault-Zitate für ein Paper vorhanden sind, diese direkt verwenden — kein
 Agent-Spawn nötig.
 
