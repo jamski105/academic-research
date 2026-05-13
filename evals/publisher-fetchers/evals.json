@@ -1,0 +1,81 @@
+{
+  "component": "publisher-fetchers",
+  "component_type": "agent",
+  "cases": [
+    {
+      "id": "pf-01",
+      "description": "springer-book: OA-Buch via Springer (Birkhaeuser OA-Mathematik)",
+      "agent": "springer-book",
+      "input": {
+        "isbn": "9783319572017",
+        "output_path": "/tmp/pf-01-springer-oa.pdf"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.status",
+        "check": "exists"
+      },
+      "notes": "Springer OA-Buch sollte ohne Auth downloadbar sein. Erwartet status in {success, metadata_only, no_match, captcha, pickup_required}."
+    },
+    {
+      "id": "pf-02",
+      "description": "degruyter: OA-Buch via De Gruyter (Klassische Studien OA)",
+      "agent": "degruyter",
+      "input": {
+        "isbn": "9783110568370",
+        "output_path": "/tmp/pf-02-degruyter-oa.pdf"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.status",
+        "check": "exists"
+      },
+      "notes": "De Gruyter OA-Buch. Erwartet status in Enum."
+    },
+    {
+      "id": "pf-03",
+      "description": "nationallizenzen: Buch ueber Nationallizenzen-Portal (Duncker & Humblot hist.)",
+      "agent": "nationallizenzen",
+      "input": {
+        "isbn": "9783428139521",
+        "output_path": "/tmp/pf-03-nationallizenzen.pdf"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.status",
+        "check": "exists"
+      },
+      "notes": "Nationallizenzen-Zugang. Erwartet status in Enum; metadata_only wenn Profil keine NL enthaelt."
+    },
+    {
+      "id": "pf-04",
+      "description": "ebook-central: MIT Press Buch auf Ebook Central",
+      "agent": "ebook-central",
+      "input": {
+        "isbn": "9780262036603",
+        "output_path": "/tmp/pf-04-ebook-central.pdf"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.status",
+        "check": "exists"
+      },
+      "notes": "Ebook Central (ProQuest) Test. Erwartet status in Enum; pickup_required wenn DRM."
+    },
+    {
+      "id": "pf-05",
+      "description": "springer-book: no_match-Pfad mit ungueltigem ISBN",
+      "agent": "springer-book",
+      "input": {
+        "isbn": "9780000000000",
+        "output_path": "/tmp/pf-05-no-match.pdf"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.status",
+        "check": "equals:no_match"
+      },
+      "notes": "Fake-ISBN — Springer sollte 0 Treffer liefern und no_match zurueckgeben."
+    }
+  ]
+}
