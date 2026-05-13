@@ -73,7 +73,7 @@ Wenn nicht `600`: Fehler ausgeben (`{status: auth_failed, reason: site_unavailab
 ```bash
 # Profil laden — NUR nicht-sensitive Felder ausgeben (keine Passwort-Werte)
 python3 - <<'PYEOF'
-import yaml, json, sys
+import yaml, json, os, sys
 try:
     with open(os.path.expanduser("~/.academic-research/library-profiles/active.yaml")) as f:
         d = yaml.safe_load(f) or {}
