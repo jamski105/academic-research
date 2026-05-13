@@ -31,12 +31,14 @@ Lese `~/.academic-research/library-profiles/active.yaml`.
 Pruefe, ob `degruyter.com` in `licensed_sites` enthalten ist.
 
 Wenn NICHT enthalten:
-```json
-{"status": "metadata_only", "source_subagent": "degruyter", "url": "https://www.degruyter.com"}
-```
-→ Sofort stoppen. Master entscheidet ueber Fallback.
 
-**Ausnahme:** Wenn OA-Badge erkennbar (Discovery-Ergebnis), fortfahren ohne Lizenz-Check.
+→ NICHT sofort stoppen, sondern Discovery-Flow beginnen. De Gruyter hat viele OA-Titel
+  die ohne Lizenz downloadbar sind.
+→ Nach Discovery: Wenn OA-Badge auf Buchseite erkennbar → Download direkt versuchen.
+→ Wenn KEIN OA-Badge und keine Lizenz im Profil:
+```json
+{"status": "metadata_only", "source_subagent": "degruyter", "url": "<buchseiten-url>"}
+```
 
 ## Discovery-Flow
 
