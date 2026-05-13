@@ -150,16 +150,20 @@ def list_figures(db_path, paper_id) -> list[dict]
 
 **Strategie:**
 - Wenn ein Figure-Referenz-Pattern gefunden wird, extrahiere die Caption aus dem direkten Textkontext (nachfolgendes Anführungszeichen-Span ≤ 200 Zeichen)
-- Suche via `list_figures_by_caption(caption_fragment)` im Vault
+- Suche via `find_figure_by_caption(db_path, caption_fragment, paper_id=None)` im Vault
 - Wenn kein Vault-Eintrag mit passendem Caption-Fragment: BLOCK mit Hint
 - Fail-open: Wenn Vault-DB fehlt oder Python-Fehler → Warnung + allow
 
 **Wichtig:** Bestehende Quote-Prüfung (`extractQuoteSpans` → `lookupInVault`) bleibt unverändert. Figure-Check ist ein zusätzlicher Schritt NACH dem Quote-Check.
 
+**Scope:** Figure-Check gilt nur für `isProtectedPath(filePath) === true`-Paths (gleicher Scope wie bestehender Quote-Check). Performance: ein Vault-Lookup pro Figure-Verweis pro Write.
+
 **Neue Python-Hilfsfunktion in server.py:**
 ```python
 def find_figure_by_caption(db_path, caption_fragment, paper_id=None) -> list[dict]
 ```
+
+`find_figure_by_caption` ist keine MCP-Tool-Funktion und erhält keinen Tool-Dekorator — sie wird ausschließlich aus dem Hook via Python-Subprocess aufgerufen (analog zu `search_quote_text` in der bestehenden Hook-Logik).
 
 **Hook-Ablauf:**
 1. Bestehender Quote-Check (unverändert)
@@ -190,6 +194,8 @@ def find_figure_by_caption(db_path, caption_fragment, paper_id=None) -> list[dic
 ## 7. Evals
 
 `evals/figure-verifier/evals.json` — 5 Cases (trigger-only Skeleton):
+
+**Abweichung von chunks.md (L0-genehmigt):** chunks.md spezifiziert 15 Cases (5 Bücher × 3 Figures). Spec reduziert auf 5-Case-Skeleton mit Trigger-Evals, weil (a) Quality-Cases reproduzierbare Buch-PDF-Fixtures verlangen die in Chunk G konsolidiert werden, (b) Wave 1 Fokus ist Vertical Slice + Foundation, nicht vollständige Eval-Suite. Chunk G erweitert dies auf vollwertige Quality-Evals als Teil der F15-Token-Regression-Initiative.
 
 - fv-01: Agent mit valider paper_id + Seite → `figure_id` non-empty
 - fv-02: Caption ≥ 50 Zeichen in vlm_description
