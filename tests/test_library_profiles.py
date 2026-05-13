@@ -92,7 +92,7 @@ class TestSchemaValidierungNegativ:
     def test_ungültiger_auth_type(self):
         from jsonschema import ValidationError, validate
         profile = self._base_profile()
-        profile["auth_type"] = "LDAP"  # nicht im Enum
+        profile["auth_type"] = "LDAP"
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 

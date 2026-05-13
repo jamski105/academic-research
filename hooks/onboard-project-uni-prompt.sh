@@ -37,19 +37,15 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ── Verfuegbare Profile sammeln ───────────────────────────────────────────────
-mapfile -t PROFILE_FILES < <(
-  find "${PROFILES_DIR}" -maxdepth 1 -name "*.yaml" ! -name "_*" | sort
+mapfile -t SLUGS < <(
+  find "${PROFILES_DIR}" -maxdepth 1 -name "*.yaml" ! -name "_*" \
+    -exec basename {} .yaml \; | sort
 )
 
-if [[ ${#PROFILE_FILES[@]} -eq 0 ]]; then
+if [[ ${#SLUGS[@]} -eq 0 ]]; then
   echo "Fehler: Keine Profile gefunden in ${PROFILES_DIR}" >&2
   exit 1
 fi
-
-declare -a SLUGS
-for f in "${PROFILE_FILES[@]}"; do
-  SLUGS+=("$(basename "$f" .yaml)")
-done
 
 # ── Profil-Auswahl ────────────────────────────────────────────────────────────
 if [[ -z "${SELECTED_PROFILE}" ]]; then
