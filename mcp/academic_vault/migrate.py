@@ -203,6 +203,30 @@ def add_parent_paper_id_column(db_path: str) -> None:
         conn.close()
 
 
+def add_figures_table(db_path: str) -> None:
+    """Erstellt figures-Tabelle falls nicht vorhanden. Idempotent.
+
+    Aufruf-Sicher: Kann mehrfach auf derselben DB ausgefuehrt werden.
+    """
+    import sqlite3 as _sqlite3
+    conn = _sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS figures (
+              figure_id           TEXT PRIMARY KEY,
+              paper_id            TEXT NOT NULL REFERENCES papers(paper_id),
+              page                INTEGER,
+              caption             TEXT,
+              vlm_description     TEXT,
+              data_extracted_json TEXT,
+              created_at          INTEGER NOT NULL
+            )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Seed-Migration: literature_state.md -> academic_vault SQLite"
