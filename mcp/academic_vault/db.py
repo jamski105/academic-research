@@ -286,3 +286,27 @@ class VaultDB:
         if own_conn:
             conn.close()
         return [dict(r) for r in rows]
+
+    def set_ocr_done(self, paper_id: str, value: int = 1) -> None:
+        """Setzt ocr_done-Flag fuer ein Paper."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            "UPDATE papers SET ocr_done = ?, updated_at = ? WHERE paper_id = ?",
+            (value, int(time.time()), paper_id),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+
+    def update_pdf_path(self, paper_id: str, new_path: str) -> None:
+        """Aktualisiert pdf_path fuer ein Paper."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            "UPDATE papers SET pdf_path = ?, updated_at = ? WHERE paper_id = ?",
+            (new_path, int(time.time()), paper_id),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()

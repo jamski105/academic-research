@@ -120,7 +120,7 @@ class TestRunOcrmypdf:
         except ImportError:
             pytest.skip("ocr.py noch nicht implementiert")
 
-        with patch("subprocess.which", return_value=None):
+        with patch("shutil.which", return_value=None):
             with pytest.raises(RuntimeError, match="ocrmypdf nicht gefunden"):
                 run_ocrmypdf("input.pdf", "output.pdf")
 
@@ -134,7 +134,7 @@ class TestRunOcrmypdf:
         mock_result = MagicMock()
         mock_result.returncode = 0
 
-        with patch("subprocess.which", return_value="/usr/local/bin/ocrmypdf"):
+        with patch("shutil.which", return_value="/usr/local/bin/ocrmypdf"):
             with patch("subprocess.run", return_value=mock_result) as mock_run:
                 run_ocrmypdf("input.pdf", "output.pdf")
 
@@ -155,7 +155,7 @@ class TestRunOcrmypdf:
         mock_result.returncode = 1
         mock_result.stderr = b"OCR failed"
 
-        with patch("subprocess.which", return_value="/usr/local/bin/ocrmypdf"):
+        with patch("shutil.which", return_value="/usr/local/bin/ocrmypdf"):
             with patch("subprocess.run", return_value=mock_result):
                 with pytest.raises(RuntimeError, match="ocrmypdf"):
                     run_ocrmypdf("input.pdf", "output.pdf")
@@ -171,8 +171,7 @@ class TestVaultOcrSetters:
     @pytest.fixture
     def tmp_db(self, tmp_path):
         db_file = str(tmp_path / "vault.db")
-        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "mcp", "academic_vault"))
-        from db import VaultDB
+        from mcp.academic_vault.db import VaultDB
         db = VaultDB(db_file)
         db.init_schema()
         db.add_paper(
@@ -184,8 +183,7 @@ class TestVaultOcrSetters:
 
     def test_set_ocr_done(self, tmp_db):
         """set_ocr_done setzt ocr_done=1 im Vault."""
-        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "mcp", "academic_vault"))
-        from server import set_ocr_done, get_paper
+        from mcp.academic_vault.server import set_ocr_done, get_paper
 
         set_ocr_done(tmp_db, "test-paper-ocr")
         paper = get_paper(tmp_db, "test-paper-ocr")
@@ -195,8 +193,7 @@ class TestVaultOcrSetters:
 
     def test_update_pdf_path(self, tmp_db):
         """update_pdf_path aktualisiert pdf_path im Vault."""
-        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "mcp", "academic_vault"))
-        from server import update_pdf_path, get_paper
+        from mcp.academic_vault.server import update_pdf_path, get_paper
 
         update_pdf_path(tmp_db, "test-paper-ocr", "/tmp/scan_ocr.pdf")
         paper = get_paper(tmp_db, "test-paper-ocr")
