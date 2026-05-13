@@ -120,6 +120,7 @@ class VaultDB:
         page_first: Optional[int] = None,
         page_last: Optional[int] = None,
         container_title: Optional[str] = None,
+        parent_paper_id: Optional[str] = None,
     ) -> None:
         """Upsert eines Papers in die papers-Tabelle.
 
@@ -144,25 +145,28 @@ class VaultDB:
             INSERT INTO papers
               (paper_id, type, csl_json, doi, isbn, pdf_path, page_offset,
                editor, chapter, page_first, page_last, container_title,
+               parent_paper_id,
                added_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(paper_id) DO UPDATE SET
-              type           = excluded.type,
-              csl_json       = excluded.csl_json,
-              doi            = excluded.doi,
-              isbn           = excluded.isbn,
-              pdf_path       = excluded.pdf_path,
-              page_offset    = excluded.page_offset,
-              editor         = excluded.editor,
-              chapter        = excluded.chapter,
-              page_first     = excluded.page_first,
-              page_last      = excluded.page_last,
-              container_title= excluded.container_title,
-              updated_at     = excluded.updated_at
+              type            = excluded.type,
+              csl_json        = excluded.csl_json,
+              doi             = excluded.doi,
+              isbn            = excluded.isbn,
+              pdf_path        = excluded.pdf_path,
+              page_offset     = excluded.page_offset,
+              editor          = excluded.editor,
+              chapter         = excluded.chapter,
+              page_first      = excluded.page_first,
+              page_last       = excluded.page_last,
+              container_title = excluded.container_title,
+              parent_paper_id = excluded.parent_paper_id,
+              updated_at      = excluded.updated_at
             """,
             (
                 paper_id, paper_type, csl_json, doi, isbn, pdf_path, page_offset,
                 editor, chapter, page_first, page_last, container_title,
+                parent_paper_id,
                 now, now,
             ),
         )
