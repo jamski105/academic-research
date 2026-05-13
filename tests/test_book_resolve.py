@@ -203,6 +203,29 @@ def test_doab_oa_check():
     assert "download_url" in result
 
 
+def test_doab_doi_oapen_lookup():
+    """DOAB-DOI-Lookup liefert open_access=True und OAPEN/DOAB-URL."""
+    import book_resolve
+
+    doi = "10.1007/978-3-658-12345-6"
+
+    with patch("book_resolve.requests.get") as mock_get:
+        resp = MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = DOAB_RESPONSE
+        resp.raise_for_status = MagicMock()
+        mock_get.return_value = resp
+        result = book_resolve.check_doab(doi=doi)
+
+    assert result is not None
+    assert result.get("open_access") is True
+    assert "download_url" in result
+    url = result["download_url"]
+    assert any(kw in url.lower() for kw in ("oapen", "doab", "/bitstream")), (
+        f"download_url enthält kein erwartetes Keyword: {url}"
+    )
+
+
 def test_no_source_returns_empty():
     """Alle Quellen schlagen fehl → leeres dict, kein crash."""
     import book_resolve
