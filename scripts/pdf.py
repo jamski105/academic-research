@@ -23,6 +23,7 @@ import json
 import logging
 import math
 import os
+import random
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -232,7 +233,6 @@ def action_resolve(papers_path: str, output_dir: str, output_path: str, email: s
 def extract_text_from_pdf(pdf_path: str) -> str:
     """Extract text from PDF using PyPDF2."""
     try:
-        from PyPDF2 import PdfReader
         reader = PdfReader(pdf_path)
         text_parts = []
         for page in reader.pages:
@@ -349,8 +349,6 @@ def detect_needs_ocr(
     je Seite < threshold (Standard: 100 Zeichen).
     Bei leerem PDF (0 Seiten) gibt die Funktion True zurueck.
     """
-    import random
-
     try:
         reader = PdfReader(pdf_path)
     except Exception:
@@ -361,7 +359,6 @@ def detect_needs_ocr(
     if total_pages == 0:
         return True
 
-    # Seiten-Indizes samplen
     n = min(sample_pages, total_pages)
     indices = random.sample(range(total_pages), n)
 

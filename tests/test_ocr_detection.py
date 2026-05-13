@@ -1,16 +1,12 @@
 """Tests fuer OCR-Detection und ocrmypdf-Workflow."""
 import os
 import sys
-import sqlite3
-import tempfile
 from unittest.mock import patch, MagicMock
 
 import pytest
 
 # scripts/ im Suchpfad
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
-
-FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "ocr")
 
 
 # ---------------------------------------------------------------------------
@@ -69,8 +65,6 @@ class TestDetectNeedsOcr:
         mock_reader = MagicMock()
         mock_reader.pages = pages
 
-        # Mit festem Seed sicherstellen dass Sample die leeren Seiten trifft
-        import random
         with patch("pdf.PdfReader", return_value=mock_reader):
             with patch("random.sample", return_value=[2, 4, 6, 7, 9]):
                 result = detect_needs_ocr("dummy.pdf", sample_pages=5, threshold=100)
