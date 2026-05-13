@@ -24,13 +24,21 @@ als Abfall des GPTZero AI-Scores vor vs. nach dem Humanizer-Pass.
 
 ---
 
-## Draft-Samples
+## Vorher/Nachher-Struktur
 
-| Draft | Kontext | KI-Tells |
-|-------|---------|----------|
-| `drafts/draft-01-theorie.md` | Bachelorarbeit, Theoriekapitel | Aufzählungs-Einstieg, Nominalstil-Übermaß |
-| `drafts/draft-02-methodik.md` | Masterarbeit, Methodikkapitel | Passiv-Übermaß, stereotype Formulierungen |
-| `drafts/draft-03-diskussion.md` | Dissertation, Diskussionskapitel | Hedging-Übermaß, redundante Einleitung |
+Die Eval-Sets bestehen aus je einem Vorher-Draft (Baseline mit KI-Tells) und einem
+Nachher-Draft (humanisierter Output nach `humanizer-de`-Pass):
+
+| Draft | Vorher (Baseline) | Nachher (nach humanizer-de-Pass) | KI-Tells im Vorher |
+|-------|-------------------|----------------------------------|--------------------|
+| Theoriekapitel | `drafts/draft-01-theorie.md` | `drafts-after/draft-01-theorie.md` | Aufzählungs-Einstieg, Nominalstil-Übermaß |
+| Methodikkapitel | `drafts/draft-02-methodik.md` | `drafts-after/draft-02-methodik.md` | Passiv-Übermaß, stereotype Formulierungen |
+| Diskussionskapitel | `drafts/draft-03-diskussion.md` | `drafts-after/draft-03-diskussion.md` | Hedging-Übermaß, redundante Einleitung |
+
+**Vorher-Drafts** (`drafts/`) enthalten die KI-typischen Tells (Baseline für GPTZero-Score).
+**Nachher-Drafts** (`drafts-after/`) zeigen den humanisierten Output für den Nachher-Score.
+
+Der Eval-Vergleich erfolgt manuell via GPTZero (kein automatisierter CI-Run).
 
 ---
 
