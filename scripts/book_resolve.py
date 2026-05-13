@@ -304,7 +304,9 @@ def check_doab(isbn: Optional[str] = None, doi: Optional[str] = None) -> Optiona
         for item in data:
             for meta in item.get("metadata", []):
                 if meta.get("key") == "dc.identifier.uri":
-                    result["download_url"] = meta.get("value", "")
+                    val = meta.get("value", "")
+                    if val:
+                        result["download_url"] = val
                     break
             if "download_url" in result:
                 break
