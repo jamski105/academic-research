@@ -82,6 +82,12 @@ Minimal — alles Weitere erledigt das Setup automatisch.
 
 Fehlt `uv`/`pipx` nur, funktioniert das Plugin trotzdem — die Browser-Module werden dann übersprungen und nur die sieben API-Quellen durchsucht.
 
+**Optionale Abhängigkeiten:**
+
+- `ocrmypdf` (OCR für Scan-PDFs ohne Text-Layer):
+  - macOS: `brew install ocrmypdf`
+  - Python-basiert: `pip install ocrmypdf`
+
 ## Installation (Schritt für Schritt)
 
 ### Schritt 1 — Plugin-Marketplace registrieren
