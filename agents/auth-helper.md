@@ -71,11 +71,22 @@ stat -f "%Lp" ~/.academic-research/library-profiles/active.yaml
 Wenn nicht `600`: Fehler ausgeben (`{status: auth_failed, reason: site_unavailable}`), NICHT versuchen die Datei zu lesen.
 
 ```bash
-# Profil laden
-cat ~/.academic-research/library-profiles/active.yaml
+# Profil laden — NUR nicht-sensitive Felder ausgeben (keine Passwort-Werte)
+python3 - <<'PYEOF'
+import yaml, json, sys
+try:
+    with open(os.path.expanduser("~/.academic-research/library-profiles/active.yaml")) as f:
+        d = yaml.safe_load(f) or {}
+    # Gib nur Steuerungs-Felder aus, KEINE Credential-Werte
+    safe = {k: d[k] for k in ["uni","auth_type","auth_url","licensed_sites","proxy_pattern","credentials_keys","bib_pickup_url"] if k in d}
+    print(json.dumps(safe))
+except Exception as e:
+    print(json.dumps({"error": str(e)}))
+    sys.exit(1)
+PYEOF
 ```
 
-**WICHTIG:** Den Inhalt von `credentials_keys`-Werten (Passwort-Felder) NICHT in deinen Output schreiben.
+Die tatsaechlichen Credential-Werte (Passwort, Benutzername) werden direkt beim browser-use-Aufruf aus dem Profil gelesen, aber NICHT in diesen Output geschrieben.
 
 ### Schritt 2: Auth-Typ bestimmen
 

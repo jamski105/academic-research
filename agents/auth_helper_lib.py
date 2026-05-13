@@ -9,7 +9,8 @@ import os
 import re
 import stat
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Optional
+from urllib.parse import urlparse
 import yaml
 
 
@@ -51,12 +52,10 @@ class CredentialStore:
 # Auth-Typ-Erkennung
 # ---------------------------------------------------------------------------
 
-_HAN_PATTERN = re.compile(r'\.han\.')
-_WAYF_PATTERN = re.compile(r'(^|\.|//)wayf\.')
-_IDP_PATTERN = re.compile(r'/idp/')
-_SHIBBOLETH_PATTERN = re.compile(r'shibboleth', re.IGNORECASE)
-_EZPROXY_PATTERN = re.compile(r'ezproxy', re.IGNORECASE)
-_DFNAAI_PATTERN = re.compile(r'(dfn-aai|\.aai\.dfn\.de)', re.IGNORECASE)
+_HAN_HOSTNAME_PATTERN = re.compile(r'\.han\.')
+_WAYF_HOSTNAME_PATTERN = re.compile(r'(^|\.)(wayf)\.')
+_IDP_PATH_PATTERN = re.compile(r'/idp/')
+_EZPROXY_HOSTNAME_PATTERN = re.compile(r'ezproxy', re.IGNORECASE)
 
 # Erlaubte auth_type-Werte (aus B-Schema-Enum)
 VALID_AUTH_TYPES = frozenset(["Shibboleth", "EZproxy", "HAN", "oa-only"])
@@ -64,6 +63,9 @@ VALID_AUTH_TYPES = frozenset(["Shibboleth", "EZproxy", "HAN", "oa-only"])
 
 def detect_auth_type(profile_data: dict, url: str) -> str:
     """Ermittelt den Auth-Typ aus Profil (Prioritaet) und URL-Muster (Fallback).
+
+    Matching-Strategie: Hostname und Pfad werden separat ausgewertet, um
+    False-Positives bei Substrings zu vermeiden.
 
     Args:
         profile_data: Inhalt von active.yaml als dict (leer = kein Profil).
@@ -77,14 +79,23 @@ def detect_auth_type(profile_data: dict, url: str) -> str:
     if profile_type in VALID_AUTH_TYPES:
         return profile_type
 
-    # URL-Pattern-Matching als Fallback
-    if _HAN_PATTERN.search(url):
+    # URL parsen fuer robustes Hostname-Matching
+    try:
+        parsed = urlparse(url)
+        hostname = parsed.hostname or ""
+        path = parsed.path or ""
+    except Exception:
+        hostname = ""
+        path = ""
+
+    # URL-Pattern-Matching als Fallback (Hostname-basiert)
+    if _HAN_HOSTNAME_PATTERN.search(hostname):
         return "HAN"
-    if _WAYF_PATTERN.search(url) or _IDP_PATTERN.search(url) or _SHIBBOLETH_PATTERN.search(url):
+    if _WAYF_HOSTNAME_PATTERN.search(hostname):
         return "Shibboleth"
-    if _DFNAAI_PATTERN.search(url):
-        return "Shibboleth"  # DFN-AAI ist Shibboleth-basiert
-    if _EZPROXY_PATTERN.search(url):
+    if _IDP_PATH_PATTERN.search(path):
+        return "Shibboleth"
+    if _EZPROXY_HOSTNAME_PATTERN.search(hostname):
         return "EZproxy"
 
     return "oa-only"
