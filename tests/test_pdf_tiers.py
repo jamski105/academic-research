@@ -256,3 +256,142 @@ class TestTierEuropePMC:
 
         result = tier_europepmc(client, "10.9999/subscription")
         assert result is None
+
+
+# ---------------------------------------------------------------------------
+# resolve_pdf_url() — ordering tests
+# ---------------------------------------------------------------------------
+
+class TestResolvePdfUrlOrdering:
+    """Prueft die Tier-Reihenfolge in resolve_pdf_url()."""
+
+    _EMPTY_ARXIV_XML = (
+        '<?xml version="1.0"?>'
+        '<feed xmlns="http://www.w3.org/2005/Atom"></feed>'
+    )
+
+    def _empty_resp(self, json_data=None):
+        """Hilfsmethode: leere Mock-Response fuer nicht-relevante Tiers."""
+        resp = MagicMock()
+        resp.json.return_value = json_data if json_data is not None else {}
+        resp.text = self._EMPTY_ARXIV_XML  # fuer tier_arxiv_title (ET.fromstring)
+        resp.raise_for_status = MagicMock()
+        return resp
+
+    def test_book_type_tries_doab_before_oab(self):
+        """Bei type='book' wird DOAB (Tier 7) vor OpenAccessButton (Tier 6) versucht."""
+        from pdf import resolve_pdf_url
+
+        call_order = []
+
+        def mock_get(url, **kwargs):
+            if "doabooks.org" in url:
+                call_order.append("doab")
+                resp = MagicMock()
+                resp.json.return_value = []
+                resp.text = self._EMPTY_ARXIV_XML
+                resp.raise_for_status = MagicMock()
+                return resp
+            if "openaccessbutton.org" in url:
+                call_order.append("oab")
+                resp = MagicMock()
+                resp.json.return_value = {"data": {}}
+                resp.text = self._EMPTY_ARXIV_XML
+                resp.raise_for_status = MagicMock()
+                return resp
+            # Alle anderen (unpaywall, core, arxiv, europepmc): leere Response
+            return self._empty_resp()
+
+        client = MagicMock()
+        client.get.side_effect = mock_get
+
+        paper = {
+            "doi": "10.1371/journal.pbio.1002055",
+            "title": "A Test Book",
+            "type": "book",
+            "isbn": "9783000000001",
+        }
+        resolve_pdf_url(client, paper, "test@example.com")
+
+        assert "doab" in call_order, "DOAB muss bei type=book versucht werden"
+        assert "oab" in call_order, "OpenAccessButton muss versucht werden"
+        doab_pos = call_order.index("doab")
+        oab_pos = call_order.index("oab")
+        assert doab_pos < oab_pos, f"DOAB ({doab_pos}) muss vor OAB ({oab_pos}) kommen"
+
+    def test_biomed_doi_activates_europepmc(self):
+        """DOI mit BIOMED_DOI_PREFIXES-Praefix aktiviert EuropePMC-Tier."""
+        from pdf import resolve_pdf_url
+
+        europepmc_called = []
+
+        def mock_get(url, **kwargs):
+            if "europepmc.org" in url:
+                europepmc_called.append(True)
+                resp = MagicMock()
+                resp.json.return_value = {"resultList": {"result": []}}
+                resp.text = self._EMPTY_ARXIV_XML
+                resp.raise_for_status = MagicMock()
+                return resp
+            return self._empty_resp()
+
+        client = MagicMock()
+        client.get.side_effect = mock_get
+
+        paper = {
+            "doi": "10.1371/journal.pbio.1002055",  # PLOS — biomed prefix
+            "title": "A PLOS paper",
+        }
+        resolve_pdf_url(client, paper, "test@example.com")
+
+        assert europepmc_called, "EuropePMC muss bei biomed DOI aufgerufen werden"
+
+    def test_non_biomed_doi_also_tries_europepmc_as_fallback(self):
+        """Auch nicht-biomed DOIs probieren EuropePMC als letzten Fallback."""
+        from pdf import resolve_pdf_url
+
+        europepmc_called = []
+
+        def mock_get(url, **kwargs):
+            if "europepmc.org" in url:
+                europepmc_called.append(True)
+                resp = MagicMock()
+                resp.json.return_value = {"resultList": {"result": []}}
+                resp.text = self._EMPTY_ARXIV_XML
+                resp.raise_for_status = MagicMock()
+                return resp
+            return self._empty_resp()
+
+        client = MagicMock()
+        client.get.side_effect = mock_get
+
+        paper = {
+            "doi": "10.9999/some-other-doi",
+            "title": "A general paper",
+        }
+        resolve_pdf_url(client, paper, "test@example.com")
+
+        assert europepmc_called, "EuropePMC muss auch als allgemeiner Fallback aufgerufen werden"
+
+    def test_resolve_returns_oab_url_on_hit(self):
+        """resolve_pdf_url gibt (url, 'openaccessbutton', None) zurueck bei OAB-Treffer."""
+        from pdf import resolve_pdf_url
+
+        def mock_get(url, **kwargs):
+            resp = MagicMock()
+            resp.raise_for_status = MagicMock()
+            resp.text = self._EMPTY_ARXIV_XML
+            if "openaccessbutton.org" in url:
+                resp.json.return_value = {"data": {"url": "https://example.org/paper.pdf"}}
+            else:
+                resp.json.return_value = {}
+            return resp
+
+        client = MagicMock()
+        client.get.side_effect = mock_get
+
+        paper = {"doi": "10.9999/test", "title": "Test paper"}
+        url, source, error = resolve_pdf_url(client, paper, "test@example.com")
+
+        assert url == "https://example.org/paper.pdf"
+        assert source == "openaccessbutton"
