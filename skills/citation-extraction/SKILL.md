@@ -58,9 +58,9 @@ Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der
 - Zitierstil-Konversion aus echtem Quelltext (nicht aus Metadaten)
 
 **Wann nicht:**
-- Reiner Metadaten-zu-Zitat-Workflow (User gibt Autor/Jahr/Titel) → weiter mit Prompt-basierter Formatierung nach Variant-References.
+- Reiner Metadaten-zu-Zitat-Workflow → weiter mit Prompt-basierter Formatierung nach Variant-References.
 
-**Output-Integration:** Die `citations[]`-Array-Eintraege der API enthalten `start_page_number` / `end_page_number` direkt — uebernimm sie in die Seitenangabe des Zitats (`S. X–Y`).
+**Output-Integration:** `citations[].start_page_number` / `end_page_number` direkt als Seitenangabe (`S. X–Y`). Bei Buechern mit Vorseiten: `printed_page = vault.get_printed_page(paper_id, pdf_page)`.
 
 ## Kontext-Dateien
 
