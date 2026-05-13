@@ -41,6 +41,13 @@ except ImportError:  # pragma: no cover
 TIMEOUT = 30.0
 PDF_MAGIC = b"%PDF"
 
+BIOMED_DOI_PREFIXES: list[str] = [
+    "10.1016/j.",   # Elsevier Biomedical
+    "10.1186/",     # BMC
+    "10.1371/",     # PLOS
+    "10.3390/",     # MDPI Biology
+]
+
 log = logging.getLogger(__name__)
 
 
@@ -146,6 +153,17 @@ def tier_arxiv_title(client: httpx.Client, title: str) -> str | None:
     except Exception:
         log.exception("arXiv title search failed: %s", title[:40])
     return None
+
+
+def tier_openaccessbutton(client: httpx.Client, doi: str) -> str | None:
+    """Tier 6: Resolve via OpenAccessButton API."""
+    resp = client.get(
+        "https://api.openaccessbutton.org/find",
+        params={"id": doi},
+        timeout=TIMEOUT,
+    )
+    resp.raise_for_status()
+    return (resp.json().get("data") or {}).get("url")
 
 
 def resolve_pdf_url(
