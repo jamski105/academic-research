@@ -92,7 +92,7 @@ class BookFetcherRouter:
     # ------------------------------------------------------------------
 
     def _ts(self) -> str:
-        return datetime.datetime.utcnow().isoformat() + "Z"
+        return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 
     def _try_entry(self, subagent: str, status: str) -> dict:
         return {"subagent": subagent, "status": status, "ts": self._ts()}
