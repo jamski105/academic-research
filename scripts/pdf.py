@@ -215,11 +215,6 @@ def tier_europepmc(client: httpx.Client, doi: str) -> str | None:
     return None
 
 
-def _is_biomed_doi(doi: str) -> bool:
-    """Return True if doi starts with a known biomedical DOI prefix."""
-    return any(doi.startswith(prefix) for prefix in BIOMED_DOI_PREFIXES)
-
-
 def resolve_pdf_url(
     client: httpx.Client, paper: dict[str, Any], email: str
 ) -> tuple[str | None, str | None, str | None]:
