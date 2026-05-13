@@ -8,6 +8,7 @@ import sqlite3
 import time
 from pathlib import Path
 from typing import Optional
+from uuid import uuid4
 
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
@@ -349,7 +350,6 @@ class VaultDB:
         data_extracted_json: Optional[str],
     ) -> str:
         """INSERT einer Figure. Gibt figure_id (UUID) zurueck."""
-        from uuid import uuid4
         figure_id = str(uuid4())
         now = int(time.time())
         conn = self._get_conn()
