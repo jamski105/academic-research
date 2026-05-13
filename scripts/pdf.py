@@ -166,6 +166,30 @@ def tier_openaccessbutton(client: httpx.Client, doi: str) -> str | None:
     return (resp.json().get("data") or {}).get("url")
 
 
+_DOAB_BASE = "https://directory.doabooks.org"
+
+
+def tier_doab(client: httpx.Client, isbn_or_title: str) -> str | None:
+    """Tier 7: Resolve via DOAB REST API."""
+    resp = client.get(
+        "https://directory.doabooks.org/rest/search",
+        params={"query": isbn_or_title, "expand": "bitstreams"},
+        timeout=TIMEOUT,
+    )
+    resp.raise_for_status()
+    results = resp.json()
+    if not isinstance(results, list):
+        return None
+    for item in results:
+        for bs in item.get("bitstreams") or []:
+            if bs.get("mimeType") == "application/pdf":
+                link: str = bs.get("retrieveLink") or ""
+                if link.startswith("http"):
+                    return link
+                return f"{_DOAB_BASE}{link}"
+    return None
+
+
 def resolve_pdf_url(
     client: httpx.Client, paper: dict[str, Any], email: str
 ) -> tuple[str | None, str | None, str | None]:

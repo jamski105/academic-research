@@ -69,3 +69,97 @@ class TestTierOpenAccessButton:
 
         result = tier_openaccessbutton(client, "10.9999/nothing")
         assert result is None
+
+
+# ---------------------------------------------------------------------------
+# Tier 7: DOAB
+# ---------------------------------------------------------------------------
+
+DOAB_HIT_RESPONSE = [
+    {
+        "uuid": "abc-123",
+        "metadata": [
+            {"key": "dc.title", "value": "Open Access Buch"},
+        ],
+        "bitstreams": [
+            {
+                "bundleName": "ORIGINAL",
+                "mimeType": "application/pdf",
+                "retrieveLink": "/bitstream/handle/20.500.12854/123/book.pdf",
+            }
+        ],
+    }
+]
+
+DOAB_HIT_ABSOLUTE_URL = [
+    {
+        "uuid": "def-456",
+        "bitstreams": [
+            {
+                "bundleName": "ORIGINAL",
+                "mimeType": "application/pdf",
+                "retrieveLink": "https://downloads.doabooks.org/book.pdf",
+            }
+        ],
+    }
+]
+
+DOAB_NO_PDF_RESPONSE = [
+    {
+        "uuid": "ghi-789",
+        "bitstreams": [
+            {
+                "bundleName": "ORIGINAL",
+                "mimeType": "text/html",
+                "retrieveLink": "/bitstream/handle/123/page.html",
+            }
+        ],
+    }
+]
+
+
+class TestTierDoab:
+    def test_success_relative_url_prepends_base(self):
+        """Erfolgsfall: relative retrieveLink bekommt DOAB-Basis-URL vorangestellt."""
+        from pdf import tier_doab
+
+        resp = _mock_httpx_response(DOAB_HIT_RESPONSE)
+        client = _mock_httpx_client(resp)
+
+        result = tier_doab(client, "9783446461031")
+        assert result is not None
+        assert result.startswith("https://directory.doabooks.org")
+        assert "book.pdf" in result
+        client.get.assert_called_once()
+        call_url = client.get.call_args[0][0]
+        assert "doabooks.org" in call_url
+
+    def test_success_absolute_url_returned_as_is(self):
+        """Erfolgsfall: absolute URL wird unveraendert zurueckgegeben."""
+        from pdf import tier_doab
+
+        resp = _mock_httpx_response(DOAB_HIT_ABSOLUTE_URL)
+        client = _mock_httpx_client(resp)
+
+        result = tier_doab(client, "Open Access Buch")
+        assert result == "https://downloads.doabooks.org/book.pdf"
+
+    def test_empty_response_returns_none(self):
+        """Leerfall: leere Trefferliste -> None."""
+        from pdf import tier_doab
+
+        resp = _mock_httpx_response([])
+        client = _mock_httpx_client(resp)
+
+        result = tier_doab(client, "9783000000000")
+        assert result is None
+
+    def test_no_pdf_bitstream_returns_none(self):
+        """Leerfall: Treffer vorhanden aber kein PDF-Bitstream -> None."""
+        from pdf import tier_doab
+
+        resp = _mock_httpx_response(DOAB_NO_PDF_RESPONSE)
+        client = _mock_httpx_client(resp)
+
+        result = tier_doab(client, "some title")
+        assert result is None
