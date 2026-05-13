@@ -163,3 +163,96 @@ class TestTierDoab:
 
         result = tier_doab(client, "some title")
         assert result is None
+
+
+# ---------------------------------------------------------------------------
+# Tier 8: EuropePMC
+# ---------------------------------------------------------------------------
+
+EUROPEPMC_HIT_RESPONSE = {
+    "resultList": {
+        "result": [
+            {
+                "pmid": "12345678",
+                "title": "A biomedical study",
+                "fullTextUrlList": {
+                    "fullTextUrl": [
+                        {
+                            "availability": "Open access",
+                            "availabilityCode": "OA",
+                            "documentStyle": "html",
+                            "site": "Europe_PMC",
+                            "url": "https://europepmc.org/articles/PMC12345",
+                        },
+                        {
+                            "availability": "Open access",
+                            "availabilityCode": "OA",
+                            "documentStyle": "pdf",
+                            "site": "Europe_PMC",
+                            "url": "https://europepmc.org/articles/PMC12345?pdf=render",
+                        },
+                    ]
+                },
+            }
+        ]
+    }
+}
+
+EUROPEPMC_EMPTY_RESPONSE = {
+    "resultList": {
+        "result": []
+    }
+}
+
+EUROPEPMC_NO_OA_PDF = {
+    "resultList": {
+        "result": [
+            {
+                "fullTextUrlList": {
+                    "fullTextUrl": [
+                        {
+                            "availability": "Subscription",
+                            "documentStyle": "pdf",
+                            "url": "https://example.com/restricted.pdf",
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+
+
+class TestTierEuropePMC:
+    def test_success_returns_oa_pdf_url(self):
+        """Erfolgsfall: OA-PDF-URL aus fullTextUrlList extrahiert."""
+        from pdf import tier_europepmc
+
+        resp = _mock_httpx_response(EUROPEPMC_HIT_RESPONSE)
+        client = _mock_httpx_client(resp)
+
+        result = tier_europepmc(client, "10.1186/s12864-021-07421-4")
+        assert result == "https://europepmc.org/articles/PMC12345?pdf=render"
+        client.get.assert_called_once()
+        call_url = client.get.call_args[0][0]
+        assert "europepmc.org" in call_url
+
+    def test_empty_result_list_returns_none(self):
+        """Leerfall: keine Treffer -> None."""
+        from pdf import tier_europepmc
+
+        resp = _mock_httpx_response(EUROPEPMC_EMPTY_RESPONSE)
+        client = _mock_httpx_client(resp)
+
+        result = tier_europepmc(client, "10.9999/nothing")
+        assert result is None
+
+    def test_no_oa_pdf_returns_none(self):
+        """Leerfall: nur kostenpflichtiger PDF-Link -> None."""
+        from pdf import tier_europepmc
+
+        resp = _mock_httpx_response(EUROPEPMC_NO_OA_PDF)
+        client = _mock_httpx_client(resp)
+
+        result = tier_europepmc(client, "10.9999/subscription")
+        assert result is None

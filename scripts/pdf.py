@@ -190,6 +190,31 @@ def tier_doab(client: httpx.Client, isbn_or_title: str) -> str | None:
     return None
 
 
+def tier_europepmc(client: httpx.Client, doi: str) -> str | None:
+    """Tier 8: Resolve via Europe PMC API (biomedical OA)."""
+    resp = client.get(
+        "https://www.europepmc.org/backend/europepmc/findByQuery.do",
+        params={
+            "query": f"DOI:{doi}",
+            "format": "json",
+            "resulttype": "core",
+            "pageSize": "1",
+        },
+        timeout=TIMEOUT,
+    )
+    resp.raise_for_status()
+    results = (resp.json().get("resultList") or {}).get("result") or []
+    for article in results:
+        urls = (article.get("fullTextUrlList") or {}).get("fullTextUrl") or []
+        for entry in urls:
+            if (
+                entry.get("documentStyle") == "pdf"
+                and entry.get("availability") == "Open access"
+            ):
+                return entry.get("url")
+    return None
+
+
 def resolve_pdf_url(
     client: httpx.Client, paper: dict[str, Any], email: str
 ) -> tuple[str | None, str | None, str | None]:
