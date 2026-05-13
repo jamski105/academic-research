@@ -335,3 +335,79 @@ class VaultDB:
         if own_conn:
             conn.commit()
             conn.close()
+
+    # ------------------------------------------------------------------
+    # Figures CRUD
+    # ------------------------------------------------------------------
+
+    def add_figure(
+        self,
+        paper_id: str,
+        page: Optional[int],
+        caption: Optional[str],
+        vlm_description: Optional[str],
+        data_extracted_json: Optional[str],
+    ) -> str:
+        """INSERT einer Figure. Gibt figure_id (UUID) zurueck."""
+        from uuid import uuid4
+        figure_id = str(uuid4())
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT INTO figures
+              (figure_id, paper_id, page, caption, vlm_description, data_extracted_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (figure_id, paper_id, page, caption, vlm_description, data_extracted_json, now),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+        return figure_id
+
+    def get_figure(self, figure_id: str) -> Optional[dict]:
+        """Gibt Figure-Record als dict zurueck oder None."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        row = conn.execute(
+            "SELECT * FROM figures WHERE figure_id = ?", (figure_id,)
+        ).fetchone()
+        if own_conn:
+            conn.close()
+        return dict(row) if row is not None else None
+
+    def list_figures(self, paper_id: str) -> list[dict]:
+        """Alle Figures fuer ein Paper, nach page sortiert."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        rows = conn.execute(
+            "SELECT * FROM figures WHERE paper_id = ? ORDER BY page",
+            (paper_id,),
+        ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    def find_figures_by_caption(
+        self,
+        caption_fragment: str,
+        paper_id: Optional[str] = None,
+    ) -> list[dict]:
+        """LIKE-Suche in figures.caption. Optionaler paper_id-Filter."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        if paper_id is not None:
+            rows = conn.execute(
+                "SELECT * FROM figures WHERE caption LIKE ? AND paper_id = ?",
+                (f"%{caption_fragment}%", paper_id),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM figures WHERE caption LIKE ?",
+                (f"%{caption_fragment}%",),
+            ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
