@@ -1,6 +1,6 @@
 ---
 name: book-handler
-description: Verwende diesen Skill wenn der User ein Buch / eine Monografie / einen Sammelband verarbeiten möchte. Trigger: "Buch", "Monografie", "Sammelband", "Kapitel von ...", ISBN-Pattern (\d{3}-\d{1,5}-\d{1,7}-\d{1,7}-\d), Springer-DOI (10.1007/978-). Löst ISBN/Titel/DOI via DNB + OpenLibrary + DOAB auf und legt CSL-JSON im Vault an. Unterstützt "Monografie / Sammelband" als gleichwertige Buchtypen.
+description: 'Verwende diesen Skill wenn der User ein Buch / eine Monografie / einen Sammelband verarbeiten möchte. Trigger: "Buch", "Monografie", "Sammelband", "Kapitel von ...", ISBN-Pattern (\d{3}-\d{1,5}-\d{1,7}-\d{1,7}-\d), Springer-DOI (10.1007/978-). Löst ISBN/Titel/DOI via DNB + OpenLibrary + DOAB auf und legt CSL-JSON im Vault an. Unterstützt "Monografie / Sammelband" als gleichwertige Buchtypen.'
 compatibility: Claude Code mit MCP vault-Tool
 license: MIT
 ---
