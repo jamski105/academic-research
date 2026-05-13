@@ -65,8 +65,7 @@ def _infer_edges(papers: list[dict]) -> list[dict]:
         for b in paper_ids[i + 1:]:
             shared = len(cit_map[a] & cit_map[b])
             if shared > 0:
-                key = (a, b)
-                edges[key] = edges.get(key, 0) + shared
+                edges[(a, b)] = shared
     return [{"from": k[0], "to": k[1], "weight": v} for k, v in edges.items()]
 
 
@@ -116,7 +115,7 @@ def cluster_to_mermaid(cluster: dict[str, Any]) -> str:
 
 def render_cluster(
     cluster: dict[str, Any],
-    output_dir: "Path | str | None" = None,
+    output_dir: Path | str | None = None,
 ) -> dict[str, Any]:
     """Schreibt .mmd-Datei und rendert optional zu PNG via mmdc.
 
