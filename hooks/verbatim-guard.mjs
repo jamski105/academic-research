@@ -30,6 +30,8 @@ const VAULT_SRC = join(REPO_ROOT, 'mcp');
 const VAULT_DB = process.env.VAULT_DB_PATH || join(REPO_ROOT, 'vault.db');
 // Mindestlänge eines Zitat-Spans (in Zeichen). Muss mit den Regex-Quantifizierern übereinstimmen.
 const MIN_QUOTE_LEN = 10;
+// Pattern fuer Figure-Referenzen (Abb., Abbildung, Tab., Tabelle, Fig., Figure + Nummer)
+const FIGURE_REF_PATTERN = /(Abb|Abbildung|Tab|Tabelle|Fig|Figure)\.?\s*\d+(\.\d+)?/gi;
 
 // ---------------------------------------------------------------------------
 // Stdin lesen
@@ -139,6 +141,46 @@ function lookupInVault(verbatim) {
 }
 
 // ---------------------------------------------------------------------------
+// Figure-Caption-Lookup via Python-Subprocess
+// ---------------------------------------------------------------------------
+
+/**
+ * Sucht Caption-Fragment im Vault.
+ * Gibt true wenn mindestens ein Eintrag gefunden oder Vault fehlt (fail-open).
+ */
+function lookupFigureInVault(captionFragment) {
+  if (!existsSync(VAULT_DB)) {
+    process.stderr.write(
+      `[Figure-Guard] Warnung: Vault-DB nicht gefunden (${VAULT_DB}). Bypass aktiv.\n`
+    );
+    return true; // fail-open
+  }
+
+  const pyCode = [
+    'import sys, json',
+    `sys.path.insert(0, ${JSON.stringify(VAULT_SRC)})`,
+    'from academic_vault.server import find_figure_by_caption',
+    `hits = find_figure_by_caption(sys.argv[1], sys.argv[2])`,
+    'print(json.dumps(hits))',
+  ].join('; ');
+
+  try {
+    const output = execFileSync('python3', ['-c', pyCode, VAULT_DB, captionFragment], {
+      encoding: 'utf-8',
+      timeout: 10000,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    const hits = JSON.parse(output.trim());
+    return Array.isArray(hits) && hits.length > 0;
+  } catch (err) {
+    process.stderr.write(
+      `[Figure-Guard] Warnung: Figure-Lookup fehlgeschlagen (${err.message}). Bypass aktiv.\n`
+    );
+    return true; // fail-open
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Haupt-Logik
 // ---------------------------------------------------------------------------
 
@@ -172,13 +214,8 @@ async function main() {
     process.exit(0);
   }
 
-  // Quote-Spans extrahieren
+  // Quote-Spans extrahieren und gegen Vault pruefen
   const spans = extractQuoteSpans(content);
-  if (spans.length === 0) {
-    process.exit(0);
-  }
-
-  // Jeden Span gegen Vault pruefen
   for (const span of spans) {
     const found = lookupInVault(span);
     if (!found) {
@@ -200,7 +237,29 @@ async function main() {
     }
   }
 
-  // Alle Spans verifiziert
+  // ---------------------------------------------------------------------------
+  // Figure-Referenz-Check (additiv, nach Quote-Check)
+  // ---------------------------------------------------------------------------
+  const figureMatches = [...content.matchAll(FIGURE_REF_PATTERN)];
+  for (const match of figureMatches) {
+    const refText = match[0]; // z.B. "Abb. 3.4"
+    const found = lookupFigureInVault(refText);
+    if (!found) {
+      const msg = [
+        `[Figure-Guard] BLOCKIERT: Figure-Referenz nicht im Vault verifiziert.`,
+        `Referenz: "${refText}"`,
+        `Bitte Figure via figure-verifier oder vault.add_figure einpflegen.`,
+        `Bypass: <!-- vault-guard: skip --> im Content ergaenzen (nur fuer Ausnahmefaelle).`,
+      ].join('\n');
+      process.stderr.write(msg + '\n');
+      console.log(JSON.stringify({
+        decision: 'block',
+        reason: msg,
+      }));
+      process.exit(2);
+    }
+  }
+
   process.exit(0);
 }
 

@@ -96,3 +96,13 @@ CREATE TRIGGER IF NOT EXISTS papers_au AFTER UPDATE ON papers BEGIN
     NULL
   );
 END;
+
+CREATE TABLE IF NOT EXISTS figures (
+  figure_id           TEXT PRIMARY KEY,
+  paper_id            TEXT NOT NULL REFERENCES papers(paper_id),
+  page                INTEGER,
+  caption             TEXT,
+  vlm_description     TEXT,
+  data_extracted_json TEXT,
+  created_at          INTEGER NOT NULL
+);
