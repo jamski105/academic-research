@@ -132,11 +132,22 @@ def add_paper(
     doi: Optional[str] = None,
     isbn: Optional[str] = None,
     page_offset: int = 0,
+    editor: Optional[str] = None,
+    chapter: Optional[str] = None,
+    page_first: Optional[int] = None,
+    page_last: Optional[int] = None,
+    container_title: Optional[str] = None,
 ) -> None:
-    """Upsert eines Papers in den Vault."""
+    """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter."""
     db = VaultDB(db_path)
     db.init_schema()
-    db.add_paper(paper_id, csl_json, doi=doi, isbn=isbn, pdf_path=pdf_path, page_offset=page_offset)
+    db.add_paper(
+        paper_id, csl_json,
+        doi=doi, isbn=isbn, pdf_path=pdf_path, page_offset=page_offset,
+        editor=editor, chapter=chapter,
+        page_first=page_first, page_last=page_last,
+        container_title=container_title,
+    )
 
 
 def get_paper(db_path: str, paper_id: str) -> Optional[dict]:
@@ -197,9 +208,20 @@ def _build_mcp_server():
         doi: str = None,
         isbn: str = None,
         page_offset: int = 0,
+        editor: str = None,
+        chapter: str = None,
+        page_first: int = None,
+        page_last: int = None,
+        container_title: str = None,
     ) -> None:
-        """Upsert eines Papers in den Vault."""
-        add_paper(db_path, paper_id, csl_json, pdf_path=pdf_path, doi=doi, isbn=isbn, page_offset=page_offset)
+        """Upsert eines Papers in den Vault. type aus csl_json; book|chapter|article-journal erlaubt."""
+        add_paper(
+            db_path, paper_id, csl_json,
+            pdf_path=pdf_path, doi=doi, isbn=isbn, page_offset=page_offset,
+            editor=editor, chapter=chapter,
+            page_first=page_first, page_last=page_last,
+            container_title=container_title,
+        )
 
     @mcp.tool(name="vault.ensure_file")
     def _vault_ensure_file(paper_id: str) -> str:
