@@ -158,9 +158,9 @@ def test_body_documents_metadata_only_for_missing_license(agent_name):
 def test_body_references_browser_guide(agent_name):
     """Agent-Body muss den config/browser_guides/-Pfad referenzieren."""
     fm, body = _parse_agent_frontmatter(agent_name)
-    # Entweder der volle Pfad oder zumindest 'browser_guides' im Body
-    assert "browser_guides" in body or "browser-guide" in body.lower(), (
-        f"{agent_name}: Body muss auf Browser-Guide referenzieren"
+    # Body muss den Pfad 'config/browser_guides/' referenzieren
+    assert "browser_guides" in body, (
+        f"{agent_name}: Body muss 'browser_guides' (config/browser_guides/-Pfad) referenzieren"
     )
 
 
