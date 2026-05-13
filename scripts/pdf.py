@@ -32,6 +32,11 @@ import httpx
 
 from text_utils import normalize_doi, safe_filename, load_json, save_json
 
+try:
+    from PyPDF2 import PdfReader
+except ImportError:  # pragma: no cover
+    PdfReader = None  # type: ignore[assignment,misc]
+
 TIMEOUT = 30.0
 PDF_MAGIC = b"%PDF"
 
@@ -326,6 +331,47 @@ def action_search(query: str, index_path: str, limit: int = 10) -> int:
     for doc_id, score in ranked:
         print(f"{score:.4f}  {doc_id}")
     return 0
+
+
+# ---------------------------------------------------------------------------
+# OCR-Detection
+# ---------------------------------------------------------------------------
+
+def detect_needs_ocr(
+    pdf_path: str,
+    sample_pages: int = 5,
+    threshold: int = 100,
+) -> bool:
+    """Prueft ob ein PDF OCR benoetigt.
+
+    Liest bis zu sample_pages zufaellig verteilte Seiten via PyPDF2.
+    Gibt True zurueck wenn der Durchschnitt der extrahierten Zeichen
+    je Seite < threshold (Standard: 100 Zeichen).
+    Bei leerem PDF (0 Seiten) gibt die Funktion True zurueck.
+    """
+    import random
+
+    try:
+        reader = PdfReader(pdf_path)
+    except Exception:
+        log.exception("detect_needs_ocr: konnte %s nicht oeffnen", pdf_path)
+        return True  # Im Fehlerfall: OCR vorschlagen
+
+    total_pages = len(reader.pages)
+    if total_pages == 0:
+        return True
+
+    # Seiten-Indizes samplen
+    n = min(sample_pages, total_pages)
+    indices = random.sample(range(total_pages), n)
+
+    total_chars = 0
+    for i in indices:
+        text = reader.pages[i].extract_text() or ""
+        total_chars += len(text)
+
+    avg_chars = total_chars / n
+    return avg_chars < threshold
 
 
 # ---------------------------------------------------------------------------
