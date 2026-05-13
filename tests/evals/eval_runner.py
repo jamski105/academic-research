@@ -77,7 +77,7 @@ def check_expected(output: str, expected: dict[str, Any]) -> bool:
     raise ValueError(f"Unbekannter expected.type: {t}")
 
 
-def read_token_baseline(baseline_file: "Path | None" = None) -> "dict[str, Any]":
+def read_token_baseline(baseline_file: Path | None = None) -> dict[str, Any]:
     """Liest tests/baselines/tokens.json (oder angegebene Datei).
 
     Gibt {} zurueck wenn Datei fehlt oder leer.
@@ -96,7 +96,7 @@ def write_token_baseline(
     case_id: str,
     tokens_in: int,
     tokens_out: int,
-    baseline_file: "Path | None" = None,
+    baseline_file: Path | None = None,
 ) -> None:
     """Schreibt tokens_in/tokens_out fuer eine Suite+Case in tokens.json.
 
@@ -115,7 +115,7 @@ def call_claude_with_tokens(
     system: str,
     user: str,
     model: str = "claude-sonnet-4-6",
-) -> "tuple[str, int, int]":
+) -> tuple[str, int, int]:
     """Ruft Claude auf und gibt (text, tokens_in, tokens_out) zurueck.
 
     Benoetigt ANTHROPIC_API_KEY. Ohne Key: pytest.skip().
