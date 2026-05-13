@@ -185,9 +185,9 @@ def write_all_chapters(
     """Schreibt alle Kapitel als separate PDFs. Gibt Liste der Pfade zurueck."""
     chapters = extract_chapters(pdf_path)
     os.makedirs(output_dir, exist_ok=True)
+    safe_isbn = re.sub(r"[^a-zA-Z0-9_-]", "-", isbn)
     paths = []
     for i, ch in enumerate(chapters, start=1):
-        safe_isbn = re.sub(r"[^a-zA-Z0-9_-]", "-", isbn)
         fname = f"{safe_isbn}-ch{i}.pdf"
         out_path = os.path.join(output_dir, fname)
         write_chapter(pdf_path, ch, out_path)

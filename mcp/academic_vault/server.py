@@ -5,6 +5,7 @@ add_quote/find_quotes/get_quote/stats bereit.
 
 Start via: python -m mcp.academic_vault.server
 """
+import json
 import os
 from uuid import uuid4
 from typing import Optional
@@ -166,14 +167,13 @@ def add_chapter(
 
     Setzt type=chapter automatisch falls nicht in csl_json angegeben.
     """
-    import json as _json
     if paper_id is None:
         paper_id = f"{parent_paper_id}-ch{chapter_number}"
     # Sicherstellen dass type=chapter in csl_json gesetzt ist
     try:
-        csl = _json.loads(csl_json)
+        csl = json.loads(csl_json)
         csl.setdefault("type", "chapter")
-        csl_json = _json.dumps(csl, ensure_ascii=False)
+        csl_json = json.dumps(csl, ensure_ascii=False)
     except Exception:
         pass
     add_paper(
