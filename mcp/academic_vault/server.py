@@ -215,6 +215,18 @@ def get_stats(db_path: str) -> dict:
     return FilesAPIClient.get_stats(db_path)
 
 
+def set_ocr_done(db_path: str, paper_id: str, value: int = 1) -> None:
+    """Setzt ocr_done-Flag fuer ein Paper im Vault."""
+    db = VaultDB(db_path)
+    db.set_ocr_done(paper_id, value)
+
+
+def update_pdf_path(db_path: str, paper_id: str, new_path: str) -> None:
+    """Aktualisiert pdf_path fuer ein Paper im Vault."""
+    db = VaultDB(db_path)
+    db.update_pdf_path(paper_id, new_path)
+
+
 # ---------------------------------------------------------------------------
 # MCP-Server (optional: nur wenn mcp-SDK verfuegbar)
 # ---------------------------------------------------------------------------
@@ -336,6 +348,16 @@ def _build_mcp_server():
     def _vault_stats() -> dict:
         """Counts + Token-Ersparnis-Schaetzung."""
         return get_stats(db_path)
+
+    @mcp.tool(name="vault.set_ocr_done")
+    def _vault_set_ocr_done(paper_id: str, value: int = 1) -> None:
+        """Setzt ocr_done-Flag (1=OCR durchgefuehrt) fuer ein Paper."""
+        set_ocr_done(db_path, paper_id, value)
+
+    @mcp.tool(name="vault.update_pdf_path")
+    def _vault_update_pdf_path(paper_id: str, new_path: str) -> None:
+        """Aktualisiert den PDF-Pfad nach OCR."""
+        update_pdf_path(db_path, paper_id, new_path)
 
     return mcp
 
