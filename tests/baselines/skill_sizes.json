@@ -2,7 +2,11 @@
   "abstract-generator": 10933,
   "academic-context": 6571,
   "advisor": 9366,
+<<<<<<< HEAD
   "book-handler": 4662,
+=======
+  "book-handler": 4397,
+>>>>>>> aefca09 (feat: book-handler — page_offset-Trigger nach PDF-Add (F2.3 #73))
   "chapter-writer": 11421,
   "citation-extraction": 11296,
   "literature-gap-analysis": 9458,

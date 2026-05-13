@@ -58,6 +58,16 @@ vault.add_paper(
 )
 ```
 
+### 2.5. page_offset berechnen
+
+Falls `pdf_path` gesetzt:
+
+```bash
+python scripts/page_offset.py {pdf_path}
+```
+
+Ergebnis via `vault.set_page_offset({citekey}, {offset})` speichern.
+
 ### 3. OA-Check
 
 Falls `book_resolve.py` ein `URL`-Feld liefert (DOAB/OAPEN):
