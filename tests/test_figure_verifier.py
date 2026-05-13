@@ -212,3 +212,21 @@ def test_data_extracted_json_valid(db_path, paper_id):
     parsed = json.loads(record["data_extracted_json"])
     assert isinstance(parsed, list)
     assert parsed[0]["col1"] == "A"
+
+
+def test_figure_verifier_agent_frontmatter():
+    """figure-verifier.md muss valides Frontmatter mit Pflichtfeldern haben."""
+    import re
+    agent_path = Path(__file__).parent.parent / "agents" / "figure-verifier.md"
+    assert agent_path.exists(), f"Agent-Datei fehlt: {agent_path}"
+
+    content = agent_path.read_text(encoding="utf-8")
+    # Frontmatter zwischen --- ... ---
+    fm_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+    assert fm_match is not None, "Kein YAML-Frontmatter gefunden"
+
+    fm = fm_match.group(1)
+    assert "name: figure-verifier" in fm
+    assert "model: sonnet" in fm
+    assert "vault.add_figure" in content
+    assert "vault.list_figures" in content
