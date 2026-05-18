@@ -1,0 +1,15 @@
+# ETH Zuerich — Shibboleth (SWITCHaai)
+uni: eth-zurich
+auth_type: Shibboleth
+auth_url: https://aai.ethz.ch/idp/shibboleth
+licensed_sites:
+  - link.springer.com
+  - degruyter.com
+  - ebookcentral.proquest.com
+  - tib.eu
+  - jstor.org
+  - wiley.com
+  - tandfonline.com
+  - sciencedirect.com
+  - research4life.org
+bib_pickup_url: https://www.nebis.ch/de/suchen/
