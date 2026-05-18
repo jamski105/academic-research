@@ -125,7 +125,7 @@ def render_cluster(
         Dict mit mermaid_source, mmd_path, png_path (oder None), note (oder None).
     """
     src = cluster_to_mermaid(cluster)
-    cluster_id = cluster.get("cluster_id", "cluster")
+    cluster_id = _sanitize_id(cluster.get("cluster_id", "cluster"))
     out = Path(output_dir) if output_dir else Path.cwd()
     out.mkdir(parents=True, exist_ok=True)
 
