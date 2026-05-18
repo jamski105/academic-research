@@ -29,6 +29,18 @@ Das Skript übernimmt in sechs Schritten:
     (kein Hard-Fail — der vendorierte Skill im Plugin bleibt funktionsfähig)
 5. Schreibt die Claude-Code-Permissions über `scripts/configure_permissions.py`.
 6. **Projekt-Bootstrap (Auto-Detect).** Wenn das aktuelle Verzeichnis ein leerer Ordner ist, fragt `/setup` `"Hier einen Facharbeit-Arbeitsordner initialisieren?"`. Bei `y` werden `academic_context.md` (Stub), `CLAUDE.md`, `.gitignore`, sowie `kapitel/`, `literatur/`, `pdfs/` angelegt. In einem bestehenden Facharbeit-Ordner (mit `academic_context.md`) werden nur fehlende Artefakte nachgezogen — idempotent, keine Rückfrage. In Code-Repos (erkannt an `package.json`, `pyproject.toml`, …) oder nicht-leeren fremden Verzeichnissen: keine Aktion. Findet der Bootstrap zusätzlich bestehenden Kontext in Claude-Memory, bietet er an, ihn einmalig ins Projekt zu kopieren; die Memory-Dateien bleiben als Backup liegen.
+7. **SciHub Opt-in (F18).** Das Skript fragt am Ende:
+
+   ```
+   SciHub-Tier aktivieren? (Rechtlich umstritten — Nutzung auf deine eigene Verantwortung)
+   SciHub ist ein Dienst, der Zugang zu wissenschaftlichen Artikeln ohne Genehmigung der
+   Verlage bereitstellt. Die Nutzung kann in deinem Land gegen das Urheberrecht verstossen.
+   Nur aktivieren, wenn du die rechtliche Lage in deinem Land kennst und akzeptierst.
+   [j/N] SciHub aktivieren?
+   ```
+
+   - **`N` (Default):** `scihub_optin: false` in `~/.academic-research/library-profiles/active.yaml` — SciHub bleibt deaktiviert.
+   - **`j`:** `scihub_optin: true` — SciHub wird als letzter Fallback in der Fetch-Pipeline aktiviert. Bei jedem SciHub-Fund erscheint der Hinweis: *"Quelle via SciHub bezogen — bitte zusätzlich legalen Zugriff klären."*
 
 ## Interpretation der Ausgabe
 
@@ -41,6 +53,8 @@ Das Skript übernimmt in sechs Schritten:
 | ⚠️ humanizer-de Skill (global): nicht gefunden | Nur vendorierter Plugin-Skill verfügbar (ausreichend für Plugin-Nutzung) |
 | ⚠️ … | siehe Hinweistext direkt unter dem Marker |
 | ✅ Facharbeit-Arbeitsordner initialisiert | Projekt-Struktur wurde im aktuellen Verzeichnis angelegt |
+| ✅ SciHub Opt-in: aktiviert | `scihub_optin: true` in active.yaml — SciHub als Last-Resort aktiv |
+| ℹ️ SciHub Opt-in: deaktiviert (Default) | `scihub_optin: false` — SciHub wird nicht genutzt |
 
 ## Was passiert, wenn etwas fehlt
 
