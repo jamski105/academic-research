@@ -1,0 +1,104 @@
+schema_version: 3
+milestone:
+  name: v6.5
+  wave: 1
+github_milestone: v6.5
+github_label: null
+started_at: "2026-05-18T10:45:11Z"
+last_action_at: "2026-05-18T10:50:00Z"
+config_hash: "7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2"
+phase_global: dispatch
+lock:
+  issue_number: null
+  current_holder:
+    machine: MAC-06094C41
+    session: "148FA4F0-D500-48C8-932F-95AEAD1A20FA"
+    acquired_at: "2026-05-18T10:45:11Z"
+    expires_at: "2026-05-18T18:45:11Z"
+state_branch:
+  name: "mmp/state/v6.5"
+  last_pushed_sha: null
+chunks:
+  - id: A
+    title: Contextual-Retrieval Vault-Erweiterung
+    tickets: [109]
+    branch: feat/v6.5-A-contextual-retrieval
+    worktree: null
+    depends_on: []
+    phase: implementation_complete
+    pr_number: null
+    last_commit: "d0a9db9"
+  - id: B
+    title: Reading-List-Import Skill
+    tickets: [95]
+    branch: feat/v6.5-B-reading-list-import
+    worktree: null
+    depends_on: []
+    phase: implementation_complete
+    pr_number: null
+    last_commit: "5dd5a25"
+  - id: C
+    title: LaTeX-Export
+    tickets: [96]
+    branch: feat/v6.5-C-latex-export
+    worktree: null
+    depends_on: []
+    phase: implementation_complete
+    pr_number: null
+    last_commit: "660ca4d"
+  - id: D
+    title: SciHub-Tier Agent (opt-in)
+    tickets: [97]
+    branch: feat/v6.5-D-scihub-tier
+    worktree: null
+    depends_on: []
+    phase: implementation_complete
+    pr_number: null
+    last_commit: "4283660"
+  - id: E
+    title: Topic-Brainstorm Skill
+    tickets: [107]
+    branch: feat/v6.5-E-topic-brainstorm
+    worktree: null
+    depends_on: []
+    phase: pending
+    pr_number: null
+  - id: F
+    title: Output-Erweiterung (Grant + Poster + Response)
+    tickets: [108]
+    branch: feat/v6.5-F-output-extensions
+    worktree: null
+    depends_on: []
+    phase: pending
+    pr_number: null
+  - id: G
+    title: README + CHANGELOG + Migration-Guide
+    tickets: [98]
+    branch: feat/v6.5-G-docs-rewrite
+    worktree: null
+    depends_on: [D]
+    phase: pending
+    pr_number: null
+open_questions: []
+ticket_improvements:
+  - issue: 95
+    quality: GOOD
+    action: none
+  - issue: 96
+    quality: GOOD
+    action: none
+  - issue: 97
+    quality: GOOD
+    action: none
+  - issue: 98
+    quality: GOOD
+    action: none
+  - issue: 107
+    quality: GOOD
+    action: none
+  - issue: 108
+    quality: GOOD
+    action: none
+  - issue: 109
+    quality: GOOD
+    action: none
