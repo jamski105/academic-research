@@ -126,7 +126,7 @@ def build_literature_state_block(
     lines = [
         f"## {title} ({year})",
         "",
-        f"- **Typ:** book",
+        "- **Typ:** book",
         f"- **ISBN/DOI:** {identifier_value}",
         f"- **PDF:** {file_path}",
         f"- **Quelle:** {source}",
