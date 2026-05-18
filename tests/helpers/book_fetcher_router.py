@@ -144,9 +144,6 @@ class BookFetcherRouter:
                 oa_any_metadata_only = True
                 if resp.get("url") and not best_metadata_url:
                     best_metadata_url = resp["url"]
-                # Weiter mit naechstem OA-Subagenten
-
-            # no_match: einfach weiter
 
         # ----------------------------------------------------------
         # Schritt 2: Verlags-Subagenten (nur wenn OA metadata_only und lizenziert)
@@ -273,8 +270,6 @@ class BookFetcherRouter:
                         "tries": tries,
                     }
 
-            # auth_failed oder retry fehlgeschlagen -- naechsten Verlags-Subagenten
             return None
 
-        # metadata_only oder no_match -- naechsten Verlags-Subagenten
         return None
