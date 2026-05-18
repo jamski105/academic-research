@@ -5,9 +5,9 @@ milestone:
   github_milestone: v6.2
   github_label: null
 started_at: 2026-05-13T09:35:08Z
-last_action_at: "2026-05-18T09:00:54Z"
+last_action_at: "2026-05-18T08:02:15Z"
 config_hash: 7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2
-phase_global: completed
+phase_global: wave-1-stage-1
 plugin_version: "0.4.8"
 lock:
   issue_number: null
@@ -126,7 +126,7 @@ chunks:
     tickets: [87]
     branch: feat/v6.2-A-browser-guides
     worktree: /Users/j65674/Repos/academic-research-v6.2-A
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: []
     agent_id: a72fd2fdfdc88d2eb
     last_signal_from_l1:
@@ -137,17 +137,11 @@ chunks:
         commits: 10
         tests_passed: null
         note: docs-only chunk; consistency check via grep confirmed unified H2 structure across 7 new guides + springer update
-    pr_number: 131
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: B
     tickets: [86]
     branch: feat/v6.2-B-uni-profile
     worktree: /Users/j65674/Repos/academic-research-v6.2-B
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: []
     agent_id: adda2ed70226dea48
     last_signal_from_l1:
@@ -158,17 +152,11 @@ chunks:
         tests_passed: 16
         tests_failed_preexisting: 0
         files_created: 10
-    pr_number: 133
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: C
     tickets: [83]
     branch: feat/v6.2-C-auth-helper
     worktree: /Users/j65674/Repos/academic-research-v6.2-C
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: [B]
     agent_id: a2c20f329bb6ee42e
     last_signal_from_l1:
@@ -182,17 +170,11 @@ chunks:
         credential_leak_grep_hits: 0
         preexisting_failures:
           - test_token_reduction[chapter-writer]
-    pr_number: 136
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: D
     tickets: [81]
     branch: feat/v6.2-D-oa-subagents
     worktree: /Users/j65674/Repos/academic-research-v6.2-D
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: [A]
     agent_id: a0e08302ec48794a0
     last_signal_from_l1:
@@ -205,17 +187,11 @@ chunks:
         files_created: 8
         preexisting_failures:
           - test_token_reduction[chapter-writer]
-    pr_number: 134
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: E
     tickets: [82]
     branch: feat/v6.2-E-publisher-subagents
     worktree: /Users/j65674/Repos/academic-research-v6.2-E
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: [A, C]
     agent_id: a890780c2b994e62d
     last_signal_from_l1:
@@ -236,16 +212,11 @@ chunks:
         - agents/ebook-central.md
       tests: tests/test_publisher_fetchers.py
       evals: evals/publisher-fetchers/evals.json
-      coverage_status: pass
-    pr_number: 138
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
   - id: F
     tickets: [84]
     branch: feat/v6.2-F-generic-fetcher
     worktree: /Users/j65674/Repos/academic-research-v6.2-F
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: []
     agent_id: a025568e945eb787e
     last_signal_from_l1:
@@ -258,17 +229,11 @@ chunks:
         files_created: 7
         preexisting_failures:
           - test_token_reduction[chapter-writer] — existiert auf main
-    pr_number: 139
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: G
     tickets: [80]
     branch: feat/v6.2-G-book-fetcher
     worktree: /Users/j65674/Repos/academic-research-v6.2-G
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: [B, D, E, F]
     agent_id: a483100da023bab77
     last_signal_from_l1:
@@ -286,42 +251,25 @@ chunks:
       tests: tests/test_book_fetcher.py
       fixtures: tests/fixtures/book_fetcher_mocks/
       helper: tests/helpers/book_fetcher_router.py
-      coverage_status: pass
-    pr_number: 137
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
   - id: H
     tickets: [85]
     branch: feat/v6.2-H-fetch-cmd
     worktree: /Users/j65674/Repos/academic-research-v6.2-H
-    phase: merge-ready
+    phase: spawned
     depends_on: [G]
     agent_id: a9f3a9243a5f38941
-    pr_number: 140
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: I
     tickets: [77]
     branch: feat/v6.2-I-pickup-cmd
     worktree: /Users/j65674/Repos/academic-research-v6.2-I
-    phase: merge-ready
+    phase: pending
     depends_on: [H]
     agent_id: null
-    pr_number: 141
-    artifacts:
-      coverage_status: pass
-    last_action_at: "2026-05-18T09:00:54Z"
-    idempotency:
-      pr_create_attempted: true
   - id: J
     tickets: [78]
     branch: feat/v6.2-J-tier-pipeline
     worktree: /Users/j65674/Repos/academic-research-v6.2-J
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: []
     agent_id: adc6c1e09b821ba10
     last_signal_from_l1:
@@ -335,17 +283,11 @@ chunks:
         eval_hit_rate_projected: 80% (16/20)
         preexisting_failures:
           - test_token_reduction[chapter-writer]
-    pr_number: 135
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
-    artifacts:
-      coverage_status: pass
   - id: K
     tickets: [79]
     branch: feat/v6.2-K-cluster-mermaid
     worktree: /Users/j65674/Repos/academic-research-v6.2-K
-    phase: merge-ready
+    phase: implementation_complete
     depends_on: []
     agent_id: a13cf9ea821aa4d91
     last_signal_from_l1:
@@ -364,8 +306,3 @@ chunks:
       skill: skills/cluster-visualizer/SKILL.md
       helper: skills/cluster-visualizer/scripts/render_mermaid.py
       tests: tests/test_cluster_visualizer.py
-      coverage_status: pass
-    pr_number: 132
-    last_action_at: "2026-05-18T08:28:37Z"
-    idempotency:
-      pr_create_attempted: true
