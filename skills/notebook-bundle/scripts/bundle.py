@@ -140,11 +140,20 @@ def _flush_writer(writer: PdfWriter, path: str) -> None:
         writer.write(f)
 
 
-def _writer_size_bytes(writer: PdfWriter) -> int:
-    """Schätzt aktuelle Größe des Writers in Bytes (schreibt in BytesIO)."""
-    buf = io.BytesIO()
-    writer.write(buf)
-    return buf.tell()
+def _estimate_size_bytes(pdf_paths: list[str]) -> int:
+    """Schätzt Bundle-Größe als Summe der rohen PDF-Dateigrößen.
+
+    Konservative Schätzung: Konkateniertes PDF ist i.d.R. kleiner als Summe
+    der Einzeldateien (kein Overhead für getrennte Header/Trailer). Für das
+    500MB-Limit ist diese Überschätzung sicher.
+
+    Args:
+        pdf_paths: Pfade zu den PDF-Dateien, die im Bundle enthalten sind.
+
+    Returns:
+        Summierte Dateigröße in Bytes.
+    """
+    return sum(Path(p).stat().st_size for p in pdf_paths if Path(p).exists())
 
 
 # ---------------------------------------------------------------------------
@@ -245,19 +254,25 @@ def build_bundle(
         for p in cover_reader.pages:
             writer.add_page(p)
 
+        # Akkumulierte PDF-Pfade für Größenschätzung (O(1) pro Paper)
+        current_pdf_paths: List[str] = [tmp_cover_path]
+
         for paper, reader in paper_readers:
-            # Größenprüfung vor jedem Paper
-            current_size = _writer_size_bytes(writer)
-            if current_size > size_limit_bytes and writer.pages:
+            paper_pdf_path = paper["pdf_path"]
+            # Größenprüfung: Summe bisheriger PDFs überschreitet Limit?
+            projected_size = _estimate_size_bytes(current_pdf_paths + [paper_pdf_path])
+            if projected_size > size_limit_bytes and writer.pages:
                 out = _make_out_path(part)
                 _flush_writer(writer, out)
                 output_files.append(out)
                 part += 1
                 need_split = True
                 writer = PdfWriter()
+                current_pdf_paths = []
 
             for page in reader.pages:
                 writer.add_page(page)
+            current_pdf_paths.append(paper_pdf_path)
 
         # Letzten Writer flushen
         if writer.pages:
