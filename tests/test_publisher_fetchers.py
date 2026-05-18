@@ -32,11 +32,12 @@ REQUIRED_TOOL_PATTERNS = [
     r"browser-use",
 ]
 
+EVALS_PATH = REPO_ROOT / "evals" / "publisher-fetchers" / "evals.json"
+
 PAYWALL_KEYWORDS = [
     "paywall",
     "login-wall",
     "auth-trigger",
-    "auth_required",
     "auth-helper",
 ]
 
@@ -166,17 +167,15 @@ def test_body_references_browser_guide(agent_name):
 
 def test_eval_cases_file_exists():
     """evals/publisher-fetchers/evals.json muss existieren."""
-    evals_path = REPO_ROOT / "evals" / "publisher-fetchers" / "evals.json"
-    assert evals_path.exists(), f"Eval-Datei fehlt: {evals_path}"
+    assert EVALS_PATH.exists(), f"Eval-Datei fehlt: {EVALS_PATH}"
 
 
 def test_eval_cases_structure():
     """evals.json muss valide Struktur haben."""
     import json
-    evals_path = REPO_ROOT / "evals" / "publisher-fetchers" / "evals.json"
-    if not evals_path.exists():
+    if not EVALS_PATH.exists():
         pytest.skip("evals.json noch nicht vorhanden")
-    data = json.loads(evals_path.read_text(encoding="utf-8"))
+    data = json.loads(EVALS_PATH.read_text(encoding="utf-8"))
     assert "component" in data
     assert "cases" in data
     assert len(data["cases"]) >= 4, "Mindestens 4 Eval-Cases erwartet"
