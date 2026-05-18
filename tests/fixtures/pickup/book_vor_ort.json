@@ -1,0 +1,12 @@
+{
+  "citekey": "mustermann2020bibliothek",
+  "type": "book",
+  "title": "Einführung in die Bibliothekswissenschaft",
+  "author": "Mustermann, Max",
+  "year": 2020,
+  "isbn": "9783161484100",
+  "publisher": "De Gruyter",
+  "availability_status": "vor_ort_verfuegbar",
+  "signature": "B 123/456",
+  "location": "Hauptbibliothek EG"
+}
