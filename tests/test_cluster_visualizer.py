@@ -1,5 +1,6 @@
 """Tests fuer den cluster-visualizer-Skill (render_mermaid.py)."""
 import json
+import re
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -21,13 +22,13 @@ def cluster_data():
 # Test 1: Mermaid-Header und alle 8 Nodes vorhanden
 # ---------------------------------------------------------------------------
 
-def test_mermaid_graph_header(cluster_data, tmp_path):
+def test_mermaid_graph_header(cluster_data):
     from render_mermaid import cluster_to_mermaid
     src = cluster_to_mermaid(cluster_data)
     assert src.startswith("graph LR"), f"Erwartet 'graph LR', got: {src[:20]!r}"
 
 
-def test_all_eight_nodes_present(cluster_data, tmp_path):
+def test_all_eight_nodes_present(cluster_data):
     from render_mermaid import cluster_to_mermaid
     src = cluster_to_mermaid(cluster_data)
     for paper in cluster_data["papers"]:
@@ -116,8 +117,7 @@ def test_label_sanitization():
     assert len(lines) == 1
     # Extrahiere den Label-Inhalt zwischen den aeusseren Mermaid-Quotes
     # Format: test_paper["<label_inhalt>"]
-    import re as _re
-    match = _re.search(r'test_paper\["(.+?)"\]', lines[0])
+    match = re.search(r'test_paper\["(.+?)"\]', lines[0])
     assert match is not None, f"Label-Pattern nicht gefunden: {lines[0]}"
     label_content = match.group(1)
     assert '"' not in label_content, \

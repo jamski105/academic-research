@@ -87,13 +87,11 @@ def cluster_to_mermaid(cluster: dict[str, Any]) -> str:
 
     lines: list[str] = ["graph LR"]
 
-    # Nodes
     for p in papers:
         node_id = _sanitize_id(p["id"])
         label = _sanitize_label(p["title"], p["year"])
         lines.append(f'    {node_id}["{label}"]')
 
-    # Kanten + linkStyle
     link_index = 0
     for edge in edges:
         w = edge.get("weight", 1)
@@ -134,7 +132,6 @@ def render_cluster(
     mmd_path = out / f"{cluster_id}.mmd"
     mmd_path.write_text(src, encoding="utf-8")
 
-    # mmdc-Graceful-Degradation
     if shutil.which("mmdc") is None:
         return {
             "mermaid_source": src,
