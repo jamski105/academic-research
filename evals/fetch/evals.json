@@ -1,0 +1,45 @@
+{
+  "component": "fetch",
+  "component_type": "command",
+  "cases": [
+    {
+      "id": "fc-01",
+      "description": "ISBN-13-Input wird korrekt als isbn erkannt",
+      "type": "input_parsing",
+      "input": {
+        "raw": "978-3-16-148410-0"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.identifier_type",
+        "check": "equals:isbn"
+      }
+    },
+    {
+      "id": "fc-02",
+      "description": "DOI-Input wird korrekt als doi erkannt",
+      "type": "input_parsing",
+      "input": {
+        "raw": "10.1007/978-3-662-54347-6"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.identifier_type",
+        "check": "equals:doi"
+      }
+    },
+    {
+      "id": "fc-03",
+      "description": "HTTPS-URL wird korrekt als url erkannt",
+      "type": "input_parsing",
+      "input": {
+        "raw": "https://link.springer.com/book/10.1007/978-3-662-54347-6"
+      },
+      "expected": {
+        "type": "json_field",
+        "path": "$.identifier_type",
+        "check": "equals:url"
+      }
+    }
+  ]
+}
