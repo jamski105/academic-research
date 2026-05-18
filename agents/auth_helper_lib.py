@@ -53,7 +53,7 @@ class CredentialStore:
 # ---------------------------------------------------------------------------
 
 _HAN_HOSTNAME_PATTERN = re.compile(r'\.han\.')
-_WAYF_HOSTNAME_PATTERN = re.compile(r'(^|\.)(wayf)\.')
+_WAYF_HOSTNAME_PATTERN = re.compile(r'(?:^|\.)wayf\.')
 _IDP_PATH_PATTERN = re.compile(r'/idp/')
 _EZPROXY_HOSTNAME_PATTERN = re.compile(r'ezproxy', re.IGNORECASE)
 
@@ -79,7 +79,6 @@ def detect_auth_type(profile_data: dict, url: str) -> str:
     if profile_type in VALID_AUTH_TYPES:
         return profile_type
 
-    # URL parsen fuer robustes Hostname-Matching
     try:
         parsed = urlparse(url)
         hostname = parsed.hostname or ""
@@ -88,7 +87,6 @@ def detect_auth_type(profile_data: dict, url: str) -> str:
         hostname = ""
         path = ""
 
-    # URL-Pattern-Matching als Fallback (Hostname-basiert)
     if _HAN_HOSTNAME_PATTERN.search(hostname):
         return "HAN"
     if _WAYF_HOSTNAME_PATTERN.search(hostname):
@@ -147,12 +145,11 @@ def load_credentials(profile_path: str) -> CredentialStore:
         profile = yaml.safe_load(f) or {}
 
     credentials_keys = profile.get("credentials_keys", [])
-    cred_data = {}
-    for key in credentials_keys:
-        value = profile.get(key)
-        if value is not None:
-            cred_data[key] = str(value)
-
+    cred_data = {
+        key: str(profile[key])
+        for key in credentials_keys
+        if profile.get(key) is not None
+    }
     return CredentialStore(_data=cred_data)
 
 
