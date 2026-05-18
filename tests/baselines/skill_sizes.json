@@ -18,5 +18,6 @@
   "source-quality-audit": 9975,
   "style-evaluator": 9427,
   "submission-checker": 8897,
-  "title-generator": 6713
+  "title-generator": 6713,
+  "latex-export": 3000
 }
