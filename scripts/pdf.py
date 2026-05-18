@@ -41,6 +41,13 @@ except ImportError:  # pragma: no cover
 TIMEOUT = 30.0
 PDF_MAGIC = b"%PDF"
 
+BIOMED_DOI_PREFIXES: list[str] = [
+    "10.1016/j.",   # Elsevier Biomedical
+    "10.1186/",     # BMC
+    "10.1371/",     # PLOS
+    "10.3390/",     # MDPI Biology
+]
+
 log = logging.getLogger(__name__)
 
 
@@ -148,12 +155,88 @@ def tier_arxiv_title(client: httpx.Client, title: str) -> str | None:
     return None
 
 
+def tier_openaccessbutton(client: httpx.Client, doi: str) -> str | None:
+    """Tier 6: Resolve via OpenAccessButton API."""
+    resp = client.get(
+        "https://api.openaccessbutton.org/find",
+        params={"id": doi},
+        timeout=TIMEOUT,
+    )
+    resp.raise_for_status()
+    return (resp.json().get("data") or {}).get("url")
+
+
+_DOAB_BASE = "https://directory.doabooks.org"
+
+
+def tier_doab(client: httpx.Client, isbn_or_title: str) -> str | None:
+    """Tier 7: Resolve via DOAB REST API."""
+    resp = client.get(
+        "https://directory.doabooks.org/rest/search",
+        params={"query": isbn_or_title, "expand": "bitstreams"},
+        timeout=TIMEOUT,
+    )
+    resp.raise_for_status()
+    results = resp.json()
+    if not isinstance(results, list):
+        return None
+    for item in results:
+        for bs in item.get("bitstreams") or []:
+            if bs.get("mimeType") == "application/pdf":
+                link: str = bs.get("retrieveLink") or ""
+                if not link:
+                    continue
+                if link.startswith("http"):
+                    return link
+                return f"{_DOAB_BASE}{link}"
+    return None
+
+
+def tier_europepmc(client: httpx.Client, doi: str) -> str | None:
+    """Tier 8: Resolve via Europe PMC API (biomedical OA)."""
+    resp = client.get(
+        "https://www.europepmc.org/backend/europepmc/findByQuery.do",
+        params={
+            "query": f"DOI:{doi}",
+            "format": "json",
+            "resulttype": "core",
+            "pageSize": "1",
+        },
+        timeout=TIMEOUT,
+    )
+    resp.raise_for_status()
+    results = (resp.json().get("resultList") or {}).get("result") or []
+    for article in results:
+        urls = (article.get("fullTextUrlList") or {}).get("fullTextUrl") or []
+        for entry in urls:
+            if (
+                entry.get("documentStyle") == "pdf"
+                and entry.get("availability") == "Open access"
+            ):
+                return entry.get("url")
+    return None
+
+
 def resolve_pdf_url(
     client: httpx.Client, paper: dict[str, Any], email: str
 ) -> tuple[str | None, str | None, str | None]:
-    """Try all tiers to find a PDF URL. Returns (url, source_tier, error)."""
+    """Try all tiers to find a PDF URL. Returns (url, source_tier, error).
+
+    Tier order:
+      1 Unpaywall        (DOI)
+      2 CORE             (DOI)
+      3 Module OA URLs   (metadata)
+      4 Direct URL       (metadata)
+      5 arXiv Title      (title)
+      6 DOAB             (isbn/title) — books/chapters only, before OpenAccessButton
+      7 OpenAccessButton (DOI)
+      8 DOAB             (isbn/title) — non-book fallback
+      9 EuropePMC        (DOI) — final fallback for all DOIs
+    """
     doi = normalize_doi(paper.get("doi"))
     last_error = None
+    paper_type = paper.get("type") or ""
+    is_book = paper_type in {"book", "chapter"}
 
     # Tier 1: Unpaywall
     if doi:
@@ -189,6 +272,43 @@ def resolve_pdf_url(
             url = tier_arxiv_title(client, title)
             if url:
                 return url, "arxiv", last_error
+        except Exception as exc:
+            last_error = str(exc)
+
+    # Tier 6 (book priority): DOAB first for books/chapters
+    isbn_or_title = paper.get("isbn") or paper.get("title") or ""
+    if is_book and isbn_or_title:
+        try:
+            url = tier_doab(client, isbn_or_title)
+            if url:
+                return url, "doab", last_error
+        except Exception as exc:
+            last_error = str(exc)
+
+    # Tier 7: OpenAccessButton
+    if doi:
+        try:
+            url = tier_openaccessbutton(client, doi)
+            if url:
+                return url, "openaccessbutton", last_error
+        except Exception as exc:
+            last_error = str(exc)
+
+    # Tier 8: DOAB for non-book types
+    if not is_book and isbn_or_title:
+        try:
+            url = tier_doab(client, isbn_or_title)
+            if url:
+                return url, "doab", last_error
+        except Exception as exc:
+            last_error = str(exc)
+
+    # Tier 9: EuropePMC — final fallback for all DOIs
+    if doi:
+        try:
+            url = tier_europepmc(client, doi)
+            if url:
+                return url, "europepmc", last_error
         except Exception as exc:
             last_error = str(exc)
 
