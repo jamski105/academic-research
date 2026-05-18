@@ -21,6 +21,10 @@ FIXTURES_DIR = os.path.join(
     os.path.dirname(__file__), "fixtures", "dom_heuristics"
 )
 
+# Parsed once at module load to avoid repeated disk reads across test methods.
+_AGENT_FM: dict = {}
+_AGENT_BODY: str = ""
+
 
 # ---------------------------------------------------------------------------
 # Helper: parse frontmatter + body from agent markdown
@@ -41,6 +45,14 @@ def _parse_agent_md(path: str) -> tuple[dict, str]:
     fm = yaml.safe_load(match.group(1)) or {}
     body = match.group(2)
     return fm, body
+
+
+def _agent() -> tuple[dict, str]:
+    """Return cached (frontmatter, body) for agents/generic-fetcher.md."""
+    global _AGENT_FM, _AGENT_BODY
+    if not _AGENT_FM and not _AGENT_BODY:
+        _AGENT_FM, _AGENT_BODY = _parse_agent_md(AGENT_FILE)
+    return _AGENT_FM, _AGENT_BODY
 
 
 # ---------------------------------------------------------------------------
@@ -88,19 +100,19 @@ class TestFrontmatter:
         )
 
     def test_frontmatter_name(self):
-        fm, _ = _parse_agent_md(AGENT_FILE)
+        fm, _ = _agent()
         assert fm.get("name") == "generic-fetcher"
 
     def test_frontmatter_model(self):
-        fm, _ = _parse_agent_md(AGENT_FILE)
+        fm, _ = _agent()
         assert fm.get("model") == "sonnet"
 
     def test_frontmatter_max_turns(self):
-        fm, _ = _parse_agent_md(AGENT_FILE)
+        fm, _ = _agent()
         assert fm.get("maxTurns") == 20
 
     def test_frontmatter_tools_contains_browser_use(self):
-        fm, _ = _parse_agent_md(AGENT_FILE)
+        fm, _ = _agent()
         tools = fm.get("tools", [])
         tool_str = " ".join(str(t) for t in tools)
         assert "browser-use" in tool_str, (
@@ -108,7 +120,7 @@ class TestFrontmatter:
         )
 
     def test_frontmatter_tools_contains_read_write(self):
-        fm, _ = _parse_agent_md(AGENT_FILE)
+        fm, _ = _agent()
         tools = fm.get("tools", [])
         tool_str = " ".join(str(t) for t in tools)
         assert "Read" in tool_str and "Write" in tool_str, (
@@ -147,46 +159,46 @@ class TestDOMHeuristics:
     ]
 
     def test_positive_pdf_indicators_present(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         missing = [kw for kw in self.POSITIVE_PDF_INDICATORS if kw not in body]
         assert not missing, (
             f"System prompt missing positive PDF indicators: {missing}"
         )
 
     def test_negative_pdf_indicators_present(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         missing = [kw for kw in self.NEGATIVE_PDF_INDICATORS if kw not in body]
         assert not missing, (
             f"System prompt missing negative PDF indicators: {missing}"
         )
 
     def test_paywall_signals_present(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         missing = [kw for kw in self.PAYWALL_SIGNALS if kw not in body]
         assert not missing, (
             f"System prompt missing paywall signals: {missing}"
         )
 
     def test_captcha_detection_present(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         assert "captcha" in body.lower() or "reCAPTCHA" in body, (
             "System prompt must mention captcha detection"
         )
 
     def test_levenshtein_threshold_mentioned(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         assert "30" in body and ("levenshtein" in body.lower() or "Levenshtein" in body), (
             "System prompt must mention Levenshtein threshold of 30%"
         )
 
     def test_pickup_required_safety_boundary(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         assert "pickup_required" in body, (
             "System prompt must mention pickup_required as safety-boundary default"
         )
 
     def test_distinguishes_a_vs_button(self):
-        _, body = _parse_agent_md(AGENT_FILE)
+        _, body = _agent()
         assert "<a>" in body or "<a " in body, "System prompt must distinguish <a> elements"
         assert "<button>" in body or "<button " in body, (
             "System prompt must distinguish <button> elements"
@@ -234,8 +246,8 @@ class TestOutputSchema:
         errors = _validate_output_schema(output)
         assert not errors, f"Schema errors: {errors}"
 
-    def test_all_three_cases_are_schema_valid(self):
-        """All three canonical test cases must be schema-valid (meta-test)."""
+    def test_all_four_statuses_are_schema_valid(self):
+        """All four canonical status values must pass schema validation."""
         cases = [
             {
                 "status": "success",
@@ -249,14 +261,19 @@ class TestOutputSchema:
                 "tries": [],
             },
             {
-                "status": "pickup_required",
+                "status": "captcha",
+                "source": "generic-fetcher",
+                "tries": [],
+            },
+            {
+                "status": "no_match",
                 "source": "generic-fetcher",
                 "tries": [],
             },
         ]
         for i, case in enumerate(cases):
             errors = _validate_output_schema(case)
-            assert not errors, f"Case {i+1} schema errors: {errors}"
+            assert not errors, f"Case {i+1} ({case['status']}) schema errors: {errors}"
 
     def test_invalid_status_rejected(self):
         """Unknown status values must be rejected by schema validator."""
