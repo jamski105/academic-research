@@ -1,9 +1,9 @@
 """Tests fuer /academic-research:pickup Excel-Generierung.
 
-TDD-Ablauf:
-  Task 2: test_barcode_generates_png, test_barcode_invalid_isbn
-  Task 3: test_sheet_assignment, test_no_status_defaults_to_lizenz
-  Task 4: test_pickup_command_integration
+Abdeckung:
+  - scripts.barcode_utils.generate_isbn_barcode: Code128-PNG-Erzeugung
+  - scripts.barcode_utils.assign_sheet: availability_status -> Sheet-Mapping
+  - scripts.barcode_utils.build_pickup_sheets: Gruppierung aller Eintraege
 """
 
 import json
@@ -17,7 +17,7 @@ FIXTURES = Path(__file__).parent / "fixtures" / "pickup"
 
 
 # ---------------------------------------------------------------------------
-# Task 2 — Barcode-Generierung
+# Barcode-Generierung
 # ---------------------------------------------------------------------------
 
 def test_barcode_generates_png():
@@ -51,7 +51,7 @@ def test_barcode_none_isbn():
 
 
 # ---------------------------------------------------------------------------
-# Task 3 — Sheet-Zuordnung
+# Sheet-Zuordnung
 # ---------------------------------------------------------------------------
 
 def test_sheet_assignment_vor_ort():
@@ -96,7 +96,7 @@ def test_no_status_defaults_to_lizenz():
 
 
 # ---------------------------------------------------------------------------
-# Task 4 — Integration: build_pickup_sheets()
+# Integration: build_pickup_sheets()
 # ---------------------------------------------------------------------------
 
 def _load_all_fixtures():

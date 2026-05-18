@@ -76,7 +76,6 @@ def generate_isbn_barcode(isbn: Optional[str], output_path: Optional[str] = None
     if not isbn:
         return None
 
-    # Bindestriche und Leerzeichen entfernen fuer Barcode-Lib
     isbn_clean = isbn.replace("-", "").replace(" ", "")
     if not isbn_clean:
         return None
@@ -84,8 +83,9 @@ def generate_isbn_barcode(isbn: Optional[str], output_path: Optional[str] = None
     try:
         import importlib
         _barcode = importlib.import_module("barcode")
-        _ImageWriter = importlib.import_module("barcode.writer").ImageWriter
-    except (ImportError, ModuleNotFoundError):
+        # python-barcode loads barcode.writer lazily; access via attribute after import
+        _ImageWriter = _barcode.writer.ImageWriter
+    except (ImportError, ModuleNotFoundError, AttributeError):
         return None
 
     try:
@@ -93,22 +93,21 @@ def generate_isbn_barcode(isbn: Optional[str], output_path: Optional[str] = None
     except Exception:
         return None
 
-    # Zielpfad bestimmen
     if output_path is None:
         tmpdir = tempfile.mkdtemp(prefix="pickup_barcode_")
         base_path = os.path.join(tmpdir, f"barcode_{isbn_clean}")
     else:
-        # Pfad ohne Erweiterung verwenden (barcode-Lib haengt .png selbst an)
+        # barcode-Lib haengt .png selbst an base_path an
         base_path = output_path
         if base_path.endswith(".png"):
             base_path = base_path[:-4]
 
     try:
         saved_path = code.save(base_path)
-        # barcode.save() gibt Pfad mit Endung zurueck
+        # code.save() gibt fertigen Pfad inkl. Endung zurueck
         if saved_path and os.path.exists(saved_path):
             return saved_path
-        # Fallback: Lib haengt .png an base_path
+        # Fallback fuer aeltere Lib-Versionen die keinen Pfad zurueckgeben
         candidate = base_path + ".png"
         if os.path.exists(candidate):
             return candidate
