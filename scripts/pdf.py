@@ -184,6 +184,8 @@ def tier_doab(client: httpx.Client, isbn_or_title: str) -> str | None:
         for bs in item.get("bitstreams") or []:
             if bs.get("mimeType") == "application/pdf":
                 link: str = bs.get("retrieveLink") or ""
+                if not link:
+                    continue
                 if link.startswith("http"):
                     return link
                 return f"{_DOAB_BASE}{link}"

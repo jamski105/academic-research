@@ -164,6 +164,26 @@ class TestTierDoab:
         result = tier_doab(client, "some title")
         assert result is None
 
+    def test_empty_retrieve_link_returns_none(self):
+        """Bugfix-Regression: PDF-Bitstream mit leerem retrieveLink gibt None zurueck."""
+        from pdf import tier_doab
+
+        resp = _mock_httpx_response([
+            {
+                "uuid": "xyz-000",
+                "bitstreams": [
+                    {
+                        "mimeType": "application/pdf",
+                        "retrieveLink": "",
+                    }
+                ],
+            }
+        ])
+        client = _mock_httpx_client(resp)
+
+        result = tier_doab(client, "some title")
+        assert result is None
+
 
 # ---------------------------------------------------------------------------
 # Tier 8: EuropePMC
