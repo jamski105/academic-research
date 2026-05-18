@@ -18,5 +18,8 @@
   "source-quality-audit": 9975,
   "style-evaluator": 9427,
   "submission-checker": 8897,
-  "title-generator": 6713
+  "title-generator": 6713,
+  "grant-proposal": 5133,
+  "conference-poster": 5238,
+  "reviewer-response": 5498
 }
