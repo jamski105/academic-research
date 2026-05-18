@@ -2,7 +2,7 @@
 description: Search academic papers across multiple APIs (Semantic Scholar, CrossRef, OpenAlex, BASE, EconBiz, EconStor, arXiv)
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash(~/.academic-research/venv/bin/python *), Bash(browser-use:*), Bash(browser-use *), Agent(query-generator, relevance-scorer, quote-extractor)
-argument-hint: "<query>" [--mode quick|standard|deep|metadata] [--modules crossref,openalex,...] [--limit N]
+argument-hint: "<query>" [--mode quick|standard|deep|metadata] [--modules crossref,openalex,...] [--limit N] [--batch] [--interactive]
 ---
 
 # Akademische Paper-Suche
@@ -26,6 +26,8 @@ Parallele Suche über 7 API-Quellen. Optional werden Queries mit dem `query-gene
 | `--limit` | `50` | Maximale Treffer pro Modul |
 | `--no-expand` | false | `query-generator`-Agent überspringen, rohe Query nutzen |
 | `--no-browser` | false | Browser-Module überspringen (nur APIs) |
+| `--batch` | false | Bei ≥50 Paper: relevance-scorer-Calls als Anthropic Message-Batches-API ausführen (50 % Discount, ~1 h Latenz). Job-ID in `$SESSION_DIR/batch.json` speichern. |
+| `--interactive` | `off` | Two-Phase Research Mode: Phase 1 zeigt Query-Expansion + Top-5-10-Treffer-Preview, dann Approval-Gate. `--interactive=off` (default) verhält sich wie bisher. |
 
 ## Modul-Auswahl nach Modus
 
@@ -108,7 +110,80 @@ Den `relevance-scorer`-Agent in Batches von 10 Papers starten.
 LLM-Scores ins Ranking einmischen. Top-N nach Modus wählen (quick=15, standard=25, deep=40).
 Als `$SESSION_DIR/papers.json` speichern.
 
-### Schritt 8: Ergebnisse anzeigen
+### Schritt 8: PRISMA-Zähler speichern
+
+```bash
+~/.academic-research/venv/bin/python -c "
+import json, sys
+sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT}/scripts')
+from search import build_prisma_counters, save_prisma_counters
+counters = build_prisma_counters(
+    n_identified=${N_IDENTIFIED},
+    n_after_dedup=${N_AFTER_DEDUP},
+    n_excluded_screening=${N_EXCLUDED_SCREENING},
+    n_excluded_eligibility=${N_EXCLUDED_ELIGIBILITY},
+    n_included=${N_INCLUDED},
+)
+save_prisma_counters('$SESSION_DIR', counters)
+"
+```
+
+Die Zähler werden in `$SESSION_DIR/prisma_counters.json` gespeichert.
+
+### Schritt 9: Relevanz-Scoring (Standard vs. Batch)
+
+**Standard (< 50 Paper oder kein `--batch`):**  
+Den `relevance-scorer`-Agent in Batches von 10 Papers starten.
+LLM-Scores ins Ranking einmischen. Top-N nach Modus wählen (quick=15, standard=25, deep=40).
+Als `$SESSION_DIR/papers.json` speichern.
+
+**Batch-Modus (`--batch` und ≥ 50 Paper):**
+
+```bash
+~/.academic-research/venv/bin/python -c "
+import json, sys
+sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT}/scripts')
+from batch_api import submit_batch, save_batch_job
+papers = json.load(open('$SESSION_DIR/ranked.json'))
+job = submit_batch(papers, query='$QUERY')
+save_batch_job('$SESSION_DIR', job)
+print('Batch-Job eingereicht:', job['batch_id'])
+print('Abholung via: /history --batch', job['batch_id'])
+"
+```
+
+Job-ID wird in `$SESSION_DIR/batch.json` gespeichert. Abholung über
+`/history --batch <id>` (sobald Batch-Status `ended` ist, ca. 1 h).
+
+### Schritt 10: Interactive Mode — Phase 1 (nur bei `--interactive`)
+
+Falls `--interactive=off` (Standard): diesen Schritt überspringen.
+
+Bei `--interactive`:
+
+```bash
+~/.academic-research/venv/bin/python -c "
+import json, sys
+sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT}/scripts')
+from search import run_interactive_phase1
+papers = json.load(open('$SESSION_DIR/ranked.json'))
+preview = run_interactive_phase1(papers, query='$QUERY', n_preview=5)
+print(json.dumps(preview, ensure_ascii=False, indent=2))
+"
+```
+
+Die Top-5-10-Treffer als formatierte Tabelle anzeigen, dann
+**Approval-Gate via `AskUserQuestion`**:
+
+Optionen:
+1. **Weiter** — Phase 2 starten (Deep-Investigation)
+2. **Anders formulieren** — neue Query eingeben und ab Schritt 2 wiederholen
+3. **Mehr Quellen** — zusätzliche Module hinzufügen und ab Schritt 3 wiederholen
+4. **Modul-Wahl ändern** — andere API-Module wählen und ab Schritt 3 wiederholen
+
+Bei "Weiter": Phase 2 (Deep-Investigation) starten = vollständiges Scoring + Kapitelplanung.
+
+### Schritt 11: Ergebnisse anzeigen
 
 Eine formatierte Tabelle mit Rang, Titel, Jahr, Score, Cluster und Quellmodul ausgeben.
 Pfad des Session-Verzeichnisses melden.

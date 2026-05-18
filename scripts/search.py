@@ -19,11 +19,98 @@ import os
 import sys
 import time
 import xml.etree.ElementTree as ET
+from pathlib import Path
 from typing import Any, Callable
 
 import httpx
 
 from text_utils import normalize_paper, save_json
+
+# ---------------------------------------------------------------------------
+# PRISMA counters
+# ---------------------------------------------------------------------------
+
+PRISMA_COUNTER_KEYS = [
+    "n_identified",
+    "n_after_dedup",
+    "n_excluded_screening",
+    "n_excluded_eligibility",
+    "n_included",
+]
+
+
+def build_prisma_counters(
+    n_identified: int = 0,
+    n_after_dedup: int = 0,
+    n_excluded_screening: int = 0,
+    n_excluded_eligibility: int = 0,
+    n_included: int = 0,
+) -> dict[str, int]:
+    """Build a PRISMA counter dict from individual counts."""
+    return {
+        "n_identified": n_identified,
+        "n_after_dedup": n_after_dedup,
+        "n_excluded_screening": n_excluded_screening,
+        "n_excluded_eligibility": n_excluded_eligibility,
+        "n_included": n_included,
+    }
+
+
+def save_prisma_counters(session_dir: str, counters: dict[str, int]) -> None:
+    """Write PRISMA counters to <session_dir>/prisma_counters.json."""
+    path = Path(session_dir) / "prisma_counters.json"
+    path.write_text(json.dumps(counters, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Interactive Phase 1
+# ---------------------------------------------------------------------------
+
+def run_interactive_phase1(
+    papers: list[dict[str, Any]],
+    query: str,
+    n_preview: int = 5,
+) -> dict[str, Any]:
+    """Phase 1 of interactive research mode: return top-paper preview + approval options.
+
+    Args:
+        papers: List of scored paper dicts (expected to have 'score' key).
+        query: Original search query.
+        n_preview: Minimum number of papers to include in preview (default 5).
+
+    Returns:
+        dict with:
+          - top_papers: sorted list of up to 10 best papers
+          - approval_options: list of option labels for the approval gate
+          - query: original query
+    """
+    if not papers:
+        return {
+            "top_papers": [],
+            "approval_options": _approval_options(),
+            "query": query,
+        }
+
+    sorted_papers = sorted(papers, key=lambda p: p.get("score", 0.0), reverse=True)
+    preview_count = max(n_preview, min(10, len(sorted_papers)))
+    top_papers = sorted_papers[:preview_count]
+
+    return {
+        "top_papers": top_papers,
+        "approval_options": _approval_options(),
+        "query": query,
+    }
+
+
+def _approval_options() -> list[str]:
+    """Return the 4 standard approval options for the interactive gate."""
+    return [
+        "Weiter — Phase 2 starten",
+        "Anders formulieren — neue Query eingeben",
+        "Mehr Quellen — zusätzliche Module hinzufügen",
+        "Modul-Wahl ändern — andere API-Module wählen",
+    ]
+
 
 TIMEOUT = 30.0
 OAI_DC_NS = "http://purl.org/dc/elements/1.1/"
