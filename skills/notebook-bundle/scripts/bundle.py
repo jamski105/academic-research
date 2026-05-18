@@ -35,7 +35,7 @@ from PyPDF2.generic import (
 _SCRIPTS_DIR = Path(__file__).parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
-from cover_pdf import generate_cover  # noqa: E402
+from cover_pdf import generate_cover, _add_font_resources, _safe_pdf_string  # noqa: E402
 
 # Standard-Größenlimit: 500 MB
 DEFAULT_SIZE_LIMIT_MB = 500
@@ -48,33 +48,6 @@ DEFAULT_SIZE_LIMIT_MB = 500
 def _timestamp() -> str:
     """Gibt aktuellen Zeitstempel im Format YYYYMMDDTHHmmss zurück."""
     return datetime.now().strftime("%Y%m%dT%H%M%S")
-
-
-def _safe_pdf_string(text: str) -> str:
-    """Bereinigt Text für PDF-Literal-String."""
-    return (
-        str(text)
-        .replace("\\", "\\\\")
-        .replace("(", "\\(")
-        .replace(")", "\\)")
-        .replace("\n", " ")
-        .replace("\r", " ")
-    )
-
-
-def _add_font_resources(page: Any, writer: PdfWriter) -> None:
-    """Fügt Helvetica-Font-Resource zur persistierten Seite hinzu."""
-    font_dict = DictionaryObject()
-    font_dict[NameObject("/Type")] = NameObject("/Font")
-    font_dict[NameObject("/Subtype")] = NameObject("/Type1")
-    font_dict[NameObject("/BaseFont")] = NameObject("/Helvetica")
-    font_ref = writer._add_object(font_dict)
-
-    resources = DictionaryObject()
-    font_resources = DictionaryObject()
-    font_resources[NameObject("/Helvetica")] = font_ref
-    resources[NameObject("/Font")] = font_resources
-    page[NameObject("/Resources")] = resources
 
 
 def _make_toc_bytes(papers: List[Dict[str, Any]], page_numbers: List[int]) -> bytes:
@@ -140,22 +113,6 @@ def _flush_writer(writer: PdfWriter, path: str) -> None:
         writer.write(f)
 
 
-def _estimate_size_bytes(pdf_paths: list[str]) -> int:
-    """Schätzt Bundle-Größe als Summe der rohen PDF-Dateigrößen.
-
-    Konservative Schätzung: Konkateniertes PDF ist i.d.R. kleiner als Summe
-    der Einzeldateien (kein Overhead für getrennte Header/Trailer). Für das
-    500MB-Limit ist diese Überschätzung sicher.
-
-    Args:
-        pdf_paths: Pfade zu den PDF-Dateien, die im Bundle enthalten sind.
-
-    Returns:
-        Summierte Dateigröße in Bytes.
-    """
-    return sum(Path(p).stat().st_size for p in pdf_paths if Path(p).exists())
-
-
 # ---------------------------------------------------------------------------
 # Haupt-API
 # ---------------------------------------------------------------------------
@@ -187,12 +144,10 @@ def build_bundle(
     size_limit_bytes = size_limit_mb * 1024 * 1024
     ts = _timestamp()
 
-    # 1. Selection laden
     selection_text = Path(selection_json).read_text(encoding="utf-8")
     selection = json.loads(selection_text)
     papers: List[Dict[str, Any]] = selection.get("papers", [])
 
-    # 2. PDFs validieren
     valid_papers: List[Dict[str, Any]] = []
     skipped_ids: List[str] = []
     for paper in papers:
@@ -202,7 +157,6 @@ def build_bundle(
         else:
             skipped_ids.append(paper.get("id", "unknown"))
 
-    # 3. Cover erzeugen (temporäre Datei)
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
         tmp_cover_path = tmp.name
     try:
@@ -210,7 +164,6 @@ def build_bundle(
         cover_reader = PdfReader(tmp_cover_path)
         cover_pages_count = len(cover_reader.pages)
 
-        # 4. Paper-Reader öffnen (Fehler beim Öffnen → überspringen)
         paper_readers: List[tuple[Dict[str, Any], PdfReader]] = []
         for paper in valid_papers:
             try:
@@ -219,20 +172,17 @@ def build_bundle(
             except Exception:
                 skipped_ids.append(paper.get("id", "unknown"))
 
-        # 5. Seitennummern berechnen für TOC
-        # Seite 1 = TOC, Seiten 2..cover_pages_count+1 = Cover, dann Paper
+        # Seite 1 = TOC, Seiten 2..(1+cover_pages_count) = Cover, dann Paper
         page_numbers: List[int] = []
-        current_page = 1 + cover_pages_count + 1  # 1 (TOC) + cover
+        current_page = 2 + cover_pages_count  # 1 (TOC) + cover_pages
         for _, reader in paper_readers:
             page_numbers.append(current_page)
             current_page += len(reader.pages)
 
-        # 6. TOC erzeugen
         toc_papers = [p for p, _ in paper_readers]
         toc_bytes = _make_toc_bytes(toc_papers, page_numbers)
         toc_reader = PdfReader(io.BytesIO(toc_bytes))
 
-        # 7. Output-Pfad-Logik
         def _make_out_path(part: Optional[int] = None) -> str:
             if output_path is not None and part is None:
                 return output_path
@@ -246,6 +196,7 @@ def build_bundle(
         output_files: List[str] = []
         need_split = False
         part = 1
+        total_pages = 0  # während Build akkumuliert (kein Re-Read nötig)
 
         writer = PdfWriter()
         # TOC + Cover immer in ersten Bundle
@@ -253,26 +204,28 @@ def build_bundle(
             writer.add_page(p)
         for p in cover_reader.pages:
             writer.add_page(p)
+        total_pages += len(toc_reader.pages) + cover_pages_count
 
-        # Akkumulierte PDF-Pfade für Größenschätzung (O(1) pro Paper)
-        current_pdf_paths: List[str] = [tmp_cover_path]
+        # Akkumulierte Byte-Summe für Größenschätzung (O(1) pro Paper)
+        current_size_bytes: int = Path(tmp_cover_path).stat().st_size
 
         for paper, reader in paper_readers:
             paper_pdf_path = paper["pdf_path"]
-            # Größenprüfung: Summe bisheriger PDFs überschreitet Limit?
-            projected_size = _estimate_size_bytes(current_pdf_paths + [paper_pdf_path])
-            if projected_size > size_limit_bytes and writer.pages:
+            paper_size = Path(paper_pdf_path).stat().st_size
+            # Größenprüfung: würde dieses Paper das Limit überschreiten?
+            if current_size_bytes + paper_size > size_limit_bytes and writer.pages:
                 out = _make_out_path(part)
                 _flush_writer(writer, out)
                 output_files.append(out)
                 part += 1
                 need_split = True
                 writer = PdfWriter()
-                current_pdf_paths = []
+                current_size_bytes = 0
 
             for page in reader.pages:
                 writer.add_page(page)
-            current_pdf_paths.append(paper_pdf_path)
+            total_pages += len(reader.pages)
+            current_size_bytes += paper_size
 
         # Letzten Writer flushen
         if writer.pages:
@@ -285,9 +238,6 @@ def build_bundle(
             os.unlink(tmp_cover_path)
         except OSError:
             pass
-
-    # 9. Gesamtseitenzahl
-    total_pages = sum(len(PdfReader(f).pages) for f in output_files)
 
     status = "split" if need_split else ("partial" if skipped_ids else "ok")
 
