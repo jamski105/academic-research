@@ -1,0 +1,5 @@
+{
+  "status": "pickup_required",
+  "source_subagent": "generic-fetcher",
+  "reason": "Keine OA- oder lizenzierte Quelle gefunden"
+}

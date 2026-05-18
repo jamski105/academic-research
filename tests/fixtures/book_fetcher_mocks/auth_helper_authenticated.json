@@ -1,0 +1,6 @@
+{
+  "status": "authenticated",
+  "auth_type": "Shibboleth",
+  "uni": "tum",
+  "session_context": "browser-use:active:tum"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "success",
+  "source_subagent": "doabooks-fetcher",
+  "pdf_path": "/tmp/test_book.pdf",
+  "url": "https://www.doabooks.org/handle/11514/12345"
+}
