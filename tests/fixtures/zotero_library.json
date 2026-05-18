@@ -1,0 +1,702 @@
+[
+  {
+    "key": "ITEM0001",
+    "version": 1,
+    "data": {
+      "key": "ITEM0001",
+      "itemType": "journalArticle",
+      "title": "Test Paper 1",
+      "creators": [{"creatorType": "author", "firstName": "Alice", "lastName": "Müller"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0001",
+      "ISBN": "",
+      "abstractNote": "Abstract 1"
+    }
+  },
+  {
+    "key": "ITEM0002",
+    "version": 1,
+    "data": {
+      "key": "ITEM0002",
+      "itemType": "journalArticle",
+      "title": "Test Paper 2",
+      "creators": [{"creatorType": "author", "firstName": "Bob", "lastName": "Schmidt"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0002",
+      "ISBN": "",
+      "abstractNote": "Abstract 2"
+    }
+  },
+  {
+    "key": "ITEM0003",
+    "version": 1,
+    "data": {
+      "key": "ITEM0003",
+      "itemType": "book",
+      "title": "Test Book 3",
+      "creators": [{"creatorType": "author", "firstName": "Carol", "lastName": "Weber"}],
+      "date": "2022",
+      "DOI": "",
+      "ISBN": "978-3-16-148410-0",
+      "abstractNote": "Abstract 3"
+    }
+  },
+  {
+    "key": "NODOI001",
+    "version": 1,
+    "data": {
+      "key": "NODOI001",
+      "itemType": "journalArticle",
+      "title": "Paper ohne DOI oder ISBN",
+      "creators": [{"creatorType": "author", "firstName": "Dana", "lastName": "Braun"}],
+      "date": "2021",
+      "DOI": "",
+      "ISBN": "",
+      "abstractNote": "Kein Identifier"
+    }
+  },
+  {
+    "key": "ITEM0005",
+    "version": 1,
+    "data": {
+      "key": "ITEM0005",
+      "itemType": "journalArticle",
+      "title": "Test Paper 5",
+      "creators": [{"creatorType": "author", "firstName": "Ernst", "lastName": "Koch"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0005",
+      "ISBN": "",
+      "abstractNote": "Abstract 5"
+    }
+  },
+  {
+    "key": "ITEM0006",
+    "version": 1,
+    "data": {
+      "key": "ITEM0006",
+      "itemType": "journalArticle",
+      "title": "Test Paper 6",
+      "creators": [{"creatorType": "author", "firstName": "Frieda", "lastName": "Lang"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0006",
+      "ISBN": "",
+      "abstractNote": "Abstract 6"
+    }
+  },
+  {
+    "key": "ITEM0007",
+    "version": 1,
+    "data": {
+      "key": "ITEM0007",
+      "itemType": "journalArticle",
+      "title": "Test Paper 7",
+      "creators": [{"creatorType": "author", "firstName": "Georg", "lastName": "Mann"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0007",
+      "ISBN": "",
+      "abstractNote": "Abstract 7"
+    }
+  },
+  {
+    "key": "ITEM0008",
+    "version": 1,
+    "data": {
+      "key": "ITEM0008",
+      "itemType": "journalArticle",
+      "title": "Test Paper 8",
+      "creators": [{"creatorType": "author", "firstName": "Hanna", "lastName": "Nowak"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0008",
+      "ISBN": "",
+      "abstractNote": "Abstract 8"
+    }
+  },
+  {
+    "key": "ITEM0009",
+    "version": 1,
+    "data": {
+      "key": "ITEM0009",
+      "itemType": "journalArticle",
+      "title": "Test Paper 9",
+      "creators": [{"creatorType": "author", "firstName": "Ingo", "lastName": "Otto"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0009",
+      "ISBN": "",
+      "abstractNote": "Abstract 9"
+    }
+  },
+  {
+    "key": "ITEM0010",
+    "version": 1,
+    "data": {
+      "key": "ITEM0010",
+      "itemType": "journalArticle",
+      "title": "Test Paper 10",
+      "creators": [{"creatorType": "author", "firstName": "Jana", "lastName": "Peters"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0010",
+      "ISBN": "",
+      "abstractNote": "Abstract 10"
+    }
+  },
+  {
+    "key": "ITEM0011",
+    "version": 1,
+    "data": {
+      "key": "ITEM0011",
+      "itemType": "journalArticle",
+      "title": "Test Paper 11",
+      "creators": [{"creatorType": "author", "firstName": "Kurt", "lastName": "Richter"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0011",
+      "ISBN": "",
+      "abstractNote": "Abstract 11"
+    }
+  },
+  {
+    "key": "ITEM0012",
+    "version": 1,
+    "data": {
+      "key": "ITEM0012",
+      "itemType": "journalArticle",
+      "title": "Test Paper 12",
+      "creators": [{"creatorType": "author", "firstName": "Lisa", "lastName": "Schulz"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0012",
+      "ISBN": "",
+      "abstractNote": "Abstract 12"
+    }
+  },
+  {
+    "key": "ITEM0013",
+    "version": 1,
+    "data": {
+      "key": "ITEM0013",
+      "itemType": "journalArticle",
+      "title": "Test Paper 13",
+      "creators": [{"creatorType": "author", "firstName": "Max", "lastName": "Thiel"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0013",
+      "ISBN": "",
+      "abstractNote": "Abstract 13"
+    }
+  },
+  {
+    "key": "ITEM0014",
+    "version": 1,
+    "data": {
+      "key": "ITEM0014",
+      "itemType": "journalArticle",
+      "title": "Test Paper 14",
+      "creators": [{"creatorType": "author", "firstName": "Nina", "lastName": "Ullrich"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0014",
+      "ISBN": "",
+      "abstractNote": "Abstract 14"
+    }
+  },
+  {
+    "key": "ITEM0015",
+    "version": 1,
+    "data": {
+      "key": "ITEM0015",
+      "itemType": "journalArticle",
+      "title": "Test Paper 15",
+      "creators": [{"creatorType": "author", "firstName": "Oliver", "lastName": "Vogel"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0015",
+      "ISBN": "",
+      "abstractNote": "Abstract 15"
+    }
+  },
+  {
+    "key": "ITEM0016",
+    "version": 1,
+    "data": {
+      "key": "ITEM0016",
+      "itemType": "journalArticle",
+      "title": "Test Paper 16",
+      "creators": [{"creatorType": "author", "firstName": "Paula", "lastName": "Wagner"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0016",
+      "ISBN": "",
+      "abstractNote": "Abstract 16"
+    }
+  },
+  {
+    "key": "ITEM0017",
+    "version": 1,
+    "data": {
+      "key": "ITEM0017",
+      "itemType": "journalArticle",
+      "title": "Test Paper 17",
+      "creators": [{"creatorType": "author", "firstName": "Quirin", "lastName": "Bauer"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0017",
+      "ISBN": "",
+      "abstractNote": "Abstract 17"
+    }
+  },
+  {
+    "key": "ITEM0018",
+    "version": 1,
+    "data": {
+      "key": "ITEM0018",
+      "itemType": "journalArticle",
+      "title": "Test Paper 18",
+      "creators": [{"creatorType": "author", "firstName": "Rosa", "lastName": "Fischer"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0018",
+      "ISBN": "",
+      "abstractNote": "Abstract 18"
+    }
+  },
+  {
+    "key": "ITEM0019",
+    "version": 1,
+    "data": {
+      "key": "ITEM0019",
+      "itemType": "journalArticle",
+      "title": "Test Paper 19",
+      "creators": [{"creatorType": "author", "firstName": "Stefan", "lastName": "Hoffmann"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0019",
+      "ISBN": "",
+      "abstractNote": "Abstract 19"
+    }
+  },
+  {
+    "key": "ITEM0020",
+    "version": 1,
+    "data": {
+      "key": "ITEM0020",
+      "itemType": "journalArticle",
+      "title": "Test Paper 20",
+      "creators": [{"creatorType": "author", "firstName": "Tina", "lastName": "Krause"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0020",
+      "ISBN": "",
+      "abstractNote": "Abstract 20"
+    }
+  },
+  {
+    "key": "ITEM0021",
+    "version": 1,
+    "data": {
+      "key": "ITEM0021",
+      "itemType": "journalArticle",
+      "title": "Test Paper 21",
+      "creators": [{"creatorType": "author", "firstName": "Uwe", "lastName": "Lehmann"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0021",
+      "ISBN": "",
+      "abstractNote": "Abstract 21"
+    }
+  },
+  {
+    "key": "ITEM0022",
+    "version": 1,
+    "data": {
+      "key": "ITEM0022",
+      "itemType": "journalArticle",
+      "title": "Test Paper 22",
+      "creators": [{"creatorType": "author", "firstName": "Vera", "lastName": "Meyer"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0022",
+      "ISBN": "",
+      "abstractNote": "Abstract 22"
+    }
+  },
+  {
+    "key": "ITEM0023",
+    "version": 1,
+    "data": {
+      "key": "ITEM0023",
+      "itemType": "journalArticle",
+      "title": "Test Paper 23",
+      "creators": [{"creatorType": "author", "firstName": "Walter", "lastName": "Neumann"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0023",
+      "ISBN": "",
+      "abstractNote": "Abstract 23"
+    }
+  },
+  {
+    "key": "ITEM0024",
+    "version": 1,
+    "data": {
+      "key": "ITEM0024",
+      "itemType": "journalArticle",
+      "title": "Test Paper 24",
+      "creators": [{"creatorType": "author", "firstName": "Xenia", "lastName": "Pohl"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0024",
+      "ISBN": "",
+      "abstractNote": "Abstract 24"
+    }
+  },
+  {
+    "key": "ITEM0025",
+    "version": 1,
+    "data": {
+      "key": "ITEM0025",
+      "itemType": "journalArticle",
+      "title": "Test Paper 25",
+      "creators": [{"creatorType": "author", "firstName": "Yvonne", "lastName": "Roth"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0025",
+      "ISBN": "",
+      "abstractNote": "Abstract 25"
+    }
+  },
+  {
+    "key": "ITEM0026",
+    "version": 1,
+    "data": {
+      "key": "ITEM0026",
+      "itemType": "journalArticle",
+      "title": "Test Paper 26",
+      "creators": [{"creatorType": "author", "firstName": "Zora", "lastName": "Sauer"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0026",
+      "ISBN": "",
+      "abstractNote": "Abstract 26"
+    }
+  },
+  {
+    "key": "ITEM0027",
+    "version": 1,
+    "data": {
+      "key": "ITEM0027",
+      "itemType": "journalArticle",
+      "title": "Test Paper 27",
+      "creators": [{"creatorType": "author", "firstName": "Anton", "lastName": "Schmid"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0027",
+      "ISBN": "",
+      "abstractNote": "Abstract 27"
+    }
+  },
+  {
+    "key": "ITEM0028",
+    "version": 1,
+    "data": {
+      "key": "ITEM0028",
+      "itemType": "journalArticle",
+      "title": "Test Paper 28",
+      "creators": [{"creatorType": "author", "firstName": "Bianca", "lastName": "Schulte"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0028",
+      "ISBN": "",
+      "abstractNote": "Abstract 28"
+    }
+  },
+  {
+    "key": "ITEM0029",
+    "version": 1,
+    "data": {
+      "key": "ITEM0029",
+      "itemType": "journalArticle",
+      "title": "Test Paper 29",
+      "creators": [{"creatorType": "author", "firstName": "Claus", "lastName": "Vogt"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0029",
+      "ISBN": "",
+      "abstractNote": "Abstract 29"
+    }
+  },
+  {
+    "key": "ITEM0030",
+    "version": 1,
+    "data": {
+      "key": "ITEM0030",
+      "itemType": "journalArticle",
+      "title": "Test Paper 30",
+      "creators": [{"creatorType": "author", "firstName": "Dagmar", "lastName": "Werner"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0030",
+      "ISBN": "",
+      "abstractNote": "Abstract 30"
+    }
+  },
+  {
+    "key": "ITEM0031",
+    "version": 1,
+    "data": {
+      "key": "ITEM0031",
+      "itemType": "journalArticle",
+      "title": "Test Paper 31",
+      "creators": [{"creatorType": "author", "firstName": "Egon", "lastName": "Zimmermann"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0031",
+      "ISBN": "",
+      "abstractNote": "Abstract 31"
+    }
+  },
+  {
+    "key": "ITEM0032",
+    "version": 1,
+    "data": {
+      "key": "ITEM0032",
+      "itemType": "journalArticle",
+      "title": "Test Paper 32",
+      "creators": [{"creatorType": "author", "firstName": "Franziska", "lastName": "Alt"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0032",
+      "ISBN": "",
+      "abstractNote": "Abstract 32"
+    }
+  },
+  {
+    "key": "ITEM0033",
+    "version": 1,
+    "data": {
+      "key": "ITEM0033",
+      "itemType": "journalArticle",
+      "title": "Test Paper 33",
+      "creators": [{"creatorType": "author", "firstName": "Gregor", "lastName": "Berg"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0033",
+      "ISBN": "",
+      "abstractNote": "Abstract 33"
+    }
+  },
+  {
+    "key": "ITEM0034",
+    "version": 1,
+    "data": {
+      "key": "ITEM0034",
+      "itemType": "journalArticle",
+      "title": "Test Paper 34",
+      "creators": [{"creatorType": "author", "firstName": "Helena", "lastName": "Böhm"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0034",
+      "ISBN": "",
+      "abstractNote": "Abstract 34"
+    }
+  },
+  {
+    "key": "ITEM0035",
+    "version": 1,
+    "data": {
+      "key": "ITEM0035",
+      "itemType": "journalArticle",
+      "title": "Test Paper 35",
+      "creators": [{"creatorType": "author", "firstName": "Ingo", "lastName": "Braun"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0035",
+      "ISBN": "",
+      "abstractNote": "Abstract 35"
+    }
+  },
+  {
+    "key": "ITEM0036",
+    "version": 1,
+    "data": {
+      "key": "ITEM0036",
+      "itemType": "journalArticle",
+      "title": "Test Paper 36",
+      "creators": [{"creatorType": "author", "firstName": "Johanna", "lastName": "Decker"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0036",
+      "ISBN": "",
+      "abstractNote": "Abstract 36"
+    }
+  },
+  {
+    "key": "ITEM0037",
+    "version": 1,
+    "data": {
+      "key": "ITEM0037",
+      "itemType": "journalArticle",
+      "title": "Test Paper 37",
+      "creators": [{"creatorType": "author", "firstName": "Klaus", "lastName": "Engel"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0037",
+      "ISBN": "",
+      "abstractNote": "Abstract 37"
+    }
+  },
+  {
+    "key": "ITEM0038",
+    "version": 1,
+    "data": {
+      "key": "ITEM0038",
+      "itemType": "journalArticle",
+      "title": "Test Paper 38",
+      "creators": [{"creatorType": "author", "firstName": "Lea", "lastName": "Frank"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0038",
+      "ISBN": "",
+      "abstractNote": "Abstract 38"
+    }
+  },
+  {
+    "key": "ITEM0039",
+    "version": 1,
+    "data": {
+      "key": "ITEM0039",
+      "itemType": "journalArticle",
+      "title": "Test Paper 39",
+      "creators": [{"creatorType": "author", "firstName": "Moritz", "lastName": "Graf"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0039",
+      "ISBN": "",
+      "abstractNote": "Abstract 39"
+    }
+  },
+  {
+    "key": "ITEM0040",
+    "version": 1,
+    "data": {
+      "key": "ITEM0040",
+      "itemType": "journalArticle",
+      "title": "Test Paper 40",
+      "creators": [{"creatorType": "author", "firstName": "Nadine", "lastName": "Hartmann"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0040",
+      "ISBN": "",
+      "abstractNote": "Abstract 40"
+    }
+  },
+  {
+    "key": "ITEM0041",
+    "version": 1,
+    "data": {
+      "key": "ITEM0041",
+      "itemType": "journalArticle",
+      "title": "Test Paper 41",
+      "creators": [{"creatorType": "author", "firstName": "Otto", "lastName": "Herrmann"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0041",
+      "ISBN": "",
+      "abstractNote": "Abstract 41"
+    }
+  },
+  {
+    "key": "ITEM0042",
+    "version": 1,
+    "data": {
+      "key": "ITEM0042",
+      "itemType": "journalArticle",
+      "title": "Test Paper 42",
+      "creators": [{"creatorType": "author", "firstName": "Petra", "lastName": "Huber"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0042",
+      "ISBN": "",
+      "abstractNote": "Abstract 42"
+    }
+  },
+  {
+    "key": "ITEM0043",
+    "version": 1,
+    "data": {
+      "key": "ITEM0043",
+      "itemType": "journalArticle",
+      "title": "Test Paper 43",
+      "creators": [{"creatorType": "author", "firstName": "Ralf", "lastName": "Jung"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0043",
+      "ISBN": "",
+      "abstractNote": "Abstract 43"
+    }
+  },
+  {
+    "key": "ITEM0044",
+    "version": 1,
+    "data": {
+      "key": "ITEM0044",
+      "itemType": "journalArticle",
+      "title": "Test Paper 44",
+      "creators": [{"creatorType": "author", "firstName": "Sabine", "lastName": "Kaiser"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0044",
+      "ISBN": "",
+      "abstractNote": "Abstract 44"
+    }
+  },
+  {
+    "key": "ITEM0045",
+    "version": 1,
+    "data": {
+      "key": "ITEM0045",
+      "itemType": "journalArticle",
+      "title": "Test Paper 45",
+      "creators": [{"creatorType": "author", "firstName": "Thomas", "lastName": "Klein"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0045",
+      "ISBN": "",
+      "abstractNote": "Abstract 45"
+    }
+  },
+  {
+    "key": "ITEM0046",
+    "version": 1,
+    "data": {
+      "key": "ITEM0046",
+      "itemType": "journalArticle",
+      "title": "Test Paper 46",
+      "creators": [{"creatorType": "author", "firstName": "Ursula", "lastName": "König"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0046",
+      "ISBN": "",
+      "abstractNote": "Abstract 46"
+    }
+  },
+  {
+    "key": "ITEM0047",
+    "version": 1,
+    "data": {
+      "key": "ITEM0047",
+      "itemType": "journalArticle",
+      "title": "Test Paper 47",
+      "creators": [{"creatorType": "author", "firstName": "Volker", "lastName": "Kramer"}],
+      "date": "2022",
+      "DOI": "10.1000/test.0047",
+      "ISBN": "",
+      "abstractNote": "Abstract 47"
+    }
+  },
+  {
+    "key": "ITEM0048",
+    "version": 1,
+    "data": {
+      "key": "ITEM0048",
+      "itemType": "journalArticle",
+      "title": "Test Paper 48",
+      "creators": [{"creatorType": "author", "firstName": "Waltraud", "lastName": "Lange"}],
+      "date": "2021",
+      "DOI": "10.1000/test.0048",
+      "ISBN": "",
+      "abstractNote": "Abstract 48"
+    }
+  },
+  {
+    "key": "ITEM0049",
+    "version": 1,
+    "data": {
+      "key": "ITEM0049",
+      "itemType": "journalArticle",
+      "title": "Test Paper 49",
+      "creators": [{"creatorType": "author", "firstName": "Xaver", "lastName": "Lorenz"}],
+      "date": "2020",
+      "DOI": "10.1000/test.0049",
+      "ISBN": "",
+      "abstractNote": "Abstract 49"
+    }
+  },
+  {
+    "key": "ITEM0050",
+    "version": 1,
+    "data": {
+      "key": "ITEM0050",
+      "itemType": "journalArticle",
+      "title": "Test Paper 50",
+      "creators": [{"creatorType": "author", "firstName": "Yvette", "lastName": "Möller"}],
+      "date": "2023",
+      "DOI": "10.1000/test.0050",
+      "ISBN": "",
+      "abstractNote": "Abstract 50"
+    }
+  }
+]
