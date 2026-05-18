@@ -94,6 +94,11 @@ class TestSplitOver500MB:
         assert len(result["output_files"]) > 1
         for f in result["output_files"]:
             assert Path(f).exists()
+            # Split-Outputs müssen im angegebenen output_path-Verzeichnis liegen,
+            # nicht im Repo-Root / cwd
+            assert Path(f).parent == tmp_path, (
+                f"Split-Output '{f}' nicht im tmp_path '{tmp_path}'"
+            )
 
 
 class TestMissingPDFSkipped:
