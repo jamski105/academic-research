@@ -518,6 +518,122 @@ def _compute_pdf_hashes(db_path: str) -> dict:
     return hashes
 
 
+# ---------------------------------------------------------------------------
+# Snapshot-Export / Restore Funktionen (v6.4, #91)
+# ---------------------------------------------------------------------------
+
+def export_snapshot(
+    db_path: str,
+    slug: str,
+    project_dir: str = ".",
+    snapshots_dir: Optional[str] = None,
+) -> Optional[str]:
+    """Exportiert State-Dateien + Vault-DB als .tgz-Snapshot.
+
+    Schreibt: <snapshots_dir>/<slug>/<YYYYMMDD-HHMM>.tgz
+
+    Args:
+        db_path:       Pfad zur Vault-DB (wird in Tarball eingeschlossen).
+        slug:          Projekt-Slug fuer Verzeichnis-Benennung.
+        project_dir:   Quell-Verzeichnis mit den State-Dateien.
+        snapshots_dir: Ziel-Basisverzeichnis (default: ~/.academic-research/snapshots).
+
+    Returns:
+        Pfad zur erstellten .tgz-Datei oder None bei Fehler.
+    """
+    import tarfile
+    import tempfile
+    import time
+    from datetime import datetime
+
+    if snapshots_dir is None:
+        snapshots_dir = str(Path.home() / ".academic-research" / "snapshots")
+
+    project_path = Path(project_dir)
+    if not project_path.exists():
+        return None
+
+    # Timestamp im Format YYYYMMDD-HHMM
+    ts = datetime.now().strftime("%Y%m%d-%H%M")
+    slug_dir = Path(snapshots_dir) / slug
+    slug_dir.mkdir(parents=True, exist_ok=True)
+    out_path = slug_dir / f"{ts}.tgz"
+
+    state_files = [
+        "academic_context.md",
+        "literature_state.md",
+        "writing_state.md",
+    ]
+
+    try:
+        with tarfile.open(str(out_path), "w:gz") as tar:
+            found_any = False
+            for name in state_files:
+                src = project_path / name
+                if src.exists():
+                    tar.add(str(src), arcname=name)
+                    found_any = True
+
+            # Vault-DB einschliessen wenn vorhanden
+            vault_path = Path(db_path)
+            if vault_path.exists():
+                tar.add(str(vault_path), arcname="vault.db")
+                found_any = True
+
+            if not found_any:
+                # Leerer Tarball mit Platzhalter
+                with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+                    f.write("Keine State-Dateien vorhanden.\n")
+                    tmp_name = f.name
+                try:
+                    tar.add(tmp_name, arcname="snapshot-empty.txt")
+                finally:
+                    Path(tmp_name).unlink(missing_ok=True)
+
+        return str(out_path)
+    except Exception:
+        return None
+
+
+def restore_snapshot(
+    slug: str,
+    ts: str,
+    snapshots_dir: Optional[str] = None,
+    target_dir: str = ".",
+) -> bool:
+    """Stellt Snapshot zurueck: Entpackt <slug>/<ts>.tgz in target_dir.
+
+    Args:
+        slug:          Projekt-Slug.
+        ts:            Timestamp-String (Dateiname ohne .tgz).
+        snapshots_dir: Basisverzeichnis der Snapshots.
+        target_dir:    Zielverzeichnis fuer Extraktion.
+
+    Returns:
+        True bei Erfolg, False bei Fehler.
+    """
+    import tarfile
+
+    if snapshots_dir is None:
+        snapshots_dir = str(Path.home() / ".academic-research" / "snapshots")
+
+    tar_path = Path(snapshots_dir) / slug / f"{ts}.tgz"
+    if not tar_path.exists():
+        return False
+
+    target_path = Path(target_dir)
+    target_path.mkdir(parents=True, exist_ok=True)
+
+    try:
+        with tarfile.open(str(tar_path), "r:gz") as tar:
+            # Nur sichere Mitglieder extrahieren (kein path-traversal)
+            members = [m for m in tar.getmembers() if not m.name.startswith('/') and '..' not in m.name]
+            tar.extractall(str(target_path), members=members)
+        return True
+    except Exception:
+        return False
+
+
 def get_printed_page(db_path: str, paper_id: str, pdf_page: int) -> int:
     """Berechnet gedruckte Seitenzahl: printed_page = pdf_page - page_offset.
 
