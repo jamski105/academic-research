@@ -1,0 +1,65 @@
+[
+  {
+    "id": "oa-01",
+    "description": "TIB-Fetcher: bekanntes OA-Buch via ISBN — erwartet success mit pdf_path",
+    "agent": "tib-fetcher",
+    "input": {
+      "isbn": "978-3-86541-416-5",
+      "title": "Open Access und Wissenschaftliches Publizieren",
+      "output_path": "/tmp/eval-oa-01.pdf"
+    },
+    "expected": {
+      "status": "success",
+      "source_subagent": "tib-fetcher",
+      "pdf_path_non_empty": true
+    },
+    "fallback_acceptable": "metadata_only"
+  },
+  {
+    "id": "oa-02",
+    "description": "OAPEN-Fetcher: OA-Buch via DOI — erwartet success (OAPEN ist reine OA-Plattform)",
+    "agent": "oapen-fetcher",
+    "input": {
+      "doi": "10.26530/oapen_1002221",
+      "title": "The Transformation of Research in the South",
+      "output_path": "/tmp/eval-oa-02.pdf"
+    },
+    "expected": {
+      "status": "success",
+      "source_subagent": "oapen-fetcher",
+      "pdf_path_non_empty": true
+    },
+    "fallback_acceptable": "metadata_only"
+  },
+  {
+    "id": "oa-03",
+    "description": "DOAB-Fetcher: OA-Buch via DOAB-Eintrag — erwartet success oder begruendetes metadata_only",
+    "agent": "doabooks-fetcher",
+    "input": {
+      "isbn": "978-3-030-68953-1",
+      "title": "Open Access in der Wissenschaft",
+      "output_path": "/tmp/eval-oa-03.pdf"
+    },
+    "expected": {
+      "status_in": ["success", "metadata_only"],
+      "source_subagent": "doabooks-fetcher"
+    },
+    "note": "DOAB ist Aggregator — metadata_only ist akzeptabel wenn kein Volltext-Link vorhanden"
+  },
+  {
+    "id": "oa-04",
+    "description": "KVK-Fetcher: Buch mit Bibliotheks-Nachweis — erwartet metadata_only + Standort-Info",
+    "agent": "kvk-fetcher",
+    "input": {
+      "isbn": "978-3-16-148410-0",
+      "title": "Einfuehrung in die Rechtswissenschaft",
+      "output_path": "/tmp/eval-oa-04.pdf"
+    },
+    "expected": {
+      "status_in": ["metadata_only", "success"],
+      "source_subagent": "kvk-fetcher",
+      "reason_non_empty_if_metadata_only": true
+    },
+    "note": "KVK liefert Standort-Info in reason-Feld bei metadata_only"
+  }
+]
