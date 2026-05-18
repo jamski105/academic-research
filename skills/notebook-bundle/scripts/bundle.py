@@ -157,6 +157,9 @@ def build_bundle(
         else:
             skipped_ids.append(paper.get("id", "unknown"))
 
+    output_files: List[str] = []
+    total_pages = 0
+
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
         tmp_cover_path = tmp.name
     try:
@@ -192,14 +195,10 @@ def build_bundle(
             else:
                 return str(Path(base) / f"notebook-bundle-{ts}-part{part}.pdf")
 
-        # 8. Bundle(s) aufbauen
-        output_files: List[str] = []
         need_split = False
         part = 1
-        total_pages = 0  # während Build akkumuliert (kein Re-Read nötig)
 
         writer = PdfWriter()
-        # TOC + Cover immer in ersten Bundle
         for p in toc_reader.pages:
             writer.add_page(p)
         for p in cover_reader.pages:
