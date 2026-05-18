@@ -187,13 +187,17 @@ def build_bundle(
         toc_reader = PdfReader(io.BytesIO(toc_bytes))
 
         def _make_out_path(part: Optional[int] = None) -> str:
-            if output_path is not None and part is None:
-                return output_path
-            base = output_dir or os.getcwd()
             if part is None:
+                if output_path is not None:
+                    return output_path
+                base = output_dir or os.getcwd()
                 return str(Path(base) / f"notebook-bundle-{ts}.pdf")
-            else:
-                return str(Path(base) / f"notebook-bundle-{ts}-part{part}.pdf")
+            # Split-Modus: respektiere output_path-Verzeichnis und -Stem, wenn gesetzt
+            if output_path is not None:
+                p = Path(output_path)
+                return str(p.parent / f"{p.stem}-part{part}{p.suffix or '.pdf'}")
+            base = output_dir or os.getcwd()
+            return str(Path(base) / f"notebook-bundle-{ts}-part{part}.pdf")
 
         need_split = False
         part = 1
