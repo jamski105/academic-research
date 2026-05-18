@@ -272,13 +272,14 @@ def run_import(
 
             # CSL-JSON erzeugen
             csl = _zotero_item_to_csl(item_data)
+            csl_str = json.dumps(csl, ensure_ascii=False)
             paper_id = f"zotero-{item_key}"
 
             try:
                 add_paper(
                     db_path=db_path,
                     paper_id=paper_id,
-                    csl_json=json.dumps(csl, ensure_ascii=False),
+                    csl_json=csl_str,
                     doi=doi,
                     isbn=isbn,
                     pdf_path=None,
@@ -297,7 +298,7 @@ def run_import(
                             add_paper(
                                 db_path=db_path,
                                 paper_id=paper_id,
-                                csl_json=json.dumps(csl, ensure_ascii=False),
+                                csl_json=csl_str,
                                 doi=doi,
                                 isbn=isbn,
                                 pdf_path=local_path,

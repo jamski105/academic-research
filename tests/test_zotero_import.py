@@ -19,7 +19,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "skills" / "zote
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 LIBRARY_JSON = FIXTURES / "zotero_library.json"
 ATTACHMENT_A = FIXTURES / "zotero_attachments" / "paper_a.pdf"
-ATTACHMENT_B = FIXTURES / "zotero_attachments" / "paper_b.pdf"
 
 
 # ---------------------------------------------------------------------------
