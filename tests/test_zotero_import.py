@@ -122,12 +122,24 @@ class TestBulkImport:
 
 class TestDedup:
     def test_rerun_no_duplicates(self, tmp_path):
-        """Zweiter Pull mit identischen Items → 0 neue Papers (alle dedupliziert)."""
+        """Zweiter Pull mit identischen Items → nur Items ohne DOI/ISBN nochmals importiert.
+
+        Items mit DOI oder ISBN werden dedupliziert (49 von 50 in der Fixture).
+        Das Item ohne DOI/ISBN (NODOI001) kann nicht dedupliziert werden und
+        wird erneut importiert — das ist Spec-konformes Verhalten.
+        """
         from zotero_pull import run_import
 
         cfg_path = _minimal_config(tmp_path)
         db_path = str(tmp_path / "vault.db")
         items = _load_library()
+
+        # Zaehle Items mit und ohne DOI/ISBN in der Fixture
+        items_with_id = sum(
+            1 for it in items
+            if it["data"].get("DOI") or it["data"].get("ISBN")
+        )
+        items_without_id = len(items) - items_with_id
 
         with patch("zotero_pull.zotero") as mock_zotero_module:
             mock_zotero_module.Zotero.return_value = _make_zotero_mock(items)
@@ -136,14 +148,16 @@ class TestDedup:
 
         assert result_1.imported == 50
 
-        # Zweiter Run — gleiche Items
+        # Zweiter Run — Items mit DOI/ISBN werden dedupliziert
         with patch("zotero_pull.zotero") as mock_zotero_module:
             mock_zotero_module.Zotero.return_value = _make_zotero_mock(items)
             with patch("zotero_pull.ensure_file"):
                 result_2 = run_import(config_path=str(cfg_path), db_path=db_path)
 
-        assert result_2.imported == 0
-        assert result_2.skipped == 50
+        # Items mit Identifier werden uebersprungen
+        assert result_2.skipped == items_with_id
+        # Items ohne Identifier werden (nicht-dedup-faehig) erneut importiert
+        assert result_2.imported == items_without_id
 
 
 # ---------------------------------------------------------------------------
