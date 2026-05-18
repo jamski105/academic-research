@@ -1,0 +1,39 @@
+{
+  "papers": [
+    {
+      "id": "smith2020",
+      "title": "Deep Learning for NLP",
+      "authors": ["Smith, J.", "Doe, A."],
+      "year": 2020,
+      "pdf_path": "__FIXTURE_DIR__/paper_smith2020.pdf"
+    },
+    {
+      "id": "jones2019",
+      "title": "Transformer Architectures",
+      "authors": ["Jones, B."],
+      "year": 2019,
+      "pdf_path": "__FIXTURE_DIR__/paper_jones2019.pdf"
+    },
+    {
+      "id": "brown2021",
+      "title": "Few-Shot Learning in LLMs",
+      "authors": ["Brown, C.", "White, D."],
+      "year": 2021,
+      "pdf_path": "__FIXTURE_DIR__/paper_brown2021.pdf"
+    },
+    {
+      "id": "zhang2022",
+      "title": "Instruction Tuning Approaches",
+      "authors": ["Zhang, L."],
+      "year": 2022,
+      "pdf_path": "__FIXTURE_DIR__/paper_zhang2022.pdf"
+    },
+    {
+      "id": "lee2023",
+      "title": "RLHF and Alignment",
+      "authors": ["Lee, K.", "Park, M."],
+      "year": 2023,
+      "pdf_path": "__FIXTURE_DIR__/paper_lee2023.pdf"
+    }
+  ]
+}
