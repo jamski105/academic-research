@@ -637,7 +637,6 @@ class VaultDB:
             embedding_text: Kombinierter Text (context_sentence + chunk_text).
             embedding_vector: Serialisierter Embedding-Vektor (bytes) oder None.
         """
-        from uuid import uuid4
         chunk_id = str(uuid4())
         now = int(time.time())
         conn = self._get_conn()

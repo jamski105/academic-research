@@ -7,6 +7,7 @@ Start via: python -m mcp.academic_vault.server
 """
 import json
 import os
+import re
 from pathlib import Path
 from uuid import uuid4
 from typing import Optional
@@ -85,10 +86,7 @@ def search_papers(
                 Reranker wird nur genutzt wenn VOYAGE_API_KEY oder COHERE_API_KEY gesetzt.
                 Fallback auf RRF-Result wenn kein API-Key vorhanden.
     """
-    # FTS5-Query sanitizieren: Sonderzeichen entfernen die FTS5-Syntax stören
     query = _sanitize_fts5_query(query)
-
-    # FTS5-BM25-Suche (Basis fuer RRF)
     conn = VaultDB._open(db_path)
     try:
         if type_filter:
@@ -127,23 +125,13 @@ def search_papers(
     if not rerank:
         return fts_results
 
-    # Hybrid-Retrieval: RRF ueber FTS5 + (vec0 falls verfuegbar)
-    # vec0-Ergebnisse: aktuell FTS5-Ergebnisse als Proxy (sqlite-vec Extension optional)
-    # In Produktion: vec0 KNN-Suche mit echten Embeddings
-    vec_results = _vec0_search(db_path, query, k=k)
-
     from .retrieval import reciprocal_rank_fusion, apply_reranker
-    fused = reciprocal_rank_fusion(vec_results, fts_results, k=60, top_n=k)
+    fused = reciprocal_rank_fusion(_vec0_search(db_path, query, k=k), fts_results, k=60, top_n=k)
 
-    # Optionaler Reranker (hinter API-Key Feature-Flag)
     voyage_key = os.environ.get("VOYAGE_API_KEY") or None
     cohere_key = os.environ.get("COHERE_API_KEY") or None
 
     if voyage_key or cohere_key:
-        # Text-Feld aus snippet belegen
-        for entry in fused:
-            if "text" not in entry:
-                entry["text"] = entry.get("snippet", entry.get("paper_id", ""))
         return apply_reranker(
             query=query,
             candidates=fused,
@@ -160,7 +148,6 @@ def _sanitize_fts5_query(query: str) -> str:
     FTS5-Sonderzeichen die Probleme verursachen: - / ^ * " ( )
     Strategie: Bindestrich und andere Operatoren durch Leerzeichen ersetzen.
     """
-    import re
     # FTS5-Operatoren entfernen/ersetzen: -, ^, /, *, (, ), "
     sanitized = re.sub(r'[-^/*()]', ' ', query)
     # Mehrfache Leerzeichen zusammenfassen
@@ -171,19 +158,11 @@ def _sanitize_fts5_query(query: str) -> str:
 def _vec0_search(db_path: str, query: str, k: int = 10) -> list[dict]:
     """vec0 KNN-Suche fuer Hybrid-Retrieval.
 
-    Falls sqlite-vec Extension nicht verfuegbar oder keine Embeddings vorhanden,
-    wird leere Liste zurueckgegeben (RRF faellt auf FTS5-only zurueck).
+    Stub fuer MVP: Gibt leere Liste zurueck (kein lokales Embedding-Modell verfuegbar).
+    RRF faellt damit auf FTS5-only zurueck.
+    Erweiterung: query-Vektor generieren + KNN in chunk_embeddings via sqlite-vec.
     """
-    try:
-        db = VaultDB(db_path)
-        if not db.load_vec_extension():
-            return []
-        # Stub: In Produktion wuerde hier ein echter Embedding-Vektor fuer query
-        # generiert und per KNN-Suche in quote_embeddings gesucht.
-        # Fuer MVP (kein Embedding-Modell lokal verfuegbar): leere Liste.
-        return []
-    except Exception:
-        return []
+    return []
 
 
 def search_quote_text(db_path: str, verbatim: str, k: int = 5) -> list[dict]:

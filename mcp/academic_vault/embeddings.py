@@ -6,21 +6,18 @@ Baut embedding_text = context_sentence + chunk_text fuer bessere Retrieval-Quali
 import os
 from typing import Optional
 
-# Modul-Level-Cache fuer Anthropic-Client (Singleton-Pattern)
-_client = None
+def _get_anthropic_client(api_key: Optional[str] = None):
+    """Erstellt einen Anthropic-Client.
 
-
-def _get_anthropic_client():
-    """Gibt gecachten Anthropic-Client zurueck oder erstellt neuen."""
-    global _client
-    if _client is None:
-        try:
-            import anthropic
-            api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-            _client = anthropic.Anthropic(api_key=api_key)
-        except ImportError:
-            raise ImportError("anthropic SDK nicht installiert. Bitte 'pip install anthropic' ausfuehren.")
-    return _client
+    Kein Singleton — api_key kann pro Aufruf uebergeben werden.
+    Nutzt ANTHROPIC_API_KEY env als Fallback.
+    """
+    try:
+        import anthropic
+        key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        return anthropic.Anthropic(api_key=key)
+    except ImportError:
+        raise ImportError("anthropic SDK nicht installiert. Bitte 'pip install anthropic' ausfuehren.")
 
 
 def generate_context_sentence(
@@ -47,7 +44,7 @@ def generate_context_sentence(
         Bei Fehler: leerer String (graceful degradation).
     """
     try:
-        client = _get_anthropic_client()
+        client = _get_anthropic_client(api_key=api_key)
 
         # System-Prompt mit cache_control fuer Prompt-Caching
         system_prompt = (

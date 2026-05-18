@@ -13,35 +13,30 @@ Standard-Konstante k=60 nach Cormack et al. 2009.
 import os
 from typing import Optional
 
-# Modul-Level-Cache fuer API-Clients
-_voyage_client = None
-_cohere_client = None
-
-
 def _get_voyage_client(api_key: Optional[str] = None):
-    """Gibt Voyage-Client zurueck."""
-    global _voyage_client
-    if _voyage_client is None:
-        try:
-            import voyageai
-            key = api_key or os.environ.get("VOYAGE_API_KEY", "")
-            _voyage_client = voyageai.Client(api_key=key)
-        except ImportError:
-            raise ImportError("voyageai SDK nicht installiert. Bitte 'pip install voyageai'.")
-    return _voyage_client
+    """Erstellt Voyage-Client.
+
+    Kein Singleton — api_key kann pro Aufruf uebergeben werden.
+    """
+    try:
+        import voyageai
+        key = api_key or os.environ.get("VOYAGE_API_KEY", "")
+        return voyageai.Client(api_key=key)
+    except ImportError:
+        raise ImportError("voyageai SDK nicht installiert. Bitte 'pip install voyageai'.")
 
 
 def _get_cohere_client(api_key: Optional[str] = None):
-    """Gibt Cohere-Client zurueck."""
-    global _cohere_client
-    if _cohere_client is None:
-        try:
-            import cohere
-            key = api_key or os.environ.get("COHERE_API_KEY", "")
-            _cohere_client = cohere.Client(api_key=key)
-        except ImportError:
-            raise ImportError("cohere SDK nicht installiert. Bitte 'pip install cohere'.")
-    return _cohere_client
+    """Erstellt Cohere-Client.
+
+    Kein Singleton — api_key kann pro Aufruf uebergeben werden.
+    """
+    try:
+        import cohere
+        key = api_key or os.environ.get("COHERE_API_KEY", "")
+        return cohere.Client(api_key=key)
+    except ImportError:
+        raise ImportError("cohere SDK nicht installiert. Bitte 'pip install cohere'.")
 
 
 def rrf_score(
@@ -89,31 +84,17 @@ def reciprocal_rank_fusion(
     Returns:
         Kombinierte Liste, absteigend nach rrf_score sortiert.
     """
-    # Rang-Maps aufbauen (1-basiert)
-    vec_ranks: dict[str, int] = {
-        r["paper_id"]: idx + 1
-        for idx, r in enumerate(vec_results)
-    }
-    fts_ranks: dict[str, int] = {
-        r["paper_id"]: idx + 1
-        for idx, r in enumerate(fts_results)
-    }
-
-    # Alle einzigartigen paper_ids aus beiden Listen
+    vec_ranks: dict[str, int] = {r["paper_id"]: idx + 1 for idx, r in enumerate(vec_results)}
+    fts_ranks: dict[str, int] = {r["paper_id"]: idx + 1 for idx, r in enumerate(fts_results)}
     all_paper_ids = set(vec_ranks.keys()) | set(fts_ranks.keys())
 
-    # Quell-Daten fuer jedes Paper sammeln (erste Quelle gewinnt)
+    # Quell-Dict: erste Quelle (vec0) gewinnt fuer Metadaten (snippet etc.)
     paper_data: dict[str, dict] = {}
     for r in vec_results:
-        pid = r["paper_id"]
-        if pid not in paper_data:
-            paper_data[pid] = dict(r)
+        paper_data.setdefault(r["paper_id"], dict(r))
     for r in fts_results:
-        pid = r["paper_id"]
-        if pid not in paper_data:
-            paper_data[pid] = dict(r)
+        paper_data.setdefault(r["paper_id"], dict(r))
 
-    # RRF-Scores berechnen
     fused: list[dict] = []
     for pid in all_paper_ids:
         entry = dict(paper_data.get(pid, {"paper_id": pid}))
@@ -124,7 +105,6 @@ def reciprocal_rank_fusion(
         )
         fused.append(entry)
 
-    # Absteigend nach rrf_score sortieren
     fused.sort(key=lambda x: x["rrf_score"], reverse=True)
 
     if top_n is not None:
@@ -225,7 +205,7 @@ def apply_reranker(
     Returns:
         Rerankte oder unveraenderte Kandidaten-Liste.
     """
-    # Text-Feld fuer Reranker vorbereiten (snippet oder rrf_score als Proxy)
+    # text-Feld sicherstellen: Reranker-APIs brauchen Dokumenttext
     enriched = []
     for c in candidates:
         entry = dict(c)
@@ -233,21 +213,18 @@ def apply_reranker(
             entry["text"] = entry.get("snippet", entry.get("paper_id", ""))
         enriched.append(entry)
 
-    # Voyage bevorzugt
     if voyage_api_key:
         try:
             return rerank_with_voyage(query, enriched, api_key=voyage_api_key)
         except Exception:
             pass
 
-    # Cohere als Fallback
     if cohere_api_key:
         try:
             return rerank_with_cohere(query, enriched, api_key=cohere_api_key)
         except Exception:
             pass
 
-    # Kein Reranking — RRF-Ergebnis unveraendert zurueckgeben
     return candidates
 
 
