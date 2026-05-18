@@ -227,6 +227,67 @@ def add_figures_table(db_path: str) -> None:
         conn.close()
 
 
+def add_v64_tables(db_path: str) -> None:
+    """Erstellt v6.4-Tabellen falls nicht vorhanden. Idempotent.
+
+    Tabellen: glossary, style_overrides, excluded_sources,
+              risk_of_bias_assessments, score_history, vault_locked_status.
+    """
+    import sqlite3 as _sqlite3
+    conn = _sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS glossary (
+              term        TEXT PRIMARY KEY,
+              definition  TEXT NOT NULL,
+              created_at  INTEGER NOT NULL,
+              updated_at  INTEGER NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS style_overrides (
+              key        TEXT PRIMARY KEY,
+              value      TEXT NOT NULL,
+              created_at INTEGER NOT NULL,
+              updated_at INTEGER NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS excluded_sources (
+              paper_id    TEXT PRIMARY KEY,
+              reason      TEXT,
+              excluded_at INTEGER NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS risk_of_bias_assessments (
+              assessment_id      TEXT PRIMARY KEY,
+              paper_id           TEXT NOT NULL,
+              study_type         TEXT NOT NULL,
+              domain_scores_json TEXT NOT NULL,
+              ts                 INTEGER NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS score_history (
+              snapshot_id TEXT PRIMARY KEY,
+              paper_id    TEXT NOT NULL,
+              session_id  TEXT NOT NULL,
+              ts          INTEGER NOT NULL,
+              scores_json TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS vault_locked_status (
+              slug      TEXT PRIMARY KEY,
+              locked_at INTEGER NOT NULL
+            )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Seed-Migration: literature_state.md -> academic_vault SQLite"
