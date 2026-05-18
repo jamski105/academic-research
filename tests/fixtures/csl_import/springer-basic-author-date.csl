@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="en-US">
+  <info>
+    <title>Springer Basic (author-date)</title>
+    <id>http://www.zotero.org/styles/springer-basic-author-date</id>
+    <link href="http://www.zotero.org/styles/springer-basic-author-date" rel="self"/>
+    <link href="http://www.springer.com" rel="documentation"/>
+    <category citation-format="author-date"/>
+    <category field="science"/>
+    <updated>2014-11-15T12:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+  <macro name="author">
+    <names variable="author">
+      <name form="long" initialize-with=" " delimiter=", " delimiter-precedes-last="always" name-as-sort-order="all"/>
+      <label form="short" prefix=" (" suffix=")"/>
+      <substitute>
+        <names variable="editor"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="author-short">
+    <names variable="author">
+      <name form="short" and="text" delimiter=", "/>
+      <substitute>
+        <names variable="editor"/>
+        <text variable="title" form="short"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="issued">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+  <macro name="doi-url">
+    <choose>
+      <if variable="DOI">
+        <text variable="DOI" prefix="https://doi.org/"/>
+      </if>
+      <else>
+        <text variable="URL"/>
+      </else>
+    </choose>
+  </macro>
+  <citation et-al-min="3" et-al-use-first="1" disambiguate-add-year-suffix="true">
+    <sort>
+      <key macro="author-short"/>
+      <key macro="issued"/>
+    </sort>
+    <layout prefix="(" suffix=")" delimiter="; ">
+      <group delimiter=" ">
+        <text macro="author-short"/>
+        <text macro="issued"/>
+      </group>
+    </layout>
+  </citation>
+  <bibliography hanging-indent="false" entry-spacing="1">
+    <sort>
+      <key macro="author"/>
+      <key macro="issued"/>
+    </sort>
+    <layout suffix=".">
+      <group delimiter=" " suffix=".">
+        <text macro="author"/>
+        <text macro="issued" prefix="(" suffix=")"/>
+      </group>
+      <choose>
+        <if type="article-journal">
+          <group delimiter=" ">
+            <text variable="title" suffix="."/>
+            <text variable="container-title" font-style="italic"/>
+            <group delimiter=":">
+              <text variable="volume" font-style="italic"/>
+              <text variable="page"/>
+            </group>
+            <text macro="doi-url"/>
+          </group>
+        </if>
+        <else-if type="book">
+          <group delimiter=", ">
+            <text variable="title" font-style="italic"/>
+            <text variable="edition" prefix="edn "/>
+            <text variable="publisher"/>
+            <text variable="publisher-place"/>
+          </group>
+        </else-if>
+        <else-if type="chapter">
+          <group delimiter=" ">
+            <text variable="title" suffix="."/>
+            <text variable="container-title" prefix="In: " font-style="italic" suffix=","/>
+            <names variable="editor" prefix="eds ">
+              <name form="long" initialize-with=" " delimiter=", " delimiter-precedes-last="always" name-as-sort-order="all"/>
+            </names>
+            <group delimiter=", ">
+              <text variable="publisher"/>
+              <text variable="publisher-place"/>
+            </group>
+            <text variable="page" prefix="pp "/>
+          </group>
+        </else-if>
+        <else-if type="paper-conference">
+          <group delimiter=" ">
+            <text variable="title" suffix="."/>
+            <text variable="container-title" prefix="In: " suffix=","/>
+            <text variable="publisher-place"/>
+            <text variable="page" prefix="pp "/>
+          </group>
+        </else-if>
+        <else>
+          <text variable="title" font-style="italic" suffix="."/>
+          <text macro="doi-url"/>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>

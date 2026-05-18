@@ -106,3 +106,49 @@ CREATE TABLE IF NOT EXISTS figures (
   data_extracted_json TEXT,
   created_at          INTEGER NOT NULL
 );
+
+-- v6.4: Decision-Log Ergaenzungs-Tabellen
+
+CREATE TABLE IF NOT EXISTS glossary (
+  term        TEXT PRIMARY KEY,
+  definition  TEXT NOT NULL,
+  created_at  INTEGER NOT NULL,
+  updated_at  INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS style_overrides (
+  key        TEXT PRIMARY KEY,
+  value      TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS excluded_sources (
+  paper_id   TEXT PRIMARY KEY,
+  reason     TEXT,
+  excluded_at INTEGER NOT NULL
+);
+
+-- v6.4: Risk-of-Bias Assessments
+CREATE TABLE IF NOT EXISTS risk_of_bias_assessments (
+  assessment_id      TEXT PRIMARY KEY,
+  paper_id           TEXT NOT NULL REFERENCES papers(paper_id),
+  study_type         TEXT NOT NULL,
+  domain_scores_json TEXT NOT NULL,
+  ts                 INTEGER NOT NULL
+);
+
+-- v6.4: Score-Trajectory-Tracking
+CREATE TABLE IF NOT EXISTS score_history (
+  snapshot_id TEXT PRIMARY KEY,
+  paper_id    TEXT NOT NULL REFERENCES papers(paper_id),
+  session_id  TEXT NOT NULL,
+  ts          INTEGER NOT NULL,
+  scores_json TEXT NOT NULL
+);
+
+-- v6.4: Material Passport Lock
+CREATE TABLE IF NOT EXISTS vault_locked_status (
+  slug      TEXT PRIMARY KEY,
+  locked_at INTEGER NOT NULL
+);
