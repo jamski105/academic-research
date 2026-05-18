@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from jsonschema import ValidationError, validate
 
 # Pfade relativ zum Repo-Root
 REPO_ROOT = Path(__file__).parent.parent
@@ -32,23 +33,18 @@ class TestProfilesValidPositiv:
     """Alle 5 Profile muessen gegen _schema.json valide sein."""
 
     def test_tum_valid(self):
-        from jsonschema import validate
         validate(instance=load_profile("tum"), schema=load_schema())
 
     def test_fu_berlin_valid(self):
-        from jsonschema import validate
         validate(instance=load_profile("fu-berlin"), schema=load_schema())
 
     def test_eth_zurich_valid(self):
-        from jsonschema import validate
         validate(instance=load_profile("eth-zurich"), schema=load_schema())
 
     def test_uni_wien_valid(self):
-        from jsonschema import validate
         validate(instance=load_profile("uni-wien"), schema=load_schema())
 
     def test_uni_hamburg_valid(self):
-        from jsonschema import validate
         validate(instance=load_profile("uni-hamburg"), schema=load_schema())
 
 
@@ -68,49 +64,42 @@ class TestSchemaValidierungNegativ:
         }
 
     def test_fehlendes_bib_pickup_url(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         del profile["bib_pickup_url"]
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
     def test_fehlendes_uni(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         del profile["uni"]
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
     def test_fehlendes_auth_type(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         del profile["auth_type"]
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
     def test_ungültiger_auth_type(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         profile["auth_type"] = "LDAP"
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
     def test_leere_licensed_sites(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         profile["licensed_sites"] = []  # minItems: 1
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
     def test_fehlendes_auth_url(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         del profile["auth_url"]
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
     def test_fehlende_licensed_sites(self):
-        from jsonschema import ValidationError, validate
         profile = self._base_profile()
         del profile["licensed_sites"]
         with pytest.raises(ValidationError):
@@ -149,7 +138,6 @@ class TestOnboardHook:
 
     def test_hook_active_yaml_ist_valide(self, tmp_path):
         """Das von Hook geschriebene active.yaml validiert gegen Schema."""
-        from jsonschema import validate
         active_dir = tmp_path / "library-profiles"
         active_dir.mkdir()
 
