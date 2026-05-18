@@ -1,0 +1,41 @@
+1. Smith, J., & Jones, A. (2020). Deep Learning for Natural Language Processing. MIT Press. ISBN: 978-0-262-04372-1
+2. Doe, J. (2019). "Attention Mechanisms in Neural Networks." Journal of Machine Learning Research, 20(1), 1-45. DOI: 10.5555/3305381.3305382
+3. Brown, T., et al. (2020). Language Models are Few-Shot Learners. NeurIPS 2020. DOI: 10.48550/arXiv.2005.14165
+4. LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436-444. DOI: 10.1038/nature14539
+5. Vaswani, A., Shazeer, N., Parmar, N., et al. (2017). Attention Is All You Need. NIPS 2017. DOI: 10.48550/arXiv.1706.03762
+6. Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep Learning. MIT Press. ISBN: 9780262035613
+7. Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). BERT: Pre-training of Deep Bidirectional Transformers. NAACL-HLT. DOI: 10.18653/v1/N19-1423
+8. Hochreiter, S., & Schmidhuber, J. (1997). Long Short-Term Memory. Neural Computation, 9(8), 1735-1780. DOI: 10.1162/neco.1997.9.8.1735
+9. Sutskever, I., Vinyals, O., & Le, Q. V. (2014). Sequence to Sequence Learning with Neural Networks. NIPS. DOI: 10.48550/arXiv.1409.3215
+10. Mikolov, T., Chen, K., Corrado, G., & Dean, J. (2013). Efficient Estimation of Word Representations in Vector Space. ICLR Workshop. DOI: 10.48550/arXiv.1301.3781
+11. @article{radford2019language,
+    author={Radford, Alec and Wu, Jeff and Child, Rewon and Luan, David},
+    title={Language Models are Unsupervised Multitask Learners},
+    year={2019},
+    journal={OpenAI Blog}
+}
+12. @inproceedings{he2016deep,
+    author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+    title={Deep Residual Learning for Image Recognition},
+    booktitle={CVPR},
+    year={2016},
+    doi={10.1109/CVPR.2016.90}
+}
+13. Pennington J, Socher R, Manning C. GloVe: Global Vectors for Word Representation. EMNLP 2014. DOI 10.3115/v1/D14-1162
+14. Kingma DP, Ba J. Adam: A Method for Stochastic Optimization. ICLR 2015. arXiv:1412.6980
+15. Srivastava N, Hinton G, Krizhevsky A, Sutskever I, Salakhutdinov R. Dropout: A Simple Way to Prevent Neural Networks from Overfitting. JMLR. 2014;15:1929-1958.
+16. Hochreiter, S. (1998). The Vanishing Gradient Problem During Learning Recurrent Neural Nets and Problem Solutions. International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems.
+17. Bengio, Y., Simard, P., Frasconi, P. (1994). Learning Long-Term Dependencies with Gradient Descent is Difficult. IEEE Transactions on Neural Networks, 5(2), 157-166. DOI: 10.1109/72.279181
+18. Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). Learning representations by back-propagating errors. Nature, 323, 533-536. DOI: 10.1038/323533a0
+19. Minsky M, Papert S. Perceptrons: An Introduction to Computational Geometry. MIT Press; 1969. ISBN: 9780262630221
+20. Rosenblatt F. The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain. Psychological Review. 1958;65(6):386-408.
+21. McCulloch WS, Pitts W. A Logical Calculus of the Ideas Immanent in Nervous Activity. Bulletin of Mathematical Biophysics. 1943;5:115-133.
+22. Bahdanau D, Cho K, Bengio Y. Neural Machine Translation by Jointly Learning to Align and Translate. ICLR 2015. DOI: 10.48550/arXiv.1409.0473
+23. Cho K, van Merriënboer B, Gulcehre C, et al. Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation. EMNLP 2014. DOI: 10.3115/v1/D14-1179
+24. Krizhevsky A, Sutskever I, Hinton GE. ImageNet Classification with Deep Convolutional Neural Networks. NIPS 2012. DOI: 10.1145/3065386
+25. Zeiler MD, Fergus R. Visualizing and Understanding Convolutional Networks. ECCV 2014. DOI: 10.1007/978-3-319-10590-1_53
+26. Simonyan K, Zisserman A. Very Deep Convolutional Networks for Large-Scale Image Recognition. ICLR 2015. arXiv:1409.1556
+27. Schmidhuber J. Deep Learning in Neural Networks: An Overview. Neural Networks. 2015;61:85-117. DOI: 10.1016/j.neunet.2014.09.003
+28. Graves A, Mohamed A, Hinton G. Speech Recognition with Deep Recurrent Neural Networks. ICASSP 2013. DOI: 10.1109/ICASSP.2013.6638947
+29. Collobert R, Weston J, Bottou L, Karlen M, Kavukcuoglu K, Kuksa P. Natural Language Processing (Almost) from Scratch. JMLR. 2011;12:2493-2537.
+30. Ioffe S, Szegedy C. Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift. ICML 2015. DOI: 10.48550/arXiv.1502.03167
