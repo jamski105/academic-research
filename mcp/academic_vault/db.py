@@ -616,6 +616,58 @@ class VaultDB:
     # Vault Lock (v6.4)
     # ------------------------------------------------------------------
 
+    # ------------------------------------------------------------------
+    # Chunk Embeddings (v6.5 — Contextual Retrieval #109)
+    # ------------------------------------------------------------------
+
+    def add_chunk_embedding(
+        self,
+        paper_id: str,
+        chunk_text: str,
+        context_sentence: str,
+        embedding_text: str,
+        embedding_vector: Optional[bytes],
+    ) -> str:
+        """INSERT eines Chunk-Embeddings. Gibt chunk_id (UUID) zurueck.
+
+        Args:
+            paper_id: Referenz auf papers.paper_id.
+            chunk_text: Originaler Chunk-Text.
+            context_sentence: 1-Satz-Kontext generiert via Anthropic API.
+            embedding_text: Kombinierter Text (context_sentence + chunk_text).
+            embedding_vector: Serialisierter Embedding-Vektor (bytes) oder None.
+        """
+        chunk_id = str(uuid4())
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT INTO chunk_embeddings
+              (chunk_id, paper_id, chunk_text, context_sentence, embedding_text,
+               embedding_vector, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (chunk_id, paper_id, chunk_text, context_sentence, embedding_text,
+             embedding_vector, now),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+        return chunk_id
+
+    def get_chunk_embeddings(self, paper_id: str) -> list[dict]:
+        """Gibt alle Chunk-Embeddings fuer ein Paper zurueck."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        rows = conn.execute(
+            "SELECT * FROM chunk_embeddings WHERE paper_id = ? ORDER BY created_at",
+            (paper_id,),
+        ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
     def lock_vault(self, slug: str) -> None:
         """Setzt Vault-Lock fuer einen Slug. Idempotent."""
         now = int(time.time())

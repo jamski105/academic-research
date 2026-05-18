@@ -152,3 +152,15 @@ CREATE TABLE IF NOT EXISTS vault_locked_status (
   slug      TEXT PRIMARY KEY,
   locked_at INTEGER NOT NULL
 );
+
+-- v6.5: Contextual Embeddings + Hybrid Retrieval (#109)
+-- Speichert Chunk-Texte mit kontextuellem 1-Satz-Kontext und Embedding-Text.
+CREATE TABLE IF NOT EXISTS chunk_embeddings (
+  chunk_id         TEXT PRIMARY KEY,
+  paper_id         TEXT NOT NULL REFERENCES papers(paper_id),
+  chunk_text       TEXT NOT NULL,
+  context_sentence TEXT NOT NULL,
+  embedding_text   TEXT NOT NULL,
+  embedding_vector BLOB,
+  created_at       INTEGER NOT NULL
+);
