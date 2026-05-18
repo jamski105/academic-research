@@ -26,6 +26,9 @@ pdfs/
 # Debug logs
 firebase-debug.log
 
+# Test artifacts (notebook-bundle output)
+/notebook-bundle-*.pdf
+
 # Secrets
 .env
 .env.local
