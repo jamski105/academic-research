@@ -226,10 +226,10 @@ def resolve_pdf_url(
       3 Module OA URLs   (metadata)
       4 Direct URL       (metadata)
       5 arXiv Title      (title)
-      7 DOAB             (isbn/title) — only when paper type is book/chapter
-      6 OpenAccessButton (DOI)
-      7 DOAB             (isbn/title) — non-book fallback
-      8 EuropePMC        (DOI) — biomed prefix prioritised, else last fallback
+      6 DOAB             (isbn/title) — books/chapters only, before OpenAccessButton
+      7 OpenAccessButton (DOI)
+      8 DOAB             (isbn/title) — non-book fallback
+      9 EuropePMC        (DOI) — final fallback for all DOIs
     """
     doi = normalize_doi(paper.get("doi"))
     last_error = None
@@ -273,20 +273,17 @@ def resolve_pdf_url(
         except Exception as exc:
             last_error = str(exc)
 
-    # Tier 7 (book priority): DOAB first for books/chapters
+    # Tier 6 (book priority): DOAB first for books/chapters
     isbn_or_title = paper.get("isbn") or paper.get("title") or ""
-    doab_tried = False
     if is_book and isbn_or_title:
         try:
             url = tier_doab(client, isbn_or_title)
             if url:
                 return url, "doab", last_error
-            doab_tried = True
         except Exception as exc:
             last_error = str(exc)
-            doab_tried = True
 
-    # Tier 6: OpenAccessButton
+    # Tier 7: OpenAccessButton
     if doi:
         try:
             url = tier_openaccessbutton(client, doi)
@@ -295,8 +292,8 @@ def resolve_pdf_url(
         except Exception as exc:
             last_error = str(exc)
 
-    # Tier 7 (non-book fallback): DOAB for non-book types
-    if not doab_tried and isbn_or_title:
+    # Tier 8: DOAB for non-book types
+    if not is_book and isbn_or_title:
         try:
             url = tier_doab(client, isbn_or_title)
             if url:
@@ -304,7 +301,7 @@ def resolve_pdf_url(
         except Exception as exc:
             last_error = str(exc)
 
-    # Tier 8: EuropePMC — biomed DOIs prioritised; all DOIs as final fallback
+    # Tier 9: EuropePMC — final fallback for all DOIs
     if doi:
         try:
             url = tier_europepmc(client, doi)
