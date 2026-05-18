@@ -248,8 +248,7 @@ def run_import(
 
     # Vault-Schema initialisieren falls DB neu
     from mcp.academic_vault.db import VaultDB
-    db = VaultDB(db_path)
-    db.init_schema()
+    VaultDB(db_path).init_schema()
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         for item in all_items:
