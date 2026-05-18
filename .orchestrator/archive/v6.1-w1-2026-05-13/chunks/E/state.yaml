@@ -1,0 +1,19 @@
+chunk_id: E
+phase: pr_ready
+last_signal_from_l1:
+  kind: pr_ready
+  ts: "2026-05-13T07:47:13Z"
+  payload:
+    commit: 92e97a12e470aea649dab1e85da01f23c3286aa6
+last_signal_from_l0: {}
+gate_b_revisions: 0
+gate_c_revisions: 0
+counters:
+  review_fix: 0
+  gate_b_revisions: 0
+  gate_c_revisions: 0
+artifacts:
+  spec_path: specs/v6.1/E.md
+  plan_path: specs/v6.1/E-plan.md
+open_questions: []
+phase_history: []
