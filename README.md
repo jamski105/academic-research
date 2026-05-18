@@ -15,6 +15,28 @@ Ein modulares Claude-Code-Plugin für akademische Arbeiten (Facharbeit, Bachelor
 
 ---
 
+<!-- SCIHUB-DISCLAIMER-BLOCK: Nicht verschieben, nicht entfernen. G ergaenzt diesen Block in Welle 2 nur, aendert ihn nicht. -->
+> [!CAUTION]
+> **SciHub-Tier (F18) — Optionaler Last-Resort: Rechtlich umstritten, deine Verantwortung**
+>
+> Dieses Plugin kann optional SciHub als letzten Fallback nutzen, wenn alle anderen Quellen (Open Access,
+> institutionelle Lizenzen, Fernleihe) keinen Zugang liefern.
+>
+> **SciHub ist per Default DEAKTIVIERT.** Aktivierung nur nach explizitem Opt-in beim Setup:
+>
+> ```
+> /academic-research:setup
+> # → Frage: "SciHub-Tier aktivieren? (Rechtlich umstritten — Nutzung auf deine eigene Verantwortung)"
+> ```
+>
+> - SciHub operiert rechtlich in einer umstrittenen Zone — die Nutzung kann in deinem Land gegen das Urheberrecht verstossen.
+> - Jeder via SciHub bezogene Volltext wird im Vault mit `provenance:scihub` getaggt.
+> - Im Output erscheint stets der Hinweis: *"Quelle via SciHub bezogen — bitte zusätzlich legalen Zugriff klären."*
+> - **Du trägst die alleinige rechtliche Verantwortung für die Nutzung des SciHub-Tiers.**
+<!-- END SCIHUB-DISCLAIMER-BLOCK -->
+
+---
+
 ## Inhalt
 
 1. [Für wen ist das?](#für-wen-ist-das)
