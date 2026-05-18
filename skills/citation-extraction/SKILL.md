@@ -35,17 +35,8 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 | Harvard | `references/harvard.md` |
 | Chicago | `references/chicago.md` |
 | DIN 1505-2 | `references/din1505.md` |
-| MLA | `references/mla.md` |
-| Vancouver | `references/vancouver.md` |
-| Springer Author-Date | `references/springer-author-date.md` |
 
 Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
-
-**Stil-Domains:**
-- APA7, Harvard, Chicago, MLA → Geistes-/Sozialwissenschaften
-- DIN 1505-2 → Deutschsprachige Norm (alle Disziplinen)
-- Vancouver → Medizin, Naturwissenschaften (nummeriertes System)
-- Springer Author-Date → Springer-Verlag DACH, interdisziplinaere Naturwissenschaften
 
 **Typ-basierte Erweiterung:** Falls die Quelle `type: chapter` hat (Buchkapitel aus Sammelband),
 lade zusaetzlich `references/book-chapter-de.md` und nutze die dort definierten
