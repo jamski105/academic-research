@@ -21,9 +21,13 @@
     },
     "licensed_sites": {
       "type": "array",
-      "items": {"type": "string"},
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\-\\.]*[a-zA-Z0-9])?$",
+        "description": "Hostname ohne Protokoll, Pfad oder Wildcard (z.B. link.springer.com)"
+      },
       "minItems": 1,
-      "description": "Allowlist der lizenzierten Hosts fuer auth-helper"
+      "description": "Allowlist der lizenzierten Hosts fuer auth-helper (keine Wildcards, keine URLs)"
     },
     "bib_pickup_url": {
       "type": "string",

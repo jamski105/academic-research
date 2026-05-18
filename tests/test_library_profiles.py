@@ -105,6 +105,20 @@ class TestSchemaValidierungNegativ:
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
 
+    def test_wildcard_host_abgelehnt(self):
+        """Wildcard-Hosts wie *.springer.com sind in licensed_sites verboten."""
+        profile = self._base_profile()
+        profile["licensed_sites"] = ["*.springer.com"]
+        with pytest.raises(ValidationError):
+            validate(instance=profile, schema=load_schema())
+
+    def test_url_als_host_abgelehnt(self):
+        """Vollstaendige URLs wie https://springer.com sind als licensed_sites-Eintraege verboten."""
+        profile = self._base_profile()
+        profile["licensed_sites"] = ["https://springer.com"]
+        with pytest.raises(ValidationError):
+            validate(instance=profile, schema=load_schema())
+
 
 # ── Onboard-Hook-Tests ───────────────────────────────────────────────────────
 
