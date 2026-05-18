@@ -35,6 +35,9 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 | Harvard | `references/harvard.md` |
 | Chicago | `references/chicago.md` |
 | DIN 1505-2 | `references/din1505.md` |
+| MLA | `references/mla.md` |
+| Vancouver | `references/vancouver.md` |
+| Springer Author-Date | `references/springer-author-date.md` |
 
 Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
 
@@ -146,24 +149,11 @@ Extrahierte Zitate dem User gruppiert nach Quelle präsentieren, mit:
 
 Formatiere Zitate inline nach dem in `./academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
 
-#### Unterstützte Stile
-
-| Stil | In-Text-Beispiel | Bibliografie-Beispiel |
-|------|-------------------|-----------------------|
-| APA7 | (Müller, 2023, S. 45) | Müller, H. (2023). *Title*. Journal, 12(3), 44-67. |
-| IEEE | [1, p. 45] | [1] H. Müller, "Title," *Journal*, vol. 12, no. 3, pp. 44-67, 2023. |
-| Harvard | (Müller 2023, p. 45) | Müller, H. 2023, 'Title', *Journal*, vol. 12, no. 3, pp. 44-67. |
-| Chicago | (Müller 2023, 45) | Müller, H. 2023. "Title." *Journal* 12 (3): 44-67. |
-| BibTeX | `\cite{mueller2023}` | `@article{mueller2023, author={Müller, H.}, title={Title}, ...}` |
-
 #### Output-Formate
 
-Claude erzeugt bei Bedarf:
-- **In-text-Zitat** — exakt im konfigurierten Stil mit Seitenzahl
-- **Literaturverzeichnis-Eintrag** — formatiert pro Quelle
-- **BibTeX-Datei** — für LaTeX-Integration (in `~/.academic-research/citations.bib` persistieren)
-- **Markdown-Bibliografie** — für Review, sortiert nach Autor/Jahr
-- **JSON** — wenn andere Skills die Daten strukturiert brauchen
+Claude erzeugt bei Bedarf: In-text-Zitat, Literaturverzeichnis-Eintrag,
+BibTeX (`~/.academic-research/citations.bib`), Markdown-Bibliografie, JSON.
+Details zu jedem Stil in der Variant-Referenz-Datei (s.o.).
 
 ### 6. Kapitelzuordnung
 
