@@ -74,6 +74,7 @@ Rufe auth-helper auf mit:
 
 auth-helper gibt zurueck:
 - `{status: "authenticated", auth_type: "Shibboleth", ...}` → weiter mit Download
+- `{status: "not_required", auth_type: "oa-only"}` → weiter mit Download (OA-Zugang ohne Login)
 - `{status: "auth_failed", reason: "..."}` → `{"status": "pickup_required", "source_subagent": "nationallizenzen", "url": "<url>", "reason": "auth_failed: <reason>"}`
 - `{status: "captcha"}` → `{"status": "captcha", "source_subagent": "nationallizenzen", "reason": "CAPTCHA erkannt — Screenshot erstellt"}`
 

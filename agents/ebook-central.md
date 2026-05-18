@@ -58,6 +58,7 @@ Rufe auth-helper auf mit:
 
 auth-helper gibt zurueck:
 - `{status: "authenticated", auth_type: "Shibboleth"|"HAN", ...}` → weiter mit Discovery
+- `{status: "not_required", auth_type: "oa-only"}` → weiter mit Discovery (unerwarteter OA-Zustand; behandle wie authenticated)
 - `{status: "auth_failed", reason: "..."}` → `{"status": "pickup_required", "source_subagent": "ebook-central", "url": "https://ebookcentral.proquest.com", "reason": "auth_failed: <reason>"}`
 - `{status: "captcha"}` → `{"status": "captcha", "source_subagent": "ebook-central", "reason": "CAPTCHA erkannt — Screenshot erstellt"}`
 
