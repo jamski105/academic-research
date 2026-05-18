@@ -411,3 +411,234 @@ class VaultDB:
         if own_conn:
             conn.close()
         return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------
+    # Decisions CRUD (v6.4)
+    # ------------------------------------------------------------------
+
+    def add_decision(
+        self,
+        category: Optional[str],
+        text: str,
+        rationale: Optional[str] = None,
+    ) -> str:
+        """INSERT einer Decision. Gibt decision_id (UUID) zurueck."""
+        decision_id = str(uuid4())
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT INTO decisions (decision_id, category, text, rationale, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (decision_id, category, text, rationale, now),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+        return decision_id
+
+    def supersede_decision(self, decision_id: str, superseded_by: str) -> None:
+        """Setzt superseded_by fuer eine Decision."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            "UPDATE decisions SET superseded_by = ? WHERE decision_id = ?",
+            (superseded_by, decision_id),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+
+    def list_decisions(
+        self,
+        category: Optional[str] = None,
+        active_only: bool = True,
+    ) -> list[dict]:
+        """Gibt Decisions zurueck, optional nach Kategorie und/oder active gefiltert."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        clauses = []
+        params: list = []
+        if category is not None:
+            clauses.append("category = ?")
+            params.append(category)
+        if active_only:
+            clauses.append("superseded_by IS NULL")
+        where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
+        rows = conn.execute(
+            f"SELECT * FROM decisions {where} ORDER BY created_at DESC",
+            params,
+        ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------
+    # Excluded Sources (v6.4)
+    # ------------------------------------------------------------------
+
+    def add_excluded_source(self, paper_id: str, reason: Optional[str] = None) -> None:
+        """INSERT or REPLACE eines excluded_source-Eintrags."""
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO excluded_sources (paper_id, reason, excluded_at)
+            VALUES (?, ?, ?)
+            """,
+            (paper_id, reason, now),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+
+    def list_excluded_sources(self) -> list[dict]:
+        """Gibt alle excluded_sources zurueck."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        rows = conn.execute("SELECT * FROM excluded_sources ORDER BY excluded_at DESC").fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    def is_excluded(self, paper_id: str) -> bool:
+        """Prueft ob paper_id in excluded_sources ist."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        row = conn.execute(
+            "SELECT 1 FROM excluded_sources WHERE paper_id = ?", (paper_id,)
+        ).fetchone()
+        if own_conn:
+            conn.close()
+        return row is not None
+
+    # ------------------------------------------------------------------
+    # Risk-of-Bias Assessments (v6.4)
+    # ------------------------------------------------------------------
+
+    def add_risk_of_bias(
+        self,
+        paper_id: str,
+        study_type: str,
+        domain_scores_json: str,
+    ) -> str:
+        """INSERT eines RoB-Assessments. Gibt assessment_id (UUID) zurueck."""
+        assessment_id = str(uuid4())
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT INTO risk_of_bias_assessments
+              (assessment_id, paper_id, study_type, domain_scores_json, ts)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (assessment_id, paper_id, study_type, domain_scores_json, now),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+        return assessment_id
+
+    def list_risk_of_bias(
+        self,
+        paper_id: Optional[str] = None,
+    ) -> list[dict]:
+        """Gibt RoB-Assessments zurueck, optional nach paper_id gefiltert."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        if paper_id is not None:
+            rows = conn.execute(
+                "SELECT * FROM risk_of_bias_assessments WHERE paper_id = ? ORDER BY ts DESC",
+                (paper_id,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM risk_of_bias_assessments ORDER BY ts DESC"
+            ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------
+    # Score History (v6.4)
+    # ------------------------------------------------------------------
+
+    def add_score_snapshot(
+        self,
+        paper_id: str,
+        session_id: str,
+        scores_json: str,
+    ) -> str:
+        """INSERT eines Score-Snapshots. Gibt snapshot_id (UUID) zurueck."""
+        snapshot_id = str(uuid4())
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT INTO score_history (snapshot_id, paper_id, session_id, ts, scores_json)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (snapshot_id, paper_id, session_id, now, scores_json),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+        return snapshot_id
+
+    def get_score_history(
+        self,
+        paper_id: str,
+        k: Optional[int] = None,
+    ) -> list[dict]:
+        """Gibt Score-History fuer ein Paper zurueck, nach ts DESC sortiert."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        if k is not None:
+            rows = conn.execute(
+                "SELECT * FROM score_history WHERE paper_id = ? ORDER BY ts DESC LIMIT ?",
+                (paper_id, k),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM score_history WHERE paper_id = ? ORDER BY ts DESC",
+                (paper_id,),
+            ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    # ------------------------------------------------------------------
+    # Vault Lock (v6.4)
+    # ------------------------------------------------------------------
+
+    def lock_vault(self, slug: str) -> None:
+        """Setzt Vault-Lock fuer einen Slug. Idempotent."""
+        now = int(time.time())
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO vault_locked_status (slug, locked_at)
+            VALUES (?, ?)
+            """,
+            (slug, now),
+        )
+        if own_conn:
+            conn.commit()
+            conn.close()
+
+    def is_locked(self, slug: str) -> bool:
+        """Prueft ob Vault-Lock fuer Slug gesetzt ist."""
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        row = conn.execute(
+            "SELECT 1 FROM vault_locked_status WHERE slug = ?", (slug,)
+        ).fetchone()
+        if own_conn:
+            conn.close()
+        return row is not None

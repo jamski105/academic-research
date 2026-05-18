@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://academic-research/material-passport.schema.json",
+  "title": "MaterialPassport",
+  "description": "Reproduzierbarkeits-Passport fuer ein akademisches Forschungsprojekt.",
+  "type": "object",
+  "required": [
+    "slug",
+    "paper_ids",
+    "dois",
+    "score_algo_version",
+    "plugin_version",
+    "decisions_snapshot",
+    "passport_hash",
+    "created_at"
+  ],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Projekt-Slug (Bezeichner des Forschungsprojekts)."
+    },
+    "paper_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Liste aller paper_ids im Vault."
+    },
+    "dois": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Liste aller DOIs der Papers."
+    },
+    "download_tier": {
+      "type": "string",
+      "enum": ["full", "metadata-only"],
+      "description": "Ob PDFs vorhanden (full) oder nur Metadaten (metadata-only)."
+    },
+    "scores_5d": {
+      "type": "object",
+      "description": "5D-Scores pro paper_id (letzter Snapshot).",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "score_algo_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Version des Score-Algorithmus."
+    },
+    "plugin_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Version des academic-research Plugins."
+    },
+    "model_versions": {
+      "type": "object",
+      "description": "Verwendete Modell-Versionen (z.B. {relevance_scorer: claude-sonnet-4-6}).",
+      "additionalProperties": { "type": "string" }
+    },
+    "per_uni_profile_hash": {
+      "type": ["string", "null"],
+      "description": "SHA-256-Hash des Per-Uni-Profils (optional)."
+    },
+    "decisions_snapshot": {
+      "type": "array",
+      "description": "Snapshot aller aktiven Decisions zum Zeitpunkt des Exports.",
+      "items": {
+        "type": "object",
+        "required": ["decision_id", "text"],
+        "properties": {
+          "decision_id": { "type": "string" },
+          "category": { "type": ["string", "null"] },
+          "text": { "type": "string" },
+          "rationale": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "pdf_sha256_hashes": {
+      "type": "object",
+      "description": "SHA-256-Hashes der PDFs pro paper_id.",
+      "additionalProperties": { "type": "string" }
+    },
+    "created_at": {
+      "type": "integer",
+      "description": "Unix-Timestamp des Passport-Exports."
+    },
+    "passport_hash": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "description": "SHA-256-Hash ueber alle anderen Passport-Felder."
+    }
+  },
+  "additionalProperties": false
+}

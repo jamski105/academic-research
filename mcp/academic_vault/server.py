@@ -7,6 +7,7 @@ Start via: python -m mcp.academic_vault.server
 """
 import json
 import os
+from pathlib import Path
 from uuid import uuid4
 from typing import Optional
 
@@ -282,6 +283,241 @@ def set_page_offset(db_path: str, paper_id: str, offset: int) -> None:
     db.set_page_offset(paper_id, offset)
 
 
+# ---------------------------------------------------------------------------
+# Decision-Log Funktionen (v6.4, #90)
+# ---------------------------------------------------------------------------
+
+def add_decision(
+    db_path: str,
+    category: Optional[str],
+    text: str,
+    rationale: Optional[str] = None,
+) -> str:
+    """Fuegt Decision in Vault ein. Gibt decision_id zurueck."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.add_decision(category=category, text=text, rationale=rationale)
+
+
+def list_decisions(
+    db_path: str,
+    category: Optional[str] = None,
+    active_only: bool = True,
+) -> list[dict]:
+    """Gibt Decisions zurueck. Optionaler Kategorie-Filter und active_only-Flag."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.list_decisions(category=category, active_only=active_only)
+
+
+def supersede_decision(db_path: str, decision_id: str, superseded_by: str) -> None:
+    """Markiert eine Decision als superseded."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    db.supersede_decision(decision_id=decision_id, superseded_by=superseded_by)
+
+
+def add_excluded_source(
+    db_path: str,
+    paper_id: str,
+    reason: Optional[str] = None,
+) -> None:
+    """Fuegt paper_id zu excluded_sources hinzu."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    db.add_excluded_source(paper_id=paper_id, reason=reason)
+
+
+def list_excluded_sources(db_path: str) -> list[dict]:
+    """Gibt alle excluded_sources zurueck."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.list_excluded_sources()
+
+
+def is_excluded(db_path: str, paper_id: str) -> bool:
+    """Gibt True zurueck wenn paper_id in excluded_sources ist."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.is_excluded(paper_id=paper_id)
+
+
+# ---------------------------------------------------------------------------
+# Risk-of-Bias Funktionen (v6.4, #100)
+# ---------------------------------------------------------------------------
+
+def add_risk_of_bias(
+    db_path: str,
+    paper_id: str,
+    study_type: str,
+    domain_scores: "dict | str",
+) -> str:
+    """Fuegt RoB-Assessment in Vault ein. Gibt assessment_id zurueck.
+
+    domain_scores: dict oder JSON-String mit Bewertungen pro Domaene.
+    """
+    if isinstance(domain_scores, dict):
+        domain_scores_json = json.dumps(domain_scores, ensure_ascii=False)
+    else:
+        domain_scores_json = str(domain_scores)
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.add_risk_of_bias(
+        paper_id=paper_id,
+        study_type=study_type,
+        domain_scores_json=domain_scores_json,
+    )
+
+
+def list_risk_of_bias(
+    db_path: str,
+    paper_id: Optional[str] = None,
+) -> list[dict]:
+    """Gibt RoB-Assessments zurueck, optional nach paper_id gefiltert."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.list_risk_of_bias(paper_id=paper_id)
+
+
+# ---------------------------------------------------------------------------
+# Score-History Funktionen (v6.4, #102)
+# ---------------------------------------------------------------------------
+
+def add_score_snapshot(
+    db_path: str,
+    paper_id: str,
+    session_id: str,
+    scores: "dict | str",
+) -> str:
+    """Fuegt Score-Snapshot in Vault ein. Gibt snapshot_id zurueck.
+
+    scores: dict oder JSON-String mit Score-Werten.
+    """
+    if isinstance(scores, dict):
+        scores_json = json.dumps(scores, ensure_ascii=False)
+    else:
+        scores_json = str(scores)
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.add_score_snapshot(
+        paper_id=paper_id,
+        session_id=session_id,
+        scores_json=scores_json,
+    )
+
+
+def get_score_history(
+    db_path: str,
+    paper_id: str,
+    k: Optional[int] = None,
+) -> list[dict]:
+    """Gibt Score-History fuer ein Paper zurueck (neueste zuerst)."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.get_score_history(paper_id=paper_id, k=k)
+
+
+# ---------------------------------------------------------------------------
+# Material Passport / Vault Lock Funktionen (v6.4, #104)
+# ---------------------------------------------------------------------------
+
+def lock_passport(db_path: str, slug: str) -> None:
+    """Setzt Vault-Lock fuer Slug. Vault wird read-only."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    db.lock_vault(slug=slug)
+
+
+def is_locked(db_path: str, slug: str) -> bool:
+    """Gibt True zurueck wenn Vault fuer Slug gelockt ist."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.is_locked(slug=slug)
+
+
+def export_material_passport(
+    db_path: str,
+    slug: str,
+    output_dir: str = ".",
+    score_algo_version: str = "1.0",
+    plugin_version: str = "6.4",
+    model_versions: Optional[dict] = None,
+    per_uni_profile_hash: Optional[str] = None,
+) -> str:
+    """Exportiert Material-Passport als material-passport.json.
+
+    Gibt den Pfad zur erzeugten Datei zurueck.
+    """
+    from .material_passport import build_passport, validate_passport
+
+    db = VaultDB(db_path)
+    db.init_schema()
+
+    conn = VaultDB._open(db_path)
+    try:
+        paper_rows = conn.execute(
+            "SELECT paper_id, doi, csl_json FROM papers ORDER BY paper_id"
+        ).fetchall()
+    finally:
+        conn.close()
+
+    paper_ids = [r["paper_id"] for r in paper_rows]
+    dois = [r["doi"] for r in paper_rows if r["doi"]]
+    decisions = db.list_decisions(active_only=True)
+
+    scores_5d: dict = {}
+    for pid in paper_ids:
+        history = db.get_score_history(pid, k=1)
+        if history:
+            scores_5d[pid] = json.loads(history[0]["scores_json"])
+
+    pdf_hashes = _compute_pdf_hashes(db_path)
+
+    passport = build_passport(
+        slug=slug,
+        paper_ids=paper_ids,
+        dois=dois,
+        scores_5d=scores_5d,
+        score_algo_version=score_algo_version,
+        plugin_version=plugin_version,
+        model_versions=model_versions or {},
+        per_uni_profile_hash=per_uni_profile_hash,
+        decisions_snapshot=decisions,
+        pdf_hashes=pdf_hashes,
+    )
+
+    validate_passport(passport)
+
+    out_path = str(Path(output_dir) / "material-passport.json")
+    Path(out_path).write_text(
+        json.dumps(passport, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    return out_path
+
+
+def _compute_pdf_hashes(db_path: str) -> dict:
+    """SHA-256-Hashes aller vorhandenen PDFs. Gibt {paper_id: hex_hash} zurueck."""
+    import hashlib
+    conn = VaultDB._open(db_path)
+    try:
+        rows = conn.execute(
+            "SELECT paper_id, pdf_path FROM papers WHERE pdf_path IS NOT NULL"
+        ).fetchall()
+    finally:
+        conn.close()
+
+    hashes = {}
+    for row in rows:
+        pdf_path = row["pdf_path"]
+        if pdf_path and Path(pdf_path).exists():
+            sha = hashlib.sha256()
+            with open(pdf_path, "rb") as f:
+                for chunk in iter(lambda: f.read(65536), b""):
+                    sha.update(chunk)
+            hashes[row["paper_id"]] = sha.hexdigest()
+    return hashes
+
+
 def get_printed_page(db_path: str, paper_id: str, pdf_page: int) -> int:
     """Berechnet gedruckte Seitenzahl: printed_page = pdf_page - page_offset.
 
@@ -461,6 +697,100 @@ def _build_mcp_server():
     def _vault_list_figures(paper_id: str) -> list[dict]:
         """Gibt alle Figures fuer ein Paper, nach page sortiert."""
         return list_figures(db_path, paper_id)
+
+    # -----------------------------------------------------------------------
+    # v6.4: Decision-Log Tools (#90)
+    # -----------------------------------------------------------------------
+
+    @mcp.tool(name="vault.add_decision")
+    def _vault_add_decision(
+        category: str = None,
+        text: str = "",
+        rationale: str = None,
+    ) -> str:
+        """Fuegt Decision in den Vault ein. Gibt decision_id zurueck."""
+        return add_decision(db_path, category=category, text=text, rationale=rationale)
+
+    @mcp.tool(name="vault.list_decisions")
+    def _vault_list_decisions(
+        category: str = None,
+        active_only: bool = True,
+    ) -> list[dict]:
+        """Gibt Decisions zurueck. Optionaler category-Filter, active_only-Flag."""
+        return list_decisions(db_path, category=category, active_only=active_only)
+
+    @mcp.tool(name="vault.add_excluded_source")
+    def _vault_add_excluded_source(paper_id: str, reason: str = None) -> None:
+        """Fuegt paper_id zu excluded_sources hinzu (verhindert Re-Vorschlag)."""
+        add_excluded_source(db_path, paper_id=paper_id, reason=reason)
+
+    @mcp.tool(name="vault.is_excluded")
+    def _vault_is_excluded(paper_id: str) -> bool:
+        """Prueft ob paper_id in excluded_sources ist."""
+        return is_excluded(db_path, paper_id=paper_id)
+
+    # -----------------------------------------------------------------------
+    # v6.4: Risk-of-Bias Tools (#100)
+    # -----------------------------------------------------------------------
+
+    @mcp.tool(name="vault.add_risk_of_bias")
+    def _vault_add_risk_of_bias(
+        paper_id: str,
+        study_type: str,
+        domain_scores: str,
+    ) -> str:
+        """Fuegt RoB-Assessment ein. domain_scores als JSON-String. Gibt assessment_id zurueck."""
+        return add_risk_of_bias(db_path, paper_id=paper_id, study_type=study_type, domain_scores=domain_scores)
+
+    @mcp.tool(name="vault.list_risk_of_bias")
+    def _vault_list_risk_of_bias(paper_id: str = None) -> list[dict]:
+        """Gibt RoB-Assessments zurueck, optional nach paper_id gefiltert."""
+        return list_risk_of_bias(db_path, paper_id=paper_id)
+
+    # -----------------------------------------------------------------------
+    # v6.4: Score-Trajectory Tools (#102)
+    # -----------------------------------------------------------------------
+
+    @mcp.tool(name="vault.add_score_snapshot")
+    def _vault_add_score_snapshot(
+        paper_id: str,
+        session_id: str,
+        scores: str,
+    ) -> str:
+        """Fuegt Score-Snapshot ein. scores als JSON-String. Gibt snapshot_id zurueck."""
+        return add_score_snapshot(db_path, paper_id=paper_id, session_id=session_id, scores=scores)
+
+    @mcp.tool(name="vault.get_score_history")
+    def _vault_get_score_history(paper_id: str, k: int = None) -> list[dict]:
+        """Gibt Score-History fuer ein Paper zurueck (neueste zuerst)."""
+        return get_score_history(db_path, paper_id=paper_id, k=k)
+
+    # -----------------------------------------------------------------------
+    # v6.4: Material Passport Tools (#104)
+    # -----------------------------------------------------------------------
+
+    @mcp.tool(name="vault.export_material_passport")
+    def _vault_export_material_passport(
+        slug: str,
+        output_dir: str = ".",
+        score_algo_version: str = "1.0",
+        plugin_version: str = "6.4",
+    ) -> str:
+        """Exportiert material-passport.json. Gibt Dateipfad zurueck."""
+        return export_material_passport(
+            db_path, slug=slug, output_dir=output_dir,
+            score_algo_version=score_algo_version, plugin_version=plugin_version,
+        )
+
+    @mcp.tool(name="vault.lock_passport")
+    def _vault_lock_passport(slug: str) -> None:
+        """Setzt Vault-Lock fuer Slug (macht Vault read-only)."""
+        lock_passport(db_path, slug=slug)
+
+    @mcp.tool(name="vault.is_locked")
+    def _vault_is_locked(slug: str) -> bool:
+        """Prueft ob Vault fuer Slug gelockt ist."""
+        return is_locked(db_path, slug=slug)
 
     return mcp
 
