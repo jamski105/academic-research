@@ -26,7 +26,7 @@ ausschließlich via `document-skills:xlsx`-Skill.
 |----|-----------|
 | `/academic-research:pickup` aufrufbar | `commands/pickup.md` mit Slash-Command-Definition |
 | 4 Sheets nach Verfügbarkeitsstatus | `Vor Ort verfügbar`, `Fernleihe`, `Online OA`, `Lizenz nötig` |
-| Code128-Barcodes als Zellbild im Books-Sheet | `scripts/barcode.py` → PNG → `insert_image` via xlsx-Skill |
+| Code128-Barcodes als Zellbild im Books-Sheet | `scripts/barcode_utils.py` → PNG → `insert_image` via xlsx-Skill |
 | Excel via `document-skills:xlsx` only | Skill-Aufruf in `commands/pickup.md`; barcode.py nur für PNG-Erzeugung |
 | Test mit 5 Quellen, valide .xlsx | `tests/test_pickup_excel.py` + `tests/fixtures/pickup/` |
 | Alle Vault-Einträge aufnehmen | Sheet-Zuordnung via `availability_status`, kein OA-Filter |
@@ -42,7 +42,7 @@ ausschließlich via `document-skills:xlsx`-Skill.
 ```
 
 1. Liest Vault-Einträge (JSON-Frontmatter oder YAML) aus der Auswahl.
-2. Ruft `scripts/barcode.py generate_isbn_barcode(isbn)` für alle Bücher auf
+2. Ruft `scripts/barcode_utils.py generate_isbn_barcode(isbn)` für alle Bücher auf
    → gibt temporäre PNG-Pfade zurück.
 3. Baut die 4-Sheet-Struktur auf.
 4. Ruft `document-skills:xlsx`-Skill auf:
@@ -51,7 +51,7 @@ ausschließlich via `document-skills:xlsx`-Skill.
    - `insert_image` für Barcode-PNGs im Books-Sheet
    - `save_workbook` → `pickup-list.xlsx`
 
-### 3.2 Barcode-Generator (`scripts/barcode.py`)
+### 3.2 Barcode-Generator (`scripts/barcode_utils.py`)
 
 - Nutzt `python-barcode`-Lib (Code128-Format).
 - `generate_isbn_barcode(isbn: str, output_path: str) -> str`
