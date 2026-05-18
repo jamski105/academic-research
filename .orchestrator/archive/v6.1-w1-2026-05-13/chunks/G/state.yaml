@@ -1,0 +1,23 @@
+chunk_id: G
+phase: implementation_complete
+last_signal_from_l1:
+  kind: implementation_complete
+  ts: "2026-05-13T10:00:00Z"
+  payload:
+    commit: "9701e9ed64836b7ed1cd6b56ac90fee31ae637fb"
+    branch: "feat/v6.1-G-eval-coverage"
+    tests_passed: 275
+    tests_failed_preexisting: 1
+    preexisting_failure: "test_token_reduction[chapter-writer] -- chapter-writer/SKILL.md gewachsen durch anderen Chunk"
+last_signal_from_l0: {}
+gate_b_revisions: 0
+gate_c_revisions: 0
+counters:
+  review_fix: 0
+  gate_b_revisions: 0
+  gate_c_revisions: 0
+artifacts:
+  spec_path: specs/v6.1/G.md
+  plan_path: specs/v6.1/G-plan.md
+open_questions: []
+phase_history: []

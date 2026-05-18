@@ -1,0 +1,6 @@
+phase: spec_review
+last_signal_from_l1:
+  kind: spec_ready
+  ts: "2026-05-13T08:07:21Z"
+  payload:
+    commit: "8f2e147cdb592a2e016222708a7387672fae2a33"

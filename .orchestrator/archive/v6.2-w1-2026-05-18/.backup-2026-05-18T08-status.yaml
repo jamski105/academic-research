@@ -1,0 +1,308 @@
+schema_version: 3
+milestone:
+  name: v6.2
+  wave: 1
+  github_milestone: v6.2
+  github_label: null
+started_at: 2026-05-13T09:35:08Z
+last_action_at: "2026-05-18T08:02:15Z"
+config_hash: 7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2
+phase_global: wave-1-stage-1
+plugin_version: "0.4.8"
+lock:
+  issue_number: null
+  current_holder:
+    machine: MAC-06094C41
+    session: 5278B4EC-A370-47B8-9062-F38E5491ACF3
+    acquired_at: "2026-05-18T08:02:15Z"
+    expires_at: "2026-05-18T16:02:15Z"
+state_branch:
+  name: mmp/state/v6.2
+  last_pushed_sha: null
+tickets:
+  - number: 77
+    title: "v6.2 · F5 — /academic-research:pickup Bibliotheks-Excel (4 Sheets, Code128-Barcodes)"
+    labels: [enhancement, v6, library]
+    url: https://github.com/jamski105/academic-research/issues/77
+  - number: 78
+    title: "v6.2 · F6 — Auto-Download-Pipeline auf 8 Tiers erweitern (OpenAccessButton, DOAB, EuropePMC)"
+    labels: [enhancement, v6, books]
+    url: https://github.com/jamski105/academic-research/issues/78
+  - number: 79
+    title: "v6.2 · F11 — Cluster-Visualisierung als Mermaid-Diagramm"
+    labels: [enhancement, v6]
+    url: https://github.com/jamski105/academic-research/issues/79
+  - number: 80
+    title: "v6.2 · F16 — Master-Agent book-fetcher (Sonnet, browser-use only Subagenten-Orchestrator)"
+    labels: [enhancement, v6, browser-use, books]
+    url: https://github.com/jamski105/academic-research/issues/80
+  - number: 81
+    title: "v6.2 · F16 — OA-Site-Subagenten: tib-fetcher, oapen-fetcher, doabooks-fetcher, kvk-fetcher"
+    labels: [enhancement, v6, browser-use, books]
+    url: https://github.com/jamski105/academic-research/issues/81
+  - number: 82
+    title: "v6.2 · F16 — Verlags-Site-Subagenten: springer-book, degruyter, nationallizenzen, ebook-central"
+    labels: [enhancement, v6, browser-use, books]
+    url: https://github.com/jamski105/academic-research/issues/82
+  - number: 83
+    title: "v6.2 · F16 — auth-helper Subagent (HAN, Shibboleth, EZproxy, DFN-AAI)"
+    labels: [security, v6, browser-use]
+    url: https://github.com/jamski105/academic-research/issues/83
+  - number: 84
+    title: "v6.2 · F16 — generic-fetcher Subagent (Discovery-Modus mit DOM-Heuristiken)"
+    labels: [enhancement, v6, browser-use]
+    url: https://github.com/jamski105/academic-research/issues/84
+  - number: 85
+    title: "v6.2 · F16 — /academic-research:fetch Slash-Command"
+    labels: [enhancement, v6, browser-use]
+    url: https://github.com/jamski105/academic-research/issues/85
+  - number: 86
+    title: "v6.2 · F16 — Per-Uni-Profile (4-5 DACH-Hochschul-Templates)"
+    labels: [enhancement, v6, library]
+    url: https://github.com/jamski105/academic-research/issues/86
+  - number: 87
+    title: "v6.2 · F16 — Browser-Guides für Buch-Download (TIB, OAPEN, DOAB, De Gruyter, Nationallizenzen, Ebook Central, KVK + Springer-Update)"
+    labels: [documentation, v6, browser-use]
+    url: https://github.com/jamski105/academic-research/issues/87
+open_questions: []
+ticket_improvements:
+  - number: 77
+    mode: live
+    original_hash: "1d88aa16eb21e972"
+    improved_hash: "b1963e2e6c0106f9"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 78
+    mode: live
+    original_hash: "4302dfb12742fa0b"
+    improved_hash: "1fa78bb177373c05"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 79
+    mode: live
+    original_hash: "82d25061050d9848"
+    improved_hash: "70d4e188165672d6"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 80
+    mode: live
+    original_hash: "af20b69382417d44"
+    improved_hash: "d315b4645f69aef3"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 81
+    mode: live
+    original_hash: "49dc644e1310ba89"
+    improved_hash: "829c7da5bef2e4eb"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 82
+    mode: live
+    original_hash: "3675e5e926b2f776"
+    improved_hash: "970bed2885682f27"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 83
+    mode: live
+    original_hash: "6a83c229fee7453b"
+    improved_hash: "85086ede611a1df8"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 84
+    mode: live
+    original_hash: "a122458e15c9aec0"
+    improved_hash: "9d5892cf02f90381"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 85
+    mode: live
+    original_hash: "6ea18ab5ecfac42f"
+    improved_hash: "170ad5102c095422"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 86
+    mode: live
+    original_hash: "357d6dd530a960ad"
+    improved_hash: "d66177fd94255cf7"
+    applied_at: 2026-05-13T09:55:00Z
+  - number: 87
+    mode: live
+    original_hash: "04cc0c171de3e445"
+    improved_hash: "cf2939a23b49361b"
+    applied_at: 2026-05-13T09:55:00Z
+chunks:
+  - id: A
+    tickets: [87]
+    branch: feat/v6.2-A-browser-guides
+    worktree: /Users/j65674/Repos/academic-research-v6.2-A
+    phase: implementation_complete
+    depends_on: []
+    agent_id: a72fd2fdfdc88d2eb
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T10:38:00Z"
+      payload:
+        files_created: 8
+        commits: 10
+        tests_passed: null
+        note: docs-only chunk; consistency check via grep confirmed unified H2 structure across 7 new guides + springer update
+  - id: B
+    tickets: [86]
+    branch: feat/v6.2-B-uni-profile
+    worktree: /Users/j65674/Repos/academic-research-v6.2-B
+    phase: implementation_complete
+    depends_on: []
+    agent_id: adda2ed70226dea48
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T10:31:00Z"
+      payload:
+        last_commit: 6c7d4d9
+        tests_passed: 16
+        tests_failed_preexisting: 0
+        files_created: 10
+  - id: C
+    tickets: [83]
+    branch: feat/v6.2-C-auth-helper
+    worktree: /Users/j65674/Repos/academic-research-v6.2-C
+    phase: implementation_complete
+    depends_on: [B]
+    agent_id: a2c20f329bb6ee42e
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T11:02:00Z"
+      payload:
+        tests_passed: 24
+        tests_failed_preexisting: 1
+        files_created: 8
+        security_verified: true
+        credential_leak_grep_hits: 0
+        preexisting_failures:
+          - test_token_reduction[chapter-writer]
+  - id: D
+    tickets: [81]
+    branch: feat/v6.2-D-oa-subagents
+    worktree: /Users/j65674/Repos/academic-research-v6.2-D
+    phase: implementation_complete
+    depends_on: [A]
+    agent_id: a0e08302ec48794a0
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T10:55:00Z"
+      payload:
+        last_commit: 01d4490
+        tests_passed: 54
+        tests_failed_preexisting: 1
+        files_created: 8
+        preexisting_failures:
+          - test_token_reduction[chapter-writer]
+  - id: E
+    tickets: [82]
+    branch: feat/v6.2-E-publisher-subagents
+    worktree: /Users/j65674/Repos/academic-research-v6.2-E
+    phase: implementation_complete
+    depends_on: [A, C]
+    agent_id: a890780c2b994e62d
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T11:16:00Z"
+      payload:
+        last_commit: 7ca7427
+        tests_passed: 46
+        tests_failed_preexisting: 0
+        files_created: 8
+    artifacts:
+      spec_path: specs/v6.2/E.md
+      plan_path: specs/v6.2/E-plan.md
+      agents:
+        - agents/springer-book.md
+        - agents/degruyter.md
+        - agents/nationallizenzen.md
+        - agents/ebook-central.md
+      tests: tests/test_publisher_fetchers.py
+      evals: evals/publisher-fetchers/evals.json
+  - id: F
+    tickets: [84]
+    branch: feat/v6.2-F-generic-fetcher
+    worktree: /Users/j65674/Repos/academic-research-v6.2-F
+    phase: implementation_complete
+    depends_on: []
+    agent_id: a025568e945eb787e
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T10:22:51Z"
+      payload:
+        last_commit: 1a3ef9b6a7e1852fbbaf99a9fb0da8854b281a69
+        tests_passed: 22
+        tests_failed_preexisting: 1
+        files_created: 7
+        preexisting_failures:
+          - test_token_reduction[chapter-writer] — existiert auf main
+  - id: G
+    tickets: [80]
+    branch: feat/v6.2-G-book-fetcher
+    worktree: /Users/j65674/Repos/academic-research-v6.2-G
+    phase: implementation_complete
+    depends_on: [B, D, E, F]
+    agent_id: a483100da023bab77
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T11:30:00Z"
+      payload:
+        last_commit: 5aa8be6
+        tests_passed: 13
+        tests_failed_preexisting: 1
+        files_created: 6
+    artifacts:
+      spec_path: specs/v6.2/G.md
+      plan_path: specs/v6.2/G-plan.md
+      agent: agents/book-fetcher.md
+      tests: tests/test_book_fetcher.py
+      fixtures: tests/fixtures/book_fetcher_mocks/
+      helper: tests/helpers/book_fetcher_router.py
+  - id: H
+    tickets: [85]
+    branch: feat/v6.2-H-fetch-cmd
+    worktree: /Users/j65674/Repos/academic-research-v6.2-H
+    phase: spawned
+    depends_on: [G]
+    agent_id: a9f3a9243a5f38941
+  - id: I
+    tickets: [77]
+    branch: feat/v6.2-I-pickup-cmd
+    worktree: /Users/j65674/Repos/academic-research-v6.2-I
+    phase: pending
+    depends_on: [H]
+    agent_id: null
+  - id: J
+    tickets: [78]
+    branch: feat/v6.2-J-tier-pipeline
+    worktree: /Users/j65674/Repos/academic-research-v6.2-J
+    phase: implementation_complete
+    depends_on: []
+    agent_id: adc6c1e09b821ba10
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T10:50:00Z"
+      payload:
+        last_commit: 9e575a3
+        tests_passed: 14
+        tests_failed_preexisting: 1
+        files_created: 6
+        eval_hit_rate_projected: 80% (16/20)
+        preexisting_failures:
+          - test_token_reduction[chapter-writer]
+  - id: K
+    tickets: [79]
+    branch: feat/v6.2-K-cluster-mermaid
+    worktree: /Users/j65674/Repos/academic-research-v6.2-K
+    phase: implementation_complete
+    depends_on: []
+    agent_id: a13cf9ea821aa4d91
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T10:42:00Z"
+      payload:
+        last_commit: a5ed732
+        tests_passed: 8
+        tests_failed_preexisting: 1
+        files_created: 7
+        preexisting_failures:
+          - test_token_reduction[chapter-writer] — existiert auf main
+    artifacts:
+      spec_path: specs/v6.2/K.md
+      plan_path: specs/v6.2/K-plan.md
+      skill: skills/cluster-visualizer/SKILL.md
+      helper: skills/cluster-visualizer/scripts/render_mermaid.py
+      tests: tests/test_cluster_visualizer.py

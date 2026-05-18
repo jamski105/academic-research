@@ -5,17 +5,17 @@ milestone:
   github_milestone: v6.2
   github_label: null
 started_at: 2026-05-13T09:35:08Z
-last_action_at: "2026-05-13T11:03:00Z"
+last_action_at: "2026-05-18T09:00:54Z"
 config_hash: 7dfadeef190972acdb864e26c4844532256276d3292ea97bccb6aa97900807e2
-phase_global: wave-1-stage-1
+phase_global: completed
 plugin_version: "0.4.8"
 lock:
   issue_number: null
   current_holder:
     machine: MAC-06094C41
-    session: 148FA4F0-D500-48C8-932F-95AEAD1A20FA
-    acquired_at: 2026-05-13T09:35:08Z
-    expires_at: 2026-05-13T17:35:08Z
+    session: 5278B4EC-A370-47B8-9062-F38E5491ACF3
+    acquired_at: "2026-05-18T08:02:15Z"
+    expires_at: "2026-05-18T16:02:15Z"
 state_branch:
   name: mmp/state/v6.2
   last_pushed_sha: null
@@ -126,7 +126,7 @@ chunks:
     tickets: [87]
     branch: feat/v6.2-A-browser-guides
     worktree: /Users/j65674/Repos/academic-research-v6.2-A
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: []
     agent_id: a72fd2fdfdc88d2eb
     last_signal_from_l1:
@@ -137,11 +137,17 @@ chunks:
         commits: 10
         tests_passed: null
         note: docs-only chunk; consistency check via grep confirmed unified H2 structure across 7 new guides + springer update
+    pr_number: 131
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: B
     tickets: [86]
     branch: feat/v6.2-B-uni-profile
     worktree: /Users/j65674/Repos/academic-research-v6.2-B
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: []
     agent_id: adda2ed70226dea48
     last_signal_from_l1:
@@ -152,11 +158,17 @@ chunks:
         tests_passed: 16
         tests_failed_preexisting: 0
         files_created: 10
+    pr_number: 133
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: C
     tickets: [83]
     branch: feat/v6.2-C-auth-helper
     worktree: /Users/j65674/Repos/academic-research-v6.2-C
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: [B]
     agent_id: a2c20f329bb6ee42e
     last_signal_from_l1:
@@ -170,11 +182,17 @@ chunks:
         credential_leak_grep_hits: 0
         preexisting_failures:
           - test_token_reduction[chapter-writer]
+    pr_number: 136
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: D
     tickets: [81]
     branch: feat/v6.2-D-oa-subagents
     worktree: /Users/j65674/Repos/academic-research-v6.2-D
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: [A]
     agent_id: a0e08302ec48794a0
     last_signal_from_l1:
@@ -187,30 +205,27 @@ chunks:
         files_created: 8
         preexisting_failures:
           - test_token_reduction[chapter-writer]
+    pr_number: 134
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: E
     tickets: [82]
     branch: feat/v6.2-E-publisher-subagents
     worktree: /Users/j65674/Repos/academic-research-v6.2-E
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: [A, C]
     agent_id: a890780c2b994e62d
     last_signal_from_l1:
       kind: implementation_complete
-      ts: "2026-05-13T13:55:00Z"
+      ts: "2026-05-13T11:16:00Z"
       payload:
         last_commit: 7ca7427
         tests_passed: 46
-        tests_failed_preexisting: 8
+        tests_failed_preexisting: 0
         files_created: 8
-        preexisting_failures:
-          - test_dnb_isbn_hit (SystemExit:1 — pre-existing auf branch)
-          - test_openlibrary_fallback (SystemExit:1 — pre-existing)
-          - test_googlebooks_fallback (SystemExit:1 — pre-existing)
-          - test_doab_oa_check (SystemExit:1 — pre-existing)
-          - test_doab_doi_oapen_lookup (SystemExit:1 — pre-existing)
-          - test_no_source_returns_empty (SystemExit:1 — pre-existing)
-          - test_isbn_csl_has_required_fields (SystemExit:1 — pre-existing)
-          - test_token_reduction[chapter-writer] (pre-existing auf main)
     artifacts:
       spec_path: specs/v6.2/E.md
       plan_path: specs/v6.2/E-plan.md
@@ -221,11 +236,16 @@ chunks:
         - agents/ebook-central.md
       tests: tests/test_publisher_fetchers.py
       evals: evals/publisher-fetchers/evals.json
+      coverage_status: pass
+    pr_number: 138
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
   - id: F
     tickets: [84]
     branch: feat/v6.2-F-generic-fetcher
     worktree: /Users/j65674/Repos/academic-research-v6.2-F
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: []
     agent_id: a025568e945eb787e
     last_signal_from_l1:
@@ -238,32 +258,70 @@ chunks:
         files_created: 7
         preexisting_failures:
           - test_token_reduction[chapter-writer] — existiert auf main
+    pr_number: 139
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: G
     tickets: [80]
     branch: feat/v6.2-G-book-fetcher
     worktree: /Users/j65674/Repos/academic-research-v6.2-G
-    phase: pending
+    phase: merge-ready
     depends_on: [B, D, E, F]
-    agent_id: null
+    agent_id: a483100da023bab77
+    last_signal_from_l1:
+      kind: implementation_complete
+      ts: "2026-05-13T11:30:00Z"
+      payload:
+        last_commit: 5aa8be6
+        tests_passed: 13
+        tests_failed_preexisting: 1
+        files_created: 6
+    artifacts:
+      spec_path: specs/v6.2/G.md
+      plan_path: specs/v6.2/G-plan.md
+      agent: agents/book-fetcher.md
+      tests: tests/test_book_fetcher.py
+      fixtures: tests/fixtures/book_fetcher_mocks/
+      helper: tests/helpers/book_fetcher_router.py
+      coverage_status: pass
+    pr_number: 137
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
   - id: H
     tickets: [85]
     branch: feat/v6.2-H-fetch-cmd
     worktree: /Users/j65674/Repos/academic-research-v6.2-H
-    phase: pending
+    phase: merge-ready
     depends_on: [G]
-    agent_id: null
+    agent_id: a9f3a9243a5f38941
+    pr_number: 140
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: I
     tickets: [77]
     branch: feat/v6.2-I-pickup-cmd
     worktree: /Users/j65674/Repos/academic-research-v6.2-I
-    phase: pending
+    phase: merge-ready
     depends_on: [H]
     agent_id: null
+    pr_number: 141
+    artifacts:
+      coverage_status: pass
+    last_action_at: "2026-05-18T09:00:54Z"
+    idempotency:
+      pr_create_attempted: true
   - id: J
     tickets: [78]
     branch: feat/v6.2-J-tier-pipeline
     worktree: /Users/j65674/Repos/academic-research-v6.2-J
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: []
     agent_id: adc6c1e09b821ba10
     last_signal_from_l1:
@@ -277,11 +335,17 @@ chunks:
         eval_hit_rate_projected: 80% (16/20)
         preexisting_failures:
           - test_token_reduction[chapter-writer]
+    pr_number: 135
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
+    artifacts:
+      coverage_status: pass
   - id: K
     tickets: [79]
     branch: feat/v6.2-K-cluster-mermaid
     worktree: /Users/j65674/Repos/academic-research-v6.2-K
-    phase: implementation_complete
+    phase: merge-ready
     depends_on: []
     agent_id: a13cf9ea821aa4d91
     last_signal_from_l1:
@@ -300,3 +364,8 @@ chunks:
       skill: skills/cluster-visualizer/SKILL.md
       helper: skills/cluster-visualizer/scripts/render_mermaid.py
       tests: tests/test_cluster_visualizer.py
+      coverage_status: pass
+    pr_number: 132
+    last_action_at: "2026-05-18T08:28:37Z"
+    idempotency:
+      pr_create_attempted: true
