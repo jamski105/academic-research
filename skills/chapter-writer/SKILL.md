@@ -102,7 +102,23 @@ Frage den User, welches Kapitel oder welcher Abschnitt geschrieben werden soll, 
 - Verfügbare zugeordnete Quellen
 - Erwarteter Umfang (Seitenschätzung aus der Gliederung)
 
-### 3. Kapitelplanung
+### 3. Approval-Gate nach Outline (Interactive Mode)
+
+Wenn `/search --interactive` aktiv war oder der User explizit eine
+Freigabe-Runde wünscht, **Approval-Gate vor dem Draften einbauen**:
+
+1. Outline (Abschnitts-Aufbau aus Schritt 4 unten) dem User vorlegen.
+2. Via `AskUserQuestion` Optionen anbieten:
+   - **Freigeben** — Outline übernehmen, Draften starten
+   - **Abschnitte anpassen** — Gliederung ändern, dann erneut vorlegen
+   - **Quellen ergänzen** — `/search` erneut aufrufen
+   - **Scope ändern** — Kapitelziel neu definieren
+3. Erst nach expliziter Freigabe ("Freigeben") mit dem Draften beginnen.
+
+Bei `--interactive=off` (default) oder ohne `/search --interactive`-Kontext:
+Kapitelplanung direkt starten (kein Gate).
+
+### 4. Kapitelplanung
 
 Bevor geschrieben wird, erstelle einen kurzen internen Plan:
 
