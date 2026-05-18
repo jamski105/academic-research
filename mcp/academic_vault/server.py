@@ -7,6 +7,7 @@ Start via: python -m mcp.academic_vault.server
 """
 import json
 import os
+import re
 from pathlib import Path
 from uuid import uuid4
 from typing import Optional
@@ -72,8 +73,20 @@ def search_papers(
     query: str,
     type_filter: Optional[str] = None,
     k: int = 5,
+    rerank: bool = False,
 ) -> list[dict]:
-    """FTS5-Suche in papers_fts. Gibt [{paper_id, snippet, score}] zurueck."""
+    """FTS5/Hybrid-Suche in papers_fts. Gibt [{paper_id, snippet, score}] zurueck.
+
+    Args:
+        db_path: Pfad zur Vault-DB.
+        query: Suchquery.
+        type_filter: Optionaler Paper-Type-Filter (article-journal, book, chapter).
+        k: Maximale Trefferzahl.
+        rerank: Wenn True, wird Hybrid-Retrieval (RRF) und optionaler Reranker aktiviert.
+                Reranker wird nur genutzt wenn VOYAGE_API_KEY oder COHERE_API_KEY gesetzt.
+                Fallback auf RRF-Result wenn kein API-Key vorhanden.
+    """
+    query = _sanitize_fts5_query(query)
     conn = VaultDB._open(db_path)
     try:
         if type_filter:
@@ -106,7 +119,50 @@ def search_papers(
             ).fetchall()
     finally:
         conn.close()
-    return [dict(r) for r in rows]
+
+    fts_results = [dict(r) for r in rows]
+
+    if not rerank:
+        return fts_results
+
+    from .retrieval import reciprocal_rank_fusion, apply_reranker
+    fused = reciprocal_rank_fusion(_vec0_search(db_path, query, k=k), fts_results, k=60, top_n=k)
+
+    voyage_key = os.environ.get("VOYAGE_API_KEY") or None
+    cohere_key = os.environ.get("COHERE_API_KEY") or None
+
+    if voyage_key or cohere_key:
+        return apply_reranker(
+            query=query,
+            candidates=fused,
+            voyage_api_key=voyage_key,
+            cohere_api_key=cohere_key,
+        )
+
+    return fused
+
+
+def _sanitize_fts5_query(query: str) -> str:
+    """Bereinigt Query fuer sichere FTS5-MATCH-Ausfuehrung.
+
+    FTS5-Sonderzeichen die Probleme verursachen: - / ^ * " ( )
+    Strategie: Bindestrich und andere Operatoren durch Leerzeichen ersetzen.
+    """
+    # FTS5-Operatoren entfernen/ersetzen: -, ^, /, *, (, ), "
+    sanitized = re.sub(r'[-^/*()]', ' ', query)
+    # Mehrfache Leerzeichen zusammenfassen
+    sanitized = re.sub(r'\s+', ' ', sanitized).strip()
+    return sanitized if sanitized else query
+
+
+def _vec0_search(db_path: str, query: str, k: int = 10) -> list[dict]:
+    """vec0 KNN-Suche fuer Hybrid-Retrieval.
+
+    Stub fuer MVP: Gibt leere Liste zurueck (kein lokales Embedding-Modell verfuegbar).
+    RRF faellt damit auf FTS5-only zurueck.
+    Erweiterung: query-Vektor generieren + KNN in chunk_embeddings via sqlite-vec.
+    """
+    return []
 
 
 def search_quote_text(db_path: str, verbatim: str, k: int = 5) -> list[dict]:
@@ -666,9 +722,9 @@ def _build_mcp_server():
     db_path = _DEFAULT_DB
 
     @mcp.tool(name="vault.search")
-    def _vault_search(query: str, type: str = None, k: int = 5) -> list[dict]:
-        """FTS5-Suche in papers. Gibt [{paper_id, snippet, score}] zurueck."""
-        return search_papers(db_path, query, type_filter=type, k=k)
+    def _vault_search(query: str, type: str = None, k: int = 5, rerank: bool = False) -> list[dict]:
+        """Hybrid-Suche in papers. rerank=True aktiviert RRF + optionalen Voyage/Cohere-Reranker."""
+        return search_papers(db_path, query, type_filter=type, k=k, rerank=rerank)
 
     @mcp.tool(name="vault.get_paper")
     def _vault_get_paper(paper_id: str) -> Optional[dict]:

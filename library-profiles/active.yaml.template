@@ -1,0 +1,23 @@
+# active.yaml.template — Vorlage fuer das aktive Uni-Profil
+#
+# Diese Datei wird beim Setup in ~/.academic-research/library-profiles/active.yaml
+# kopiert und ggf. mit Uni-spezifischen Werten befuellt.
+#
+# Pflichtfelder fuer book-fetcher: uni, auth_type, auth_url, licensed_sites, bib_pickup_url
+# Optional: proxy_pattern, credentials_keys
+#
+# SciHub-Opt-in (F18):
+#   Default: false — SciHub ist DEAKTIVIERT.
+#   Aktivierung nur nach explizitem Opt-in im Setup (rechtlich umstritten).
+#   Siehe README § SciHub-Disclaimer.
+
+uni: ""
+auth_type: "oa-only"
+auth_url: ""
+licensed_sites: []
+bib_pickup_url: ""
+
+# SciHub-Last-Resort (F18) — Default: false (DEAKTIVIERT)
+# Aktivierung: /academic-research:setup → SciHub-Opt-in-Frage bejahen
+# Rechtlich umstritten — Nutzung auf eigene Verantwortung.
+scihub_optin: false
