@@ -116,20 +116,23 @@ Nein — nicht nötig, aber auch kein Problem. Das Plugin liest sie weiterhin al
 
 ## 4. Hooks installieren
 
-v6.x installiert vier Hooks. Das Setup erledigt das automatisch. Zur manuellen Überprüfung:
+v6.x konfiguriert 7 Hook-Events (5 Skript-Dateien + 1 Inline-Bash). Das Setup erledigt das automatisch. Zur manuellen Überprüfung:
 
 ```bash
 cat ~/.claude/plugins/cache/academic-research/hooks/hooks.json
 ```
 
-Sollte vier Einträge zeigen:
+Sollte sieben Event-Einträge zeigen:
 
 | Hook | Trigger | Zweck |
 |------|---------|-------|
 | `verbatim-guard.mjs` | `PreToolUse(Write)` für `kapitel/*.md` | Zitat-Validation gegen Vault |
 | `pre-compact.mjs` | `PreCompact` | Snapshot-Backup vor Compaction |
 | `post-tool-use-decisions.mjs` | `PostToolUse(Write)` für `*.md` | Decision-Log |
-| `mid-session-reinforcement.mjs` | `SessionMid` | Anti-Fabrikations-Erinnerung |
+| `mid-session-reinforcement.mjs` | `Notification` | Anti-Fabrikations-Erinnerung (nach ~20 Nachrichten) |
+| `mid-session-reinforcement.mjs` | `PostCompact` | Anti-Fabrikations-Erinnerung nach Compaction |
+| `onboard-project-uni-prompt.sh` | `SessionStart` | Python-venv-Bereitschaft prüfen |
+| *(Inline-Bash)* | `Stop` | Hinweis bei ungesicherten `academic_context.md`-Änderungen |
 
 ### Manuelle Hook-Aktivierung
 
