@@ -569,6 +569,28 @@ Das Plugin installiert vier Hooks via `hooks/hooks.json`:
 
 ---
 
+## Privacy/Logs
+
+Der `post-tool-use-decisions.mjs`-Hook protokolliert jede `.md`-Änderung im
+Projekt nach `~/.academic-research/decisions.log` (Pfad überschreibbar via
+`ACADEMIC_DECISIONS_LOG`). Datenschutz-Eigenschaften:
+
+- **Kein Klartext-Inhalt.** Statt eines Content-Snippets steht in jeder Zeile
+  nur der **SHA-256-Hash** des geschriebenen Inhalts
+  (`… | Write | <pfad> | sha256=<hash>`). Damit bleibt der Idempotenz-/
+  Änderungs-Check möglich, ohne PII (z. B. Zitat-Texte, Kapitelinhalte) zu
+  leaken (CWE-532).
+- **0600-Permissions.** Das Logfile wird mit `chmod 0600` (nur Owner liest/
+  schreibt) erstellt; das Verzeichnis mit `0700`.
+- **Rotation.** Überschreitet `decisions.log` 10 MB, wird es nach
+  `decisions.log.1` rotiert und ein frisches Log begonnen.
+
+Wer gar kein Decision-Log möchte, kann den Hook in `hooks/hooks.json`
+deaktivieren oder `ACADEMIC_DECISIONS_LOG` auf einen verworfenen Pfad
+(z. B. unter `/tmp`) setzen.
+
+---
+
 ## Per-Uni-Profile
 
 Profile liegen unter `library-profiles/<uni>.yaml` und konfigurieren Bibliotheks-Auth für den `book-fetcher` und Browser-Module.

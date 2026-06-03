@@ -4,7 +4,12 @@
  *
  * Bei Write-Events auf *.md-Dateien im Projekt-Verzeichnis schreibt
  * eine Zeile in decisions.log:
- *   <ISO-Timestamp> | Write | <relativer-Pfad>
+ *   <ISO-Timestamp> | Write | <relativer-Pfad> | sha256=<hash>
+ *
+ * Datenschutz (CWE-532):
+ *   - KEIN Content-Snippet im Klartext — nur der SHA-256-Hash des Inhalts.
+ *   - Logfile wird mit 0600-Permissions geschrieben (nur Owner).
+ *   - Rotation bei >10 MB: decisions.log -> decisions.log.1.
  *
  * Protokoll:
  *   - Eingabe: JSON via stdin (Claude Code PostToolUse-Format)
@@ -15,12 +20,16 @@
  *   CLAUDE_PROJECT_DIR      — Projekt-Verzeichnis (default: cwd)
  */
 
-import { appendFileSync, mkdirSync, existsSync } from 'node:fs';
+import { appendFileSync, mkdirSync, existsSync, chmodSync, statSync, renameSync } from 'node:fs';
 import { dirname, relative, basename } from 'node:path';
+import { createHash } from 'node:crypto';
 import * as os from 'node:os';
 import * as path from 'node:path';
 
 const DEFAULT_LOG = path.join(os.homedir(), '.academic-research', 'decisions.log');
+
+// Rotation: maximale Logfile-Groesse in Bytes (10 MB), dann -> decisions.log.1
+const MAX_LOG_BYTES = 10 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------
 // Konfiguration
@@ -67,8 +76,27 @@ function isMdInProject(filePath) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Rotiert das Logfile, wenn es MAX_LOG_BYTES ueberschreitet.
+ * decisions.log -> decisions.log.1 (ueberschreibt eine evtl. vorhandene .1).
+ */
+function rotateIfNeeded() {
+  try {
+    if (!existsSync(DECISIONS_LOG)) return;
+    const size = statSync(DECISIONS_LOG).size;
+    if (size <= MAX_LOG_BYTES) return;
+    renameSync(DECISIONS_LOG, `${DECISIONS_LOG}.1`);
+  } catch {
+    // Rotation ist best-effort — nie blockierend.
+  }
+}
+
+/**
  * Schreibt eine Zeile in decisions.log.
- * Format: ISO-Timestamp | Write | <relativer-Pfad> | <Δ-Summary>
+ * Format: ISO-Timestamp | Write | <relativer-Pfad> | sha256=<hash>
+ *
+ * Aus Datenschutzgruenden (CWE-532) wird KEIN Content-Snippet im Klartext
+ * geloggt. Stattdessen steht der SHA-256-Hash des Inhalts in der Zeile —
+ * ausreichend fuer Idempotenz-/Aenderungs-Checks, ohne PII zu leaken.
  */
 function writeLogLine(filePath, content) {
   const ts = new Date().toISOString();
@@ -81,19 +109,21 @@ function writeLogLine(filePath, content) {
     relPath = basename(filePath);
   }
 
-  // Δ-Summary: erste Zeile des Inhalts (bis 60 Zeichen)
-  const firstLine = (content || '').split('\n')[0].slice(0, 60).trim();
-  const delta = firstLine || '<leer>';
+  // SHA-256-Hash des Inhalts statt Klartext-Snippet (Idempotenz-Check ohne Leak).
+  const hash = createHash('sha256').update(content || '', 'utf-8').digest('hex');
 
-  const line = `${ts} | Write | ${relPath} | ${delta}\n`;
+  const line = `${ts} | Write | ${relPath} | sha256=${hash}\n`;
 
   try {
     // Log-Verzeichnis sicherstellen
     const logDir = dirname(DECISIONS_LOG);
     if (!existsSync(logDir)) {
-      mkdirSync(logDir, { recursive: true });
+      mkdirSync(logDir, { recursive: true, mode: 0o700 });
     }
+    rotateIfNeeded();
     appendFileSync(DECISIONS_LOG, line, 'utf-8');
+    // Restriktive Permissions: nur Owner darf lesen/schreiben (0600).
+    chmodSync(DECISIONS_LOG, 0o600);
   } catch (err) {
     process.stderr.write(`[Decisions-Log] Fehler beim Schreiben: ${err.message}\n`);
   }
