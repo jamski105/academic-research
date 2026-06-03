@@ -6,8 +6,8 @@ description: >
   "Cluster-Diagramm", "Netzwerk der Quellen", "zeige Verbindungen".
   Nimmt ein Cluster-JSON (5D-Scoring-Output) als Input und erzeugt ein
   Mermaid-graph-LR-Diagramm. Erzeugt Knoten fuer Paper (Titel + Jahr)
-  und Kanten fuer geteilte Zitationsverbindungen ("Kantenstärke / Gewicht" via linkStyle).
-  Optional wird das Diagramm per Mermaid-CLI (mmdc) als PNG exportiert.
+  und Kanten fuer geteilte Zitationsverbindungen ("Kantenstärke / Kantenstaerke" via linkStyle).
+  Optional wird das Diagramm per Mermaid-CLI als PNG exportiert.
 compatibility: Claude Code
 license: MIT
 ---

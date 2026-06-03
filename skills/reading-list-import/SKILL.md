@@ -6,7 +6,7 @@ description: >
   Trigger-Phrasen: "Importiere Reading List", "Prof-Liste einlesen",
   "Bibliographie importieren", "Literaturliste einlesen",
   "Reading List importieren".
-  Parst Referenzen via LLM (Sonnet), resolvet DOI/ISBN ("Auflösung / Resolution"
+  Parst Referenzen via LLM (Sonnet), resolvet DOI/ISBN ("Auflösung / Aufloesung"
   via Crossref + DNB), und schreibt alles in den Vault (vault.add_paper).
   Optional: anystyle (Ruby) als Backend, falls installiert.
 triggers:

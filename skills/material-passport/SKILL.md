@@ -5,7 +5,7 @@ description: >
   oder das Projekt fuer die Abgabe finalisieren moechte.
   Trigger-Phrasen: "Reproduzierbarkeits-Manifest / Material-Passport erstellen",
   "Abgabe vorbereiten", "Vault sperren", "Repro-Lock", "material-passport.json".
-  Exporttyp: "Prüfung / Validation" via JSON-Schema.
+  Exporttyp: "Prüfung / Pruefung" via JSON-Schema.
   Exportiert alle relevanten Metadaten (paper_ids, DOIs, Scores, Algo-Version,
   Modellversionen, PDF-Hashes, Decision-Snapshot) als material-passport.json
   und ergaenzt kapitel/methodik.md automatisch um einen Reproduzierbarkeits-Block.

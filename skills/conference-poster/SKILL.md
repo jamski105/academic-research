@@ -1,6 +1,6 @@
 ---
 name: conference-poster
-description: Use this skill when the user needs to create a conference poster / Konferenz-Poster. Triggers on "Poster für Konferenz erstellen / Poster fuer Konferenz create", "A0-Poster", "tikzposter", "conference poster", or when a visual research summary for a conference is needed. Erstellt A0-Poster aus Kapiteln + Top-Figures; für vollständige Kapitel → `chapter-writer`.
+description: Use this skill when the user needs to create a conference poster / Konferenz-Poster. Triggers on "Poster für Konferenz erstellen / Poster fuer Konferenz erstellen", "A0-Poster", "tikzposter", "conference poster", or when a visual research summary for a conference is needed. Erstellt A0-Poster aus Kapiteln + Top-Figures; für vollständige Kapitel → `chapter-writer`.
 license: MIT
 ---
 
