@@ -34,6 +34,11 @@ description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel
 | `book` | `@book` | author, title, publisher, year |
 | `chapter` | `@incollection` | author, title, booktitle, year |
 
+## BibTeX-Abgrenzung
+
+BibTeX hier = Vault-weiter Bibliography-Dump (alle Papers).
+Einzelzitat aus PDF (one-shot) → `citation-extraction`.
+
 ## Verbatim-Guard
 
 Hook `hooks/verbatim-guard.mjs` schützt `*.tex`-Writes (wie `kapitel/*.md`).
