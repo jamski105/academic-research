@@ -9,6 +9,7 @@ Prueft jede skills/*/SKILL.md auf:
 """
 
 import json
+import math
 import re
 from pathlib import Path
 
@@ -22,7 +23,15 @@ ALL_SKILLS = sorted(
 
 PREAMBLE_PATTERN = "> **Gemeinsames Preamble laden:**"
 BASELINES_PATH = Path(__file__).parent / "baselines" / "skill_sizes.json"
+TOKEN_BASELINE_PATH = Path(__file__).parent / "baselines" / "tokens.json"
 TOKEN_REDUCTION_MIN = 1400  # Zeichen ~ 350 Token (cl100k-Proxy)
+CHARS_PER_TOKEN = 4  # cl100k-Proxy: 1400 Zeichen ~ 350 Token
+TOKEN_DRIFT_THRESHOLD = 1.20  # max. +20% Token-Drift vs. Baseline (Issue #200)
+
+
+def _estimate_tokens(text: str) -> int:
+    """Deterministischer cl100k-Proxy: aufgerundete Zeichenzahl / 4."""
+    return math.ceil(len(text) / CHARS_PER_TOKEN)
 
 
 def _frontmatter(path: Path) -> dict:
@@ -107,4 +116,28 @@ def test_token_reduction(skill_path: Path) -> None:
         f"{skill_name}: Reduktion nur {delta} Zeichen "
         f"(erwartet >= {TOKEN_REDUCTION_MIN}). "
         f"alt={old_chars}, neu={new_chars}"
+    )
+
+
+def test_token_baseline_not_empty() -> None:
+    """tokens.json muss befuellt sein, sonst skippt die Token-Regression still (Issue #200)."""
+    assert TOKEN_BASELINE_PATH.exists(), f"Token-Baseline fehlt: {TOKEN_BASELINE_PATH}"
+    baseline = json.loads(TOKEN_BASELINE_PATH.read_text())
+    assert baseline, "tokens.json ist leer -- Token-Regression-Baseline fehlt (Issue #200)"
+
+
+@pytest.mark.parametrize("skill_path", ALL_SKILLS, ids=lambda p: p.parent.name)
+def test_token_drift_vs_baseline(skill_path: Path) -> None:
+    """Jeder Skill muss in tokens.json stehen und darf <= +20% Token-Drift haben (Issue #200)."""
+    baseline = json.loads(TOKEN_BASELINE_PATH.read_text())
+    skill_name = skill_path.parent.name
+    assert skill_name in baseline, (
+        f"Skill '{skill_name}' fehlt in tokens.json -- Baseline aktualisieren"
+    )
+    baseline_tokens = baseline[skill_name]
+    current_tokens = _estimate_tokens(skill_path.read_text())
+    limit = baseline_tokens * TOKEN_DRIFT_THRESHOLD
+    assert current_tokens <= limit, (
+        f"{skill_name}: Token-Drift {current_tokens} > Baseline "
+        f"{baseline_tokens} * {TOKEN_DRIFT_THRESHOLD} = {limit:.0f}"
     )
