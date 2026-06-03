@@ -106,6 +106,32 @@ jobs:
       - name: pytest (Skills)
         run: pytest tests/test_skills_manifest.py tests/test_skill_naming.py -v
 
+  # 4b. Lint + Typpruefung (ruff + mypy) — Konfig in pyproject.toml (#202, vgl. #184)
+  lint-types:
+    name: Lint + Typen (ruff + mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: ruff + mypy installieren
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy
+      - name: ruff check
+        # Schrittweise Einfuehrung: vorerst nicht-blockierend, damit bestehender
+        # Code die CI nicht sofort rot faerbt. Spaeter auf blockierend umstellen.
+        continue-on-error: true
+        run: ruff check .
+      - name: ruff format --check
+        continue-on-error: true
+        run: ruff format --check .
+      - name: mypy
+        continue-on-error: true
+        run: mypy
+
   # 5. Vollstaendige Test-Suite auf macOS + Ubuntu
   python-tests:
     name: pytest (${{ matrix.os }})

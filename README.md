@@ -654,6 +654,29 @@ cp library-profiles/template-han.yaml \
 
 Aktuell: ~60 Tests, inkl. Regression-Guards (`test_skill_naming.py`, `test_cross_references.py`).
 
+### Mitwirken (CONTRIBUTING)
+
+Lint, Format und Typpruefung sind zentral in `pyproject.toml` konfiguriert
+(`[tool.ruff]`, `[tool.mypy]`) und werden ueber **pre-commit** durchgesetzt.
+
+```bash
+# Einmalig einrichten
+pip install pre-commit
+pre-commit install            # installiert den Git-Hook
+
+# Manuell ueber alle Dateien laufen lassen
+pre-commit run --all-files
+
+# Einzelne Tools direkt
+ruff check .                  # Linter
+ruff format .                 # Formatter
+mypy                          # Typpruefung (Pfade aus pyproject.toml)
+```
+
+Die pre-commit-Hooks umfassen `ruff` (Lint + Format), `mypy`,
+`end-of-file-fixer`, `check-yaml` und `check-json`. Reproduzierbare Installs
+liefert der gepinnte `requirements.lock` (`pip install -r requirements.lock`).
+
 ### Evals
 
 ```bash
