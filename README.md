@@ -126,7 +126,7 @@ Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU 
 | Komponente | Warum | Installation |
 |-----------|-------|--------------|
 | **Claude Code** | CLI zum Ausführen | [Installations-Anleitung](https://code.claude.com/docs/en/quickstart) |
-| **Python 3.10+** | Vault-MCP-Server, Suchskripte | `brew install python@3.11` (macOS) |
+| **Python 3.11+** (entwickelt + getestet mit 3.14) | Vault-MCP-Server, Suchskripte | `brew install python@3.11` (macOS) |
 | **`uv` oder `pipx`** | Für die automatische `browser-use`-Installation | `brew install pipx` oder `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | **Git** | Plugin-Marketplace-Install | auf macOS/Linux meist vorinstalliert |
 
