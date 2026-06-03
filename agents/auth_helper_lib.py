@@ -104,10 +104,16 @@ def detect_auth_type(profile_data: dict, url: str) -> str:
 # ---------------------------------------------------------------------------
 
 def check_profile_permissions(profile_path: str) -> None:
-    """Prueft, dass die Profil-Datei nur owner-readable (0600) ist.
+    """Prueft, dass die Profil-Datei nur owner-readable (0600) und im Besitz
+    des aktuellen Prozess-Owners ist.
+
+    In Multi-User-Setups reicht der Mode-Check allein nicht: Eine 0600-Datei,
+    die einem anderen Nutzer gehoert, koennte untergeschoben sein. Daher wird
+    zusaetzlich geprueft, dass ``os.stat(path).st_uid == os.geteuid()``.
 
     Raises:
-        InsecureProfilePermissionsError: Wenn Perms nicht 0600.
+        InsecureProfilePermissionsError: Wenn Perms nicht 0600 oder die Datei
+            einem fremden UID gehoert.
         FileNotFoundError: Wenn Datei nicht existiert.
     """
     path_stat = os.stat(profile_path)
@@ -117,6 +123,16 @@ def check_profile_permissions(profile_path: str) -> None:
             f"Profil-Datei {profile_path!r} hat unsichere Berechtigungen "
             f"{oct(mode)} — erwartet 0600. "
             f"Fix: chmod 600 {profile_path}"
+        )
+
+    # Owner-Check: Datei muss dem aktuellen effektiven User gehoeren.
+    # os.geteuid() ist auf Windows nicht verfuegbar — dort entfaellt der Check.
+    geteuid = getattr(os, "geteuid", None)
+    if geteuid is not None and path_stat.st_uid != geteuid():
+        raise InsecureProfilePermissionsError(
+            f"Profil-Datei {profile_path!r} gehoert UID {path_stat.st_uid}, "
+            f"erwartet UID {geteuid()} (aktueller Owner). "
+            f"Fix: chown {geteuid()} {profile_path}"
         )
 
 
