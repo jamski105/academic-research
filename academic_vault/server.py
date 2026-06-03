@@ -681,10 +681,32 @@ def restore_snapshot(
     target_path.mkdir(parents=True, exist_ok=True)
 
     try:
+        dest = target_path.resolve()
         with tarfile.open(str(tar_path), "r:gz") as tar:
-            # Nur sichere Mitglieder extrahieren (kein path-traversal)
-            members = [m for m in tar.getmembers() if not m.name.startswith('/') and '..' not in m.name]
-            tar.extractall(str(target_path), members=members)
+            # Sicher extrahieren (CVE-2007-4559 / CWE-22, Issue #192).
+            # Schicht 1: Symlink-/Hardlink-Member und Path-Traversal pro
+            # Member explizit ablehnen — funktioniert auch auf Python < 3.12
+            # ohne PEP-706-Filter.
+            safe_members = []
+            for m in tar.getmembers():
+                if m.issym() or m.islnk():
+                    # Symlinks/Hardlinks erlauben Escapes aus dem Zielverzeichnis.
+                    raise ValueError(f"symlink/hardlink not allowed: {m.name}")
+                if m.name.startswith("/"):
+                    raise ValueError(f"absolute path not allowed: {m.name}")
+                resolved = (dest / m.name).resolve()
+                if resolved != dest and dest not in resolved.parents:
+                    raise ValueError(f"path traversal: {m.name}")
+                safe_members.append(m)
+            # Schicht 2: PEP-706-data-Filter (Python 3.12+, backportiert auf
+            # 3.9.17+/3.10.12+/3.11.4+). Blockiert Symlink-Escape und
+            # Path-Traversal zusaetzlich auf C-Ebene. Wenn nicht verfuegbar,
+            # greift nur Schicht 1.
+            try:
+                tar.extractall(str(target_path), members=safe_members, filter="data")
+            except TypeError:
+                # filter-Argument auf aelteren Pythons nicht vorhanden
+                tar.extractall(str(target_path), members=safe_members)
         return True
     except Exception:
         return False
