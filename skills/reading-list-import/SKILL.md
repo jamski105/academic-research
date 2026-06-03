@@ -5,19 +5,12 @@ description: >
   Quellenliste (PDF, Markdown, Plaintext) in den Vault importieren moechte.
   Trigger-Phrasen: "Importiere Reading List", "Prof-Liste einlesen",
   "Bibliographie importieren", "Literaturliste einlesen",
-  "Reading List importieren".
+  "Reading List importieren", "Quellenliste importieren", "Leseliste einlesen".
   Parst Referenzen via LLM (Sonnet), resolvet DOI/ISBN ("Auflösung / Resolution"
   via Crossref + DNB), und schreibt alles in den Vault (vault.add_paper).
   Optional: anystyle (Ruby) als Backend, falls installiert.
-triggers:
-  - "Importiere Reading List"
-  - "Reading List importieren"
-  - "Prof-Liste einlesen"
-  - "Bibliographie importieren"
-  - "Literaturliste einlesen"
-  - "Quellenliste importieren"
-  - "Leseliste einlesen"
-tools:
+license: MIT
+allowed-tools:
   - Bash
   - Read
 security:

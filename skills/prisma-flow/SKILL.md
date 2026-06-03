@@ -5,8 +5,8 @@ description: >
   kapitel/methodik.md. Triggert nach /search wenn PRISMA-Zähler (n_identified etc.)
   vorliegen, oder wenn der User "PRISMA Flow", "PRISMA-Diagramm",
   "Flussdiagramm Literatursuche / Flowchart", "Einschlüsse / Inclusions" oder "PRISMA 2020" anfragt.
-compatibility: Claude API
 license: MIT
+allowed-tools: [Bash, Read, Write]
 ---
 
 # PRISMA-Flow
@@ -18,7 +18,7 @@ license: MIT
 
 ## Übersicht
 
-Dieser Skill erzeugt ein standardkonformes PRISMA 2020 Flow-Diagramm (Mermaid)
+Erzeugt ein standardkonformes PRISMA 2020 Flow-Diagramm (Mermaid)
 aus den PRISMA-Zählern einer `/search`-Session und fügt es in das
 Methodikkapitel ein.
 

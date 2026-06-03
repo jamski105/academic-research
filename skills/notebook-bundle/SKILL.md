@@ -6,8 +6,11 @@ description: >
   "Bücher / grosse Dokumente aufteilen", "Riesen-PDF aufteilen", "NotebookLM vorbereiten".
   Erzeugt ein konkateniertes PDF aller ausgewaehlten Paper (mit Cover + TOC)
   fuer manuellen Upload in Google NotebookLM.
-compatibility: Claude Code
 license: MIT
+allowed-tools:
+  - Bash
+  - Read
+  - Write
 ---
 
 # NotebookLM-Bundle Skill

@@ -7,15 +7,8 @@ description: >
   "custom citation style", "Stil aus GitHub laden".
   Parst .csl-Dateien ("Stilübernahme / Import" via xml.etree.ElementTree) und generiert
   Prompt-Regel-Varianten unter skills/citation-extraction/references/custom-<style>.md.
-triggers:
-  - "Zitierstil importieren"
-  - "CSL importieren"
-  - "CSL-Stil laden"
-  - "neuer Zitierstil"
-  - "custom citation style"
-  - "Stil aus GitHub laden"
-  - "citation style language"
-tools:
+license: MIT
+allowed-tools:
   - Bash
   - Write
 references:

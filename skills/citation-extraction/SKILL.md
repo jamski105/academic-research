@@ -1,8 +1,9 @@
 ---
 name: citation-extraction
 description: Use this skill when the user needs to extract or format citations. Triggers on "Literaturverzeichnis prüfen / erstellen / generieren", "Bibliographie formatieren", "Zitation prüfen", "citation extraction", "bibliography generation", or when raw PDFs need citation rendering (not chapter body writing — for that → `chapter-writer`). Extrahiert Zitate aus PDFs und liefert formatierte Bibliographien im Zitationsstil aus `./academic_context.md`.
-compatibility: Claude API mit documents[] und citations.enabled
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Zitat-Extraktion
