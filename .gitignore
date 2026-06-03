@@ -23,6 +23,10 @@ Thumbs.db
 sessions/
 pdfs/
 
+# Vault-Datenbank — Forschungs-PII, nie ins Repo (Issue #190, CWE-538)
+*.db
+vault.db
+
 # Debug logs
 firebase-debug.log
 

@@ -17,8 +17,9 @@
 
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as os from 'node:os';
 
 // ---------------------------------------------------------------------------
 // Konfiguration
@@ -27,7 +28,12 @@ import { fileURLToPath } from 'node:url';
 const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(HOOK_DIR);
 const VAULT_SRC = REPO_ROOT;
-const VAULT_DB = process.env.VAULT_DB_PATH || join(REPO_ROOT, 'vault.db');
+// Kanonischer DB-Default (Single Source of Truth, Issue #190):
+// VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db
+// mit slug=basename(CWD). NICHT mehr REPO_ROOT/vault.db (= Plugin-Verzeichnis).
+const SLUG = basename(process.env.CLAUDE_PROJECT_DIR || process.cwd()) || 'default';
+const VAULT_DB = process.env.VAULT_DB_PATH
+  || join(os.homedir(), '.academic-research', 'projects', SLUG, 'vault.db');
 // Mindestlänge eines Zitat-Spans (in Zeichen). Muss mit den Regex-Quantifizierern übereinstimmen.
 const MIN_QUOTE_LEN = 10;
 // Pattern fuer Figure-Referenzen (Abb., Abbildung, Tab., Tabelle, Fig., Figure + Nummer)
