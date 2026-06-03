@@ -26,35 +26,35 @@ class TestAuthTypeDetection:
 
     def test_profile_auth_type_takes_precedence_over_url(self):
         """Profil-auth_type hat Vorrang vor URL-Pattern."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {"auth_type": "Shibboleth", "uni": "tum"}
         result = detect_auth_type(profile, "https://link.springer.com/book/123")
         assert result == "Shibboleth"
 
     def test_han_detected_from_url_when_no_profile_auth_type(self):
         """HAN wird aus URL erkannt, wenn kein auth_type im Profil."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {"uni": "leibniz-fh"}
         result = detect_auth_type(profile, "https://link-springer-com.han.leibniz-fh.de")
         assert result == "HAN"
 
     def test_shibboleth_detected_from_wayf_in_url(self):
         """Shibboleth aus wayf. im Hostnamen erkannt."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {}
         result = detect_auth_type(profile, "https://wayf.dfn.de/select")
         assert result == "Shibboleth"
 
     def test_shibboleth_detected_from_idp_path(self):
         """Shibboleth aus /idp/-Pfad erkannt."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {}
         result = detect_auth_type(profile, "https://idp.tum.de/idp/profile/SAML2/Redirect")
         assert result == "Shibboleth"
 
     def test_dfn_aai_detected_and_mapped_to_shibboleth(self):
         """DFN-AAI wird als Shibboleth behandelt."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {}
         result = detect_auth_type(profile, "https://bwidm.scc.kit.edu/saml/idp")
         # DFN-AAI URLs haben kein eindeutiges Muster — Profil-auth_type entscheidet
@@ -63,7 +63,7 @@ class TestAuthTypeDetection:
 
     def test_dfn_aai_from_profile_field(self):
         """DFN-AAI aus Profil-auth_type (falls explizit gesetzt)."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         # Laut Schema-Enum: ["Shibboleth", "EZproxy", "HAN", "oa-only"]
         # DFN-AAI ist Shibboleth-basiert → im Profil als Shibboleth gespeichert
         profile = {"auth_type": "Shibboleth", "uni": "kit"}
@@ -72,21 +72,21 @@ class TestAuthTypeDetection:
 
     def test_ezproxy_detected_from_url(self):
         """EZproxy aus Hostnamen erkannt."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {}
         result = detect_auth_type(profile, "https://ezproxy.uni-hamburg.de/login")
         assert result == "EZproxy"
 
     def test_oa_only_when_no_match(self):
         """Kein Muster + kein Profil → oa-only."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {}
         result = detect_auth_type(profile, "https://www.oapen.org/book/12345")
         assert result == "oa-only"
 
     def test_profile_oa_only_overrides_url_with_auth_pattern(self):
         """auth_type: oa-only im Profil verhindert Login auch bei auth-aehnlicher URL."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {"auth_type": "oa-only", "uni": "test-uni"}
         # Selbst wenn URL wie ein Proxy aussieht
         result = detect_auth_type(profile, "https://ezproxy.test.de/login")
@@ -94,7 +94,7 @@ class TestAuthTypeDetection:
 
     def test_han_from_profile_field(self):
         """HAN aus Profil-Feld erkannt."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {"auth_type": "HAN", "uni": "leibniz-fh"}
         result = detect_auth_type(profile, "https://link.springer.com/book/123")
         assert result == "HAN"
@@ -105,7 +105,7 @@ class TestCredentialSecurity:
 
     def test_check_profile_permissions_passes_for_0600(self, tmp_path):
         """check_profile_permissions() besteht bei 0600-Datei."""
-        from agents.auth_helper_lib import check_profile_permissions
+        from scripts.auth_helper_lib import check_profile_permissions
         profile = tmp_path / "active.yaml"
         profile.write_text("uni: test\n", encoding="utf-8")
         os.chmod(profile, 0o600)
@@ -114,8 +114,8 @@ class TestCredentialSecurity:
 
     def test_check_profile_permissions_fails_for_0644(self, tmp_path):
         """check_profile_permissions() wirft bei 0644-Datei (world-readable)."""
-        from agents.auth_helper_lib import check_profile_permissions
-        from agents.auth_helper_lib import InsecureProfilePermissionsError
+        from scripts.auth_helper_lib import check_profile_permissions
+        from scripts.auth_helper_lib import InsecureProfilePermissionsError
         profile = tmp_path / "active.yaml"
         profile.write_text("uni: test\n", encoding="utf-8")
         os.chmod(profile, 0o644)
@@ -124,8 +124,8 @@ class TestCredentialSecurity:
 
     def test_check_profile_permissions_fails_for_0640(self, tmp_path):
         """check_profile_permissions() wirft bei 0640 (group-readable)."""
-        from agents.auth_helper_lib import check_profile_permissions
-        from agents.auth_helper_lib import InsecureProfilePermissionsError
+        from scripts.auth_helper_lib import check_profile_permissions
+        from scripts.auth_helper_lib import InsecureProfilePermissionsError
         profile = tmp_path / "active.yaml"
         profile.write_text("uni: test\n", encoding="utf-8")
         os.chmod(profile, 0o640)
@@ -134,7 +134,7 @@ class TestCredentialSecurity:
 
     def test_load_credentials_returns_dict_without_password_in_repr(self, tmp_path):
         """Rueckgabe von load_credentials() darf Passwort nicht im repr() enthalten."""
-        from agents.auth_helper_lib import load_credentials
+        from scripts.auth_helper_lib import load_credentials
         profile_data = {
             "uni": "tum",
             "auth_type": "Shibboleth",
@@ -153,8 +153,8 @@ class TestCredentialSecurity:
 
     def test_schema_validation_fails_for_literal_credentials_in_profile(self, tmp_path):
         """validate_profile_schema() schlaegt fehl, wenn Profil Literal-Credentials enthaelt."""
-        from agents.auth_helper_lib import validate_profile_schema
-        from agents.auth_helper_lib import ProfileSchemaError
+        from scripts.auth_helper_lib import validate_profile_schema
+        from scripts.auth_helper_lib import ProfileSchemaError
         bad_profile = {
             "uni": "test",
             "auth_type": "Shibboleth",
@@ -169,7 +169,7 @@ class TestCredentialSecurity:
 
     def test_no_credential_string_in_stdout_after_detection(self, tmp_path, capsys):
         """Keine Passwort-Strings in stdout nach detect_auth_type + load_credentials."""
-        from agents.auth_helper_lib import detect_auth_type, load_credentials
+        from scripts.auth_helper_lib import detect_auth_type, load_credentials
         profile_data = {
             "uni": "tum",
             "auth_type": "Shibboleth",
@@ -220,7 +220,7 @@ class TestShibbolethMockFlow:
 
     def test_build_auth_flow_result_for_shibboleth(self, shibboleth_profile):
         """build_auth_flow_result() liefert authenticated-Status fuer Shibboleth-Profil."""
-        from agents.auth_helper_lib import build_auth_flow_result
+        from scripts.auth_helper_lib import build_auth_flow_result
         profile_data = yaml.safe_load(shibboleth_profile.read_text())
         result = build_auth_flow_result(
             auth_type="Shibboleth",
@@ -236,7 +236,7 @@ class TestShibbolethMockFlow:
 
     def test_no_credential_leak_in_auth_result_json(self, shibboleth_profile):
         """JSON-Output von build_auth_flow_result enthaelt kein Passwort."""
-        from agents.auth_helper_lib import build_auth_flow_result
+        from scripts.auth_helper_lib import build_auth_flow_result
         profile_data = yaml.safe_load(shibboleth_profile.read_text())
         result = build_auth_flow_result(
             auth_type="Shibboleth",
@@ -249,7 +249,7 @@ class TestShibbolethMockFlow:
 
     def test_no_cookie_dump_in_session_context(self, shibboleth_profile):
         """session_context darf keine serialisierten Cookies enthalten."""
-        from agents.auth_helper_lib import build_auth_flow_result
+        from scripts.auth_helper_lib import build_auth_flow_result
         profile_data = yaml.safe_load(shibboleth_profile.read_text())
         result = build_auth_flow_result(
             auth_type="Shibboleth",
@@ -265,7 +265,7 @@ class TestShibbolethMockFlow:
 
     def test_auth_failed_result_has_structured_reason(self, shibboleth_profile):
         """build_auth_flow_result() mit browser_success=False → auth_failed + reason."""
-        from agents.auth_helper_lib import build_auth_flow_result
+        from scripts.auth_helper_lib import build_auth_flow_result
         profile_data = yaml.safe_load(shibboleth_profile.read_text())
         result = build_auth_flow_result(
             auth_type="Shibboleth",
@@ -283,7 +283,7 @@ class TestNoLoginForOASites:
 
     def test_oa_only_profile_returns_not_required(self, tmp_path):
         """oa-only Profil → status: not_required."""
-        from agents.auth_helper_lib import build_auth_flow_result
+        from scripts.auth_helper_lib import build_auth_flow_result
         profile_data = {
             "uni": "generic-oa",
             "auth_type": "oa-only",
@@ -301,7 +301,7 @@ class TestNoLoginForOASites:
 
     def test_oa_only_result_has_null_uni_or_profile_uni(self, tmp_path):
         """oa-only Ergebnis: uni darf null oder leer sein."""
-        from agents.auth_helper_lib import build_auth_flow_result
+        from scripts.auth_helper_lib import build_auth_flow_result
         profile_data = {
             "auth_type": "oa-only",
             "uni": "oa-site",
@@ -319,7 +319,7 @@ class TestNoLoginForOASites:
 
     def test_detect_oa_only_from_url_no_browser_call_marker(self, tmp_path):
         """detect_auth_type fuer OA-URL gibt oa-only → kein Login-Trigger."""
-        from agents.auth_helper_lib import detect_auth_type
+        from scripts.auth_helper_lib import detect_auth_type
         profile = {}
         result = detect_auth_type(profile, "https://www.oapen.org/book/12345")
         assert result == "oa-only"
