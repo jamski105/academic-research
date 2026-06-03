@@ -62,10 +62,27 @@ class VaultDB:
         return self._open(self.db_path)
 
     def load_vec_extension(self, conn: Optional[sqlite3.Connection] = None) -> bool:
-        """Versucht sqlite_vec Extension zu laden. Gibt True bei Erfolg zurueck."""
+        """Versucht sqlite_vec Extension zu laden. Gibt True bei Erfolg zurueck.
+
+        Python-Builds ohne ``--enable-loadable-sqlite-extensions`` (z.B. das
+        macOS-System-Python und die macOS-Builds von actions/setup-python)
+        haben ``enable_load_extension`` nicht bzw. werfen beim Aufruf. Dann ist
+        die Vektor-Suche schlicht nicht verfuegbar (optionales Feature) und
+        ``vec_available`` bleibt False — der Rest des Vault funktioniert weiter.
+        """
         vec_path = os.environ.get("SQLITE_VEC_PATH", "")
         target = conn if conn is not None else self._get_conn()
-        target.enable_load_extension(True)
+
+        if not hasattr(target, "enable_load_extension"):
+            self.vec_available = False
+            return False
+
+        try:
+            target.enable_load_extension(True)
+        except (AttributeError, sqlite3.OperationalError, sqlite3.NotSupportedError):
+            self.vec_available = False
+            return False
+
         try:
             if vec_path:
                 target.load_extension(vec_path)
@@ -75,7 +92,10 @@ class VaultDB:
         except Exception:
             self.vec_available = False
         finally:
-            target.enable_load_extension(False)
+            try:
+                target.enable_load_extension(False)
+            except Exception:
+                pass
         return self.vec_available
 
     def init_schema(self) -> None:

@@ -1,8 +1,9 @@
 # Academic Research v6.5
 
+[![CI](https://github.com/jamski105/academic-research/actions/workflows/ci.yml/badge.svg)](https://github.com/jamski105/academic-research/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-6.5.0-blue.svg)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-23+-orange.svg)](#skills-übersicht)
-[![Tests](https://img.shields.io/badge/tests-~60%20passing-success.svg)](#entwicklung-und-evals)
+[![Tests](https://img.shields.io/badge/tests-963%20passing-success.svg)](#entwicklung-und-evals)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-8A2BE2.svg)](https://code.claude.com/docs/en/plugins)
 
