@@ -100,7 +100,7 @@ echo ""
 python3 "$SCRIPT_DIR/configure_permissions.py"
 
 # ---------------------------------------------------------------------------
-# 7. Projekt-Bootstrap (Auto-Detect)
+# 6. Projekt-Bootstrap (Auto-Detect)
 # ---------------------------------------------------------------------------
 
 "$BASE/venv/bin/python" "$SCRIPT_DIR/project_bootstrap.py"
