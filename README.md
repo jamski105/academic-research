@@ -70,7 +70,7 @@ Seit v6.0 hat das Plugin einen eigenen **Vault-MCP-Server** (SQLite + FTS5 + sql
 - **Schüler\*innen**, die eine Facharbeit schreiben und sauber zitieren lernen wollen.
 - **Alle**, die Claude Code bereits nutzen und akademisches Schreiben mit KI-Unterstützung professionalisieren möchten.
 
-Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU München, RWTH Aachen, FAU Erlangen-Nürnberg und weitere DACH-Hochschulen. Weitere Profile sind einfach hinzufügbar.
+Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für ETH Zürich, FU Berlin, TU München, Universität Hamburg und Universität Wien. Weitere Profile sind einfach hinzufügbar.
 
 ---
 
@@ -103,7 +103,7 @@ Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU 
 | **Vault MCP** | v6.0 | SQLite-Backend mit FTS5 + sqlite-vec: Zitate, Entscheidungen, Risk-of-Bias, Score-Historie, Material-Passport. Halluzinationsschutz via Verbatim-Validation-Hook. |
 | **Universal Book Fetcher** | v6.2 | 8-Tier-Download-Pipeline mit 10 Site-Subagenten (TIB, Springer, De Gruyter, OAPEN, DOAB, KVK, Ebook Central, Nationallizenzen, generischer Fallback). Autarke Browser-Navigation via `browser-use`. |
 | **humanizer-de** | v6.0 | Anti-KI-Audit-Pass mit Severity-Ranking und Stimmkalibrierung. Schützt vor Turnitin / GPTZero / OriginalityAI-Detection. |
-| **Per-Uni-Profile** | v6.2 | `library-profiles/<uni>.yaml` konfiguriert HAN, Shibboleth, EZproxy, lizenzierte Sites. 5 DACH-Templates mitgeliefert. |
+| **Per-Uni-Profile** | v6.2 | `config/library-profiles/<uni>.yaml` konfiguriert HAN, Shibboleth, EZproxy, lizenzierte Sites. 5 Profile (eth-zurich, fu-berlin, tum, uni-hamburg, uni-wien) mitgeliefert. |
 | **PRISMA-Flow** | v6.4 | Mermaid-Diagramm + PRISMA-2020-Checkliste für Systematic Reviews. |
 | **Meta-Analysis** | v6.4 | DerSimonian-Laird Random-Effects mit Mermaid-Forest-Plot. |
 | **Risk-of-Bias** | v6.4 | Cochrane RoB 2 / ROBINS-I / CASP Assessment Agent. |
@@ -571,26 +571,23 @@ Das Plugin installiert vier Hooks via `hooks/hooks.json`:
 
 ## Per-Uni-Profile
 
-Profile liegen unter `library-profiles/<uni>.yaml` und konfigurieren Bibliotheks-Auth für den `book-fetcher` und Browser-Module.
+Profile liegen unter `config/library-profiles/<uni>.yaml` und konfigurieren Bibliotheks-Auth für den `book-fetcher` und Browser-Module.
 
 **Mitgelieferte Profile:**
 
 | Profil | Hochschule | Auth-Typ |
 |--------|-----------|----------|
-| `leibniz-fh.yaml` | Leibniz FH Hannover | HAN |
+| `eth-zurich.yaml` | ETH Zürich | Shibboleth |
+| `fu-berlin.yaml` | Freie Universität Berlin | Shibboleth |
 | `tum.yaml` | TU München | Shibboleth |
-| `rwth-aachen.yaml` | RWTH Aachen | Shibboleth |
-| `fau-erlangen.yaml` | FAU Erlangen-Nürnberg | Shibboleth |
-| `template-han.yaml` | HAN-Template (generisch) | HAN |
-| `template-shibboleth.yaml` | Shibboleth-WAYF-Template | Shibboleth |
-| `template-ezproxy.yaml` | EZproxy-Template | EZproxy |
-| `template-oa-only.yaml` | Nur OA-Quellen | keine |
+| `uni-hamburg.yaml` | Universität Hamburg | Shibboleth |
+| `uni-wien.yaml` | Universität Wien | Shibboleth |
 
 ### Profil aktivieren
 
 ```bash
-# Profil aus Template kopieren und anpassen
-cp library-profiles/template-han.yaml \
+# Vorhandenes Profil als Ausgangsbasis kopieren und anpassen
+cp config/library-profiles/tum.yaml \
    ~/.academic-research/library-profiles/meine-uni.yaml
 # → uni, auth_url, credentials_keys, licensed_sites eintragen
 
