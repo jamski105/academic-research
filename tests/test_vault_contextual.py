@@ -21,7 +21,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 def _make_db(tmp_path: Path) -> str:
     """Erstellt eine Vault-DB mit Schema und gibt den Pfad zurueck."""
     db_path = str(tmp_path / "vault.db")
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     db = VaultDB(db_path)
     db.init_schema()
     return db_path
@@ -29,7 +29,7 @@ def _make_db(tmp_path: Path) -> str:
 
 def _add_paper(db_path: str, paper_id: str, title: str, abstract: str) -> None:
     """Hilfsfunktion: fuegt ein Paper in den Vault ein."""
-    from mcp.academic_vault.server import add_paper
+    from academic_vault.server import add_paper
     csl = {"type": "article-journal", "title": title, "abstract": abstract}
     add_paper(db_path, paper_id, json.dumps(csl))
 
@@ -88,7 +88,7 @@ class TestChunkEmbeddingsCRUD:
         db_path = _make_db(tmp_path)
         _add_paper(db_path, "p001", "Test Paper", "Test Abstract")
 
-        from mcp.academic_vault.db import VaultDB
+        from academic_vault.db import VaultDB
         db = VaultDB(db_path)
         chunk_id = db.add_chunk_embedding(
             paper_id="p001",
@@ -105,7 +105,7 @@ class TestChunkEmbeddingsCRUD:
         db_path = _make_db(tmp_path)
         _add_paper(db_path, "p001", "Test Paper", "Test Abstract")
 
-        from mcp.academic_vault.db import VaultDB
+        from academic_vault.db import VaultDB
         db = VaultDB(db_path)
         db.add_chunk_embedding(
             paper_id="p001",
@@ -132,7 +132,7 @@ class TestChunkEmbeddingsCRUD:
         db_path = _make_db(tmp_path)
         _add_paper(db_path, "p001", "Test Paper", "Test Abstract")
 
-        from mcp.academic_vault.db import VaultDB
+        from academic_vault.db import VaultDB
         db = VaultDB(db_path)
         ctx = "Dieser Chunk diskutiert X im Kontext von Y aus Paper Z."
         db.add_chunk_embedding(
@@ -156,13 +156,13 @@ class TestContextualEmbeddingGeneration:
 
     def test_generate_context_sentence_returns_string(self, tmp_path):
         """generate_context_sentence gibt einen nicht-leeren String zurueck."""
-        from mcp.academic_vault.embeddings import generate_context_sentence
+        from academic_vault.embeddings import generate_context_sentence
 
         # Mock-Anthropic-Client — keine echte API noetig
         mock_response = MagicMock()
         mock_response.content = [MagicMock(text="Dieser Chunk diskutiert Transformer im Kontext von Attention aus Paper p001.")]
 
-        with patch("mcp.academic_vault.embeddings._get_anthropic_client") as mock_client:
+        with patch("academic_vault.embeddings._get_anthropic_client") as mock_client:
             mock_instance = MagicMock()
             mock_instance.messages.create.return_value = mock_response
             mock_client.return_value = mock_instance
@@ -179,13 +179,13 @@ class TestContextualEmbeddingGeneration:
 
     def test_generate_context_sentence_uses_prompt_caching(self, tmp_path):
         """generate_context_sentence nutzt Anthropic Prompt-Caching."""
-        from mcp.academic_vault.embeddings import generate_context_sentence
+        from academic_vault.embeddings import generate_context_sentence
 
         mock_response = MagicMock()
         mock_response.content = [MagicMock(text="Context sentence.")]
         mock_response.usage = MagicMock(cache_creation_input_tokens=100, cache_read_input_tokens=0)
 
-        with patch("mcp.academic_vault.embeddings._get_anthropic_client") as mock_client:
+        with patch("academic_vault.embeddings._get_anthropic_client") as mock_client:
             mock_instance = MagicMock()
             mock_instance.messages.create.return_value = mock_response
             mock_client.return_value = mock_instance
@@ -206,7 +206,7 @@ class TestContextualEmbeddingGeneration:
 
     def test_build_contextual_embedding_text(self):
         """build_contextual_embedding_text kombiniert Kontext + Chunk korrekt."""
-        from mcp.academic_vault.embeddings import build_contextual_embedding_text
+        from academic_vault.embeddings import build_contextual_embedding_text
 
         context = "Dieser Chunk diskutiert Transformer im Kontext von Attention."
         chunk = "Multi-head attention allows joint attention."
@@ -219,9 +219,9 @@ class TestContextualEmbeddingGeneration:
 
     def test_generate_context_sentence_fallback_on_error(self):
         """Bei API-Fehler gibt generate_context_sentence Fallback-String zurueck."""
-        from mcp.academic_vault.embeddings import generate_context_sentence
+        from academic_vault.embeddings import generate_context_sentence
 
-        with patch("mcp.academic_vault.embeddings._get_anthropic_client") as mock_client:
+        with patch("academic_vault.embeddings._get_anthropic_client") as mock_client:
             mock_instance = MagicMock()
             mock_instance.messages.create.side_effect = Exception("API error")
             mock_client.return_value = mock_instance
@@ -250,7 +250,7 @@ class TestHybridRetrievalFTS5:
         _add_paper(db_path, "p001", "Transformer Neural Networks", "Self-attention mechanism for NLP tasks.")
         _add_paper(db_path, "p002", "Convolutional Networks", "Image classification with deep learning.")
 
-        from mcp.academic_vault.server import search_papers
+        from academic_vault.server import search_papers
         results = search_papers(db_path, "transformer attention", k=5)
 
         assert len(results) > 0
@@ -266,7 +266,7 @@ class TestHybridRetrievalFTS5:
         _add_paper(db_path, "p_low", "Unrelated Paper About Cats",
                    "Cats are domestic animals that like to sleep.")
 
-        from mcp.academic_vault.server import search_papers
+        from academic_vault.server import search_papers
         results = search_papers(db_path, "transformer attention", k=5)
 
         result_ids = [r["paper_id"] for r in results]
@@ -288,7 +288,7 @@ class TestVaultSearchWithRerank:
         db_path = _make_db(tmp_path)
         _add_paper(db_path, "p001", "Retrieval Systems", "Dense and sparse retrieval methods.")
 
-        from mcp.academic_vault.server import search_papers
+        from academic_vault.server import search_papers
         results = search_papers(db_path, "retrieval methods", k=5, rerank=False)
 
         assert isinstance(results, list)
@@ -304,7 +304,7 @@ class TestVaultSearchWithRerank:
             os.environ.pop("VOYAGE_API_KEY", None)
             os.environ.pop("COHERE_API_KEY", None)
 
-            from mcp.academic_vault.server import search_papers
+            from academic_vault.server import search_papers
             results = search_papers(db_path, "hybrid retrieval", k=5, rerank=True)
 
         assert isinstance(results, list)
@@ -313,7 +313,7 @@ class TestVaultSearchWithRerank:
     def test_search_papers_signature_accepts_rerank(self, tmp_path):
         """search_papers akzeptiert rerank-Parameter ohne TypeError."""
         db_path = _make_db(tmp_path)
-        from mcp.academic_vault.server import search_papers
+        from academic_vault.server import search_papers
         import inspect
         sig = inspect.signature(search_papers)
         assert "rerank" in sig.parameters, "search_papers muss rerank-Parameter haben"

@@ -16,7 +16,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 def _make_db(tmp_path: Path) -> str:
     """Erstellt eine Vault-DB mit Schema und gibt den Pfad zurueck."""
     db_path = str(tmp_path / "vault.db")
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     db = VaultDB(db_path)
     db.init_schema()
     return db_path
@@ -24,7 +24,7 @@ def _make_db(tmp_path: Path) -> str:
 
 def _add_paper(db_path: str, paper_id: str, title: str, abstract: str) -> None:
     """Hilfsfunktion: fuegt ein Paper in den Vault ein."""
-    from mcp.academic_vault.server import add_paper
+    from academic_vault.server import add_paper
     csl = {"type": "article-journal", "title": title, "abstract": abstract}
     add_paper(db_path, paper_id, json.dumps(csl))
 
@@ -38,7 +38,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_score_formula(self):
         """RRF-Score = 1/(k+rank_vec) + 1/(k+rank_fts) mit k=60."""
-        from mcp.academic_vault.retrieval import rrf_score
+        from academic_vault.retrieval import rrf_score
         k = 60
         rank_vec = 1  # Rang 1 in vec0-Ergebnissen
         rank_fts = 1  # Rang 1 in FTS5-Ergebnissen
@@ -48,7 +48,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_score_missing_in_one_list(self):
         """RRF-Score mit None-Rang (Paper nur in einem Ergebnis): nur ein Term."""
-        from mcp.academic_vault.retrieval import rrf_score
+        from academic_vault.retrieval import rrf_score
         k = 60
         # Nur in vec0, nicht in FTS5
         result_vec_only = rrf_score(rank_vec=1, rank_fts=None, k=k)
@@ -61,7 +61,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_fusion_returns_sorted_by_score(self):
         """reciprocal_rank_fusion gibt Liste absteigend nach Score sortiert zurueck."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion
+        from academic_vault.retrieval import reciprocal_rank_fusion
 
         # p001 erscheint in beiden Listen (Rang 1)
         # p002 erscheint nur in vec0 (Rang 2)
@@ -86,7 +86,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_fusion_includes_all_papers(self):
         """RRF-Fusion inkludiert alle Papers aus beiden Listen."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion
+        from academic_vault.retrieval import reciprocal_rank_fusion
 
         vec_results = [{"paper_id": "p001"}, {"paper_id": "p002"}]
         fts_results = [{"paper_id": "p003"}, {"paper_id": "p001"}]
@@ -97,7 +97,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_fusion_paper_in_both_lists_ranks_higher(self):
         """Paper in beiden Listen rankt hoeher als Paper nur in einer Liste."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion
+        from academic_vault.retrieval import reciprocal_rank_fusion
 
         # p001 in beiden Listen, p002 nur in vec0
         vec_results = [{"paper_id": "p001"}, {"paper_id": "p002"}]
@@ -109,7 +109,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_fusion_empty_vec_results(self):
         """RRF-Fusion mit leerer vec0-Liste gibt FTS5-Ergebnisse zurueck."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion
+        from academic_vault.retrieval import reciprocal_rank_fusion
 
         fts_results = [{"paper_id": "p001"}, {"paper_id": "p002"}]
         fused = reciprocal_rank_fusion([], fts_results, k=60)
@@ -117,7 +117,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_fusion_empty_fts_results(self):
         """RRF-Fusion mit leerer FTS5-Liste gibt vec0-Ergebnisse zurueck."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion
+        from academic_vault.retrieval import reciprocal_rank_fusion
 
         vec_results = [{"paper_id": "p001"}, {"paper_id": "p002"}]
         fused = reciprocal_rank_fusion(vec_results, [], k=60)
@@ -125,7 +125,7 @@ class TestReciprocalRankFusion:
 
     def test_rrf_fusion_respects_top_n(self):
         """reciprocal_rank_fusion schneidet nach top_n ab."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion
+        from academic_vault.retrieval import reciprocal_rank_fusion
 
         vec_results = [{"paper_id": f"p{i:03d}"} for i in range(10)]
         fts_results = [{"paper_id": f"p{i:03d}"} for i in range(5, 15)]
@@ -143,7 +143,7 @@ class TestRerankerIntegration:
 
     def test_rerank_with_voyage_deterministic_scores(self, tmp_path):
         """Voyage-Reranker sortiert nach deterministischen Mock-Scores."""
-        from mcp.academic_vault.retrieval import rerank_with_voyage
+        from academic_vault.retrieval import rerank_with_voyage
 
         candidates = [
             {"paper_id": "p001", "text": "Transformer neural networks."},
@@ -159,7 +159,7 @@ class TestRerankerIntegration:
             MagicMock(index=1, relevance_score=0.40),
         ]
 
-        with patch("mcp.academic_vault.retrieval._get_voyage_client") as mock_client:
+        with patch("academic_vault.retrieval._get_voyage_client") as mock_client:
             mock_instance = MagicMock()
             mock_instance.rerank.return_value = mock_rerank_result
             mock_client.return_value = mock_instance
@@ -176,7 +176,7 @@ class TestRerankerIntegration:
 
     def test_rerank_with_cohere_deterministic_scores(self, tmp_path):
         """Cohere-Reranker sortiert nach deterministischen Mock-Scores."""
-        from mcp.academic_vault.retrieval import rerank_with_cohere
+        from academic_vault.retrieval import rerank_with_cohere
 
         candidates = [
             {"paper_id": "p001", "text": "Dense retrieval methods."},
@@ -192,7 +192,7 @@ class TestRerankerIntegration:
             MagicMock(index=1, relevance_score=0.55),
         ]
 
-        with patch("mcp.academic_vault.retrieval._get_cohere_client") as mock_client:
+        with patch("academic_vault.retrieval._get_cohere_client") as mock_client:
             mock_instance = MagicMock()
             mock_instance.rerank.return_value = mock_response
             mock_client.return_value = mock_instance
@@ -209,7 +209,7 @@ class TestRerankerIntegration:
 
     def test_rerank_fallback_when_no_api_key(self):
         """Reranker gibt RRF-Ergebnis unveraendert zurueck wenn API-Key fehlt."""
-        from mcp.academic_vault.retrieval import apply_reranker
+        from academic_vault.retrieval import apply_reranker
 
         candidates = [
             {"paper_id": "p001", "rrf_score": 0.02},
@@ -230,15 +230,15 @@ class TestRerankerIntegration:
 
     def test_rerank_voyage_preferred_over_cohere(self):
         """Voyage wird bevorzugt wenn beide API-Keys verfuegbar sind."""
-        from mcp.academic_vault.retrieval import apply_reranker
+        from academic_vault.retrieval import apply_reranker
 
         candidates = [{"paper_id": "p001", "rrf_score": 0.02}]
 
         mock_rerank_result = MagicMock()
         mock_rerank_result.results = [MagicMock(index=0, relevance_score=0.9)]
 
-        with patch("mcp.academic_vault.retrieval._get_voyage_client") as mock_voyage, \
-             patch("mcp.academic_vault.retrieval._get_cohere_client") as mock_cohere:
+        with patch("academic_vault.retrieval._get_voyage_client") as mock_voyage, \
+             patch("academic_vault.retrieval._get_cohere_client") as mock_cohere:
 
             mock_voyage_instance = MagicMock()
             mock_voyage_instance.rerank.return_value = mock_rerank_result
@@ -275,33 +275,33 @@ class TestRecallEval:
 
     def test_recall_at_10_function_exists(self):
         """compute_recall_at_k Funktion existiert in retrieval.py."""
-        from mcp.academic_vault.retrieval import compute_recall_at_k
+        from academic_vault.retrieval import compute_recall_at_k
         assert callable(compute_recall_at_k)
 
     def test_recall_at_k_perfect_retrieval(self):
         """Recall@10 = 1.0 wenn alle relevanten Papers in Top-10."""
-        from mcp.academic_vault.retrieval import compute_recall_at_k
+        from academic_vault.retrieval import compute_recall_at_k
         retrieved = ["p001", "p002", "p003", "p004", "p005", "p006", "p007", "p008", "p009", "p010"]
         relevant = ["p001", "p003", "p005"]
         assert compute_recall_at_k(retrieved, relevant, k=10) == 1.0
 
     def test_recall_at_k_zero_retrieval(self):
         """Recall@10 = 0.0 wenn kein relevantes Paper in Top-10."""
-        from mcp.academic_vault.retrieval import compute_recall_at_k
+        from academic_vault.retrieval import compute_recall_at_k
         retrieved = ["p011", "p012", "p013", "p014", "p015", "p016", "p017", "p018", "p019", "p020"]
         relevant = ["p001", "p003", "p005"]
         assert compute_recall_at_k(retrieved, relevant, k=10) == 0.0
 
     def test_recall_at_k_partial_retrieval(self):
         """Recall@10 = 0.5 wenn die Haelfte der relevanten Papers in Top-10."""
-        from mcp.academic_vault.retrieval import compute_recall_at_k
+        from academic_vault.retrieval import compute_recall_at_k
         retrieved = ["p001", "p002", "p003", "p004", "p005", "p006", "p007", "p008", "p009", "p010"]
         relevant = ["p001", "p011"]  # p001 in Top-10, p011 nicht
         assert compute_recall_at_k(retrieved, relevant, k=10) == 0.5
 
     def test_recall_at_k_cutoff_at_k(self):
         """Recall@10 beachtet k-Cutoff: Treffer ab Position k+1 zaehlen nicht."""
-        from mcp.academic_vault.retrieval import compute_recall_at_k
+        from academic_vault.retrieval import compute_recall_at_k
         # p003 ist an Position 11 (index 10) — zaehlt nicht bei k=10
         retrieved = ["p001", "p002", "p004", "p005", "p006", "p007", "p008", "p009", "p010", "p011", "p003"]
         relevant = ["p003"]
@@ -315,7 +315,7 @@ class TestRecallEval:
         db_path = _make_db(tmp_path)
 
         # Alle 200 Papers in DB laden
-        from mcp.academic_vault.server import add_paper
+        from academic_vault.server import add_paper
         for p in data["papers"]:
             csl = {
                 "type": "article-journal",
@@ -324,8 +324,8 @@ class TestRecallEval:
             }
             add_paper(db_path, p["paper_id"], json.dumps(csl))
 
-        from mcp.academic_vault.server import search_papers
-        from mcp.academic_vault.retrieval import compute_recall_at_k
+        from academic_vault.server import search_papers
+        from academic_vault.retrieval import compute_recall_at_k
 
         recalls = []
         for q in data["queries"]:
@@ -340,8 +340,8 @@ class TestRecallEval:
 
     def test_rrf_improves_over_vanilla_fts_on_mock_data(self, tmp_path):
         """RRF-Retrieval schlaegt reines FTS5 auf vereinfachtem Eval-Subset."""
-        from mcp.academic_vault.retrieval import reciprocal_rank_fusion, compute_recall_at_k
-        from mcp.academic_vault.server import search_papers
+        from academic_vault.retrieval import reciprocal_rank_fusion, compute_recall_at_k
+        from academic_vault.server import search_papers
 
         # Vereinfachtes Setup: 3 Papers, Query findet p001 via FTS5 und vec0
         db_path = _make_db(tmp_path)

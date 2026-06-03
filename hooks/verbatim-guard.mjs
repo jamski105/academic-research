@@ -26,7 +26,7 @@ import { fileURLToPath } from 'node:url';
 
 const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(HOOK_DIR);
-const VAULT_SRC = join(REPO_ROOT, 'mcp');
+const VAULT_SRC = REPO_ROOT;
 const VAULT_DB = process.env.VAULT_DB_PATH || join(REPO_ROOT, 'vault.db');
 // Mindestlänge eines Zitat-Spans (in Zeichen). Muss mit den Regex-Quantifizierern übereinstimmen.
 const MIN_QUOTE_LEN = 10;

@@ -27,7 +27,7 @@ import * as path from 'node:path';
 
 const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(HOOK_DIR);
-const VAULT_SRC = join(REPO_ROOT, 'mcp');
+const VAULT_SRC = REPO_ROOT;
 
 const VAULT_DB = process.env.VAULT_DB_PATH
   || join(os.homedir(), '.academic-research', 'projects', 'default', 'vault.db');

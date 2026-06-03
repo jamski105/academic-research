@@ -42,7 +42,7 @@ def run_hook(tool_name: str, file_path: str, content: str, env_overrides: dict =
 @pytest.fixture
 def vault_with_figure(tmp_path):
     """Erstellt temporaere Vault-DB mit einem Figure-Eintrag."""
-    sys.path.insert(0, str(WORKTREE_ROOT / "mcp"))
+    sys.path.insert(0, str(WORKTREE_ROOT))
     from academic_vault.db import VaultDB
     from academic_vault.server import add_paper, add_figure
 
@@ -88,7 +88,7 @@ def test_hook_non_write_tool_ignored():
 
 def test_hook_blocks_unknown_figure_reference(tmp_path):
     """Hook blockiert bei Abb.-Referenz die nicht im Vault ist (Vault existiert, kein Eintrag)."""
-    sys.path.insert(0, str(WORKTREE_ROOT / "mcp"))
+    sys.path.insert(0, str(WORKTREE_ROOT))
     from academic_vault.db import VaultDB
     from academic_vault.server import add_paper
 
@@ -128,7 +128,7 @@ def test_hook_allows_when_figure_in_vault(vault_with_figure):
 
 def test_existing_quote_check_still_works(tmp_path):
     """Regression: bestehende Quote-Pruefung blockiert weiterhin bei unverifizierten Zitaten."""
-    sys.path.insert(0, str(WORKTREE_ROOT / "mcp"))
+    sys.path.insert(0, str(WORKTREE_ROOT))
     from academic_vault.db import VaultDB
     from academic_vault.server import add_paper
 

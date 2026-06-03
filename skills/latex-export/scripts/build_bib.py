@@ -26,7 +26,7 @@ def get_all_papers(db_path: str) -> list[dict]:
 
     Jedes Dict hat mindestens: paper_id, csl_json
     """
-    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "mcp"))
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
     try:
         from academic_vault.db import VaultDB
     except ImportError:

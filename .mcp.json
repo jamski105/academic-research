@@ -1,9 +1,10 @@
 {
   "mcpServers": {
     "academic-vault": {
-      "command": "python",
-      "args": ["-m", "mcp.academic_vault.server"],
+      "command": "${HOME}/.academic-research/venv/bin/python",
+      "args": ["-m", "academic_vault.server"],
       "env": {
+        "PYTHONPATH": "${CLAUDE_PLUGIN_ROOT}",
         "VAULT_DB_PATH": "${CLAUDE_PLUGIN_ROOT}/vault.db",
         "SQLITE_VEC_PATH": ""
       }

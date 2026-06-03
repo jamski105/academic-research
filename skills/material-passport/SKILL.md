@@ -157,7 +157,7 @@ Das JSON-Dokument enthaelt:
 | `passport_hash` | SHA-256 ueber alle uebrigen Felder |
 
 Das Dokument wird gegen das JSON-Schema in
-`mcp/academic_vault/material-passport.schema.json` validiert.
+`academic_vault/material-passport.schema.json` validiert.
 
 ---
 

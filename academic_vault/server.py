@@ -3,7 +3,7 @@
 Stellt MCP-Tools vault.search/get_paper/add_paper/ensure_file/
 add_quote/find_quotes/get_quote/stats bereit.
 
-Start via: python -m mcp.academic_vault.server
+Start via: python -m academic_vault.server
 """
 import json
 import os

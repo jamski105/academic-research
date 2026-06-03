@@ -24,8 +24,8 @@ if str(_WORKTREE_ROOT) not in sys.path:
 
 _SCRIPT = _WORKTREE_ROOT / "skills" / "material-passport" / "scripts" / "build_passport.py"
 
-from mcp.academic_vault.db import VaultDB
-from mcp.academic_vault import server as vault_server
+from academic_vault.db import VaultDB
+from academic_vault import server as vault_server
 
 
 # ---------------------------------------------------------------------------

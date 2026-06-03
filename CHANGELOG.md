@@ -6,6 +6,13 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 
 ---
 
+## [6.5.1] — 2026-06-03
+
+### Fixed
+
+- **Vault-MCP-Server startet wieder (#217):** Drei sich gegenseitig blockierende Start-Ursachen behoben: (1) `.mcp.json` startet den Server jetzt mit der Projekt-venv (`${HOME}/.academic-research/venv/bin/python`) und setzt `PYTHONPATH=${CLAUDE_PLUGIN_ROOT}`; (2) `mcp>=1.0` + `sqlite-vec>=0.1.0` werden über `scripts/requirements.txt` ins venv installiert; (3) Namespace-Kollision mit dem `mcp`-SDK aufgelöst — lokales Paket `mcp/academic_vault/` → `academic_vault/` (Top-Level) verschoben, alle Referenzen (`.mcp.json`, Hooks, Skills, Tests) angepasst.
+- **`/history --restore` repariert (#219):** Literal-Platzhalter `<PLUGIN_ROOT>` in `commands/history.md` durch `${CLAUDE_PLUGIN_ROOT}` ersetzt — der Pfad wird nun zur Laufzeit expandiert, `import academic_vault.server` schlägt nicht mehr fehl.
+
 ## [6.5.0] — 2026-05-18
 
 ### Added

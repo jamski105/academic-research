@@ -28,7 +28,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from mcp.academic_vault import server as vault_server
+from academic_vault import server as vault_server
 
 # Reproduzierbarkeits-Block-Marker — verhindert Doppel-Eintraege
 _REPRO_MARKER = "## Reproduzierbarkeit"

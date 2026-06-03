@@ -19,7 +19,7 @@ import pytest
 
 WORKTREE_ROOT = Path(__file__).parent.parent
 
-sys.path.insert(0, str(WORKTREE_ROOT / "mcp"))
+sys.path.insert(0, str(WORKTREE_ROOT))
 
 
 @pytest.fixture

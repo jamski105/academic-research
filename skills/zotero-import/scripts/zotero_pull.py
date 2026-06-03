@@ -38,7 +38,7 @@ except ImportError:  # pragma: no cover
 # Vault-Funktionen direkt importieren (kein MCP-Roundtrip noetig)
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(_REPO_ROOT))
-from mcp.academic_vault.server import add_paper, ensure_file  # noqa: E402
+from academic_vault.server import add_paper, ensure_file  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -247,7 +247,7 @@ def run_import(
     result = ImportResult()
 
     # Vault-Schema initialisieren falls DB neu
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     VaultDB(db_path).init_schema()
 
     with tempfile.TemporaryDirectory() as tmp_dir:

@@ -102,7 +102,7 @@ def test_vault_db_set_get_page_offset():
     import json
 
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
 
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tf:
         db_path = tf.name
@@ -122,7 +122,7 @@ def test_vault_db_get_page_offset_missing_returns_zero():
     import tempfile
 
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
 
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tf:
         db_path = tf.name
@@ -143,7 +143,7 @@ def test_server_set_and_get_printed_page():
     import json
 
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from mcp.academic_vault.server import (
+    from academic_vault.server import (
         set_page_offset as srv_set_offset,
         get_printed_page,
         add_paper,
@@ -167,7 +167,7 @@ def test_server_get_printed_page_zero_offset():
     import json
 
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from mcp.academic_vault.server import get_printed_page, add_paper
+    from academic_vault.server import get_printed_page, add_paper
 
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tf:
         db_path = tf.name

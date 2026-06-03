@@ -22,7 +22,7 @@ from uuid import uuid4
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CASES_PATH = Path(__file__).parent / "cases.json"
 
-VAULT_SRC = REPO_ROOT / "mcp"
+VAULT_SRC = REPO_ROOT
 sys.path.insert(0, str(VAULT_SRC))
 
 # Importiert vault-Funktionen — schlaegt fehl wenn search_quote_text fehlt
