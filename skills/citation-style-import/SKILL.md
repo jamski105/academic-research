@@ -3,7 +3,8 @@ name: citation-style-import
 description: >
   Verwende diesen Skill wenn der User einen Zitierstil aus dem CSL-Repository
   importieren moechte und eine neue custom-Variante generieren will.
-  Trigger-Phrasen: "Zitierstil importieren", "CSL importieren", "neuer Stil",
+  Trigger-Phrasen: "Zitierstil importieren", "eigenen Zitierstil laden",
+  "CSL importieren", "CSL laden", "neuer Stil",
   "custom citation style", "Stil aus GitHub laden".
   Parst .csl-Dateien ("Stilübernahme / Import" via xml.etree.ElementTree) und generiert
   Prompt-Regel-Varianten unter skills/citation-extraction/references/custom-<style>.md.

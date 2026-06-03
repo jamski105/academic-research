@@ -1,6 +1,6 @@
 ---
 name: chapter-writer
-description: Use this skill when the user writes a chapter of an academic work. Triggers on "Einleitung schreiben", "Theorieteil / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Empirie / Ergebnisse darstellen", "Diskussion schreiben", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren", or when a chapter body with proper citations is needed. Schreibt vollständige Kapitelentwürfe; Für Abstract/Keywords → `abstract-generator`; für Zitations-Formatierung → `citation-extraction`.
+description: Use this skill when the user writes a chapter of an academic work. Triggers on "Kapitel schreiben", "Einleitung schreiben", "Theorieteil / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Empirie / Ergebnisse darstellen", "Diskussion schreiben", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren", or when a chapter body with proper citations is needed. Schreibt Kapitelentwürfe; Für Abstract/Keywords → `abstract-generator`; für Zitate → `citation-extraction`.
 compatibility: Claude API mit documents[] und citations.enabled
 license: MIT
 ---

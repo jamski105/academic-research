@@ -4,7 +4,7 @@ description: >
   Verwende diesen Skill wenn der User ein Reproduzierbarkeits-Manifest erstellen
   oder das Projekt fuer die Abgabe finalisieren moechte.
   Trigger-Phrasen: "Reproduzierbarkeits-Manifest / Material-Passport erstellen",
-  "Abgabe vorbereiten", "Vault sperren", "Repro-Lock", "material-passport.json".
+  "Artefakt sichern", "Abgabe vorbereiten", "Vault sperren", "Repro-Lock", "material-passport.json".
   Exporttyp: "Prüfung / Validation" via JSON-Schema.
   Exportiert alle relevanten Metadaten (paper_ids, DOIs, Scores, Algo-Version,
   Modellversionen, PDF-Hashes, Decision-Snapshot) als material-passport.json

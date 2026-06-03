@@ -3,7 +3,8 @@ name: humanizer-de
 description: >
   Erkennt und entfernt KI-generierte Schreibmuster aus deutschsprachigen Texten.
   Verwende diesen Skill wenn ein Kapitelentwurf oder Text auf KI-typische Muster
-  geprüft und überarbeitet werden soll (Anti-KI-Audit-Pass). Unterstützt Modus
+  geprüft und überarbeitet werden soll (Anti-KI-Audit-Pass). Trigger-Phrasen:
+  "humanisieren", "menschlicher klingen", "Text humanisieren". Unterstützt Modus
   normal (Sachlich) und deep (vollständiger Zwei-Pass-Durchlauf mit finalem
   Anti-KI-Audit). Optionale Voice-Kalibrierung via Schreibproben.
   Produziert humanisierten Text sowie Severity-gegliedertes Diff.
