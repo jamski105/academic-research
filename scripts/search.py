@@ -418,7 +418,7 @@ def search_econstor(query: str, limit: int) -> list[dict[str, Any]]:
 
 def search_arxiv(query: str, limit: int) -> list[dict[str, Any]]:
     """Search arXiv via Atom feed API."""
-    url = "http://export.arxiv.org/api/query"
+    url = "https://export.arxiv.org/api/query"
     params = {
         "search_query": f"all:{query}",
         "start": 0,
