@@ -1,0 +1,12 @@
+# pre-commit-Konfiguration (optional, empfohlen).
+# Installation:  pip install pre-commit && pre-commit install
+# Verhindert u. a. das versehentliche Committen großer Dateien, neuer Submodule
+# und privater Schlüssel. Lokale OS-Artefakte wie .DS_Store werden bereits via
+# .gitignore ausgeschlossen.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+      - id: forbid-new-submodules
+      - id: detect-private-key

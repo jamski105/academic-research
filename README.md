@@ -654,6 +654,18 @@ cp library-profiles/template-han.yaml \
 
 Aktuell: ~60 Tests, inkl. Regression-Guards (`test_skill_naming.py`, `test_cross_references.py`).
 
+### pre-commit (empfohlen)
+
+Für lokale Hygiene wird `pre-commit` empfohlen. Die Konfiguration liegt in
+[`.pre-commit-config.yaml`](.pre-commit-config.yaml) und blockt versehentlich
+committete große Dateien, neue Submodule und private Schlüssel. OS-Artefakte wie
+`.DS_Store` werden bereits über `.gitignore` ausgeschlossen.
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
 ### Evals
 
 ```bash
