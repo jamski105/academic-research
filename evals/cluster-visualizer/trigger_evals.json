@@ -1,0 +1,27 @@
+{
+  "component": "cluster-visualizer",
+  "should_trigger": [
+    "Zeige mir den Literaturcluster.",
+    "Visualisiere meine Quellen.",
+    "Erstelle eine Mindmap der Paper.",
+    "Ich brauche ein Cluster-Diagramm.",
+    "Zeige das Netzwerk der Quellen.",
+    "Zeige die Verbindungen zwischen den Papern.",
+    "Mach mir ein Mermaid-Diagramm aus dem Cluster-JSON.",
+    "Visualisiere die Zitationsverbindungen.",
+    "Erzeuge einen Graphen meiner Literatur.",
+    "Cluster als Diagramm darstellen bitte."
+  ],
+  "should_not_trigger": [
+    "Suche Paper zu Microservices.",
+    "Schreibe Kapitel 3.",
+    "Welches Thema soll ich nehmen?",
+    "Extrahiere Zitate aus dem PDF.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Exportiere nach LaTeX.",
+    "Importiere meine Reading List.",
+    "Schreibe einen Foerderantrag.",
+    "Generiere einen Titel.",
+    "Schaerfe meine Forschungsfrage."
+  ]
+}

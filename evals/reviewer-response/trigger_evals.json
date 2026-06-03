@@ -1,0 +1,27 @@
+{
+  "component": "reviewer-response",
+  "should_trigger": [
+    "Hilf mir eine Antwort fuer die Reviewer zu schreiben.",
+    "Ich brauche eine Reviewer-Response nach der Einreichung.",
+    "Schreibe eine point-by-point response.",
+    "Wir haben ein Revise and Resubmit bekommen, hilf mir antworten.",
+    "Verfasse ein Response-Letter an die Gutachter.",
+    "Wie reagiere ich auf die Peer-Review-Kommentare?",
+    "Antwort fuer Reviewer 2 formulieren.",
+    "Erstelle eine strukturierte Gutachter-Antwort.",
+    "R&R-Antwortschreiben aufsetzen bitte.",
+    "Ich muss auf die Reviewer-Kommentare punktweise antworten."
+  ],
+  "should_not_trigger": [
+    "Schreibe Kapitel 1 meiner Arbeit.",
+    "Welches Thema soll ich waehlen?",
+    "Schreibe einen Foerderantrag.",
+    "Erstelle ein Konferenz-Poster.",
+    "Exportiere mein Kapitel nach LaTeX.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Importiere meine Zotero-Bibliothek.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel.",
+    "Suche Open-Access-Paper zu Microservices."
+  ]
+}
