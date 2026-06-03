@@ -142,10 +142,13 @@ class VaultDB:
         page_last: Optional[int] = None,
         container_title: Optional[str] = None,
         parent_paper_id: Optional[str] = None,
+        provenance: Optional[str] = None,
     ) -> None:
         """Upsert eines Papers in die papers-Tabelle.
 
         type wird aus csl_json extrahiert. Erlaubte Werte: article-journal, book, chapter.
+
+        provenance: Herkunfts-Tag (z.B. "scihub", "oa") fuer Audit-Zwecke (#195).
         """
         try:
             csl = json.loads(csl_json)
@@ -166,9 +169,9 @@ class VaultDB:
             INSERT INTO papers
               (paper_id, type, csl_json, doi, isbn, pdf_path, page_offset,
                editor, chapter, page_first, page_last, container_title,
-               parent_paper_id,
+               parent_paper_id, provenance,
                added_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(paper_id) DO UPDATE SET
               type            = excluded.type,
               csl_json        = excluded.csl_json,
@@ -182,12 +185,13 @@ class VaultDB:
               page_last       = excluded.page_last,
               container_title = excluded.container_title,
               parent_paper_id = excluded.parent_paper_id,
+              provenance      = excluded.provenance,
               updated_at      = excluded.updated_at
             """,
             (
                 paper_id, paper_type, csl_json, doi, isbn, pdf_path, page_offset,
                 editor, chapter, page_first, page_last, container_title,
-                parent_paper_id,
+                parent_paper_id, provenance,
                 now, now,
             ),
         )
@@ -247,6 +251,22 @@ class VaultDB:
         if row is None:
             return 0
         return int(row["page_offset"] or 0)
+
+    def list_papers_by_provenance(self, provenance: str) -> list[dict]:
+        """Gibt alle Papers mit dem angegebenen provenance-Tag zurueck (Audit, #195).
+
+        Beispiel: ``list_papers_by_provenance("scihub")`` liefert alle aus dem
+        SciHub-Tier bezogenen Papers fuer ein Provenance-Audit.
+        """
+        conn = self._get_conn()
+        own_conn = self._conn is None
+        rows = conn.execute(
+            "SELECT * FROM papers WHERE provenance = ? ORDER BY added_at",
+            (provenance,),
+        ).fetchall()
+        if own_conn:
+            conn.close()
+        return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
     # Quotes CRUD
