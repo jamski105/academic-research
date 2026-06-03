@@ -8,7 +8,7 @@
 #   4. Check: globaler browser-use Claude-Skill
 #   5. Claude-Code-Permissions via configure_permissions.py
 
-set -e
+set -euo pipefail
 
 BASE="$HOME/.academic-research"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -29,6 +29,14 @@ fi
 
 "$BASE/venv/bin/pip" install --quiet --upgrade pip
 "$BASE/venv/bin/pip" install --quiet -r "$SCRIPT_DIR/requirements.txt"
+
+# Smoke-Test: bricht laut ab, wenn der Install still fehlschlug (vgl. #197).
+# Deckt die Kern-Abhaengigkeiten ab, die Scripts/Tests zur Importzeit brauchen.
+if ! "$BASE/venv/bin/python" -c "import requests, httpx, anthropic, yaml, barcode" 2>/dev/null; then
+  echo "❌ Smoke-Test fehlgeschlagen: Kern-Module fehlen nach 'pip install'." >&2
+  echo "   Bitte erneut ausfuehren oder 'pip install -r $SCRIPT_DIR/requirements.txt' manuell pruefen." >&2
+  exit 1
+fi
 
 # Leere Seed-Dateien
 touch "$BASE/citations.bib"

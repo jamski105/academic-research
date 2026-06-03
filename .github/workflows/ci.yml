@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # 1. JSON-Manifeste muessen valide sein
+  manifest-validation:
+    name: Manifest-Validierung (JSON)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: jq empty auf allen Manifesten
+        run: |
+          set -euo pipefail
+          jq empty .claude-plugin/plugin.json
+          jq empty .claude-plugin/marketplace.json
+          jq empty .mcp.json
+          jq empty hooks/hooks.json
+          echo "Alle Manifeste sind valides JSON."
+
+  # 2. Hook-Quelldateien muessen syntaktisch valide sein
+  hook-syntax:
+    name: Hook-Syntax (node --check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: node --check fuer alle .mjs-Hooks
+        run: |
+          set -euo pipefail
+          for f in hooks/*.mjs; do
+            echo "→ $f"
+            node --check "$f"
+          done
+
+  # 3. Jede Command/Agent-Datei braucht Frontmatter mit nicht-leerer description
+  frontmatter-coverage:
+    name: Frontmatter-Coverage (commands + agents)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Frontmatter + description pruefen
+        run: |
+          python3 - <<'PY'
+          import sys, glob, pathlib, re
+          bad = []
+          files = sorted(
+              glob.glob("commands/**/*.md", recursive=True)
+              + glob.glob("agents/**/*.md", recursive=True)
+          )
+          for f in files:
+              lines = pathlib.Path(f).read_text(encoding="utf-8").splitlines()
+              if not lines or lines[0].strip() != "---":
+                  bad.append((f, "kein Frontmatter (--- am Dateianfang fehlt)")); continue
+              end = next((i for i in range(1, len(lines)) if lines[i].strip() == "---"), None)
+              if end is None:
+                  bad.append((f, "kein schliessendes ---")); continue
+              fm = lines[1:end]
+              di = next((i for i, l in enumerate(fm) if re.match(r"^description\s*:", l)), None)
+              if di is None:
+                  bad.append((f, "kein description-Feld")); continue
+              val = re.match(r"^description\s*:\s*(.*)$", fm[di]).group(1).strip()
+              if val in (">", "|", ">-", "|-", ">+", "|+", ""):
+                  block = [fm[j].strip() for j in range(di + 1, len(fm)) if fm[j].strip()]
+                  if not block:
+                      bad.append((f, "description-Block leer"))
+          print(f"geprueft: {len(files)} Dateien (commands + agents)")
+          if bad:
+              print("PROBLEME:")
+              for f, why in bad:
+                  print(f"  {f}: {why}")
+              sys.exit(1)
+          print("ALLE OK — Frontmatter + nicht-leere description vorhanden")
+          PY
+
+  # 4. Schnelle Skill-Manifest- und Naming-Checks
+  skill-tests:
+    name: Skill-Manifest- & Naming-Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Python-Deps installieren
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt pytest
+      - name: pytest (Skills)
+        run: pytest tests/test_skills_manifest.py tests/test_skill_naming.py -v
+
+  # 5. Vollstaendige Test-Suite auf macOS + Ubuntu
+  python-tests:
+    name: pytest (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      # Hook-Tests starten .mjs-Hooks per `node` — daher zwingend noetig
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Python-Deps installieren (erster Step, vgl. #197)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+          pip install pytest pytest-cov
+      - name: Smoke-Test der Kern-Importe
+        run: python -c "import requests, httpx, anthropic, yaml, barcode, lxml"
+      - name: pytest mit Coverage
+        run: |
+          pytest tests/ -p no:cacheprovider \
+            --cov=scripts --cov=academic_vault \
+            --cov-report=term-missing

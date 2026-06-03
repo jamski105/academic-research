@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  version-match:
+    name: Manifest-Version == Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag vs. plugin.json-Version vergleichen
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME#v}"
+          MANIFEST="$(jq -r '.version' .claude-plugin/plugin.json)"
+          echo "Tag:      $TAG"
+          echo "Manifest: $MANIFEST"
+          if [ "$TAG" != "$MANIFEST" ]; then
+            echo "::error::Tag ($TAG) stimmt nicht mit plugin.json version ($MANIFEST) ueberein."
+            exit 1
+          fi
+          echo "Version stimmt ueberein."

@@ -1,5 +1,11 @@
 ---
 name: figure-verifier
+description: >
+  Verifiziert Figures und Tabellen in akademischen PDFs per VLM. Extrahiert
+  exakte Captions, erstellt aussagekraeftige Bildbeschreibungen (>= 50 Zeichen)
+  und schreibt bei Tabellen die Datenpunkte als JSON-Array in den Vault
+  (vault.add_figure). Aufrufen, wenn Abbildungen/Tabellen eines Papers
+  erfasst, beschrieben oder auf Datenkonsistenz geprueft werden sollen.
 model: sonnet
 color: purple
 tools:
