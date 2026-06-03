@@ -72,7 +72,7 @@ Ablauf:
 ```bash
 ~/.academic-research/venv/bin/python -c "
 import sys
-sys.path.insert(0, '<PLUGIN_ROOT>/mcp')
+sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT}')
 from academic_vault.server import restore_snapshot
 ok = restore_snapshot(
     slug='<slug>',

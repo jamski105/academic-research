@@ -41,7 +41,7 @@ if str(_REPO_SCRIPTS) not in sys.path:
 # server.py-Funktionen fuer Vault-Zugriff (als optionale Laufzeit-Deps)
 try:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-    from mcp.academic_vault.server import add_paper as _vault_add_paper_native
+    from academic_vault.server import add_paper as _vault_add_paper_native
     _VAULT_NATIVE = True
 except ImportError:
     _VAULT_NATIVE = False
@@ -58,7 +58,7 @@ def vault_add_paper(
     doi: Optional[str] = None,
     isbn: Optional[str] = None,
 ) -> None:
-    """Wrapper um mcp.academic_vault.server.add_paper.
+    """Wrapper um academic_vault.server.add_paper.
 
     Wird in Tests via patch() ersetzt.
     """
@@ -72,7 +72,7 @@ def vault_add_paper(
         )
     else:
         raise RuntimeError(
-            "vault_add_paper: mcp.academic_vault.server nicht verfuegbar. "
+            "vault_add_paper: academic_vault.server nicht verfuegbar. "
             "Stelle sicher dass der MCP-Server im PYTHONPATH ist."
         )
 

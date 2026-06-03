@@ -165,7 +165,7 @@ class TestVaultOcrSetters:
     @pytest.fixture
     def tmp_db(self, tmp_path):
         db_file = str(tmp_path / "vault.db")
-        from mcp.academic_vault.db import VaultDB
+        from academic_vault.db import VaultDB
         db = VaultDB(db_file)
         db.init_schema()
         db.add_paper(
@@ -177,7 +177,7 @@ class TestVaultOcrSetters:
 
     def test_set_ocr_done(self, tmp_db):
         """set_ocr_done setzt ocr_done=1 im Vault."""
-        from mcp.academic_vault.server import set_ocr_done, get_paper
+        from academic_vault.server import set_ocr_done, get_paper
 
         set_ocr_done(tmp_db, "test-paper-ocr")
         paper = get_paper(tmp_db, "test-paper-ocr")
@@ -187,7 +187,7 @@ class TestVaultOcrSetters:
 
     def test_update_pdf_path(self, tmp_db):
         """update_pdf_path aktualisiert pdf_path im Vault."""
-        from mcp.academic_vault.server import update_pdf_path, get_paper
+        from academic_vault.server import update_pdf_path, get_paper
 
         update_pdf_path(tmp_db, "test-paper-ocr", "/tmp/scan_ocr.pdf")
         paper = get_paper(tmp_db, "test-paper-ocr")

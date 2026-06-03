@@ -109,7 +109,7 @@ def run_migration(
     db_path: str,
 ) -> dict:
     """Fuehrt Migration aus. Gibt {inserted, skipped, errors} zurueck."""
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
 
     db = VaultDB(db_path)
     db.init_schema()

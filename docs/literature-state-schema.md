@@ -6,7 +6,7 @@ beschreibt das Schema der Eintraege.
 
 ## Quelle der Wahrheit
 
-Der Vault (SQLite via `mcp/academic_vault/`) ist die Quelle der Wahrheit.
+Der Vault (SQLite via `academic_vault/`) ist die Quelle der Wahrheit.
 `literature_state.md` ist nur ein menschenlesbarer Snapshot.
 
 ---
@@ -71,7 +71,7 @@ Der Vault (SQLite via `mcp/academic_vault/`) ist die Quelle der Wahrheit.
 
 ## Vault-Schema-Mapping
 
-Die Vault-DB (`mcp/academic_vault/schema.sql`) speichert CSL-Daten als:
+Die Vault-DB (`academic_vault/schema.sql`) speichert CSL-Daten als:
 
 | literature_state.md-Feld | Vault-Spalte |
 |--------------------------|-------------|

@@ -231,7 +231,7 @@ Die Verschlüsselung nutzt macOS Keychain (macOS) bzw. GNOME Keyring (Linux) wen
 /academic-research:setup
 ```
 
-Richtet `mcp/academic_vault/` ein, erstellt `vault.db` unter `~/.academic-research/projects/<slug>/vault.db` und registriert den MCP-Server.
+Richtet `academic_vault/` ein, erstellt `vault.db` unter `~/.academic-research/projects/<slug>/vault.db` und registriert den MCP-Server.
 
 ### Vault-Status prüfen
 

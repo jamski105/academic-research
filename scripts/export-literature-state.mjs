@@ -10,7 +10,7 @@
  *   - VAULT_DB_PATH gesetzt oder vault.db im CWD
  *
  * Hinweis: Dieses Skript liest den Vault direkt über das Python-Modul
- * (mcp.academic_vault.db), da kein MCP-HTTP-Client in diesem Repo verfügbar ist.
+ * (academic_vault.db), da kein MCP-HTTP-Client in diesem Repo verfügbar ist.
  * In einer MCP-Umgebung können stattdessen vault.search() + vault.get_paper()
  * Tool-Calls verwendet werden.
  */
@@ -61,7 +61,7 @@ function getAllPapers() {
 import sys, json
 sys.path.insert(0, '.')
 try:
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     conn = VaultDB._open('${VAULT_DB.replace(/'/g, "\\'")}')
     rows = conn.execute(
         'SELECT paper_id, csl_json, pdf_path, file_id, type FROM papers ORDER BY added_at DESC'
@@ -82,7 +82,7 @@ function getQuoteCount(paperId) {
 import sys, json
 sys.path.insert(0, '.')
 try:
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     conn = VaultDB._open('${VAULT_DB.replace(/'/g, "\\'")}')
     row = conn.execute('SELECT COUNT(*) AS cnt FROM quotes WHERE paper_id = ?', ('${safe}',)).fetchone()
     conn.close()

@@ -15,8 +15,8 @@ _WORKTREE_ROOT = Path(__file__).parent.parent
 if str(_WORKTREE_ROOT) not in sys.path:
     sys.path.insert(0, str(_WORKTREE_ROOT))
 
-from mcp.academic_vault.db import VaultDB
-from mcp.academic_vault import server as vault_server
+from academic_vault.db import VaultDB
+from academic_vault import server as vault_server
 
 
 # ---------------------------------------------------------------------------
@@ -236,7 +236,7 @@ def test_add_v64_tables_idempotent():
     """add_v64_tables() kann mehrfach aufgerufen werden ohne Fehler."""
     db_path, db = make_temp_db()
     try:
-        from mcp.academic_vault.migrate import add_v64_tables
+        from academic_vault.migrate import add_v64_tables
         # Zweiter Aufruf (erster ist implizit via init_schema in make_temp_db)
         add_v64_tables(db_path)
         add_v64_tables(db_path)

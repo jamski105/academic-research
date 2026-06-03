@@ -279,8 +279,8 @@ def assess_risk_of_bias(
     if str(_root) not in sys.path:
         sys.path.insert(0, str(_root))
 
-    from mcp.academic_vault import server as vault_server
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault import server as vault_server
+    from academic_vault.db import VaultDB
 
     study_key = study_type.lower()
     if study_key not in STUDY_TYPE_MAP:

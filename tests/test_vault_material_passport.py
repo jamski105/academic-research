@@ -15,8 +15,8 @@ _WORKTREE_ROOT = Path(__file__).parent.parent
 if str(_WORKTREE_ROOT) not in sys.path:
     sys.path.insert(0, str(_WORKTREE_ROOT))
 
-from mcp.academic_vault.db import VaultDB
-from mcp.academic_vault import server as vault_server
+from academic_vault.db import VaultDB
+from academic_vault import server as vault_server
 
 
 def make_temp_db() -> tuple[str, VaultDB]:
@@ -229,7 +229,7 @@ def test_export_material_passport_schema_validates(tmp_path):
             slug="proj",
             output_dir=str(tmp_path),
         )
-        from mcp.academic_vault.material_passport import validate_passport
+        from academic_vault.material_passport import validate_passport
         data = json.loads((tmp_path / "material-passport.json").read_text())
         # validate_passport wirft bei Fehler
         validate_passport(data)
@@ -245,7 +245,7 @@ def test_v64_migration_idempotent_for_passport():
     """add_v64_tables() ist idempotent bezueglich vault_locked_status."""
     db_path, db = make_temp_db()
     try:
-        from mcp.academic_vault.migrate import add_v64_tables
+        from academic_vault.migrate import add_v64_tables
         add_v64_tables(db_path)
         add_v64_tables(db_path)
     finally:

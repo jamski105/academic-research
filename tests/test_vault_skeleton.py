@@ -9,26 +9,26 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-# Worktree-Root zum PYTHONPATH hinzufuegen damit mcp.academic_vault importierbar ist
+# Worktree-Root zum PYTHONPATH hinzufuegen damit academic_vault importierbar ist
 _WORKTREE_ROOT = Path(__file__).parent.parent
 if str(_WORKTREE_ROOT) not in sys.path:
     sys.path.insert(0, str(_WORKTREE_ROOT))
 
 # Modul-Imports mit Guard: fehlen noch bis zur Implementierung
 try:
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     _DB_AVAILABLE = True
 except ImportError:
     _DB_AVAILABLE = False
 
 try:
-    from mcp.academic_vault.files_api import FilesAPIClient
+    from academic_vault.files_api import FilesAPIClient
     _FILES_API_AVAILABLE = True
 except ImportError:
     _FILES_API_AVAILABLE = False
 
 try:
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
     _SERVER_AVAILABLE = True
 except ImportError:
     _SERVER_AVAILABLE = False
@@ -120,7 +120,7 @@ def test_search_returns_results():
             ) % (i, i)
             db.add_paper("p-search-%d" % i, csl)
 
-        from mcp.academic_vault.server import search_papers
+        from academic_vault.server import search_papers
         start = time.perf_counter()
         results = search_papers(db_path, "DevOps Governance", k=5)
         elapsed = time.perf_counter() - start
@@ -148,7 +148,7 @@ def test_add_quote_requires_api_response_id():
         csl = '{"title": "Test Paper"}'
         db.add_paper("p-quote", csl)
 
-        from mcp.academic_vault.server import add_quote
+        from academic_vault.server import add_quote
         with pytest.raises(ValueError, match="api_response_id"):
             add_quote(
                 db_path=db_path,
@@ -176,7 +176,7 @@ def test_add_quote_manual_no_api_id():
         csl = '{"title": "Test Paper"}'
         db.add_paper("p-manual", csl)
 
-        from mcp.academic_vault.server import add_quote
+        from academic_vault.server import add_quote
         quote_id = add_quote(
             db_path=db_path,
             paper_id="p-manual",
@@ -239,7 +239,7 @@ def test_find_quotes():
         db.init_schema()
         db.add_paper("p-fq", '{"title": "Find Quotes Paper"}')
 
-        from mcp.academic_vault.server import add_quote, find_quotes
+        from academic_vault.server import add_quote, find_quotes
         add_quote(
             db_path=db_path,
             paper_id="p-fq",
@@ -267,7 +267,7 @@ def test_get_quote():
         db.init_schema()
         db.add_paper("p-gq", '{"title": "Get Quote Paper"}')
 
-        from mcp.academic_vault.server import add_quote, get_quote
+        from academic_vault.server import add_quote, get_quote
         quote_id = add_quote(
             db_path=db_path,
             paper_id="p-gq",
@@ -300,7 +300,7 @@ def test_stats():
         # file_id manuell setzen (wie nach ensure_file)
         db.set_file_id("p-stats", "file-xyz", expires_at=int(time.time()) + 3600)
 
-        from mcp.academic_vault.server import add_quote
+        from academic_vault.server import add_quote
         add_quote(
             db_path=db_path,
             paper_id="p-stats",
@@ -308,7 +308,7 @@ def test_stats():
             extraction_method="manual",
         )
 
-        from mcp.academic_vault.files_api import FilesAPIClient
+        from academic_vault.files_api import FilesAPIClient
         stats = FilesAPIClient.get_stats(db_path)
 
         assert "paper_count" in stats
@@ -363,7 +363,7 @@ def test_vec_fallback():
 def test_migrate_help():
     """migrate.py --help muss mit exit 0 laufen."""
     import subprocess
-    migrate_path = str(_WORKTREE_ROOT / "mcp" / "academic_vault" / "migrate.py")
+    migrate_path = str(_WORKTREE_ROOT / "academic_vault" / "migrate.py")
     result = subprocess.run(
         [sys.executable, migrate_path, "--help"],
         capture_output=True,

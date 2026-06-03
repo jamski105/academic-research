@@ -35,7 +35,7 @@ if str(_ROOT) not in sys.path:
 @pytest.fixture
 def db_path(tmp_path):
     """Temporaere SQLite-DB mit vollstaendigem Schema."""
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     path = str(tmp_path / "test_rob.db")
     db = VaultDB(path)
     db.init_schema()
@@ -43,7 +43,7 @@ def db_path(tmp_path):
 
 
 def _seed_paper(db_path: str, paper_id: str, pdf_path: str = "/tmp/test.pdf") -> None:
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     db = VaultDB(db_path)
     db.add_paper(
         paper_id,
@@ -143,7 +143,7 @@ def test_rct_calls_add_risk_of_bias_with_correct_domains(db_path, tmp_path):
         pdf_text=MOCK_PDF_TEXT,
     )
 
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
     assessments = vault_server.list_risk_of_bias(db_path, paper_id="paper_rct")
     assert len(assessments) >= 1, "add_risk_of_bias muss aufgerufen worden sein"
 
@@ -170,7 +170,7 @@ def test_rct_overall_score_present(db_path):
         pdf_text=MOCK_PDF_TEXT,
     )
 
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
     assessments = vault_server.list_risk_of_bias(db_path, paper_id="paper_rct_overall")
     stored = json.loads(assessments[0]["domain_scores_json"])
     assert "overall" in stored, "'overall'-Eintrag fehlt im RCT-Assessment"
@@ -182,7 +182,7 @@ def test_rct_adds_quote_per_domain(db_path):
     _seed_paper(db_path, "paper_rct_quotes")
 
     from tests.helpers.rob_agent_helper import assess_risk_of_bias
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
 
     assess_risk_of_bias(
         db_path=db_path,
@@ -191,7 +191,7 @@ def test_rct_adds_quote_per_domain(db_path):
         pdf_text=MOCK_PDF_TEXT,
     )
 
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     db = VaultDB(db_path)
     quotes = db.find_quotes(paper_id="paper_rct_quotes")
     assert len(quotes) >= len(_expected_rct_domains()), (
@@ -216,7 +216,7 @@ def test_observational_calls_add_risk_of_bias_with_correct_domains(db_path):
         pdf_text=MOCK_PDF_TEXT_OBS,
     )
 
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
     assessments = vault_server.list_risk_of_bias(db_path, paper_id="paper_obs")
     assert len(assessments) >= 1
 
@@ -239,7 +239,7 @@ def test_observational_adds_quote_per_domain(db_path):
         pdf_text=MOCK_PDF_TEXT_OBS,
     )
 
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     db = VaultDB(db_path)
     quotes = db.find_quotes(paper_id="paper_obs_q")
     assert len(quotes) >= len(_expected_obs_domains())
@@ -262,7 +262,7 @@ def test_qualitative_calls_add_risk_of_bias_with_correct_domains(db_path):
         pdf_text=MOCK_PDF_TEXT_QUAL,
     )
 
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
     assessments = vault_server.list_risk_of_bias(db_path, paper_id="paper_qual")
     assert len(assessments) >= 1
 
@@ -285,7 +285,7 @@ def test_qualitative_adds_quote_per_domain(db_path):
         pdf_text=MOCK_PDF_TEXT_QUAL,
     )
 
-    from mcp.academic_vault.db import VaultDB
+    from academic_vault.db import VaultDB
     db = VaultDB(db_path)
     quotes = db.find_quotes(paper_id="paper_qual_q")
     assert len(quotes) >= len(_expected_qual_domains())
@@ -347,7 +347,7 @@ def test_review_study_type_falls_back_to_robins_i(db_path):
         pdf_text=MOCK_PDF_TEXT_OBS,
     )
 
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
     assessments = vault_server.list_risk_of_bias(db_path, paper_id="paper_review")
     assert len(assessments) >= 1
     stored = json.loads(assessments[0]["domain_scores_json"])
@@ -375,7 +375,7 @@ def test_consistent_scores_rct_same_paper(db_path):
     _seed_paper(db_path, "paper_cons")
 
     from tests.helpers.rob_agent_helper import assess_risk_of_bias
-    from mcp.academic_vault import server as vault_server
+    from academic_vault import server as vault_server
 
     assess_risk_of_bias(
         db_path=db_path,

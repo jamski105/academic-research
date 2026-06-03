@@ -8,7 +8,7 @@ import pytest
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from mcp.academic_vault.db import VaultDB
+from academic_vault.db import VaultDB
 
 
 def _make_db() -> tuple:
@@ -76,7 +76,7 @@ def test_add_paper_invalid_type():
 
 def test_migration_idempotent():
     """add_book_columns() kann mehrfach aufgerufen werden ohne Fehler."""
-    from mcp.academic_vault.migrate import add_book_columns
+    from academic_vault.migrate import add_book_columns
     db_path, _ = _make_db()
     add_book_columns(db_path)  # Erster Aufruf
     add_book_columns(db_path)  # Zweiter Aufruf -- darf nicht scheitern

@@ -166,7 +166,7 @@ Dieser Command:
 2. Erzeugt ein isoliertes Python-venv unter `~/.academic-research/venv/`.
 3. Installiert Python-Pakete (httpx, PyPDF2, pyyaml, anthropic, openpyxl, pandas, sqlite-vec u.a.).
 4. Installiert `browser-use`-CLI automatisch via `uv tool install browser-use` oder `pipx install browser-use`.
-5. Richtet den Vault-MCP-Server ein (`mcp/academic_vault/`).
+5. Richtet den Vault-MCP-Server ein (`academic_vault/`).
 6. Fragt nach **Hochschul-Profil** (Opt-in für Per-Uni-Konfiguration).
 7. Fragt nach **SciHub-Tier-Aktivierung** (Default: aus).
 8. Trägt Permissions in `~/.claude/settings.local.json` ein.
@@ -474,7 +474,7 @@ Agents werden als LLM-Subagents von Commands oder Skills gestartet.
 
 ## Vault-MCP-Server
 
-Der **Vault** (`mcp/academic_vault/`) ist die Kernkomponente seit v6.0. Er ersetzt die flachen Markdown-Dateien durch eine SQLite-Datenbank mit FTS5-Volltext-Index und sqlite-vec für semantische Suche.
+Der **Vault** (`academic_vault/`) ist die Kernkomponente seit v6.0. Er ersetzt die flachen Markdown-Dateien durch eine SQLite-Datenbank mit FTS5-Volltext-Index und sqlite-vec für semantische Suche.
 
 **Datenbank:** `~/.academic-research/projects/<slug>/vault.db`
 

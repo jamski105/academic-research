@@ -6,5 +6,8 @@ openpyxl>=3.1
 pandas>=2.0
 requests>=2.28.0
 lxml>=4.9.0
+# academic-vault MCP-Server (Vault): FastMCP-SDK + Vektor-Suche-Extension
+mcp>=1.0
+sqlite-vec>=0.1.0
 # optional — nur fuer Zotero-Import (Skill: zotero-import)
 pyzotero>=1.5

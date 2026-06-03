@@ -43,7 +43,7 @@ const SLUG = process.env.ACADEMIC_PROJECT_SLUG || 'default';
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const VAULT_DB = process.env.VAULT_DB_PATH
   || join(os.homedir(), '.academic-research', 'projects', SLUG, 'vault.db');
-const VAULT_SRC = join(REPO_ROOT, 'mcp');
+const VAULT_SRC = REPO_ROOT;
 
 // Zu sichernde State-Dateien (relativ zu PROJECT_DIR)
 const STATE_FILES = [

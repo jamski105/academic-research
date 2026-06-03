@@ -9,7 +9,7 @@ import pytest
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from mcp.academic_vault.db import VaultDB
+from academic_vault.db import VaultDB
 
 
 class TestParentPaperIdSchema:
@@ -81,7 +81,7 @@ class TestMigrateParentPaperId:
 
     def test_add_parent_paper_id_column_idempotent(self):
         """Migration fuegt Spalte hinzu; zweiter Lauf wirft keinen Fehler."""
-        from mcp.academic_vault.migrate import add_parent_paper_id_column
+        from academic_vault.migrate import add_parent_paper_id_column
         # Erster Lauf
         add_parent_paper_id_column(self.db_path)
         cols = [
@@ -104,7 +104,7 @@ class TestServerAddChapter:
 
     def test_add_chapter_via_server(self):
         """server.add_chapter() legt Kapitel mit parent_paper_id an."""
-        from mcp.academic_vault import server as vault_server
+        from academic_vault import server as vault_server
         # Elternbuch anlegen
         vault_server.add_paper(
             self.db_path, "buch-001",
@@ -125,7 +125,7 @@ class TestServerAddChapter:
 
     def test_server_add_paper_accepts_parent_paper_id(self):
         """server.add_paper() akzeptiert parent_paper_id."""
-        from mcp.academic_vault import server as vault_server
+        from academic_vault import server as vault_server
         vault_server.add_paper(
             self.db_path, "root-book",
             csl_json=json.dumps({"type": "book", "title": "Root"}),
@@ -140,7 +140,7 @@ class TestServerAddChapter:
 
     def test_add_chapter_auto_sets_chapter_type(self):
         """add_chapter setzt type=chapter automatisch wenn nicht in csl_json."""
-        from mcp.academic_vault import server as vault_server
+        from academic_vault import server as vault_server
         vault_server.add_paper(
             self.db_path, "buch-002",
             csl_json=json.dumps({"type": "book", "title": "Buch Zwei"}),
