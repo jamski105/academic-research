@@ -66,6 +66,30 @@ function isProtectedPath(filePath) {
 }
 
 // ---------------------------------------------------------------------------
+// Tool-Erkennung + Content-Extraktion
+// ---------------------------------------------------------------------------
+
+// Tools die Dateiinhalte schreiben und daher geprueft werden muessen (#220).
+const WRITE_LIKE_TOOLS = new Set(['Write', 'Edit', 'MultiEdit']);
+
+/**
+ * Extrahiert den zu pruefenden Text aus tool_input — abhaengig vom Tool:
+ *   - Write:     tool_input.content
+ *   - Edit:      tool_input.new_string
+ *   - MultiEdit: alle edits[].new_string (zusammengefuegt)
+ */
+function extractContent(toolName, toolInput) {
+  if (toolName === 'MultiEdit' && Array.isArray(toolInput.edits)) {
+    return toolInput.edits.map((e) => e?.new_string || '').join('\n');
+  }
+  if (toolName === 'Edit') {
+    return toolInput.new_string || '';
+  }
+  // Write (und Fallback)
+  return toolInput.content || '';
+}
+
+// ---------------------------------------------------------------------------
 // Quote-Parser
 // ---------------------------------------------------------------------------
 
@@ -194,15 +218,15 @@ async function main() {
     process.exit(0);
   }
 
-  // Nur Write-Tool-Calls pruefen
+  // Schreibende Tool-Calls pruefen: Write, Edit, MultiEdit (#220)
   const toolName = input?.tool_name || input?.hook_event_name || '';
-  if (toolName !== 'Write') {
+  if (!WRITE_LIKE_TOOLS.has(toolName)) {
     process.exit(0);
   }
 
   const toolInput = input?.tool_input || {};
   const filePath = toolInput.file_path || '';
-  const content = toolInput.content || '';
+  const content = extractContent(toolName, toolInput);
 
   // Pfad-Match
   if (!isProtectedPath(filePath)) {
