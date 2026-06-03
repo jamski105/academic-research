@@ -37,7 +37,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ── Verfuegbare Profile sammeln ───────────────────────────────────────────────
-mapfile -t SLUGS < <(
+# Hinweis: 'mapfile'/'readarray' gibt es erst ab bash 4 — macOS liefert noch
+# bash 3.2 aus. Daher portable while-read-Schleife statt 'mapfile -t'.
+SLUGS=()
+while IFS= read -r _slug; do
+  [[ -n "${_slug}" ]] && SLUGS+=("${_slug}")
+done < <(
   find "${PROFILES_DIR}" -maxdepth 1 -name "*.yaml" ! -name "_*" \
     -exec basename {} .yaml \; | sort
 )
