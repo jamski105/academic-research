@@ -6,7 +6,7 @@ description: >
   Trigger-Phrasen: "Zitierstil importieren", "CSL importieren", "neuer Stil",
   "custom citation style", "Stil aus GitHub laden".
   Parst .csl-Dateien ("Stilübernahme / Import" via xml.etree.ElementTree) und generiert
-  Prompt-Regel-Varianten unter skills/citation-extraction/references/custom-<style>.md.
+  Prompt-Regel-Varianten unter ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-<style>.md.
 triggers:
   - "Zitierstil importieren"
   - "CSL importieren"
@@ -19,7 +19,7 @@ tools:
   - Bash
   - Write
 references:
-  - skills/citation-style-import/references/csl-spec.md
+  - ${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/references/csl-spec.md
 ---
 
 # CSL-Import Skill
@@ -35,7 +35,7 @@ Importiert einen beliebigen Zitierstil aus dem
 [citation-style-language/styles](https://github.com/citation-style-language/styles)
 GitHub-Repository oder einem lokalen Pfad. Parst die .csl-Datei (XML nach
 CSL 1.0.2) und generiert eine neue Prompt-Regel-Variante analog zu
-`skills/citation-extraction/references/apa.md`.
+`${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/apa.md`.
 
 ## Voraussetzungen
 
@@ -68,9 +68,9 @@ curl -o /tmp/<dateiname>.csl \
 ### 3. Parser ausfuehren
 
 ```bash
-python skills/citation-style-import/scripts/csl_import.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/scripts/csl_import.py \
   /tmp/<dateiname>.csl \
-  -o skills/citation-extraction/references/custom-<dateiname>.md
+  -o ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-<dateiname>.md
 ```
 
 Beispiel fuer Springer Author-Date:
@@ -79,9 +79,9 @@ Beispiel fuer Springer Author-Date:
 curl -o /tmp/springer-basic-author-date.csl \
   "https://raw.githubusercontent.com/citation-style-language/styles/master/springer-basic-author-date.csl"
 
-python skills/citation-style-import/scripts/csl_import.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/scripts/csl_import.py \
   /tmp/springer-basic-author-date.csl \
-  -o skills/citation-extraction/references/custom-springer-basic-author-date.md
+  -o ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-springer-basic-author-date.md
 ```
 
 ## Verhalten
@@ -149,6 +149,6 @@ auf die neue Variante hinweisen:
 
 ## CSL-Spezifikation
 
-Vollstaendige Kurzreferenz: `skills/citation-style-import/references/csl-spec.md`
+Vollstaendige Kurzreferenz: `${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/references/csl-spec.md`
 
 Offizielle Doku: https://docs.citationstyles.org/en/stable/specification.html

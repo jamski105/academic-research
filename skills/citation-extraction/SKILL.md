@@ -39,7 +39,7 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 | Vancouver | `references/vancouver.md` |
 | Springer Author-Date | `references/springer-author-date.md` |
 
-Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
+Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/<variant>.md`.
 
 **Typ-basierte Erweiterung:** Falls die Quelle `type: chapter` hat (Buchkapitel aus Sammelband),
 lade zusaetzlich `references/book-chapter-de.md` und nutze die dort definierten

@@ -90,19 +90,19 @@ Fehlende `pdf_path`-Eintraege: Skill meldet diese Paper als "uebersprungen".
 ### Schritt 2: Bundle bauen
 
 ```bash
-python skills/notebook-bundle/scripts/bundle.py <selection.json> \
+python ${CLAUDE_PLUGIN_ROOT}/skills/notebook-bundle/scripts/bundle.py <selection.json> \
   --output-dir <projekt-verzeichnis>
 ```
 
 Oder mit explizitem Output-Pfad:
 ```bash
-python skills/notebook-bundle/scripts/bundle.py <selection.json> \
+python ${CLAUDE_PLUGIN_ROOT}/skills/notebook-bundle/scripts/bundle.py <selection.json> \
   --output <projekt>/notebook-bundle-<ts>.pdf
 ```
 
 Bei >500MB automatisch:
 ```bash
-python skills/notebook-bundle/scripts/bundle.py <selection.json> \
+python ${CLAUDE_PLUGIN_ROOT}/skills/notebook-bundle/scripts/bundle.py <selection.json> \
   --output-dir <dir> --size-limit-mb 450
 ```
 

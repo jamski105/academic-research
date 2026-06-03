@@ -54,7 +54,7 @@ Im academic-research-Kontext: Default ist **normal**. Bei Hochschul-Arbeiten
 Vor dem Scan die vollständigen Musterbeschreibungen laden:
 
 ```
-Read skills/humanizer-de/references/patterns.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/humanizer-de/references/patterns.md
 ```
 
 Die Datei enthält alle 45 Muster mit Indikatoren, Beispielen und Lösungen.

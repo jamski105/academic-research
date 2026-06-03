@@ -77,7 +77,7 @@ Claude erkennt folgende Phrasen und fuehrt den Import aus:
 ### Manuell
 
 ```bash
-python skills/zotero-import/scripts/zotero_pull.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/zotero-import/scripts/zotero_pull.py \
   --config ~/.academic-research/config.yaml \
   --db vault.db
 ```
@@ -94,8 +94,8 @@ python skills/zotero-import/scripts/zotero_pull.py \
 ## Sicherheitshinweise
 
 - **Read-only**: Kein Schreiben zurueck nach Zotero
-- **Netz-Allowlist**: Ausschliesslich `api.zotero.org` (via pyzotero)
-- **Credentials**: Nur in `~/.academic-research/config.yaml` mit 0600-Permissions
+- **Netz-Allowlist**: Nur `api.zotero.org` (via pyzotero)
+- **Credentials**: Nur in `~/.academic-research/config.yaml` mit 0600
 
 ## Bekannte Einschraenkungen
 

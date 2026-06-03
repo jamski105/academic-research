@@ -77,7 +77,7 @@ Klaere bei Bedarf:
 
 **Ohne Repro-Lock** (normaler Export):
 ```bash
-python skills/material-passport/scripts/build_passport.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/material-passport/scripts/build_passport.py \
   --db vault.db \
   --slug <projekt-slug> \
   --output-dir . \
@@ -86,7 +86,7 @@ python skills/material-passport/scripts/build_passport.py \
 
 **Mit Repro-Lock** (Vault nach Export sperren):
 ```bash
-python skills/material-passport/scripts/build_passport.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/material-passport/scripts/build_passport.py \
   --db vault.db \
   --slug <projekt-slug> \
   --output-dir . \

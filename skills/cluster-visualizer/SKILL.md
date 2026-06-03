@@ -22,8 +22,8 @@ license: MIT
 ## Uebersicht
 
 Visualisiert einen Literaturcluster als Mermaid-`graph LR`-Diagramm.
-Knoten repraesentieren Paper (Titel + Jahr), Kanten repraesentieren
-gemeinsame Zitationsverbindungen (Kantengewicht via Strichdicke).
+Knoten sind Paper (Titel + Jahr), Kanten sind gemeinsame
+Zitationsverbindungen (Kantengewicht via Strichdicke).
 
 ## Trigger-Erkennung
 
@@ -60,7 +60,7 @@ Erwartetes Schema:
 ### 2. Mermaid-Quelltext erzeugen
 
 ```bash
-python skills/cluster-visualizer/scripts/render_mermaid.py <cluster.json> [output_dir]
+python ${CLAUDE_PLUGIN_ROOT}/skills/cluster-visualizer/scripts/render_mermaid.py <cluster.json> [output_dir]
 ```
 
 Der Quelltext wird als `.mmd`-Datei gespeichert und als Pfad zurueckgegeben.

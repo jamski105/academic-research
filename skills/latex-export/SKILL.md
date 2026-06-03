@@ -12,8 +12,8 @@ description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel
 ## Workflow
 
 1. Kapitel aus `kapitel/` lesen
-2. `skills/latex-export/scripts/render_tex.py` → `.tex` (Pandoc bevorzugt, Custom-Fallback)
-3. `skills/latex-export/scripts/build_bib.py` → `.bib` aus Vault (alle Papers)
+2. `${CLAUDE_PLUGIN_ROOT}/skills/latex-export/scripts/render_tex.py` → `.tex` (Pandoc bevorzugt, Custom-Fallback)
+3. `${CLAUDE_PLUGIN_ROOT}/skills/latex-export/scripts/build_bib.py` → `.bib` aus Vault (alle Papers)
 4. Optional: Uni-Template `~/.academic-research/library-profiles/<uni>.tex.template` wrappen
 
 ## Command

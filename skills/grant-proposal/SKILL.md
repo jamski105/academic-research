@@ -46,9 +46,9 @@ Frage den User via `AskUserQuestion` nach der gewünschten Förderlinie:
 - **EU-Horizon** — Horizon Europe (ERC, MSCA, Kooperationsprojekte)
 
 Lade die entsprechende Referenzdatei:
-- DFG → `skills/grant-proposal/references/dfg.md`
-- BMBF → `skills/grant-proposal/references/bmbf.md`
-- EU-Horizon → `skills/grant-proposal/references/eu-horizon.md`
+- DFG → `${CLAUDE_PLUGIN_ROOT}/skills/grant-proposal/references/dfg.md`
+- BMBF → `${CLAUDE_PLUGIN_ROOT}/skills/grant-proposal/references/bmbf.md`
+- EU-Horizon → `${CLAUDE_PLUGIN_ROOT}/skills/grant-proposal/references/eu-horizon.md`
 
 ### 2. Vault-Quellen sammeln
 
