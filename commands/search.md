@@ -104,13 +104,7 @@ Ergebnisse an `$SESSION_DIR/api_results.json` anhängen.
 
 Die Heuristik-Dimensionen (Aktualität, Qualität, Autorität, Zugang) werden direkt in diesem Command berechnet — siehe Formeln in `commands/score.md` → „4 weitere Dimensionen berechnen". Gesamtscore wie dort, Clusterzuweisung ebenfalls. Das Resultat in `$SESSION_DIR/ranked.json` schreiben.
 
-### Schritt 7: LLM-Relevanz-Scoring
-
-Den `relevance-scorer`-Agent in Batches von 10 Papers starten.
-LLM-Scores ins Ranking einmischen. Top-N nach Modus wählen (quick=15, standard=25, deep=40).
-Als `$SESSION_DIR/papers.json` speichern.
-
-### Schritt 8: PRISMA-Zähler speichern
+### Schritt 7: PRISMA-Zähler speichern
 
 ```bash
 ~/.academic-research/venv/bin/python -c "
@@ -130,7 +124,7 @@ save_prisma_counters('$SESSION_DIR', counters)
 
 Die Zähler werden in `$SESSION_DIR/prisma_counters.json` gespeichert.
 
-### Schritt 9: Relevanz-Scoring (Standard vs. Batch)
+### Schritt 8: Relevanz-Scoring (Standard vs. Batch)
 
 **Standard (< 50 Paper oder kein `--batch`):**  
 Den `relevance-scorer`-Agent in Batches von 10 Papers starten.
@@ -155,7 +149,7 @@ print('Abholung via: /history --batch', job['batch_id'])
 Job-ID wird in `$SESSION_DIR/batch.json` gespeichert. Abholung über
 `/history --batch <id>` (sobald Batch-Status `ended` ist, ca. 1 h).
 
-### Schritt 10: Interactive Mode — Phase 1 (nur bei `--interactive`)
+### Schritt 9: Interactive Mode — Phase 1 (nur bei `--interactive`)
 
 Falls `--interactive=off` (Standard): diesen Schritt überspringen.
 
@@ -183,7 +177,7 @@ Optionen:
 
 Bei "Weiter": Phase 2 (Deep-Investigation) starten = vollständiges Scoring + Kapitelplanung.
 
-### Schritt 11: Ergebnisse anzeigen
+### Schritt 10: Ergebnisse anzeigen
 
 Eine formatierte Tabelle mit Rang, Titel, Jahr, Score, Cluster und Quellmodul ausgeben.
 Pfad des Session-Verzeichnisses melden.
