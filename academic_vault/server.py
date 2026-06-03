@@ -280,8 +280,10 @@ def add_chapter(
         csl = json.loads(csl_json)
         csl.setdefault("type", "chapter")
         csl_json = json.dumps(csl, ensure_ascii=False)
-    except Exception:
-        pass
+    except Exception as exc:
+        # Kein stilles Durchreichen von malformed csl_json -- sonst wuerde
+        # add_paper() es als article-journal fehlklassifizieren (siehe #232).
+        raise ValueError(f"add_chapter: Ungueltiges csl_json: {exc}") from exc
     add_paper(
         db_path=db_path,
         paper_id=paper_id,
