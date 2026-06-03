@@ -127,11 +127,11 @@ def detect_format(file_path: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _extract_pdf(file_path: str) -> str:
-    """Extrahiert Text aus PDF via PyPDF2 oder pdfminer als Fallback."""
+    """Extrahiert Text aus PDF via pypdf oder pdfminer als Fallback."""
     try:
-        import PyPDF2  # type: ignore
+        import pypdf  # type: ignore
         with open(file_path, "rb") as fh:
-            reader = PyPDF2.PdfReader(fh)
+            reader = pypdf.PdfReader(fh)
             pages = []
             for page in reader.pages:
                 pages.append(page.extract_text() or "")
@@ -143,8 +143,8 @@ def _extract_pdf(file_path: str) -> str:
         return _pdfminer_extract(file_path)
     except ImportError:
         raise ImportError(
-            "PDF-Extraktion benoetigt PyPDF2 oder pdfminer.six: "
-            "pip install PyPDF2  ODER  pip install pdfminer.six"
+            "PDF-Extraktion benoetigt pypdf oder pdfminer.six: "
+            "pip install pypdf  ODER  pip install pdfminer.six"
         )
 
 

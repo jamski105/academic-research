@@ -165,7 +165,7 @@ Dieser Command:
 
 1. Legt `~/.academic-research/` als Daten-Verzeichnis an.
 2. Erzeugt ein isoliertes Python-venv unter `~/.academic-research/venv/`.
-3. Installiert Python-Pakete (httpx, PyPDF2, pyyaml, anthropic, openpyxl, pandas, sqlite-vec u.a.).
+3. Installiert Python-Pakete (httpx, pypdf, pyyaml, anthropic, openpyxl, pandas, sqlite-vec u.a.).
 4. Installiert `browser-use`-CLI automatisch via `uv tool install browser-use` oder `pipx install browser-use`.
 5. Richtet den Vault-MCP-Server ein (`academic_vault/`).
 6. Fragt nach **Hochschul-Profil** (Opt-in für Per-Uni-Konfiguration).

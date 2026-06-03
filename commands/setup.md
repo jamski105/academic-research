@@ -17,7 +17,7 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh
 Das Skript übernimmt in sechs Schritten:
 
 1. Legt `~/.academic-research/{sessions,pdfs,venv}` an.
-2. Erstellt die Python-venv und installiert `httpx`, `PyPDF2`, `pyyaml`, `openpyxl` (aus `scripts/requirements.txt`).
+2. Erstellt die Python-venv und installiert `httpx`, `pypdf`, `pyyaml`, `openpyxl` (aus `scripts/requirements.txt`).
 3. Prüft, ob `browser-use` CLI vorhanden ist. Falls nicht: installiert automatisch via `uv tool install` oder `pipx install`, sofern eines der beiden Tools vorhanden ist. Führt anschließend `browser-use doctor` aus.
 4. Prüft, ob der globale `browser-use` Claude-Skill unter `~/.claude/skills/browser-use/` liegt.
 4a. Prüft, ob der `humanizer-de`-Skill unter `~/.codex/skills/humanizer-de/`
