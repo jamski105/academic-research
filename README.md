@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/jamski105/academic-research/actions/workflows/ci.yml/badge.svg)](https://github.com/jamski105/academic-research/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-6.5.0-blue.svg)](CHANGELOG.md)
-[![Skills](https://img.shields.io/badge/skills-23+-orange.svg)](#skills-übersicht)
+[![Skills](https://img.shields.io/badge/skills-28-orange.svg)](#skills-übersicht)
 [![Tests](https://img.shields.io/badge/tests-963%20passing-success.svg)](#entwicklung-und-evals)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-8A2BE2.svg)](https://code.claude.com/docs/en/plugins)
@@ -49,7 +49,7 @@ Seit v6.0 hat das Plugin einen eigenen **Vault-MCP-Server** (SQLite + FTS5 + sql
 5. [Update auf v6.5 (Migration von v5)](#update-auf-v65--migration-von-v5)
 6. [Walkthrough — Erstes Projekt](#walkthrough--erstes-projekt)
 7. [Commands / Slash-Commands](#commands--slash-commands)
-8. [Skills (23+ selbstaktivierend)](#skills-übersicht)
+8. [Skills (28 selbstaktivierend)](#skills-übersicht)
 9. [Agents (LLM-Subagents)](#agents)
 10. [Vault-MCP-Server](#vault-mcp-server)
 11. [5D-Scoring und Cluster](#5d-scoring-und-cluster)
@@ -410,6 +410,7 @@ Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt.
 | `zotero-import` | *„Zotero importieren"*, *„Bibliothek einlesen"* | pyzotero-Pull mit Vault-Dedup |
 | `reading-list-import` | *„Literaturliste importieren"*, *„Quellenliste"* | PDF/Markdown/Text → Vault |
 | `citation-style-import` | *„eigenen Zitierstil"*, *„CSL laden"* | CSL-Repository → Vault-Stilregeln |
+| `book-handler` | *„Buch"*, *„Monografie"*, *„Sammelband"*, ISBN-/Springer-DOI-Muster | Löst ISBN/Titel/DOI via DNB + OpenLibrary + DOAB auf, legt CSL-JSON im Vault an ([SKILL.md](skills/book-handler/SKILL.md)) |
 
 ### Schreib-Skills
 
@@ -434,6 +435,9 @@ Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt.
 | `grant-proposal` | *„Förderantrag"*, *„DFG"*, *„BMBF"*, *„EU-Antrag"* | DFG/BMBF/EU-Antrag mit Vault-Quellen |
 | `conference-poster` | *„Poster"*, *„Konferenz-Poster"* | A0-Poster (LaTeX tikzposter / PowerPoint) |
 | `reviewer-response` | *„Response-Letter"*, *„Reviewer-Kommentare"* | Point-by-point Response |
+| `latex-export` | *„Thesis als .tex"*, *„Kapitel exportieren"*, *„BibTeX aus Vault"* | Markdown-Kapitel → `.tex` (Pandoc/Custom) + `.bib` aus Vault (biblatex, DIN-1505) ([SKILL.md](skills/latex-export/SKILL.md)) |
+| `notebook-bundle` | *„NotebookLM Bundle"*, *„PDF-Bundle exportieren"*, *„Riesen-PDF aufteilen"* | Konkateniertes PDF (Cover + TOC) der Paper für NotebookLM-Upload ([SKILL.md](skills/notebook-bundle/SKILL.md)) |
+| `cluster-visualizer` | *„zeige Cluster"*, *„visualisiere"*, *„Mindmap"*, *„Netzwerk der Quellen"* | Cluster-JSON → Mermaid-`graph-LR`-Diagramm, optional PNG via mmdc ([SKILL.md](skills/cluster-visualizer/SKILL.md)) |
 
 ### Abschluss-Skills
 
