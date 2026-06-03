@@ -54,6 +54,7 @@ def call_claude(system: str, user: str, model: str = "claude-sonnet-4-6") -> str
     resp = client.messages.create(
         model=model,
         max_tokens=2048,
+        temperature=0,  # deterministisch — verhindert flaky Trigger-Evals (#231)
         system=system,
         messages=[{"role": "user", "content": user}],
     )
@@ -128,6 +129,7 @@ def call_claude_with_tokens(
     resp = client.messages.create(
         model=model,
         max_tokens=2048,
+        temperature=0,  # deterministisch — verhindert flaky Trigger-Evals (#231)
         system=system,
         messages=[{"role": "user", "content": user}],
     )
