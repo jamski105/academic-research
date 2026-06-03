@@ -138,7 +138,7 @@ Bevor geschrieben wird, erstelle einen kurzen internen Plan:
 
 Plan dem User zur Freigabe vorlegen, bevor gedraftet wird.
 
-### 4. Draften
+### 5. Draften
 
 Schreibe das Kapitel Abschnitt für Abschnitt. Für jeden Abschnitt:
 
@@ -165,7 +165,7 @@ Beim Zitieren die Daten aus dem `citation-extraction`-Skill nutzen (inline-forma
 - **Zusammenfassung** — Argumentation einer Quelle verdichten, mit Zitat
 - **Synthese** — Mehrere Quellen kombinieren, um einen Punkt zu stützen
 
-### 5. User-Review-Zyklus
+### 6. User-Review-Zyklus
 
 Nach dem Vorstellen jedes Abschnittsentwurfs:
 
@@ -176,7 +176,7 @@ Nach dem Vorstellen jedes Abschnittsentwurfs:
 
 Liefert der User eigene Notizen oder Stichpunkte, bau sie zu akademischer Prosa aus und bewahre die inhaltliche Absicht.
 
-### 6. Kapitel-Zusammensetzung
+### 7. Kapitel-Zusammensetzung
 
 Nachdem alle Abschnitte reviewt und freigegeben sind:
 
@@ -186,7 +186,7 @@ Nachdem alle Abschnitte reviewt und freigegeben sind:
 4. Kapitel-Einleitung (außer bei Thesis-Einleitung) und Kapitel-Zusammenfassung ergänzen
 5. Finale Wortzahl berichten
 
-### 7. Writing-State aktualisieren
+### 8. Writing-State aktualisieren
 
 Nach der Freigabe des Kapitels durch den User:
 
