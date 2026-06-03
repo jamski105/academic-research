@@ -127,12 +127,20 @@ jobs:
       - name: Python-Deps installieren (erster Step, vgl. #197)
         run: |
           python -m pip install --upgrade pip
-          pip install -r scripts/requirements.txt
-          pip install pytest pytest-cov
+          pip install -r requirements-dev.txt
       - name: Smoke-Test der Kern-Importe
         run: python -c "import requests, httpx, anthropic, yaml, barcode, lxml"
       - name: pytest mit Coverage
         run: |
           pytest tests/ -p no:cacheprovider \
             --cov=scripts --cov=academic_vault \
-            --cov-report=term-missing
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml
+      - name: Coverage-Report zu Codecov hochladen
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
