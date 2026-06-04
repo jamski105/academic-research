@@ -5,7 +5,7 @@
       "args": ["-m", "academic_vault.server"],
       "env": {
         "PYTHONPATH": "${CLAUDE_PLUGIN_ROOT}",
-        "VAULT_DB_PATH": "${CLAUDE_PLUGIN_ROOT}/vault.db",
+        "VAULT_DB_PATH": "${HOME}/.academic-research/projects/${PWD##*/}/vault.db",
         "SQLITE_VEC_PATH": ""
       }
     }

@@ -2,9 +2,9 @@
 /**
  * hooks/post-tool-use-decisions.mjs — PostToolUse Decision-Log Hook
  *
- * Bei Write-Events auf *.md-Dateien im Projekt-Verzeichnis schreibt
- * eine Zeile in decisions.log:
- *   <ISO-Timestamp> | Write | <relativer-Pfad> | sha256=<hash>
+ * Bei Write/Edit/MultiEdit-Events auf *.md-Dateien im Projekt-Verzeichnis
+ * schreibt eine Zeile in decisions.log:
+ *   <ISO-Timestamp> | <Tool> | <relativer-Pfad> | sha256=<hash>
  *
  * Datenschutz (CWE-532):
  *   - KEIN Content-Snippet im Klartext — nur der SHA-256-Hash des Inhalts.
@@ -37,6 +37,25 @@ const MAX_LOG_BYTES = 10 * 1024 * 1024;
 
 const DECISIONS_LOG = process.env.ACADEMIC_DECISIONS_LOG || DEFAULT_LOG;
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+
+// Tools die Dateiinhalte schreiben und daher protokolliert werden (#220).
+const WRITE_LIKE_TOOLS = new Set(['Write', 'Edit', 'MultiEdit']);
+
+/**
+ * Extrahiert den geschriebenen Text aus tool_input — abhaengig vom Tool:
+ *   - Write:     tool_input.content
+ *   - Edit:      tool_input.new_string
+ *   - MultiEdit: alle edits[].new_string (zusammengefuegt)
+ */
+function extractContent(toolName, toolInput) {
+  if (toolName === 'MultiEdit' && Array.isArray(toolInput.edits)) {
+    return toolInput.edits.map((e) => (e && e.new_string) || '').join('\n');
+  }
+  if (toolName === 'Edit') {
+    return toolInput.new_string || '';
+  }
+  return toolInput.content || '';
+}
 
 // ---------------------------------------------------------------------------
 // Stdin lesen
@@ -92,13 +111,15 @@ function rotateIfNeeded() {
 
 /**
  * Schreibt eine Zeile in decisions.log.
- * Format: ISO-Timestamp | Write | <relativer-Pfad> | sha256=<hash>
+ * Format: ISO-Timestamp | <Tool> | <relativer-Pfad> | sha256=<hash>
+ *
+ * Der Tool-Name (Write/Edit/MultiEdit, #220) wird mitprotokolliert.
  *
  * Aus Datenschutzgruenden (CWE-532) wird KEIN Content-Snippet im Klartext
  * geloggt. Stattdessen steht der SHA-256-Hash des Inhalts in der Zeile —
  * ausreichend fuer Idempotenz-/Aenderungs-Checks, ohne PII zu leaken.
  */
-function writeLogLine(filePath, content) {
+function writeLogLine(toolName, filePath, content) {
   const ts = new Date().toISOString();
 
   // Relativer Pfad wenn moeglich
@@ -112,7 +133,7 @@ function writeLogLine(filePath, content) {
   // SHA-256-Hash des Inhalts statt Klartext-Snippet (Idempotenz-Check ohne Leak).
   const hash = createHash('sha256').update(content || '', 'utf-8').digest('hex');
 
-  const line = `${ts} | Write | ${relPath} | sha256=${hash}\n`;
+  const line = `${ts} | ${toolName} | ${relPath} | sha256=${hash}\n`;
 
   try {
     // Log-Verzeichnis sicherstellen
@@ -145,22 +166,22 @@ async function main() {
     process.exit(0);
   }
 
-  // Nur Write-Events
+  // Schreibende Tool-Events protokollieren: Write, Edit, MultiEdit (#220)
   const toolName = input?.tool_name || input?.hook_event_name || '';
-  if (toolName !== 'Write') {
+  if (!WRITE_LIKE_TOOLS.has(toolName)) {
     process.exit(0);
   }
 
   const toolInput = input?.tool_input || {};
   const filePath = toolInput.file_path || '';
-  const content = toolInput.content || '';
+  const content = extractContent(toolName, toolInput);
 
   // Nur .md-Dateien im Projekt
   if (!isMdInProject(filePath)) {
     process.exit(0);
   }
 
-  writeLogLine(filePath, content);
+  writeLogLine(toolName, filePath, content);
   process.exit(0);
 }
 

@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "academic-research"
+version = "6.6.0"
+description = "Claude-Code-Plugin fuer wissenschaftliche Recherche, Vault-MCP-Server und Fetch-Pipelines."
+readme = "README.md"
+license = { file = "LICENSE" }
+# Mindestversion: 3.11 (entwickelt + getestet mit 3.14, CI-Matrix 3.11/3.12/3.13).
+# Konsistent mit README.md und .github/workflows/ci.yml (vgl. #201).
+requires-python = ">=3.11"

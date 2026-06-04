@@ -20,7 +20,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -29,8 +29,12 @@ const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(HOOK_DIR);
 const VAULT_SRC = REPO_ROOT;
 
+// Kanonischer DB-Default (Single Source of Truth, Issue #190):
+// VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db
+// mit slug=basename(CWD). Kein hart kodierter 'default'-Bucket mehr.
+const SLUG = basename(process.env.CLAUDE_PROJECT_DIR || process.cwd()) || 'default';
 const VAULT_DB = process.env.VAULT_DB_PATH
-  || join(os.homedir(), '.academic-research', 'projects', 'default', 'vault.db');
+  || join(os.homedir(), '.academic-research', 'projects', SLUG, 'vault.db');
 
 const STATE_FILE = process.env.ACADEMIC_REINFORCEMENT_STATE
   || join(os.homedir(), '.academic-research', 'reinforcement-state.json');

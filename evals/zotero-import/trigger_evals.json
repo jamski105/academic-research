@@ -1,0 +1,27 @@
+{
+  "component": "zotero-import",
+  "should_trigger": [
+    "Importiere meine Zotero-Items in den Vault.",
+    "Synchronisiere meine Bibliothek mit dem Vault.",
+    "Mach einen Zotero-Sync.",
+    "Importiere meine Zotero-Bibliothek.",
+    "Hol die Items und PDFs aus Zotero.",
+    "Zotero importieren bitte.",
+    "Lade meine Zotero-Sammlung in den Vault.",
+    "Sync meine Zotero-Library, read-only.",
+    "Importiere die Attachments aus Zotero.",
+    "Bibliothek aus Zotero synchronisieren."
+  ],
+  "should_not_trigger": [
+    "Importiere meine Reading List.",
+    "Importiere einen Zitierstil aus dem CSL-Repo.",
+    "Extrahiere Zitate aus dem PDF.",
+    "Schreibe Kapitel 2.",
+    "Welches Thema soll ich nehmen?",
+    "Exportiere nach LaTeX.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel."
+  ]
+}
