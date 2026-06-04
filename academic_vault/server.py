@@ -12,11 +12,12 @@ from pathlib import Path
 from uuid import uuid4
 from typing import Optional
 
-from .db import VaultDB
+from .db import VaultDB, default_db_path
 from .files_api import FilesAPIClient
 
-# VAULT_DB_PATH aus Env; Fallback auf vault.db im CWD
-_DEFAULT_DB = os.environ.get("VAULT_DB_PATH", "vault.db")
+# Kanonischer DB-Default (Single Source of Truth, Issue #190):
+# VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db.
+_DEFAULT_DB = default_db_path()
 _ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 

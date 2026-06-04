@@ -16,6 +16,41 @@ _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 VALID_PAPER_TYPES = frozenset({"article-journal", "book", "chapter"})
 
 
+def project_slug(cwd: Optional[str] = None) -> str:
+    """Kanonischer Projekt-Slug fuer den DB-Pfad: basename(CWD).
+
+    Eine einzige Quelle der Wahrheit (Issue #190). Hooks und MCP-Server
+    muessen denselben Algorithmus verwenden, damit alle Komponenten gegen
+    dieselbe vault.db schreiben.
+    """
+    base = Path(cwd) if cwd is not None else Path.cwd()
+    return base.name or "default"
+
+
+def default_db_path() -> str:
+    """Kanonischer Default-Pfad zur vault.db (Single Source of Truth, Issue #190).
+
+    Reihenfolge:
+      1. Falls ``VAULT_DB_PATH`` gesetzt ist, wird dieser Pfad verwendet.
+      2. Sonst ``~/.academic-research/projects/<slug>/vault.db`` mit
+         ``slug = basename(CWD)``.
+
+    Bewusst NICHT das CWD direkt ("vault.db") und NICHT das Plugin-Verzeichnis
+    (``CLAUDE_PLUGIN_ROOT``/``REPO_ROOT``), um Datenverlust bei Plugin-Updates
+    und das versehentliche Committen von Forschungs-PII zu vermeiden (CWE-538).
+    """
+    env = os.environ.get("VAULT_DB_PATH")
+    if env:
+        return env
+    return str(
+        Path.home()
+        / ".academic-research"
+        / "projects"
+        / project_slug()
+        / "vault.db"
+    )
+
+
 class VaultDB:
     """SQLite-Datenbankzugriff fuer den academic_vault MCP-Server."""
 
