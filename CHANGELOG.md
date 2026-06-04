@@ -35,7 +35,7 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 
 ---
 
-## [6.4.0] — 2026-05-18
+## [6.4.0] — 2026-05-17
 
 ### Added
 
