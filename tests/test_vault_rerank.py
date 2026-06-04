@@ -259,6 +259,100 @@ class TestRerankerIntegration:
 
 
 # ---------------------------------------------------------------------------
+# Tests: Fallback-Struktur-Konsistenz (#233)
+# ---------------------------------------------------------------------------
+
+class TestRerankerFallbackStructure:
+    """Regressionstests fuer #233: Fallback liefert enriched-Struktur (inkl. text)."""
+
+    def test_fallback_no_api_key_returns_text_field(self):
+        """Ohne Reranker-Key muss jeder Kandidat ein text-Feld haben (#233)."""
+        from academic_vault.retrieval import apply_reranker
+
+        # Kandidaten OHNE text-Feld (wie aus RRF-Fusion)
+        candidates = [
+            {"paper_id": "p001", "snippet": "Transformer networks.", "rrf_score": 0.02},
+            {"paper_id": "p002", "snippet": "Convolutional networks.", "rrf_score": 0.015},
+        ]
+
+        result = apply_reranker(
+            query="test query",
+            candidates=candidates,
+            voyage_api_key=None,
+            cohere_api_key=None,
+        )
+
+        # Fallback-Pfad muss enriched-Struktur liefern: text-Feld vorhanden
+        for entry in result:
+            assert "text" in entry, "Fallback-Kandidat ohne text-Feld (#233)"
+        assert result[0]["text"] == "Transformer networks."
+        assert result[1]["text"] == "Convolutional networks."
+
+    def test_fallback_on_voyage_exception_returns_text_field(self):
+        """Wenn Voyage eine Exception wirft, muss der Fallback enriched liefern (#233)."""
+        from academic_vault.retrieval import apply_reranker
+
+        candidates = [
+            {"paper_id": "p001", "snippet": "Dense retrieval.", "rrf_score": 0.02},
+        ]
+
+        with patch("academic_vault.retrieval._get_voyage_client") as mock_voyage:
+            mock_instance = MagicMock()
+            mock_instance.rerank.side_effect = RuntimeError("Voyage API down")
+            mock_voyage.return_value = mock_instance
+
+            result = apply_reranker(
+                query="test",
+                candidates=candidates,
+                voyage_api_key="voyage-key",
+                cohere_api_key=None,
+            )
+
+        assert "text" in result[0], "Exception-Fallback ohne text-Feld (#233)"
+        assert result[0]["text"] == "Dense retrieval."
+
+    def test_fallback_structure_matches_reranker_path(self):
+        """Fallback-Pfad liefert dieselben Keys wie der Reranker-Pfad (#233)."""
+        from academic_vault.retrieval import apply_reranker
+
+        candidates = [
+            {"paper_id": "p001", "snippet": "A", "rrf_score": 0.02},
+            {"paper_id": "p002", "snippet": "B", "rrf_score": 0.01},
+        ]
+
+        # Reranker-Pfad (Voyage) — fuegt text + rerank_score hinzu
+        mock_result = MagicMock()
+        mock_result.results = [
+            MagicMock(index=0, relevance_score=0.9),
+            MagicMock(index=1, relevance_score=0.5),
+        ]
+        with patch("academic_vault.retrieval._get_voyage_client") as mock_voyage:
+            mock_instance = MagicMock()
+            mock_instance.rerank.return_value = mock_result
+            mock_voyage.return_value = mock_instance
+            reranked = apply_reranker(
+                query="q",
+                candidates=candidates,
+                voyage_api_key="voyage-key",
+                cohere_api_key=None,
+            )
+
+        # Fallback-Pfad — kein Key
+        fallback = apply_reranker(
+            query="q",
+            candidates=candidates,
+            voyage_api_key=None,
+            cohere_api_key=None,
+        )
+
+        # Beide Pfade muessen das text-Feld enthalten
+        reranked_text_keys = {"text" in e for e in reranked}
+        fallback_text_keys = {"text" in e for e in fallback}
+        assert reranked_text_keys == {True}
+        assert fallback_text_keys == {True}
+
+
+# ---------------------------------------------------------------------------
 # Tests: Recall@10 Eval-Set
 # ---------------------------------------------------------------------------
 

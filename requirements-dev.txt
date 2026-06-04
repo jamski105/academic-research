@@ -1,0 +1,6 @@
+# Entwicklungs- und Test-Abhaengigkeiten (nicht fuer Runtime noetig).
+# Runtime-Deps stehen in scripts/requirements.txt.
+-r scripts/requirements.txt
+
+pytest>=8.0
+pytest-cov>=5.0

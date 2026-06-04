@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -118,6 +119,79 @@ class TestSchemaValidierungNegativ:
         profile["licensed_sites"] = ["https://springer.com"]
         with pytest.raises(ValidationError):
             validate(instance=profile, schema=load_schema())
+
+
+# ── README-Konsistenz-Tests ───────────────────────────────────────────────────
+
+README_PATH = REPO_ROOT / "README.md"
+
+
+class TestReadmeKonsistenz:
+    """README muss den tatsaechlichen Zustand von config/library-profiles/ widerspiegeln."""
+
+    def _readme_text(self) -> str:
+        return README_PATH.read_text(encoding="utf-8")
+
+    def test_readme_nennt_korrekten_pfad(self):
+        """README darf 'library-profiles/<uni>.yaml' nicht mehr als Pfad nennen (ohne config/ Praefix)."""
+        readme = self._readme_text()
+        # Suche nach dem Fehlmuster: library-profiles/ ohne config/ davor
+        # Erlaube nur 'config/library-profiles/' oder Runtime-Pfad '~/.academic-research/library-profiles/'
+        bad_matches = re.findall(
+            r"(?<!config/)(?<!academic-research/)library-profiles/[^`\s]*\.yaml",
+            readme,
+        )
+        assert bad_matches == [], (
+            f"README enthaelt Pfade ohne 'config/'-Praefix: {bad_matches}. "
+            "Korrekt: 'config/library-profiles/<uni>.yaml'."
+        )
+
+    def test_readme_listet_tatsaechliche_profile(self):
+        """Die Profile die README in der Per-Uni-Profile-Tabelle listet muessen mit den tatsaechlichen Dateien uebereinstimmen."""
+        actual_slugs = {
+            p.stem for p in PROFILES_DIR.glob("*.yaml")
+        }
+        # Erwartete tatsaechliche Slugs gemaess Dateisystem
+        expected_slugs = set(PROFILE_SLUGS)
+        assert actual_slugs == expected_slugs, (
+            f"Dateisystem-Profile: {sorted(actual_slugs)}, "
+            f"Erwartete Profile gemaess PROFILE_SLUGS: {sorted(expected_slugs)}"
+        )
+
+    def test_readme_erwaehnt_keine_nicht_existenten_profile(self):
+        """Profil-Dateien die README im Per-Uni-Profile-Abschnitt erwaehnt muessen existieren."""
+        readme = self._readme_text()
+        # Suche nach dem Abschnitt '## Per-Uni-Profile' und lese die Tabelle
+        section_match = re.search(
+            r"## Per-Uni-Profile.*?(?=\n## |\Z)", readme, re.DOTALL
+        )
+        assert section_match, "Abschnitt '## Per-Uni-Profile' nicht im README gefunden"
+        section = section_match.group(0)
+        # Nur einfache Dateinamen ohne Pfad-Separator und ohne Platzhalter (<>) extrahieren
+        # (z.B. 'tum.yaml', 'fu-berlin.yaml' — nicht 'config/library-profiles/<uni>.yaml')
+        mentioned_yamls = re.findall(r"`([a-z0-9_-]+\.yaml)`", section)
+        # Templates herausfiltern (template-*.yaml sind Vorlagen und existieren ggf. nicht)
+        non_template_yamls = [y for y in mentioned_yamls if not y.startswith("template-")]
+        missing = [
+            y for y in non_template_yamls
+            if not (PROFILES_DIR / y).exists()
+        ]
+        assert missing == [], (
+            f"README erwaehnt Profile die nicht in config/library-profiles/ existieren: {missing}"
+        )
+
+    def test_readme_per_uni_pfad_ist_config_library_profiles(self):
+        """Der Per-Uni-Profile Abschnitt muss 'config/library-profiles/' als Pfad dokumentieren."""
+        readme = self._readme_text()
+        section_match = re.search(
+            r"## Per-Uni-Profile.*?(?=\n## |\Z)", readme, re.DOTALL
+        )
+        assert section_match, "Abschnitt '## Per-Uni-Profile' nicht im README gefunden"
+        section = section_match.group(0)
+        assert "config/library-profiles/" in section, (
+            "Per-Uni-Profile-Abschnitt muss 'config/library-profiles/' als Pfad enthalten, "
+            "nicht 'library-profiles/'"
+        )
 
 
 # ── Onboard-Hook-Tests ───────────────────────────────────────────────────────

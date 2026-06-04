@@ -1,0 +1,27 @@
+{
+  "component": "prisma-flow",
+  "should_trigger": [
+    "Erstelle ein PRISMA-Flow-Diagramm.",
+    "Ich brauche ein PRISMA-Diagramm fuer meine Methodik.",
+    "Render das Flussdiagramm der Literatursuche.",
+    "Mach ein PRISMA-2020-Flussdiagramm.",
+    "Zeige die Einschluesse als PRISMA-Flow.",
+    "Erzeuge das PRISMA-Flowchart aus den Suchzaehlern.",
+    "Flussdiagramm fuer die Literaturauswahl erstellen.",
+    "Integriere ein PRISMA-Diagramm in kapitel/methodik.md.",
+    "PRISMA Flow mit n_identified und n_included rendern.",
+    "Visualisiere meinen Screening-Prozess als PRISMA-Diagramm."
+  ],
+  "should_not_trigger": [
+    "Visualisiere meinen Literaturcluster als Netzwerk.",
+    "Schreibe Kapitel 3.",
+    "Welches Thema soll ich nehmen?",
+    "Extrahiere Zitate aus dem PDF.",
+    "Exportiere nach LaTeX.",
+    "Importiere meine Reading List.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel."
+  ]
+}
