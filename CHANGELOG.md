@@ -44,11 +44,13 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 - **PRISMA-Flow (#92):** Neuer Skill `prisma-flow`. Mermaid-Diagramm + 27-Punkte-PRISMA-2020-Checkliste. Integration in `/search` (schreibt `n_identified`, `n_after_dedup`) und `relevance-scorer` (`excluded_screening`).
 - **Meta-Analysis (#150):** Neuer Agent `meta-analysis`. DerSimonian-Laird Random-Effects-Modell. Mermaid-Forest-Plot. Output via `scripts/meta_analysis.py`.
 - **Risk-of-Bias (#100):** Neuer Agent `risk-of-bias`. Cochrane RoB 2, ROBINS-I, CASP Assessment. Ergebnisse in `vault.add_risk_of_bias()`.
-- **Hooks-Stack (#91, #103):** Vier Hooks:
-  - `pre-compact.mjs`: Snapshot-Backup vor Claude-Compaction nach `~/.academic-research/snapshots/`.
-  - `post-tool-use-decisions.mjs`: Decision-Log für alle `*.md`-Schreiboperationen.
-  - `mid-session-reinforcement.mjs`: Anti-Fabrikations-Erinnerung.
-  - `verbatim-guard.mjs`: Blockt Kapitel-Writes mit nicht-verifizierten Zitaten.
+- **Hooks-Stack (#91, #103):** 7 Hook-Events (5 Skript-Dateien + 1 Inline-Bash):
+  - `pre-compact.mjs` (`PreCompact`): Snapshot-Backup vor Claude-Compaction nach `~/.academic-research/snapshots/`.
+  - `post-tool-use-decisions.mjs` (`PostToolUse(Write)`): Decision-Log für alle `*.md`-Schreiboperationen.
+  - `mid-session-reinforcement.mjs` (`Notification` + `PostCompact`): Anti-Fabrikations-Erinnerung nach ~20 Nachrichten bzw. nach Compaction.
+  - `verbatim-guard.mjs` (`PreToolUse(Write)`): Blockt Kapitel-Writes mit nicht-verifizierten Zitaten.
+  - `onboard-project-uni-prompt.sh` (`SessionStart`): Prüft Python-venv-Bereitschaft.
+  - Inline-Bash (`Stop`): Hinweis bei ungesicherten `academic_context.md`-Änderungen.
   - `/academic-research:history --restore <ts>`: Snapshot-Restore.
 - **Citation-Styles MLA/Vancouver/Springer-AD (#106):** Drei neue Varianten in `citation-extraction/references/`.
 - **CSL-JSON Import (#93):** Neuer Skill `citation-style-import`. Lädt beliebige `.csl`-Datei aus CSL-Repository, parst zu promptfähigen Regeln, speichert als `references/custom-<style>.md`.

@@ -110,7 +110,7 @@ Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU 
 | **Material-Passport** | v6.4 | Unveränderlicher Artefakt-Passport mit Repro-Lock. |
 | **NotebookLM-Bundle** | v6.3 | PDF-Pack für manuelle NotebookLM-Uploads (Riesen-Bücher >600 Seiten). |
 | **Zotero-Import** | v6.3 | pyzotero-Pull-only mit DOI/ISBN-Dedup in den Vault. |
-| **Hooks-Stack** | v6.4 | PreCompact-Snapshot, Post-Tool-Use Decision-Log, Mid-Session-Reinforcement, Verbatim-Guard. |
+| **Hooks-Stack** | v6.4 | 7 Hook-Events: PreToolUse, PostToolUse, PreCompact, Notification, PostCompact, SessionStart, Stop. |
 | **LaTeX-Export** | v6.5 | Markdown-Kapitel → `.tex`, Bibliographie → `.bib` (biblatex DIN-1505). Per-Uni-Template-Slot. |
 | **Contextual Retrieval** | v6.5 | Hybrid BM25 + vec0 mit Reciprocal-Rank-Fusion. Anthropic-Contextual-Embedding-Cache. |
 | **Topic-Brainstorm** | v6.5 | 3-5 Kandidaten mit Feasibility/Novelty/Career-Fit-Scores + Pilot-Paper-Sets. |
@@ -558,14 +558,17 @@ Jedes Paper wird nach 5 Dimensionen bewertet (0–1):
 
 ## Hooks-Stack
 
-Das Plugin installiert vier Hooks via `hooks/hooks.json`:
+Das Plugin konfiguriert 7 Events in `hooks/hooks.json` (5 Skript-Dateien + 1 Inline-Bash):
 
-| Hook | Typ | Beschreibung |
-|------|-----|-------------|
+| Hook | Event | Beschreibung |
+|------|-------|-------------|
 | `verbatim-guard.mjs` | `PreToolUse(Write)` | Blockt Kapitel-Writes mit nicht-verifizierten Zitaten |
-| `pre-compact.mjs` | `PreCompact` | Snapshot-Backup vor Claude-Compaction |
 | `post-tool-use-decisions.mjs` | `PostToolUse(Write)` | Decision-Log: jede `.md`-Änderung wird protokolliert |
-| `mid-session-reinforcement.mjs` | `SessionMid` | Erinnerung an Anti-Fabrikations-Regeln |
+| `pre-compact.mjs` | `PreCompact` | Snapshot-Backup vor Claude-Compaction |
+| `mid-session-reinforcement.mjs` | `Notification` | Erinnerung an Anti-Fabrikations-Regeln (nach ~20 Nachrichten) |
+| `mid-session-reinforcement.mjs` | `PostCompact` | Erinnerung an Anti-Fabrikations-Regeln nach Compaction |
+| `onboard-project-uni-prompt.sh` | `SessionStart` | Prüft Python-venv-Bereitschaft beim Session-Start |
+| *(Inline-Bash)* | `Stop` | Hinweis bei ungesicherten `academic_context.md`-Änderungen |
 
 ---
 
