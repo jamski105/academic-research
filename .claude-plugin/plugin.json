@@ -1,7 +1,7 @@
 {
   "name": "academic-research",
-  "version": "5.4.0",
-  "description": "Modulares akademisches Forschungs-Toolkit mit 13 selbstaktivierenden Skills, 5D-Scoring, Excel-Export und KI-Stil-Erkennung. Durchsucht Semantic Scholar, CrossRef, OpenAlex, BASE, Google Scholar und weitere Quellen.",
+  "version": "6.5.0",
+  "description": "Modulares akademisches Forschungs-Toolkit mit 28 selbstaktivierenden Skills, Vault-MCP-Server (SQLite + FTS5 + sqlite-vec), Universal Book Fetcher (8-Tier-Pipeline), humanizer-de Anti-KI-Audit, LaTeX-Export, Per-Uni-Profile, 5D-Scoring. Durchsucht Semantic Scholar, CrossRef, OpenAlex, BASE, Google Scholar und 9 weitere wissenschaftliche Quellen.",
   "author": {
     "name": "Jonas Ahler",
     "email": "jam@ahler.org",

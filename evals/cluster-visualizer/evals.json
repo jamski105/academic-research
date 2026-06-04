@@ -1,0 +1,9 @@
+{
+  "component": "cluster-visualizer",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "cv-01", "input": "Erzeuge aus diesem Cluster-JSON ein Mermaid-graph-LR-Diagramm:\n{\"nodes\":[{\"id\":\"p1\",\"title\":\"DevOps Governance\",\"year\":2022},{\"id\":\"p2\",\"title\":\"Zero Trust\",\"year\":2024}],\"edges\":[{\"from\":\"p1\",\"to\":\"p2\",\"weight\":0.6}]}", "expected": {"type": "regex", "value": "(graph LR|-->|mermaid)"}, "mode": "with_skill"},
+    {"id": "cv-02", "input": "Wie kodierst du die Kantenstaerke (Gewicht) zwischen zwei Papern in einem Mermaid-Diagramm?", "expected": {"type": "regex", "value": "(linkStyle|Gewicht|Kante|stroke)"}, "mode": "with_skill"},
+    {"id": "cv-03", "input": "Welche Information gehoert in einen Paper-Knoten eines Literaturcluster-Diagramms?", "expected": {"type": "regex", "value": "(Titel|Jahr|year|title|Knoten)"}, "mode": "with_skill"}
+  ]
+}

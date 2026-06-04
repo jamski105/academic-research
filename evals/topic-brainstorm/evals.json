@@ -1,0 +1,9 @@
+{
+  "component": "topic-brainstorm",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "tb-01", "input": "Ich studiere Wirtschaftsinformatik und brauche ein Masterarbeitsthema im Bereich Nachhaltigkeit. Schlage mir drei konkrete Themen vor und bewerte sie kurz.", "expected": {"type": "regex", "value": "(Thema|Themen|Vorschlag)"}, "mode": "with_skill"},
+    {"id": "tb-02", "input": "Bewerte die Themenidee 'KI-gestuetzte Pruefungsbewertung an Hochschulen' nach Machbarkeit und Relevanz.", "expected": {"type": "regex", "value": "(Machbarkeit|Relevanz|Bewertung)"}, "mode": "with_skill"},
+    {"id": "tb-03", "input": "Ich habe noch gar keine Richtung. Welche Themen lohnen sich aktuell in der Cybersecurity-Forschung?", "expected": {"type": "regex", "value": "(Thema|Themen|Security|Sicherheit)"}, "mode": "with_skill"}
+  ]
+}

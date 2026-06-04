@@ -1,0 +1,9 @@
+{
+  "component": "citation-style-import",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "csi-01", "input": "Beschreibe Schritt fuer Schritt, wie du einen .csl-Stil aus dem CSL-Repository importierst und in eine custom-Prompt-Regel umwandelst.", "expected": {"type": "regex", "value": "(CSL|\\.csl|Stil|Import)"}, "mode": "with_skill"},
+    {"id": "csi-02", "input": "Welche XML-Elemente einer .csl-Datei sind relevant, um eine Zitierregel abzuleiten?", "expected": {"type": "regex", "value": "(citation|bibliography|macro|XML|csl)"}, "mode": "with_skill"},
+    {"id": "csi-03", "input": "Wohin schreibst du die generierte custom-Variante eines importierten Zitierstils?", "expected": {"type": "regex", "value": "(custom|references|citation-extraction|skills/)"}, "mode": "with_skill"}
+  ]
+}
