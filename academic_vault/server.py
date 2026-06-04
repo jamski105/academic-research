@@ -914,10 +914,20 @@ def _build_mcp_server():
         """Gibt Decisions zurueck. Optionaler category-Filter, active_only-Flag."""
         return list_decisions(db_path, category=category, active_only=active_only)
 
+    @mcp.tool(name="vault.supersede_decision")
+    def _vault_supersede_decision(decision_id: str, superseded_by: str) -> None:
+        """Markiert eine Decision als superseded (verweist auf Nachfolge-Decision)."""
+        supersede_decision(db_path, decision_id=decision_id, superseded_by=superseded_by)
+
     @mcp.tool(name="vault.add_excluded_source")
     def _vault_add_excluded_source(paper_id: str, reason: str = None) -> None:
         """Fuegt paper_id zu excluded_sources hinzu (verhindert Re-Vorschlag)."""
         add_excluded_source(db_path, paper_id=paper_id, reason=reason)
+
+    @mcp.tool(name="vault.list_excluded_sources")
+    def _vault_list_excluded_sources() -> list[dict]:
+        """Gibt alle excluded_sources zurueck."""
+        return list_excluded_sources(db_path)
 
     @mcp.tool(name="vault.is_excluded")
     def _vault_is_excluded(paper_id: str) -> bool:
