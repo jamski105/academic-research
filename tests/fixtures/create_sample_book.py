@@ -1,4 +1,4 @@
-"""Erstellt sample_book.pdf mit PyPDF2 fuer Tests.
+"""Erstellt sample_book.pdf mit pypdf fuer Tests.
 
 Erzeugt ein minimales PDF mit 4 Kapiteln im Outline-Tree.
 Aufruf: python tests/fixtures/create_sample_book.py
@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def create_sample_book(output_path: str) -> None:
-    from PyPDF2 import PdfWriter
+    from pypdf import PdfWriter
 
     writer = PdfWriter()
 
@@ -38,7 +38,7 @@ def create_large_book(output_path: str, num_chapters: int = 8, pages_per_chapter
 
     8 x 55 = 440 Seiten, Outline-Tree korrekt gesetzt.
     """
-    from PyPDF2 import PdfWriter
+    from pypdf import PdfWriter
 
     writer = PdfWriter()
 

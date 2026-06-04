@@ -1,6 +1,6 @@
 ---
 name: conference-poster
-description: Use this skill when the user needs to create a conference poster / Konferenz-Poster. Triggers on "Poster für Konferenz erstellen / Poster fuer Konferenz erstellen", "A0-Poster", "tikzposter", "conference poster", or when a visual research summary for a conference is needed. Erstellt A0-Poster aus Kapiteln + Top-Figures; für vollständige Kapitel → `chapter-writer`.
+description: Use this skill when the user needs to create a conference poster / Konferenz-Poster. Triggers on "Poster für Konferenz erstellen / create conference poster", "Konferenz-Poster prüfen / pruefen", "A0-Poster", "tikzposter", "conference poster", or when a visual research summary for a conference is needed. Erstellt A0-Poster aus Kapiteln + Top-Figures; für vollständige Kapitel → `chapter-writer`.
 license: MIT
 ---
 
@@ -57,7 +57,7 @@ Frage den User via `AskUserQuestion`:
 - **LaTeX tikzposter** — generiert `.tex`-Datei mit tikzposter-Klasse
 - **PowerPoint-Struktur** — generiert strukturierten Outline für PPTX-Export
 
-Für tikzposter: Lade Template aus `skills/conference-poster/references/tikzposter-template.md`.
+Für tikzposter: Lade Template aus `${CLAUDE_PLUGIN_ROOT}/skills/conference-poster/references/tikzposter-template.md`.
 
 ### 4. Poster-Inhalt strukturieren
 
@@ -72,7 +72,7 @@ Für tikzposter: Lade Template aus `skills/conference-poster/references/tikzpost
 
 ### 5. LaTeX tikzposter generieren
 
-Nutze das Template aus `skills/conference-poster/references/tikzposter-template.md`.
+Nutze das Template aus `${CLAUDE_PLUGIN_ROOT}/skills/conference-poster/references/tikzposter-template.md`.
 Befülle die 4 `\block{}`-Umgebungen mit komprimiertem Text aus den Kapiteln.
 Füge `\includegraphics{<figure_path>}` für beide Top-Figures ein.
 

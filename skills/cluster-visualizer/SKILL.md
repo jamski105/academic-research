@@ -2,12 +2,12 @@
 name: cluster-visualizer
 description: >
   Verwende diesen Skill wenn der User einen Literaturcluster visualisieren
-  moechte. Trigger-Phrasen: "zeige Cluster", "visualisiere", "Mindmap",
+  möchte. Trigger-Phrasen: "zeige Cluster", "visualisiere", "Mindmap",
   "Cluster-Diagramm", "Netzwerk der Quellen", "zeige Verbindungen".
   Nimmt ein Cluster-JSON (5D-Scoring-Output) als Input und erzeugt ein
-  Mermaid-graph-LR-Diagramm. Erzeugt Knoten fuer Paper (Titel + Jahr)
-  und Kanten fuer geteilte Zitationsverbindungen ("Kantenstärke / Kantenstaerke" via linkStyle).
-  Optional wird das Diagramm per Mermaid-CLI als PNG exportiert.
+  Mermaid-graph-LR-Diagramm. Erzeugt Knoten für Paper (Titel + Jahr)
+  und Kanten für geteilte Zitationsverbindungen ("Kantenstärke / Kantenstaerke" via linkStyle).
+  Optional wird das Diagramm per Mermaid-CLI (mmdc) als PNG exportiert.
 compatibility: Claude Code
 license: MIT
 ---
@@ -15,15 +15,15 @@ license: MIT
 # Cluster-Visualizer
 
 > **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
-> und befolge alle dort definierten Bloecke (Vorbedingungen, Keine Fabrikation,
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
 > Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
-> fortfaehrst.
+> fortfährst.
 
-## Uebersicht
+## Übersicht
 
 Visualisiert einen Literaturcluster als Mermaid-`graph LR`-Diagramm.
-Knoten repraesentieren Paper (Titel + Jahr), Kanten repraesentieren
-gemeinsame Zitationsverbindungen (Kantengewicht via Strichdicke).
+Knoten sind Paper (Titel + Jahr), Kanten sind gemeinsame
+Zitationsverbindungen (Kantengewicht via Strichdicke).
 
 ## Trigger-Erkennung
 
@@ -60,10 +60,10 @@ Erwartetes Schema:
 ### 2. Mermaid-Quelltext erzeugen
 
 ```bash
-python skills/cluster-visualizer/scripts/render_mermaid.py <cluster.json> [output_dir]
+python ${CLAUDE_PLUGIN_ROOT}/skills/cluster-visualizer/scripts/render_mermaid.py <cluster.json> [output_dir]
 ```
 
-Der Quelltext wird als `.mmd`-Datei gespeichert und als Pfad zurueckgegeben.
+Der Quelltext wird als `.mmd`-Datei gespeichert und als Pfad zurückgegeben.
 
 ### 3. PNG-Rendering (optional)
 
@@ -81,7 +81,7 @@ Ausgabe:
 
 ### 5. Einbettung in Literatur-Kapitel (optional)
 
-Falls der User das Diagramm in `kapitel/literatur.md` einbetten moechte:
+Falls der User das Diagramm in `kapitel/literatur.md` einbetten möchte:
 
 ````markdown
 ```mermaid

@@ -94,6 +94,23 @@ class TestAgentFrontmatter:
             f"'browser-use' fehlt im tools-Frontmatter von {agent_name}.md"
         )
 
+    @pytest.mark.parametrize("agent_name", AGENT_NAMES)
+    def test_frontmatter_tools_has_space_syntax_permission(self, agent_name):
+        """Regression #222: tools muss die Space-Syntax 'Bash(browser-use *)'
+        deklarieren, sonst matchen die im Workflow genutzten Space-Befehle
+        (browser-use open/state/click/download) nicht → Permission-Denied.
+        Die reine Colon-Variante 'Bash(browser-use:*)' reicht nicht aus.
+        """
+        path = AGENTS_DIR / f"{agent_name}.md"
+        content = path.read_text(encoding="utf-8")
+        fm_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+        assert fm_match, f"Kein Frontmatter in {agent_name}.md"
+        fm_raw = fm_match.group(1)
+        assert "Bash(browser-use *)" in fm_raw, (
+            f"Space-Syntax-Permission 'Bash(browser-use *)' fehlt im tools-Frontmatter "
+            f"von {agent_name}.md — Space-Befehle werden geblockt (Issue #222)"
+        )
+
     @pytest.mark.parametrize("agent_name, expected_guide", [
         ("tib-fetcher", "config/browser_guides/tib.md"),
         ("oapen-fetcher", "config/browser_guides/oapen.md"),

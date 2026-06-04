@@ -1,0 +1,9 @@
+{
+  "component": "notebook-bundle",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "nb-01", "input": "Welche Bestandteile gehoeren in ein NotebookLM-Bundle-PDF (Cover, TOC, Paper)?", "expected": {"type": "regex", "value": "(Cover|TOC|Inhaltsverzeichnis|Paper|PDF)"}, "mode": "with_skill"},
+    {"id": "nb-02", "input": "Warum muss ein sehr grosses Buch fuer den NotebookLM-Upload ggf. aufgeteilt werden?", "expected": {"type": "regex", "value": "(Limit|Groesse|aufteil|Upload|NotebookLM)"}, "mode": "with_skill"},
+    {"id": "nb-03", "input": "Beschreibe den Ablauf, um drei ausgewaehlte Paper zu einem hochladbaren NotebookLM-PDF zu konkatenieren.", "expected": {"type": "regex", "value": "(konkatenier|zusammenf|PDF|Bundle|merge)"}, "mode": "with_skill"}
+  ]
+}

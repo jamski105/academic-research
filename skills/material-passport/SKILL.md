@@ -2,13 +2,13 @@
 name: material-passport
 description: >
   Verwende diesen Skill wenn der User ein Reproduzierbarkeits-Manifest erstellen
-  oder das Projekt fuer die Abgabe finalisieren moechte.
+  oder das Projekt für die Abgabe finalisieren möchte.
   Trigger-Phrasen: "Reproduzierbarkeits-Manifest / Material-Passport erstellen",
-  "Abgabe vorbereiten", "Vault sperren", "Repro-Lock", "material-passport.json".
-  Exporttyp: "Prüfung / Pruefung" via JSON-Schema.
+  "Artefakt sichern", "Manifest prüfen / pruefen", "Abgabe vorbereiten", "Vault sperren", "Repro-Lock", "material-passport.json".
+  Exporttyp: "Prüfung / Validation" via JSON-Schema.
   Exportiert alle relevanten Metadaten (paper_ids, DOIs, Scores, Algo-Version,
   Modellversionen, PDF-Hashes, Decision-Snapshot) als material-passport.json
-  und ergaenzt kapitel/methodik.md automatisch um einen Reproduzierbarkeits-Block.
+  und ergänzt kapitel/methodik.md automatisch um einen Reproduzierbarkeits-Block.
 triggers:
   - "Reproduzierbarkeits-Manifest"
   - "Material-Passport erstellen"
@@ -24,21 +24,21 @@ tools:
 # Material-Passport Skill
 
 > **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
-> und befolge alle dort definierten Bloecke (Vorbedingungen, Keine Fabrikation,
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
 > Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
-> fortfaehrst.
+> fortfährst.
 
 ---
 
 ## Zweck
 
-Erstellt einen vollstaendigen Material-Passport fuer das Forschungsprojekt:
+Erstellt einen vollständigen Material-Passport für das Forschungsprojekt:
 
 - **material-passport.json** — maschinenlesbares Manifest mit allen Metadaten
-- **kapitel/methodik.md** — erhaelt automatisch einen `## Reproduzierbarkeit`-Block
+- **kapitel/methodik.md** — erhält automatisch einen `## Reproduzierbarkeit`-Block
 - **Repro-Lock** (optional) — sperrt den Vault nach Abgabe read-only
 
-Der Passport ermoeglicht vollstaendige Reproduzierbarkeit: Dritte koennen nachvollziehen,
+Der Passport ermöglicht vollständige Reproduzierbarkeit: Dritte können nachvollziehen,
 welche Paper, Scores, Algorithmus-Version und Modellversionen verwendet wurden.
 
 ---
@@ -49,7 +49,7 @@ Aktiviert bei:
 - "Reproduzierbarkeits-Manifest erstellen"
 - "Material-Passport"
 - "Abgabe vorbereiten"
-- "Vault fuer Abgabe sperren" / "Repro-Lock"
+- "Vault für Abgabe sperren" / "Repro-Lock"
 - "material-passport.json generieren"
 - "Reproduzierbarkeit dokumentieren"
 
@@ -60,7 +60,7 @@ Aktiviert bei:
 1. **Vault-DB** vorhanden (Standard: `vault.db` im CWD oder via `VAULT_DB_PATH`)
 2. **Paper im Vault** eingetragen (via `vault.add_paper`)
 3. **kapitel/methodik.md** existiert (wird ggf. angelegt)
-4. Python-Abhaengigkeiten installiert: `pip install -r scripts/requirements.txt`
+4. Python-Abhängigkeiten installiert: `pip install -r scripts/requirements.txt`
 
 ---
 
@@ -68,16 +68,16 @@ Aktiviert bei:
 
 ### Schritt 1: User-Anfrage verstehen
 
-Klaere bei Bedarf:
+Kläre bei Bedarf:
 - Soll der Vault nach dem Export **gesperrt** werden? (Repro-Lock — irreversibel)
   Wenn unklar: **immer nachfragen** bevor `--lock` gesetzt wird.
 - Projekt-Slug (Standard: aus Vault-DB oder aktuelles Verzeichnis)
 
-### Schritt 2: build_passport.py ausfuehren
+### Schritt 2: build_passport.py ausführen
 
 **Ohne Repro-Lock** (normaler Export):
 ```bash
-python skills/material-passport/scripts/build_passport.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/material-passport/scripts/build_passport.py \
   --db vault.db \
   --slug <projekt-slug> \
   --output-dir . \
@@ -86,7 +86,7 @@ python skills/material-passport/scripts/build_passport.py \
 
 **Mit Repro-Lock** (Vault nach Export sperren):
 ```bash
-python skills/material-passport/scripts/build_passport.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/material-passport/scripts/build_passport.py \
   --db vault.db \
   --slug <projekt-slug> \
   --output-dir . \
@@ -95,8 +95,8 @@ python skills/material-passport/scripts/build_passport.py \
 ```
 
 > **Achtung:** Der Repro-Lock ist **irreversibel**. Sobald `--lock` gesetzt wurde,
-> koennen keine weiteren Paper oder Decisions in den Vault geschrieben werden.
-> Den User **explizit bestaetigen lassen**, bevor `--lock` ausgefuehrt wird.
+> können keine weiteren Paper oder Decisions in den Vault geschrieben werden.
+> Den User **explizit bestätigen lassen**, bevor `--lock` ausgeführt wird.
 
 ### Schritt 3: Ergebnis an User melden
 
@@ -106,7 +106,7 @@ Material-Passport exportiert: ./material-passport.json
 methodik.md aktualisiert: kapitel/methodik.md
 ```
 
-Vollstaendige Meldung an User:
+Vollständige Meldung an User:
 ```
 Material-Passport erstellt:
   Datei:   ./material-passport.json
@@ -115,30 +115,30 @@ Material-Passport erstellt:
   DOIs:    <M> mit DOI
   Decisions: <K> aktive Entscheidungen
 
-kapitel/methodik.md wurde um '## Reproduzierbarkeit' ergaenzt.
+kapitel/methodik.md wurde um '## Reproduzierbarkeit' ergänzt.
 ```
 
-Bei aktivem Repro-Lock zusaetzlich:
+Bei aktivem Repro-Lock zusätzlich:
 ```
 Vault gesperrt (Repro-Lock aktiv).
-Keine weiteren Aenderungen am Vault moeglich.
+Keine weiteren Aenderungen am Vault möglich.
 ```
 
 ---
 
-## Fehlerfaelle
+## Fehlerfälle
 
-| Situation | Meldung | Massnahme |
+| Situation | Meldung | Maßnahme |
 |-----------|---------|-----------|
-| Vault bereits gesperrt | `FEHLER: Vault fuer Slug '...' ist gesperrt` | Kein erneuter Export — Vault ist read-only |
-| Vault-DB nicht gefunden | `FEHLER: ...` | Pfad pruefen oder `VAULT_DB_PATH` setzen |
-| methodik.md nicht schreibbar | `WARNUNG: methodik.md konnte nicht aktualisiert werden` | Berechtigungen pruefen; Passport wurde trotzdem erstellt |
+| Vault bereits gesperrt | `FEHLER: Vault für Slug '...' ist gesperrt` | Kein erneuter Export — Vault ist read-only |
+| Vault-DB nicht gefunden | `FEHLER: ...` | Pfad prüfen oder `VAULT_DB_PATH` setzen |
+| methodik.md nicht schreibbar | `WARNUNG: methodik.md konnte nicht aktualisiert werden` | Berechtigungen prüfen; Passport wurde trotzdem erstellt |
 
 ---
 
 ## material-passport.json — Inhalt
 
-Das JSON-Dokument enthaelt:
+Das JSON-Dokument enthält:
 
 | Feld | Beschreibung |
 |------|-------------|
@@ -154,7 +154,7 @@ Das JSON-Dokument enthaelt:
 | `decisions_snapshot` | Snapshot aller aktiven Decisions |
 | `pdf_sha256_hashes` | SHA-256-Hashes aller vorhandenen PDFs |
 | `created_at` | Unix-Timestamp des Exports |
-| `passport_hash` | SHA-256 ueber alle uebrigen Felder |
+| `passport_hash` | SHA-256 über alle übrigen Felder |
 
 Das Dokument wird gegen das JSON-Schema in
 `academic_vault/material-passport.schema.json` validiert.
@@ -165,6 +165,6 @@ Das Dokument wird gegen das JSON-Schema in
 
 - Kein automatisches Backup oder Archivierung — nur Export
 - Kein Hochladen in externe Systeme
-- Repro-Lock nur mit expliziter User-Bestaetigung
-- Kein Loeschen vorhandener Vault-Daten
+- Repro-Lock nur mit expliziter User-Bestätigung
+- Kein Löschen vorhandener Vault-Daten
 - JSON-Schema-Validierung erfolgt intern; bei Validierungsfehler wird kein File geschrieben
