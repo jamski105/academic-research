@@ -16,6 +16,25 @@ _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 
 VALID_PAPER_TYPES = frozenset({"article-journal", "book", "chapter"})
 
+# Escape-Zeichen fuer LIKE-Patterns (siehe escape_like / ESCAPE-Klauseln unten).
+_LIKE_ESCAPE_CHAR = "\\"
+
+
+def escape_like(value: str) -> str:
+    """Escaped LIKE-Wildcards (``%`` und ``_``) sowie das Escape-Zeichen selbst.
+
+    SQLite-LIKE behandelt ``%`` und ``_`` als Wildcards. Ohne Escaping veraendert
+    User-Input mit diesen Zeichen das Suchverhalten still. Mit dem Rueckgabewert
+    laesst sich ein literales LIKE-Pattern bauen, das per ``ESCAPE '\\'`` an die
+    Query gebunden wird. Backslash muss zuerst escaped werden, damit die spaeter
+    eingefuegten Escape-Backslashes nicht doppelt escaped werden.
+    """
+    return (
+        value.replace(_LIKE_ESCAPE_CHAR, _LIKE_ESCAPE_CHAR * 2)
+        .replace("%", _LIKE_ESCAPE_CHAR + "%")
+        .replace("_", _LIKE_ESCAPE_CHAR + "_")
+    )
+
 
 def project_slug(cwd: Optional[str] = None) -> str:
     """Kanonischer Projekt-Slug fuer den DB-Pfad: basename(CWD).
@@ -359,8 +378,9 @@ class VaultDB:
         """LIKE-Suche in quotes.verbatim. Gibt [{quote_id, verbatim, paper_id}] zurueck."""
         with self._connection() as conn:
             rows = conn.execute(
-                "SELECT quote_id, verbatim, paper_id FROM quotes WHERE verbatim LIKE ? LIMIT ?",
-                (f"%{verbatim}%", k),
+                "SELECT quote_id, verbatim, paper_id FROM quotes "
+                "WHERE verbatim LIKE ? ESCAPE '\\' LIMIT ?",
+                (f"%{escape_like(verbatim)}%", k),
             ).fetchall()
         return [dict(r) for r in rows]
 
@@ -374,8 +394,9 @@ class VaultDB:
         with self._connection() as conn:
             if query:
                 rows = conn.execute(
-                    "SELECT * FROM quotes WHERE paper_id = ? AND verbatim LIKE ? LIMIT ?",
-                    (paper_id, f"%{query}%", k),
+                    "SELECT * FROM quotes WHERE paper_id = ? "
+                    "AND verbatim LIKE ? ESCAPE '\\' LIMIT ?",
+                    (paper_id, f"%{escape_like(query)}%", k),
                 ).fetchall()
             else:
                 rows = conn.execute(
@@ -452,13 +473,13 @@ class VaultDB:
         with self._connection() as conn:
             if paper_id is not None:
                 rows = conn.execute(
-                    "SELECT * FROM figures WHERE caption LIKE ? AND paper_id = ?",
-                    (f"%{caption_fragment}%", paper_id),
+                    "SELECT * FROM figures WHERE caption LIKE ? ESCAPE '\\' AND paper_id = ?",
+                    (f"%{escape_like(caption_fragment)}%", paper_id),
                 ).fetchall()
             else:
                 rows = conn.execute(
-                    "SELECT * FROM figures WHERE caption LIKE ?",
-                    (f"%{caption_fragment}%",),
+                    "SELECT * FROM figures WHERE caption LIKE ? ESCAPE '\\'",
+                    (f"%{escape_like(caption_fragment)}%",),
                 ).fetchall()
         return [dict(r) for r in rows]
 

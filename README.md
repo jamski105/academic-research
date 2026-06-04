@@ -225,14 +225,14 @@ In Claude Code:
 /academic-research:setup
 ```
 
-Antworte auf *„Hier einen Facharbeit-Arbeitsordner initialisieren?"* mit `y`. Das Plugin legt an:
+Antworte auf *„Hier einen Facharbeit-Arbeitsordner initialisieren?"* mit `y`. Das Plugin legt im **User-Projektordner** an (nicht im Plugin-Repo); alle Pfade unten sind relativ zu `<projekt>/`:
 
 ```
-Facharbeit-DevOps/
-├── academic_context.md     # Thesis-Profil (leere Stubs)
+<projekt>/                      # z.B. Facharbeit-DevOps/
+├── academic_context.md     # Thesis-Profil (leere Stubs) — User-Output
 ├── CLAUDE.md               # Plugin-Anleitung für Claude (generiert)
 ├── .gitignore              # sinnvolle Defaults
-├── kapitel/
+├── kapitel/                # Kapitel-Markdown — User-Output
 ├── literatur/
 └── pdfs/
 ```
@@ -395,7 +395,7 @@ Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt. In
 
 | Skill | Aktiviert bei | Beschreibung |
 |-------|--------------|-------------|
-| `academic-context` | *„meine Arbeit"*, *„Thesis"*, *„Forschungsfrage"* | Bootet akademischen Kontext in `./academic_context.md` |
+| `academic-context` | *„meine Arbeit"*, *„Thesis"*, *„Forschungsfrage"* | Bootet akademischen Kontext in `<projekt>/academic_context.md` (User-Output) |
 | `research-question-refiner` | *„Forschungsfrage formulieren"*, *„präzisieren"* | Verfeinert auf Spezifität, Beantwortbarkeit, Falsifizierbarkeit |
 | `advisor` | *„Gliederung"*, *„Exposé"*, *„Struktur"* | Baut Gliederungen und Exposés im Dialog (7-Kriterien-Check) |
 | `methodology-advisor` | *„welche Methodik"*, *„Forschungsdesign"* | Berät bei Methodenwahl (4-Dimensionen-Scoring) |
@@ -733,7 +733,7 @@ cp config/library-profiles/tum.yaml \
 ~/.academic-research/venv/bin/python -m pytest tests/ -v
 ```
 
-Aktuell: **1111 Tests gesammelt**, davon **963 bestanden** und 148 übersprungen (`pytest --collect-only` für die Gesamtzahl). Enthalten sind Regression-Guards (`test_skill_naming.py`, `test_cross_references.py`, `test_skills_manifest.py`).
+Aktuell: **1111 Tests gesammelt**, davon **963 bestanden** und 148 übersprungen (`pytest --collect-only` für die Gesamtzahl). Enthalten sind Regression-Guards (`tests/test_skill_naming.py`, `tests/test_cross_references.py`, `tests/test_skills_manifest.py`).
 
 Die Kern-Suite ist **offline-hermetisch** und läuft ohne Netzwerk. Übersprungen werden Tests, die externe Abhängigkeiten brauchen: API-basierte Evals unter `tests/evals/` setzen einen `ANTHROPIC_API_KEY` voraus (Network/External), und einige Integrations-Tests werden ohne installierte optionale Pakete (z.B. `requests`, `sqlite-vec`) automatisch geskippt.
 
