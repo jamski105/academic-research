@@ -3,7 +3,7 @@ name: notebook-bundle
 description: >
   Verwende diesen Skill wenn der User ein NotebookLM-Bundle erstellen möchte.
   Trigger-Phrasen: "NotebookLM Bundle", "PDF-Bundle exportieren", "Bundle für Upload",
-  "Bücher / große Dokumente aufteilen", "Riesen-PDF aufteilen", "NotebookLM vorbereiten".
+  "Bücher aufteilen", "Bundle prüfen / pruefen", "große Dokumente aufteilen", "Riesen-PDF aufteilen", "NotebookLM vorbereiten".
   Erzeugt ein konkateniertes PDF aller ausgewählten Paper (mit Cover + TOC)
   für manuellen Upload in Google NotebookLM.
 compatibility: Claude Code

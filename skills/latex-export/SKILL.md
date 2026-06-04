@@ -1,6 +1,6 @@
 ---
 name: latex-export
-description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel exportieren", "Kapitel übersetzen / konvertieren", "Thesis als .tex", "BibTeX aus Vault", "/academic-research:latex". Converts Markdown-Kapitel to .tex (Pandoc or custom renderer) and builds .bib from Vault (biblatex, DIN-1505).
+description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel exportieren", "Kapitel übersetzen / uebersetzen", "Thesis als .tex", "BibTeX aus Vault", "/academic-research:latex". Converts Markdown-Kapitel to .tex (Pandoc or custom renderer) and builds .bib from Vault (biblatex, DIN-1505).
 ---
 
 # LaTeX-Export

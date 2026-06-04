@@ -6,7 +6,7 @@ description: >
   Trigger-Phrasen: "Zitierstil importieren", "eigenen Zitierstil laden",
   "CSL importieren", "CSL laden", "neuer Stil",
   "custom citation style", "Stil aus GitHub laden".
-  Parst .csl-Dateien ("Stilübernahme / Import" via xml.etree.ElementTree) und generiert
+  Parst .csl-Dateien ("Stilübernahme / Stiluebernahme" via xml.etree.ElementTree) und generiert
   Prompt-Regel-Varianten unter ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-<style>.md.
 triggers:
   - "Zitierstil importieren"

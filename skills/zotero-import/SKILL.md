@@ -2,9 +2,9 @@
 name: zotero-import
 description: >
   Verwende diesen Skill wenn der User Zotero-Items in den Vault importieren möchte.
-  Trigger-Phrasen: "Zotero importieren", "Bibliothek einlesen", "Bibliothek synchronisieren", "Zotero sync".
-  Holt Items und PDF-Attachments aus einer Zotero-Library via pyzotero.
-  Dedupliziert via DOI/ISBN ("Prüfung / Deduplication" via normalisierten Identifikatoren).
+  Trigger-Phrasen: "Zotero importieren", "Bibliothek einlesen", "Bibliothek prüfen / pruefen", "Bibliothek synchronisieren", "Zotero sync".
+  Holt Items + PDF-Attachments aus Zotero-Library via pyzotero.
+  Dedupliziert via DOI/ISBN ("Prüfung / Dedup" via Identifikatoren).
   Lädt PDFs in die Files-API hoch und cached file_ids. Read-only — kein Push zurück.
 triggers:
   - "Zotero importieren"

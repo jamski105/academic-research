@@ -4,7 +4,7 @@ description: >
   Rendert ein PRISMA-2020-Flow-Diagramm als Mermaid-Block in kapitel/methodik.md.
   Triggert nach /search wenn PRISMA-Zähler (n_identified etc.)
   vorliegen, oder wenn der User "PRISMA Flow", "PRISMA-Diagramm", "Systematic Review",
-  "Flussdiagramm / Flowchart", "Einschlüsse / Inclusions" oder "PRISMA 2020" anfragt.
+  "Flussdiagramm / Flowchart", "Einschlüsse / Einschluesse" oder "PRISMA 2020" anfragt.
 compatibility: Claude API
 license: MIT
 ---
