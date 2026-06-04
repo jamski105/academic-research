@@ -7,6 +7,7 @@ description: |
   strukturierten metadata_only-Status zurueck.
 tools:
   - Bash(browser-use:*)
+  - Bash(browser-use *)
   - Read
   - Write
 maxTurns: 15

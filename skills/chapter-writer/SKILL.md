@@ -1,6 +1,6 @@
 ---
 name: chapter-writer
-description: Use this skill when the user writes a chapter of an academic work. Triggers on "Einleitung schreiben", "Theorieteil / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Empirie / Ergebnisse darstellen", "Diskussion schreiben", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren", or when a chapter body with proper citations is needed. Schreibt vollständige Kapitelentwürfe; Für Abstract/Keywords → `abstract-generator`; für Zitations-Formatierung → `citation-extraction`.
+description: Use this skill when the user wants a chapter SCHREIBEN (Text-Output, kein Review). Triggers on "Kapitel SCHREIBEN", "Einleitung schreiben", "Theorieteil ausformulieren / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Diskussion schreiben / Diskussionsteil drafted", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren". Für reines Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`. Für Abstract/Keywords → `abstract-generator`. Für Zitations-Formatierung → `citation-extraction`.
 compatibility: Claude API mit documents[] und citations.enabled
 license: MIT
 ---
@@ -15,12 +15,14 @@ license: MIT
 ## Übersicht
 
 Schreibt konkrete Kapitel (Einleitung, Theorieteil, Methodik, Empirie,
-Diskussion, Fazit) für akademische Arbeiten. Zieht Zitate via
-`vault.search()` + `vault.find_quotes()` und folgt dem Disziplin-Register.
+Diskussion, Fazit). Zieht Zitate via `vault.search()` +
+`vault.find_quotes()` und folgt dem Disziplin-Register.
 
 ## Abgrenzung
 
-Schreibt Kapitel-Prosa und baut Zitate in die Argumentation ein.
+Erzeugt Kapitel-Prosa als **Text-Output** und baut Zitate in die
+Argumentation ein.
+Für reines Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`.
 Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extraction`.
 
 ## Few-Shot-Beispiele (pro Kapiteltyp)
@@ -87,23 +89,23 @@ Bevor geschrieben wird, erstelle einen kurzen internen Plan:
 
 Plan dem User zur Freigabe vorlegen, bevor gedraftet wird.
 
-### 4. Draften
+### 5. Draften
 
-Schreibe das Kapitel Abschnitt für Abschnitt. Für jeden Abschnitt:
+Schreibe das Kapitel Abschnitt für Abschnitt. Je Abschnitt:
 
 1. Text in der Sprache der Arbeit entwerfen (Default: Deutsch)
 2. In-Text-Zitate im konfigurierten Zitationsstil einbauen (Default: APA7)
-3. Formales akademisches Register nutzen — keine Umgangssprache, keine Ich-Form, außer die Methodik verlangt es
+3. Formales akademisches Register — keine Umgangssprache, keine Ich-Form (außer die Methodik verlangt es)
 4. Wo sinnvoll, explizit an die Forschungsfrage anknüpfen
 5. Entwurf dem User zur Durchsicht vorlegen
 
 #### Schreibrichtlinien
 
 - **Absatzstruktur** — Topic Sentence, Ausarbeitung, Evidenz, Synthese
-- **Zitationsdichte** — In Theoriekapiteln mindestens ein Zitat pro substanzieller Aussage; weniger in Methodik/Analyse
+- **Zitationsdichte** — In Theoriekapiteln min. ein Zitat pro substanzieller Aussage; weniger in Methodik/Analyse
 - **Übergänge** — Jeder Abschnitt endet mit einer Brücke zum nächsten
-- **Hedging-Sprache** — Angemessene Abschwächung bei Aussagen ("deutet darauf hin", "weist darauf hin", "laut")
-- **Keine Füllwörter** — Jeder Satz muss zur Argumentation beitragen
+- **Hedging-Sprache** — Angemessene Abschwächung ("deutet darauf hin", "weist darauf hin", "laut")
+- **Keine Füllwörter** — Jeder Satz trägt zur Argumentation bei
 
 #### Quellenintegration
 
@@ -112,7 +114,7 @@ Zitatdaten aus `citation-extraction` nutzen (inline-formatiert nach dem Stil aus
 **Paraphrase** (eigene Worte + Zitat), **Zusammenfassung** (verdichtet + Zitat),
 **Synthese** (mehrere Quellen kombiniert).
 
-### 5. User-Review-Zyklus
+### 6. User-Review-Zyklus
 
 Nach dem Vorstellen jedes Abschnittsentwurfs:
 
@@ -124,7 +126,7 @@ Nach dem Vorstellen jedes Abschnittsentwurfs:
 Liefert der User Notizen oder Stichpunkte, bau sie zu akademischer Prosa aus und
 bewahre die inhaltliche Absicht.
 
-### 6. Kapitel-Zusammensetzung
+### 7. Kapitel-Zusammensetzung
 
 Nachdem alle Abschnitte reviewt und freigegeben sind:
 
@@ -134,7 +136,7 @@ Nachdem alle Abschnitte reviewt und freigegeben sind:
 4. Kapitel-Einleitung (außer bei Thesis-Einleitung) und Kapitel-Zusammenfassung ergänzen
 5. Finale Wortzahl berichten
 
-### 7. Writing-State aktualisieren
+### 8. Writing-State aktualisieren
 
 Nach der Freigabe des Kapitels durch den User:
 
@@ -171,9 +173,9 @@ PASS-/REVISE-Handling: `skills/chapter-writer/references/quality-review-config.m
 
 ## Wichtige Regeln
 
-- **Nie ohne User-Review schreiben** — Jeden Abschnitt zur Durchsicht vorlegen, bevor weitergearbeitet wird
-- **Nie Zitate fabrizieren** — Nur Quellen nutzen, die im Literaturstatus existieren
-- **User-Voice bewahren** — Wenn der User Notizen liefert, Formulierung und Intention respektieren
-- **Sprache der Arbeit einhalten** — In der Sprache schreiben, die im akademischen Kontext angegeben ist
-- **Fortschritt tracken** — Nach freigegebenen Drafts immer `./writing_state.md` aktualisieren
-- **Lücken flaggen** — Fehlt für einen Abschnitt eine Quelle, das melden und `/search` anbieten
+- **Nie ohne User-Review schreiben** — Jeden Abschnitt vor dem Weiterarbeiten vorlegen
+- **Nie Zitate fabrizieren** — Nur Quellen aus dem Literaturstatus nutzen
+- **User-Voice bewahren** — Bei User-Notizen Formulierung und Intention respektieren
+- **Sprache der Arbeit einhalten** — In der im akademischen Kontext angegebenen Sprache schreiben
+- **Fortschritt tracken** — Nach freigegebenen Drafts `./writing_state.md` aktualisieren
+- **Lücken flaggen** — Fehlt einem Abschnitt eine Quelle, melden und `/search` anbieten

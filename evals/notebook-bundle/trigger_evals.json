@@ -1,0 +1,27 @@
+{
+  "component": "notebook-bundle",
+  "should_trigger": [
+    "Erstelle ein NotebookLM-Bundle.",
+    "Exportiere ein PDF-Bundle fuer den Upload.",
+    "Mach mir ein Bundle fuer NotebookLM.",
+    "Bereite die Paper fuer NotebookLM vor.",
+    "Konkateniere die ausgewaehlten Paper zu einem PDF.",
+    "Teile dieses Riesen-PDF fuer NotebookLM auf.",
+    "Bundle fuer den NotebookLM-Upload erzeugen.",
+    "Fasse alle Paper zu einem PDF mit Cover und TOC zusammen.",
+    "Grosse Dokumente fuer NotebookLM aufteilen.",
+    "Erzeuge ein zusammengefuegtes PDF aller Quellen."
+  ],
+  "should_not_trigger": [
+    "Extrahiere Zitate aus dem PDF.",
+    "Schreibe Kapitel 2.",
+    "Welches Thema soll ich nehmen?",
+    "Suche Open-Access-Paper.",
+    "Exportiere nach LaTeX.",
+    "Importiere meine Reading List.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel."
+  ]
+}
