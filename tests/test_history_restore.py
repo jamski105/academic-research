@@ -176,3 +176,128 @@ def test_restore_snapshot_extracts_files(tmp_path, vault_db):
     # Datei muss wiederhergestellt sein
     restored = (project_dir / "academic_context.md").read_text()
     assert "Original" in restored, f"Restore fehlgeschlagen: {restored!r}"
+
+
+# ---------------------------------------------------------------------------
+# Security: Path-Traversal / Symlink-Escape (Issue #192, CVE-2007-4559)
+# ---------------------------------------------------------------------------
+
+def _build_malicious_tar(tar_path: Path, build_members) -> None:
+    """Hilfsfunktion: erstellt einen .tgz mit den von build_members(tar)
+    hinzugefuegten Mitgliedern (umgeht den export_snapshot-Pfad, um boese
+    Member injizieren zu koennen)."""
+    tar_path.parent.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(str(tar_path), "w:gz") as tar:
+        build_members(tar)
+
+
+def test_restore_snapshot_rejects_symlink_escape(tmp_path):
+    """restore_snapshot extrahiert KEINE Symlink-Member, die aus dem
+    Zielverzeichnis herauszeigen (Symlink-Path-Traversal, CVE-2007-4559)."""
+    import io
+    from academic_vault.server import restore_snapshot
+
+    # Ziel ausserhalb des Extraktionsverzeichnisses, das angegriffen wird
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    secret = outside / "secret.txt"
+    secret.write_text("ORIGINAL-SECRET")
+
+    snapshots_dir = tmp_path / "snapshots"
+    tar_path = snapshots_dir / "evil" / "20990101-0000.tgz"
+
+    def build(tar):
+        # 1) Symlink, der aus dem Zielverzeichnis auf die Geheimdatei zeigt
+        link = tarfile.TarInfo(name="evil_link")
+        link.type = tarfile.SYMTYPE
+        link.linkname = str(secret)
+        tar.addfile(link)
+        # 2) Schreibversuch durch den Symlink hindurch (ueberschreibt secret)
+        payload = b"PWNED"
+        data = tarfile.TarInfo(name="evil_link")
+        data.size = len(payload)
+        tar.addfile(data, io.BytesIO(payload))
+
+    _build_malicious_tar(tar_path, build)
+
+    target = tmp_path / "target"
+    target.mkdir()
+
+    # Restore darf das Geheimnis ausserhalb von target NICHT veraendern
+    restore_snapshot(
+        slug="evil",
+        ts="20990101-0000",
+        snapshots_dir=str(snapshots_dir),
+        target_dir=str(target),
+    )
+
+    assert secret.read_text() == "ORIGINAL-SECRET", (
+        "Symlink-Escape erfolgreich — Datei ausserhalb von target wurde veraendert!"
+    )
+
+
+def test_restore_snapshot_rejects_absolute_and_dotdot_paths(tmp_path):
+    """restore_snapshot extrahiert KEINE Member mit '..'-Komponenten,
+    die aus dem Zielverzeichnis herauszeigen (klassischer Path-Traversal)."""
+    import io
+    from academic_vault.server import restore_snapshot
+
+    snapshots_dir = tmp_path / "snapshots"
+    tar_path = snapshots_dir / "evil2" / "20990101-0001.tgz"
+
+    escape_target = tmp_path / "escaped.txt"
+
+    def build(tar):
+        payload = b"PWNED-TRAVERSAL"
+        info = tarfile.TarInfo(name="../escaped.txt")
+        info.size = len(payload)
+        tar.addfile(info, io.BytesIO(payload))
+
+    _build_malicious_tar(tar_path, build)
+
+    target = tmp_path / "target2"
+    target.mkdir()
+
+    restore_snapshot(
+        slug="evil2",
+        ts="20990101-0001",
+        snapshots_dir=str(snapshots_dir),
+        target_dir=str(target),
+    )
+
+    assert not escape_target.exists(), (
+        f"Path-Traversal erfolgreich — Datei wurde ausserhalb von target "
+        f"geschrieben: {escape_target}"
+    )
+
+
+def test_restore_snapshot_still_extracts_benign_files(tmp_path):
+    """Sanity-Check: harmlose, regulaere Dateien werden weiterhin extrahiert."""
+    import io
+    from academic_vault.server import restore_snapshot
+
+    snapshots_dir = tmp_path / "snapshots"
+    tar_path = snapshots_dir / "good" / "20990101-0002.tgz"
+
+    def build(tar):
+        payload = b"# Kontext\n"
+        info = tarfile.TarInfo(name="academic_context.md")
+        info.size = len(payload)
+        tar.addfile(info, io.BytesIO(payload))
+
+    _build_malicious_tar(tar_path, build)
+
+    target = tmp_path / "target3"
+    target.mkdir()
+
+    result = restore_snapshot(
+        slug="good",
+        ts="20990101-0002",
+        snapshots_dir=str(snapshots_dir),
+        target_dir=str(target),
+    )
+
+    assert result is True
+    extracted = target / "academic_context.md"
+    assert extracted.exists(), "Harmlose Datei wurde nicht extrahiert"
+    assert extracted.read_text() == "# Kontext\n"

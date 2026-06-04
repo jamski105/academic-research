@@ -15,7 +15,7 @@
  * Tool-Calls verwendet werden.
  */
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -33,14 +33,16 @@ const VAULT_DB = process.env.VAULT_DB_PATH ?? "vault.db";
 /**
  * Führt einen Python3-Einzeiler aus und gibt das geparste JSON-Ergebnis zurück.
  * Bei Fehler: gibt null zurück und loggt die Fehlermeldung.
+ *
+ * Sicherheit: Der Code und etwaige Argumente werden über das argv-Array an
+ * `python3` übergeben (execFileSync, KEINE Shell). Dadurch ist keine
+ * Shell-Interpolation möglich. Der Vault-Pfad fließt ausschließlich über die
+ * Environment-Variable VAULT_DB_PATH und wird im Python via os.environ gelesen
+ * — er wird nirgends in den Code-String interpoliert (#218).
  */
-function runPython(code) {
+function runPython(code, args = []) {
   try {
-    const escaped = code
-      .replace(/\\/g, "\\\\")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, "\\n");
-    const result = execSync(`python3 -c "${escaped}"`, {
+    const result = execFileSync("python3", ["-c", code, ...args], {
       env: { ...process.env, VAULT_DB_PATH: VAULT_DB },
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
@@ -58,11 +60,11 @@ function runPython(code) {
  */
 function getAllPapers() {
   return runPython(`
-import sys, json
+import os, sys, json
 sys.path.insert(0, '.')
 try:
     from academic_vault.db import VaultDB
-    conn = VaultDB._open('${VAULT_DB.replace(/'/g, "\\'")}')
+    conn = VaultDB._open(os.environ['VAULT_DB_PATH'])
     rows = conn.execute(
         'SELECT paper_id, csl_json, pdf_path, file_id, type FROM papers ORDER BY added_at DESC'
     ).fetchall()
@@ -77,19 +79,22 @@ except Exception as e:
  * Gibt die Anzahl gespeicherter Zitate für ein Paper zurück.
  */
 function getQuoteCount(paperId) {
-  const safe = paperId.replace(/'/g, "\\'");
-  return runPython(`
-import sys, json
+  // paperId fließt über argv (sys.argv[1]) — keine Interpolation in den Code.
+  return runPython(
+    `
+import os, sys, json
 sys.path.insert(0, '.')
 try:
     from academic_vault.db import VaultDB
-    conn = VaultDB._open('${VAULT_DB.replace(/'/g, "\\'")}')
-    row = conn.execute('SELECT COUNT(*) AS cnt FROM quotes WHERE paper_id = ?', ('${safe}',)).fetchone()
+    conn = VaultDB._open(os.environ['VAULT_DB_PATH'])
+    row = conn.execute('SELECT COUNT(*) AS cnt FROM quotes WHERE paper_id = ?', (sys.argv[1],)).fetchone()
     conn.close()
     print(json.dumps(row['cnt'] if row else 0))
 except Exception as e:
     print(json.dumps(0))
-`);
+`,
+    [paperId]
+  );
 }
 
 /**

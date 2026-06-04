@@ -121,6 +121,73 @@ def test_render_flow_script_exists():
 
 
 # ---------------------------------------------------------------------------
+# Documented Python-API import path (#225)
+# ---------------------------------------------------------------------------
+
+def _extract_python_blocks(markdown: str):
+    """Return the contents of all ```python fenced code blocks."""
+    blocks = []
+    lines = markdown.splitlines()
+    in_block = False
+    buf: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not in_block and stripped.startswith("```python"):
+            in_block = True
+            buf = []
+            continue
+        if in_block and stripped.startswith("```"):
+            in_block = False
+            blocks.append("\n".join(buf))
+            continue
+        if in_block:
+            buf.append(line)
+    return blocks
+
+
+def test_skill_md_documents_no_broken_package_import():
+    """SKILL.md must not document the non-importable `skills.prisma_flow` path (#225).
+
+    The directory is `skills/prisma-flow` (hyphen) without `__init__.py`, so
+    `from skills.prisma_flow.scripts.render_flow import ...` raises
+    ModuleNotFoundError. The documented import must use the actual module name.
+    """
+    skill_md = REPO_ROOT / "skills" / "prisma-flow" / "SKILL.md"
+    content = skill_md.read_text(encoding="utf-8")
+    assert "skills.prisma_flow" not in content, (
+        "SKILL.md documents the non-importable package path 'skills.prisma_flow' "
+        "(directory has a hyphen and no __init__.py)"
+    )
+
+
+def test_skill_md_python_api_import_is_executable():
+    """The documented Python-API import block in SKILL.md must actually work (#225)."""
+    skill_md = REPO_ROOT / "skills" / "prisma-flow" / "SKILL.md"
+    content = skill_md.read_text(encoding="utf-8")
+
+    import_lines = [
+        line.strip()
+        for block in _extract_python_blocks(content)
+        for line in block.splitlines()
+        if "render_prisma_flow" in line and line.strip().startswith(("from ", "import "))
+    ]
+    assert import_lines, "SKILL.md no longer documents a render_prisma_flow import"
+
+    # Execute the documented import statement(s) with the scripts dir on the path
+    # (mirrors the ${CLAUDE_PLUGIN_ROOT}/skills/prisma-flow/scripts convention).
+    scripts_dir = REPO_ROOT / "skills" / "prisma-flow" / "scripts"
+    namespace: dict = {}
+    for stmt in import_lines:
+        prev = list(sys.path)
+        sys.path.insert(0, str(scripts_dir))
+        try:
+            exec(compile(stmt, "<skill-md>", "exec"), namespace)
+        finally:
+            sys.path[:] = prev
+    assert callable(namespace.get("render_prisma_flow"))
+
+
+# ---------------------------------------------------------------------------
 # skill_sizes.json test
 # ---------------------------------------------------------------------------
 
