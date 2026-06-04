@@ -21,6 +21,15 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 mkdir -p "$BASE/sessions" "$BASE/pdfs"
 
+# Mindest-Python-Version pruefen, bevor die venv erstellt wird (vgl. #201).
+# Konsistent mit README.md ("Python 3.11+") und pyproject.toml (requires-python >=3.11).
+if ! python3 -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)'; then
+  CURRENT="$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null || echo "unbekannt")"
+  echo "❌ Python 3.11+ erforderlich (gefunden: $CURRENT)." >&2
+  echo "   Bitte ein neueres Python installieren, z.B. 'brew install python@3.11' (macOS)." >&2
+  exit 1
+fi
+
 if [ ! -d "$BASE/venv" ]; then
   python3 -m venv "$BASE/venv"
 fi
