@@ -1,6 +1,6 @@
 ---
 name: chapter-writer
-description: Use this skill when the user wants a chapter SCHREIBEN (Text-Output, kein Review). Triggers on "Kapitel SCHREIBEN", "Einleitung schreiben", "Theorieteil ausformulieren / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Diskussionsteil drafted", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren". Für reines Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`. Für Abstract/Keywords → `abstract-generator`. Für Zitations-Formatierung → `citation-extraction`.
+description: Use this skill when the user wants a chapter SCHREIBEN (Text-Output, kein Review). Triggers on "Kapitel SCHREIBEN", "Einleitung schreiben", "Theorieteil ausformulieren / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Diskussion schreiben / Diskussionsteil drafted", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren". Für reines Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`. Für Abstract/Keywords → `abstract-generator`. Für Zitations-Formatierung → `citation-extraction`.
 compatibility: Claude API mit documents[] und citations.enabled
 license: MIT
 ---
@@ -27,51 +27,8 @@ Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extractio
 
 ## Few-Shot-Beispiele (pro Kapiteltyp)
 
-### Kapitel: Theorie
-
-**Schlecht** (Grund: Definitionen aneinandergereiht, keine Struktur-Argumentation):
-
-> "Führung ist wichtig. Transformationale Führung ist eine Führungsart.
-> Sie wurde von Bass beschrieben."
-
-**Gut** (Grund: Definition + Einordnung + Abgrenzung, mit Beleg):
-
-> "Transformationale Führung bezeichnet ein Führungskonzept, bei dem
-> Vorgesetzte Mitarbeiter durch Vision und individuelle Förderung über
-> transaktionale Anreize hinaus motivieren (Bass 1985, S. 22). Abgrenzung
-> zur transaktionalen Führung: Transaktional beruht auf Leistungs-
-> Gegenleistungs-Tausch, transformational auf intrinsischer Motivation
-> (Bass & Riggio 2006)."
-
-### Kapitel: Methoden
-
-**Schlecht** (Grund: keine Begründung, keine Operationalisierung):
-
-> "Wir haben eine Umfrage gemacht."
-
-**Gut** (Grund: Wahl + Begründung + Operationalisierung + Grenzen):
-
-> "Gewählt wurde ein standardisierter Online-Fragebogen, weil nur so die
-> angestrebte Stichprobengröße n ≥ 100 im Zeitrahmen erreichbar war.
-> Führungsstil wurde mittels MLQ-5X operationalisiert (Avolio & Bass
-> 2004). Limitation: Selbstauskunft der Mitarbeiter zur Führungs-
-> Wahrnehmung, keine Beobachtungsdaten."
-
-### Kapitel: Diskussion
-
-**Schlecht** (Grund: Ergebnis-Wiederholung ohne Einordnung):
-
-> "Die Umfrage hat gezeigt, dass transformationale Führung besser wirkt.
-> Das passt zu den Erwartungen."
-
-**Gut** (Grund: Befund + Literatur-Kontext + Abweichungs-Erklärung):
-
-> "Der gefundene positive Effekt transformationaler Führung auf
-> Mitarbeiterzufriedenheit (β=0,38, p<0,01) deckt sich mit der Meta-
-> Analyse von Judge & Piccolo (2004), fällt aber schwächer aus als dort
-> berichtet (β=0,59). Mögliche Erklärung: Branchenspezifika in
-> Metallverarbeitung (hohe Arbeitsteilung) dämpfen Führungseffekte —
-> konsistent mit Liao & Chuang (2007)."
+Schlecht-/Gut-Beispiele pro Kapiteltyp (Theorie, Methoden, Diskussion):
+`skills/chapter-writer/references/chapter-examples.md`. Vor dem Draften lesen.
 
 ## Kontext-Dateien
 
@@ -92,17 +49,14 @@ Fehlt `./academic_context.md`: `academic-context`-Skill triggern.
 Fehlt Gliederung: `advisor`-Skill vorschlagen.
 
 Quellen nicht aus `literature_state.md` laden — stattdessen Vault-Queries
-verwenden (Schritt 3 unten). So werden nur relevante Quellen geladen,
-nicht die komplette Literaturliste.
+verwenden (Schritt 4). So werden nur relevante Quellen geladen, nicht die
+komplette Literaturliste.
 
 ### 2. Ziel-Kapitel bestimmen
 
-Frage den User, welches Kapitel geschrieben werden soll, falls unklar. Kläre:
-
-- Kapitelnummer und -titel aus der Gliederung
-- Scope — Was soll das Kapitel leisten?
-- Verfügbare zugeordnete Quellen
-- Erwarteter Umfang (Seitenschätzung aus der Gliederung)
+Falls unklar, den User fragen, welches Kapitel/welcher Abschnitt zu schreiben
+ist. Kläre: Kapitelnummer und -titel, Scope (was das Kapitel leisten soll),
+zugeordnete Quellen, erwarteter Umfang (Seitenschätzung aus der Gliederung).
 
 ### 3. Approval-Gate nach Outline (Interactive Mode)
 
@@ -117,7 +71,7 @@ Freigabe-Runde wünscht, **Approval-Gate vor dem Draften einbauen**:
    - **Scope ändern** — Kapitelziel neu definieren
 3. Erst nach expliziter Freigabe ("Freigeben") mit dem Draften beginnen.
 
-Bei `--interactive=off` (default) oder ohne `/search --interactive`-Kontext:
+Bei `--interactive=off` (default) ohne `/search --interactive`-Kontext:
 Kapitelplanung direkt starten (kein Gate).
 
 ### 4. Kapitelplanung
@@ -125,18 +79,13 @@ Kapitelplanung direkt starten (kein Gate).
 Bevor geschrieben wird, erstelle einen kurzen internen Plan:
 
 1. **Abschnitts-Aufbau** — Unterabschnitte mit 2-3 Sätzen Inhaltsbeschreibung
-2. **Quellen-Mapping via Vault** — Vault-Queries pro Unterabschnitt:
-   ```
-   vault.search("<Kapitelthema>", k=5)
-   → [paper_id, snippet] für relevante Paper
-
-   vault.find_quotes(paper_id, query="<Unterabschnitts-Frage>", k=3)
-   → [verbatim, page, quote_id] für Zitat-Kandidaten
-   ```
-   Ergebnis: maximal ~1700 Token Quellen-Kontext statt vollständigem
-   `literature_state.md`-Dump (~8–15 k Token).
-3. **Argumentationsfluss** — Wie das Kapitel seinen Beitrag zur Forschungsfrage aufbaut
-4. **Schlüsseldefinitionen** — Begriffe, die eingeführt oder referenziert werden müssen
+2. **Quellen-Mapping via Vault** — pro Unterabschnitt:
+   `vault.search("<Kapitelthema>", k=5)` → `[paper_id, snippet]`, dann
+   `vault.find_quotes(paper_id, query="<Unterabschnitts-Frage>", k=3)` →
+   `[verbatim, page, quote_id]`. Ergebnis: ~1700 Token Quellen-Kontext statt
+   vollständigem `literature_state.md`-Dump (~8–15 k Token).
+3. **Argumentationsfluss** — wie das Kapitel zur Forschungsfrage beiträgt
+4. **Schlüsseldefinitionen** — einzuführende oder referenzierte Begriffe
 
 Plan dem User zur Freigabe vorlegen, bevor gedraftet wird.
 
@@ -160,12 +109,10 @@ Schreibe das Kapitel Abschnitt für Abschnitt. Je Abschnitt:
 
 #### Quellenintegration
 
-Beim Zitieren die Daten aus dem `citation-extraction`-Skill nutzen (inline-formatiert nach dem in `./academic_context.md` konfigurierten Stil). Paper über das formatierte Zitat referenzieren. Folgende Integrationsmuster werden unterstützt:
-
-- **Direktzitat** — Exakter Wortlaut in Anführungszeichen mit Seitenzahl
-- **Paraphrase** — In eigenen Worten wiedergeben, mit Zitat
-- **Zusammenfassung** — Argumentation einer Quelle verdichten, mit Zitat
-- **Synthese** — Mehrere Quellen kombinieren, um einen Punkt zu stützen
+Zitatdaten aus `citation-extraction` nutzen (inline-formatiert nach dem Stil aus
+`./academic_context.md`). Integrationsmuster: **Direktzitat** (Wortlaut + Seite),
+**Paraphrase** (eigene Worte + Zitat), **Zusammenfassung** (verdichtet + Zitat),
+**Synthese** (mehrere Quellen kombiniert).
 
 ### 6. User-Review-Zyklus
 
@@ -176,7 +123,8 @@ Nach dem Vorstellen jedes Abschnittsentwurfs:
 - Feedback in den nächsten Abschnitt übernehmen
 - Nie ohne Bestätigung des Users zum nächsten Abschnitt übergehen
 
-Liefert der User eigene Notizen oder Stichpunkte, bau sie zu akademischer Prosa aus und bewahre die inhaltliche Absicht.
+Liefert der User Notizen oder Stichpunkte, bau sie zu akademischer Prosa aus und
+bewahre die inhaltliche Absicht.
 
 ### 7. Kapitel-Zusammensetzung
 
@@ -198,116 +146,36 @@ Nach der Freigabe des Kapitels durch den User:
 
 ## Spezielle Kapiteltypen
 
-### Einleitung
-
-Struktur: Themenrelevanz, Problemstellung, Forschungsfrage, Methodik-Überblick, Gliederungs-Vorschau. Zuletzt schreiben oder nach Fertigstellung der anderen Kapitel überarbeiten.
-
-### Theoretischer Rahmen
-
-Hohe Zitationsdichte. Alle Schlüsselkonzepte definieren. Perspektiven verschiedener Autoren vergleichen. Auf den später verwendeten Analyserahmen hinarbeiten.
-
-### Methodik
-
-Den gewählten Ansatz begründen. Datenerhebung und -analyse beschreiben. Limitationen adressieren. Methodik-Literatur referenzieren.
-
-### Analyse / Ergebnisse
-
-Den theoretischen Rahmen auf die Daten anwenden. Befunde entlang der Unterfragen oder Themen strukturieren. Evidenz aus Primär- oder Sekundärquellen nutzen.
-
-### Fazit
-
-Befunde pro Unterfrage zusammenfassen. Die Hauptfrage beantworten. Limitationen und zukünftige Forschung diskutieren. Keine neuen Quellen.
+Struktur- und Zitations-Profile pro Kapiteltyp (Einleitung, Theoretischer
+Rahmen, Methodik, Analyse/Ergebnisse, Fazit):
+`skills/chapter-writer/references/chapter-types.md`. Beim Kapitelplanung-Schritt
+das passende Profil anwenden.
 
 ## Zitat-Einbindung via Citations-API
 
-Beim Einweben von Zitaten in Kapitel-Prosa: Quellen-PDFs im `documents`-Parameter an Claude uebergeben, damit die API die Quellenbindung erzwingt. Jedes Paraphrase-Segment mit einem `citations[]`-Eintrag nachweisbar.
-
-**Workflow:**
-1. `vault.search("<Kapitelthema>", k=5)` → relevante `paper_id`s
-2. Pro paper_id: `vault.find_quotes(paper_id, query, k=3)` → Zitat-Kandidaten
-3. Pro Paper: `vault.ensure_file(paper_id)` → `file_id` für Citations-API
-4. API-Call mit `documents[]` (file_id), `citations.enabled: true`
-5. Output-Text enthält `citations[]`-Blöcke — als Inline-Zitate nach
-   Variant-Zitierstil aus `./academic_context.md` rendern.
-
-**Fallback:** Gibt `vault.ensure_file()` `None` zurück (kein PDF im Vault),
-nutze den Vault-Zitat-Text (`verbatim`) direkt als Prompt-basiertes Zitat
-ohne Citations-API-Erzwingung.
+Quellen-PDFs im `documents`-Parameter übergeben, damit die API die
+Quellenbindung erzwingt; jedes Paraphrase-Segment via `citations[]`
+nachweisbar. Vollständiger Workflow und Fallback (kein PDF im Vault):
+`skills/chapter-writer/references/citations-api.md`.
 
 ## Humanizer-Audit-Pass (nur Hochschul-Kontext)
 
-Bevor `quality-reviewer` aufgerufen wird, prüfe ob ein Anti-KI-Audit-Pass
-erforderlich ist:
-
-### Trigger-Bedingung
-
-1. Lies `./academic_context.md` (bereits in Schritt 1 geladen).
-2. Extrahiere das Feld `Typ:` (Freitext, z. B. `Bachelorarbeit`).
-3. Prüfe Substring-Match (case-insensitiv) gegen:
-   `["bachelor", "master", "diplom", "dissertation"]`
-4. Prüfe ob `humanizer_de: off` in `./academic_context.md` gesetzt ist.
-
-**Humanizer überspringen wenn:**
-- `./academic_context.md` fehlt, oder `Typ:` nicht gesetzt, oder kein Hochschul-Marker gefunden, **oder**
-- `humanizer_de: off` in `./academic_context.md` gesetzt ist.
-
-**Humanizer ausführen wenn:** Hochschul-Marker gefunden UND kein Bypass-Flag.
-
-### Ausführung
-
-```
-Skill(humanizer-de):
-  mode: formal
-  input: <aktueller Kapitel-Entwurf>
-  voice_samples_dir: <aus academic_context.md project_slug oder null>
-```
-
-Der Skill gibt zurück:
-- `humanized_text` — überarbeiteter Entwurf (ersetzt den rohen Draft)
-- `changes` — Liste der Änderungen mit `severity` und `pattern_id`
-
-**Nach dem Audit-Pass:** Verwende `humanized_text` als Input für den
-nachfolgenden `quality-reviewer`-Aufruf.
-
-**Anzahl Critical/High-Änderungen** kurz dem User melden (z. B.:
-`Humanizer-Audit: 3 Critical, 7 High, 12 Medium Muster korrigiert.`),
-ohne den vollständigen Diff auszugeben — User kann `/humanize` für
-den vollständigen Diff aufrufen.
+Vor dem `quality-reviewer`-Aufruf prüfen, ob ein Anti-KI-Audit-Pass nötig ist
+(Hochschul-Marker in `academic_context.md`, kein `humanizer_de: off`).
+Trigger-Bedingung, Ausführung und Ergebnis-Handling:
+`skills/chapter-writer/references/humanizer-audit.md`.
 
 ## Qualitaets-Review vor finalem Output
 
 Nach der Generierung des Kapitel-Entwurfs (ggf. nach Humanizer-Audit-Pass)
-triggere den `quality-reviewer`-Agent:
-
-```
-Agent(
-  subagent_type="quality-reviewer",
-  prompt={
-    "content": "<Entwurfs-Text oder humanized_text>",
-    "criteria": [
-      {"name": "Satzlaenge Median", "threshold": "15-25 Woerter", "metric": "median"},
-      {"name": "Passiv-Quote", "threshold": "< 30%", "metric": "percentage"},
-      {"name": "Nominalstil", "threshold": "< 40%", "metric": "percentage"},
-      {"name": "Quellen pro 1000 Woerter", "threshold": ">= 5", "metric": "count_per_1000"}
-    ],
-    "context": {
-      "component": "chapter-writer",
-      "iteration": <N>,
-      "humanizer_de_pass": <true wenn Audit-Pass gelaufen, sonst false>
-    }
-  }
-)
-```
-
-**Bei PASS:** Output an User liefern.
-**Bei REVISE:** Empfehlungen anwenden, erneut generieren, iteration += 1.
-**Bei iteration >= 2:** PASS-with-warnings akzeptieren und die verbleibenden Warnungen dem User transparent machen.
+triggere den `quality-reviewer`-Agent. Vollständige Kriterien-Konfiguration und
+PASS-/REVISE-Handling: `skills/chapter-writer/references/quality-review-config.md`.
 
 ## Wichtige Regeln
 
-- **Nie ohne User-Review schreiben** — Jeden Abschnitt zur Durchsicht vorlegen, bevor weitergearbeitet wird
-- **Nie Zitate fabrizieren** — Nur Quellen nutzen, die im Literaturstatus existieren
-- **User-Voice bewahren** — Wenn der User Notizen liefert, Formulierung und Intention respektieren
-- **Sprache der Arbeit einhalten** — In der Sprache schreiben, die im akademischen Kontext angegeben ist
-- **Fortschritt tracken** — Nach freigegebenen Drafts immer `./writing_state.md` aktualisieren
-- **Lücken flaggen** — Fehlt für einen Abschnitt eine Quelle, das melden und `/search` anbieten
+- **Nie ohne User-Review schreiben** — Jeden Abschnitt vor dem Weiterarbeiten vorlegen
+- **Nie Zitate fabrizieren** — Nur Quellen aus dem Literaturstatus nutzen
+- **User-Voice bewahren** — Bei User-Notizen Formulierung und Intention respektieren
+- **Sprache der Arbeit einhalten** — In der im akademischen Kontext angegebenen Sprache schreiben
+- **Fortschritt tracken** — Nach freigegebenen Drafts `./writing_state.md` aktualisieren
+- **Lücken flaggen** — Fehlt einem Abschnitt eine Quelle, melden und `/search` anbieten
