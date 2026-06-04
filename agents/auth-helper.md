@@ -86,7 +86,40 @@ except Exception as e:
 PYEOF
 ```
 
-Die tatsaechlichen Credential-Werte (Passwort, Benutzername) werden direkt beim browser-use-Aufruf aus dem Profil gelesen, aber NICHT in diesen Output geschrieben.
+Die tatsaechlichen Credential-Werte (Passwort, Benutzername) werden NICHT in diesen Output geschrieben.
+
+#### Credentials in ENV-Variablen laden (NICHT in den Prompt)
+
+**Sicherheits-Kern (Fix #193):** Credential-Werte duerfen NIEMALS als Text in den
+browser-use-Prompt (Reasoning-Stream des LLM) gelangen — sonst leaken sie via
+Trace-Logs, Hook-Captures oder Error-Messages. Stattdessen werden sie in lokale
+Shell-ENV-Variablen geladen und ueber den deterministischen `browser-use input`-Befehl
+direkt in die Formular-Felder getippt. Der Wert wird von der Shell expandiert und
+erreicht das LLM nie.
+
+```bash
+# Benutzername/Passwort aus dem Profil in ENV-Variablen laden — KEIN echo/print der Werte.
+# Der erste Eintrag in credentials_keys ist der User-Schluessel, der zweite der Pass-Schluessel.
+export BROWSER_USE_USER="$(python3 - <<'PYEOF'
+import yaml, os
+with open(os.path.expanduser("~/.academic-research/library-profiles/active.yaml")) as f:
+    d = yaml.safe_load(f) or {}
+keys = d.get("credentials_keys", [])
+print(d.get(keys[0], "") if len(keys) > 0 else "", end="")
+PYEOF
+)"
+export BROWSER_USE_PASS="$(python3 - <<'PYEOF'
+import yaml, os
+with open(os.path.expanduser("~/.academic-research/library-profiles/active.yaml")) as f:
+    d = yaml.safe_load(f) or {}
+keys = d.get("credentials_keys", [])
+print(d.get(keys[1], "") if len(keys) > 1 else "", end="")
+PYEOF
+)"
+```
+
+Diese Variablen leben nur in der aktuellen Shell-Session, werden NIE per `echo`/`print`
+ausgegeben und nach dem Login mit `unset BROWSER_USE_USER BROWSER_USE_PASS` geloescht.
 
 ### Schritt 2: Auth-Typ bestimmen
 
@@ -120,14 +153,28 @@ Wenn NICHT enthalten:
 
 Baue die HAN-Proxy-URL aus `proxy_pattern` und dem Ziel-Hostnamen.
 
+Voraussetzung: `BROWSER_USE_USER` / `BROWSER_USE_PASS` sind bereits in der Shell gesetzt
+(siehe "Credentials in ENV-Variablen laden"). Die Werte werden NICHT in den Prompt geschrieben.
+
 ```bash
+# 1. Seite oeffnen und Formular-Struktur lesen (KEINE Credentials im Prompt).
+browser-use open "<proxy_url aus proxy_pattern>"
+browser-use state    # liefert die Element-Indizes der Login-Felder
+```
+
+```bash
+# 2. Credentials deterministisch in die Felder tippen — Wert kommt aus der ENV-Var,
+#    von der Shell expandiert, NICHT ueber das LLM. <user_idx>/<pass_idx>/<submit_idx>
+#    stammen aus dem vorigen `state`-Output.
+browser-use input <user_idx> "$BROWSER_USE_USER" \
+  && browser-use input <pass_idx> "$BROWSER_USE_PASS" \
+  && browser-use click <submit_idx>
+```
+
+```bash
+# 3. Ergebnis pruefen — der Prompt enthaelt KEINE Credentials.
 browser-use "
-Navigiere zur HAN-Proxy-URL: <proxy_url aus proxy_pattern>
-Falls eine Login-Seite erscheint:
-  - Fuelle Benutzername-Feld mit dem Wert aus dem Profil-Feld <credentials_keys[0]>
-  - Fuelle Passwort-Feld mit dem Wert aus dem Profil-Feld <credentials_keys[1]>
-  - Klicke Submit
-Pruefe: Wurde zur Ziel-Site weitergeleitet?
+Pruefe den aktuellen browser-use state: Wurde zur Ziel-Site weitergeleitet?
 Antworte NUR mit einem dieser Strings (ohne Credentials):
   LOGIN_SUCCESS
   LOGIN_FAILED: <Fehlertext, keine Zugangsdaten>
@@ -137,15 +184,31 @@ Antworte NUR mit einem dieser Strings (ohne Credentials):
 
 #### Shibboleth-Login (inkl. DFN-AAI)
 
+Voraussetzung: `BROWSER_USE_USER` / `BROWSER_USE_PASS` sind in der Shell gesetzt.
+
 ```bash
+# 1. Navigieren + ggf. WAYF-Einrichtung waehlen. <uni> ist KEIN Credential und
+#    darf im Prompt stehen. Danach das Login-Formular per state lesen.
+browser-use open "<auth_url aus Profil>"
 browser-use "
-Navigiere zu: <auth_url aus Profil>
-Falls WAYF-Seite erscheint: Waehle Einrichtung mit Namen/Schluessel '<uni>' aus.
-Fuelle Shibboleth-Login-Formular:
-  - Benutzername: <Wert aus credentials_keys[0] im Profil>
-  - Passwort: <Wert aus credentials_keys[1] im Profil>
-Klicke Anmelden / Login.
-Warte auf Redirect zur Ziel-Site.
+Falls eine WAYF-/Einrichtungs-Auswahlseite erscheint: Waehle die Einrichtung mit
+Namen/Schluessel '<uni>' aus und folge zum Login-Formular.
+Antworte NUR mit: WAYF_DONE oder NO_WAYF
+"
+browser-use state    # Element-Indizes der Shibboleth-Login-Felder lesen
+```
+
+```bash
+# 2. Credentials deterministisch eingeben — Werte aus ENV-Vars, nie im Prompt.
+browser-use input <user_idx> "$BROWSER_USE_USER" \
+  && browser-use input <pass_idx> "$BROWSER_USE_PASS" \
+  && browser-use click <submit_idx>
+```
+
+```bash
+# 3. Ergebnis pruefen (kein Credential im Prompt).
+browser-use "
+Pruefe den browser-use state: Wurde nach dem Login zur Ziel-Site weitergeleitet?
 Antworte NUR:
   LOGIN_SUCCESS
   LOGIN_FAILED: <Fehlermeldung ohne Zugangsdaten>
@@ -155,13 +218,25 @@ Antworte NUR:
 
 #### EZproxy-Login
 
+Voraussetzung: `BROWSER_USE_USER` / `BROWSER_USE_PASS` sind in der Shell gesetzt.
+
 ```bash
+# 1. Login-Seite oeffnen und Formular-Struktur lesen.
+browser-use open "<auth_url aus Profil>"
+browser-use state    # Element-Indizes der Login-Felder lesen
+```
+
+```bash
+# 2. Credentials deterministisch eingeben — Werte aus ENV-Vars, nie im Prompt.
+browser-use input <user_idx> "$BROWSER_USE_USER" \
+  && browser-use input <pass_idx> "$BROWSER_USE_PASS" \
+  && browser-use click <submit_idx>
+```
+
+```bash
+# 3. Ergebnis pruefen (kein Credential im Prompt).
 browser-use "
-Navigiere zu: <auth_url aus Profil>
-Fuelle Login-Formular:
-  - Benutzername: <Wert aus credentials_keys[0]>
-  - Passwort: <Wert aus credentials_keys[1]>
-Submit → warte auf Redirect.
+Pruefe den browser-use state: Wurde zur Ziel-Site weitergeleitet?
 Antworte NUR:
   LOGIN_SUCCESS
   LOGIN_FAILED: <Fehlermeldung>
@@ -214,6 +289,9 @@ Wenn `browser-use` meldet, dass eine Session abgelaufen ist oder ein erneuter Lo
 
 ## Sicherheits-Checkliste (vor jedem Output pruefen)
 
+- [ ] Credentials NUR via ENV-Var (`BROWSER_USE_USER`/`BROWSER_USE_PASS`) + `browser-use input` — NIE im browser-use-Prompt-Text
+- [ ] Kein `echo`/`print` der Credential-ENV-Variablen
+- [ ] Nach dem Login: `unset BROWSER_USE_USER BROWSER_USE_PASS`
 - [ ] Kein Passwort-String im Output
 - [ ] Kein Cookie-Inhalt im Output
 - [ ] `session_context` = nur opaker Bezeichner (Format: `browser-use:active:<uni>`)

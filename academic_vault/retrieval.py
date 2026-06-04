@@ -225,7 +225,7 @@ def apply_reranker(
         except Exception:
             pass
 
-    return candidates
+    return enriched
 
 
 def compute_recall_at_k(

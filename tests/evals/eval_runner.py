@@ -22,6 +22,58 @@ SKILLS_ROOT = Path(__file__).parent.parent.parent / "skills"
 AGENTS_ROOT = Path(__file__).parent.parent.parent / "agents"
 BASELINES_ROOT = Path(__file__).parent.parent / "baselines"
 
+# Maximal zulaessiger Quality-Drop (PASS-Rate) gegenueber Baseline.
+# README verspricht Schwelle Delta >= 20 pp; konfigurierbar via ENV.
+DEFAULT_DELTA_THRESHOLD = 0.20
+
+
+def quality_delta_threshold() -> float:
+    """Liefert die Quality-Delta-Schwelle (Default 0.20).
+
+    Ueberschreibbar via Umgebungsvariable EVAL_DELTA_THRESHOLD.
+    Ungueltige Werte fallen auf den Default zurueck.
+    """
+    raw = os.environ.get("EVAL_DELTA_THRESHOLD", "")
+    if not raw:
+        return DEFAULT_DELTA_THRESHOLD
+    try:
+        return float(raw)
+    except ValueError:
+        return DEFAULT_DELTA_THRESHOLD
+
+
+def check_quality_delta(
+    current_score: float,
+    baseline_score: float,
+    threshold: float | None = None,
+) -> float:
+    """Enforced die README-Schwelle: PASS-Rate-Drop darf 20 pp nicht ueberschreiten.
+
+    Vergleicht die aktuelle PASS-Rate (current_score) mit der Baseline
+    (baseline_score). Faellt der Score um mehr als ``threshold`` (Default
+    0.20 bzw. EVAL_DELTA_THRESHOLD), wird ein AssertionError ausgeloest.
+
+    Args:
+        current_score: PASS-Rate des aktuellen Laufs (z.B. with_skill), 0.0-1.0.
+        baseline_score: PASS-Rate der Baseline (z.B. without_skill), 0.0-1.0.
+        threshold: Optionale Override-Schwelle; sonst quality_delta_threshold().
+
+    Returns:
+        Das gemessene Delta (current_score - baseline_score).
+
+    Raises:
+        AssertionError: Wenn der Quality-Drop die Schwelle ueberschreitet.
+    """
+    limit = quality_delta_threshold() if threshold is None else threshold
+    delta = current_score - baseline_score
+    # Kleine Epsilon-Toleranz gegen Float-Rundung, damit der exakte
+    # Schwellenwert (Drop == limit) zuverlaessig besteht.
+    assert delta >= -limit - 1e-9, (
+        f"Quality drop > {limit * 100:.0f}pp: delta={delta:+.2f} "
+        f"(current={current_score:.2f}, baseline={baseline_score:.2f})"
+    )
+    return delta
+
 
 def load_eval_file(component: str, filename: str) -> dict[str, Any]:
     path = EVALS_ROOT / component / filename
@@ -54,6 +106,7 @@ def call_claude(system: str, user: str, model: str = "claude-sonnet-4-6") -> str
     resp = client.messages.create(
         model=model,
         max_tokens=2048,
+        temperature=0,  # deterministisch — verhindert flaky Trigger-Evals (#231)
         system=system,
         messages=[{"role": "user", "content": user}],
     )
@@ -128,6 +181,7 @@ def call_claude_with_tokens(
     resp = client.messages.create(
         model=model,
         max_tokens=2048,
+        temperature=0,  # deterministisch — verhindert flaky Trigger-Evals (#231)
         system=system,
         messages=[{"role": "user", "content": user}],
     )

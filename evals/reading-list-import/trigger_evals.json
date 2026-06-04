@@ -1,0 +1,27 @@
+{
+  "component": "reading-list-import",
+  "should_trigger": [
+    "Importiere meine Reading List in den Vault.",
+    "Lies die Prof-Liste ein.",
+    "Importiere diese Bibliographie.",
+    "Literaturliste einlesen bitte.",
+    "Reading List importieren.",
+    "Importiere diese Quellenliste.",
+    "Lies meine Leseliste ein und resolve die DOIs.",
+    "Importiere die Markdown-Bibliographie in den Vault.",
+    "Kannst du diese PDF-Literaturliste einlesen?",
+    "Bibliographie aus Plaintext importieren."
+  ],
+  "should_not_trigger": [
+    "Importiere meine Zotero-Bibliothek.",
+    "Importiere einen Zitierstil aus dem CSL-Repo.",
+    "Extrahiere Zitate aus dem PDF.",
+    "Schreibe Kapitel 2.",
+    "Welches Thema soll ich nehmen?",
+    "Exportiere nach LaTeX.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel."
+  ]
+}

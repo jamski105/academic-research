@@ -1,0 +1,9 @@
+{
+  "component": "conference-poster",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "cp-01", "input": "Erstelle das Grundgeruest eines A0-Konferenz-Posters (tikzposter) mit den Bloecken Titel, Motivation, Methode, Ergebnisse, Fazit fuer das Thema 'Zero Trust in Healthcare'.", "expected": {"type": "regex", "value": "(tikzposter|block|Titel|Motivation|Ergebnisse)"}, "mode": "with_skill"},
+    {"id": "cp-02", "input": "Welche Inhalte gehoeren in den Ergebnis-Block eines wissenschaftlichen A0-Posters und wie waehle ich die Top-Figures aus?", "expected": {"type": "regex", "value": "(Figure|Abbildung|Ergebnis|Block)"}, "mode": "with_skill"},
+    {"id": "cp-03", "input": "Fasse dieses Kapitel in fuenf praegnanten Stichpunkten fuer einen Poster-Methodenblock zusammen: Wir nutzen eine qualitative Inhaltsanalyse nach Mayring mit 24 Interviews.", "expected": {"type": "regex", "value": "(Inhaltsanalyse|Mayring|Interview|Methode|-)"}, "mode": "with_skill"}
+  ]
+}

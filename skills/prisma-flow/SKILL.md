@@ -67,7 +67,9 @@ Zählwerte bitten oder aus dem angezeigten Ergebnis-Summary ableiten.
 Oder per Python-API:
 
 ```python
-from skills.prisma_flow.scripts.render_flow import render_prisma_flow
+import sys
+sys.path.insert(0, "${CLAUDE_PLUGIN_ROOT}/skills/prisma-flow/scripts")
+from render_flow import render_prisma_flow
 mermaid = render_prisma_flow(counters, output_path="kapitel/methodik.md")
 ```
 

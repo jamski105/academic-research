@@ -1,0 +1,9 @@
+{
+  "component": "reading-list-import",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "rli-01", "input": "Parse diese Reading-List-Zeile in Autor, Jahr und Titel: 'Mayring, P. (2022). Qualitative Inhaltsanalyse. Beltz.'", "expected": {"type": "regex", "value": "(Mayring|2022|Inhaltsanalyse|Titel|Autor)"}, "mode": "with_skill"},
+    {"id": "rli-02", "input": "Welche Dienste nutzt du, um DOI und ISBN einer importierten Quelle aufzuloesen?", "expected": {"type": "regex", "value": "(Crossref|DNB|DOI|ISBN|OpenLibrary)"}, "mode": "with_skill"},
+    {"id": "rli-03", "input": "Beschreibe den Ablauf, um eine Markdown-Bibliographie in den Vault zu importieren.", "expected": {"type": "regex", "value": "(Vault|add_paper|import|parse|Referenz)"}, "mode": "with_skill"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "component": "book-handler",
+  "should_trigger": [
+    "Verarbeite dieses Buch fuer meine Arbeit.",
+    "Ich habe eine Monografie, leg sie im Vault an.",
+    "Verarbeite diesen Sammelband.",
+    "Loese die ISBN 978-3-16-148410-0 auf.",
+    "Ein Kapitel von Schmidt aus einem Sammelband bitte.",
+    "Importiere dieses Springer-Buch (DOI 10.1007/978-3-...).",
+    "Leg dieses Fachbuch als CSL-JSON im Vault an.",
+    "Kannst du diese Monografie ueber DNB aufloesen?",
+    "Buch via OpenLibrary suchen und anlegen.",
+    "Verarbeite den Sammelband mit drei Herausgebern."
+  ],
+  "should_not_trigger": [
+    "Extrahiere Zitate aus diesem Paper.",
+    "Suche Open-Access-Artikel zu Microservices.",
+    "Schreibe Kapitel 2 meiner Arbeit.",
+    "Welches Thema soll ich nehmen?",
+    "Exportiere nach LaTeX.",
+    "Importiere meine Zotero-Bibliothek.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel."
+  ]
+}

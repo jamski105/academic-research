@@ -2,18 +2,54 @@
 
 Context-Manager-Klasse mit sqlite-vec-Fallback und FTS5-Volltext-Suche.
 """
+import contextlib
 import json
 import os
 import sqlite3
 import time
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, Optional
 from uuid import uuid4
 
 
 _SCHEMA_PATH = Path(__file__).parent / "schema.sql"
 
 VALID_PAPER_TYPES = frozenset({"article-journal", "book", "chapter"})
+
+
+def project_slug(cwd: Optional[str] = None) -> str:
+    """Kanonischer Projekt-Slug fuer den DB-Pfad: basename(CWD).
+
+    Eine einzige Quelle der Wahrheit (Issue #190). Hooks und MCP-Server
+    muessen denselben Algorithmus verwenden, damit alle Komponenten gegen
+    dieselbe vault.db schreiben.
+    """
+    base = Path(cwd) if cwd is not None else Path.cwd()
+    return base.name or "default"
+
+
+def default_db_path() -> str:
+    """Kanonischer Default-Pfad zur vault.db (Single Source of Truth, Issue #190).
+
+    Reihenfolge:
+      1. Falls ``VAULT_DB_PATH`` gesetzt ist, wird dieser Pfad verwendet.
+      2. Sonst ``~/.academic-research/projects/<slug>/vault.db`` mit
+         ``slug = basename(CWD)``.
+
+    Bewusst NICHT das CWD direkt ("vault.db") und NICHT das Plugin-Verzeichnis
+    (``CLAUDE_PLUGIN_ROOT``/``REPO_ROOT``), um Datenverlust bei Plugin-Updates
+    und das versehentliche Committen von Forschungs-PII zu vermeiden (CWE-538).
+    """
+    env = os.environ.get("VAULT_DB_PATH")
+    if env:
+        return env
+    return str(
+        Path.home()
+        / ".academic-research"
+        / "projects"
+        / project_slug()
+        / "vault.db"
+    )
 
 
 class VaultDB:
@@ -61,6 +97,32 @@ class VaultDB:
             return self._conn
         return self._open(self.db_path)
 
+    @contextlib.contextmanager
+    def _connection(self, commit: bool = False) -> Iterator[sqlite3.Connection]:
+        """Stellt eine Connection bereit und schliesst sie garantiert.
+
+        Verhindert SQLite-Connection-Leaks bei Exceptions (Issue #237). Wird die
+        Connection in dieser Methode selbst geoeffnet (``self._conn is None``,
+        also ausserhalb des Context-Managers), so wird sie im ``finally``-Block
+        immer geschlossen — auch wenn ``conn.execute()`` z. B. einen
+        ``IntegrityError`` wirft. Bei ``commit=True`` wird im Erfolgsfall vorher
+        committet. Eine geteilte Connection (``self._conn`` gesetzt) wird hier
+        weder committet noch geschlossen; das uebernimmt ``__exit__``.
+
+        Args:
+            commit: Bei True wird die selbst geoeffnete Connection im Erfolgsfall
+                committet (fuer write-Methoden).
+        """
+        own_conn = self._conn is None
+        conn = self._get_conn()
+        try:
+            yield conn
+            if own_conn and commit:
+                conn.commit()
+        finally:
+            if own_conn:
+                conn.close()
+
     def load_vec_extension(self, conn: Optional[sqlite3.Connection] = None) -> bool:
         """Versucht sqlite_vec Extension zu laden. Gibt True bei Erfolg zurueck.
 
@@ -101,28 +163,22 @@ class VaultDB:
     def init_schema(self) -> None:
         """Erstellt alle Tabellen gemaess schema.sql. Versucht vec0 zu erstellen."""
         ddl = _SCHEMA_PATH.read_text(encoding="utf-8")
-        conn = self._get_conn()
-        own_conn = self._conn is None
+        with self._connection(commit=True) as conn:
+            # vec-Extension auf derselben Connection laden (optional)
+            self.load_vec_extension(conn)
 
-        # vec-Extension auf derselben Connection laden (optional)
-        self.load_vec_extension(conn)
+            # Basis-Schema ausfuehren (ohne vec0-Block — der ist auskommentiert)
+            conn.executescript(ddl)
 
-        # Basis-Schema ausfuehren (ohne vec0-Block — der ist auskommentiert)
-        conn.executescript(ddl)
-
-        # quote_embeddings via vec0 versuchen (nur wenn Extension geladen)
-        if self.vec_available:
-            try:
-                conn.execute(
-                    "CREATE VIRTUAL TABLE IF NOT EXISTS quote_embeddings "
-                    "USING vec0(quote_id TEXT PRIMARY KEY, embedding FLOAT[384])"
-                )
-            except sqlite3.OperationalError:
-                self.vec_available = False
-
-        if own_conn:
-            conn.commit()
-            conn.close()
+            # quote_embeddings via vec0 versuchen (nur wenn Extension geladen)
+            if self.vec_available:
+                try:
+                    conn.execute(
+                        "CREATE VIRTUAL TABLE IF NOT EXISTS quote_embeddings "
+                        "USING vec0(quote_id TEXT PRIMARY KEY, embedding FLOAT[384])"
+                    )
+                except sqlite3.OperationalError:
+                    self.vec_available = False
 
     # ------------------------------------------------------------------
     # Papers CRUD
@@ -149,12 +205,21 @@ class VaultDB:
         type wird aus csl_json extrahiert. Erlaubte Werte: article-journal, book, chapter.
 
         provenance: Herkunfts-Tag (z.B. "scihub", "oa") fuer Audit-Zwecke (#195).
+
+        Malformed JSON wird NICHT mehr stillschweigend zu 'article-journal'
+        defaulted (Issue #213, Security Round-2 M3), sondern als ValueError
+        gemeldet. Fehlt das Feld 'type' komplett, gilt weiterhin der
+        DB-Default 'article-journal'.
         """
         try:
             csl = json.loads(csl_json)
-            paper_type = csl.get("type", "article-journal")
-        except Exception:
-            paper_type = "article-journal"
+        except (json.JSONDecodeError, TypeError) as exc:
+            raise ValueError(
+                f"csl_json ist kein valides JSON: {exc}"
+            ) from exc
+        if not isinstance(csl, dict):
+            raise ValueError("csl_json muss ein JSON-Objekt sein.")
+        paper_type = csl.get("type", "article-journal")
 
         if paper_type not in VALID_PAPER_TYPES:
             raise ValueError(
@@ -162,52 +227,45 @@ class VaultDB:
             )
 
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO papers
-              (paper_id, type, csl_json, doi, isbn, pdf_path, page_offset,
-               editor, chapter, page_first, page_last, container_title,
-               parent_paper_id, provenance,
-               added_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(paper_id) DO UPDATE SET
-              type            = excluded.type,
-              csl_json        = excluded.csl_json,
-              doi             = excluded.doi,
-              isbn            = excluded.isbn,
-              pdf_path        = excluded.pdf_path,
-              page_offset     = excluded.page_offset,
-              editor          = excluded.editor,
-              chapter         = excluded.chapter,
-              page_first      = excluded.page_first,
-              page_last       = excluded.page_last,
-              container_title = excluded.container_title,
-              parent_paper_id = excluded.parent_paper_id,
-              provenance      = excluded.provenance,
-              updated_at      = excluded.updated_at
-            """,
-            (
-                paper_id, paper_type, csl_json, doi, isbn, pdf_path, page_offset,
-                editor, chapter, page_first, page_last, container_title,
-                parent_paper_id, provenance,
-                now, now,
-            ),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO papers
+                  (paper_id, type, csl_json, doi, isbn, pdf_path, page_offset,
+                   editor, chapter, page_first, page_last, container_title,
+                   parent_paper_id, provenance,
+                   added_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(paper_id) DO UPDATE SET
+                  type            = excluded.type,
+                  csl_json        = excluded.csl_json,
+                  doi             = excluded.doi,
+                  isbn            = excluded.isbn,
+                  pdf_path        = excluded.pdf_path,
+                  page_offset     = excluded.page_offset,
+                  editor          = excluded.editor,
+                  chapter         = excluded.chapter,
+                  page_first      = excluded.page_first,
+                  page_last       = excluded.page_last,
+                  container_title = excluded.container_title,
+                  parent_paper_id = excluded.parent_paper_id,
+                  provenance      = excluded.provenance,
+                  updated_at      = excluded.updated_at
+                """,
+                (
+                    paper_id, paper_type, csl_json, doi, isbn, pdf_path, page_offset,
+                    editor, chapter, page_first, page_last, container_title,
+                    parent_paper_id, provenance,
+                    now, now,
+                ),
+            )
 
     def get_paper(self, paper_id: str) -> Optional[dict]:
         """Gibt Paper-Record als dict zurueck oder None."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        row = conn.execute(
-            "SELECT * FROM papers WHERE paper_id = ?", (paper_id,)
-        ).fetchone()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            row = conn.execute(
+                "SELECT * FROM papers WHERE paper_id = ?", (paper_id,)
+            ).fetchone()
         if row is None:
             return None
         return dict(row)
@@ -216,38 +274,27 @@ class VaultDB:
         self, paper_id: str, file_id: str, expires_at: int
     ) -> None:
         """Setzt file_id und file_id_expires_at fuer ein Paper."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            "UPDATE papers SET file_id = ?, file_id_expires_at = ?, updated_at = ? "
-            "WHERE paper_id = ?",
-            (file_id, expires_at, int(time.time()), paper_id),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                "UPDATE papers SET file_id = ?, file_id_expires_at = ?, updated_at = ? "
+                "WHERE paper_id = ?",
+                (file_id, expires_at, int(time.time()), paper_id),
+            )
 
     def set_page_offset(self, paper_id: str, offset: int) -> None:
         """Setzt page_offset fuer ein Paper."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            "UPDATE papers SET page_offset = ?, updated_at = ? WHERE paper_id = ?",
-            (offset, int(time.time()), paper_id),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                "UPDATE papers SET page_offset = ?, updated_at = ? WHERE paper_id = ?",
+                (offset, int(time.time()), paper_id),
+            )
 
     def get_page_offset(self, paper_id: str) -> int:
         """Gibt page_offset fuer ein Paper zurueck. Fallback: 0."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        row = conn.execute(
-            "SELECT page_offset FROM papers WHERE paper_id = ?", (paper_id,)
-        ).fetchone()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            row = conn.execute(
+                "SELECT page_offset FROM papers WHERE paper_id = ?", (paper_id,)
+            ).fetchone()
         if row is None:
             return 0
         return int(row["page_offset"] or 0)
@@ -258,14 +305,11 @@ class VaultDB:
         Beispiel: ``list_papers_by_provenance("scihub")`` liefert alle aus dem
         SciHub-Tier bezogenen Papers fuer ein Provenance-Audit.
         """
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        rows = conn.execute(
-            "SELECT * FROM papers WHERE provenance = ? ORDER BY added_at",
-            (provenance,),
-        ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM papers WHERE provenance = ? ORDER BY added_at",
+                (provenance,),
+            ).fetchall()
         return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
@@ -287,47 +331,37 @@ class VaultDB:
     ) -> None:
         """INSERT eines Quotes in die quotes-Tabelle."""
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO quotes
-              (quote_id, paper_id, verbatim, pdf_page, printed_page,
-               section, context_before, context_after,
-               extraction_method, api_response_id, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                quote_id, paper_id, verbatim, pdf_page, printed_page,
-                section, context_before, context_after,
-                extraction_method, api_response_id, now,
-            ),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO quotes
+                  (quote_id, paper_id, verbatim, pdf_page, printed_page,
+                   section, context_before, context_after,
+                   extraction_method, api_response_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    quote_id, paper_id, verbatim, pdf_page, printed_page,
+                    section, context_before, context_after,
+                    extraction_method, api_response_id, now,
+                ),
+            )
 
     def get_quote(self, quote_id: str) -> Optional[dict]:
         """Gibt Quote-Record als dict zurueck oder None."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        row = conn.execute(
-            "SELECT * FROM quotes WHERE quote_id = ?", (quote_id,)
-        ).fetchone()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            row = conn.execute(
+                "SELECT * FROM quotes WHERE quote_id = ?", (quote_id,)
+            ).fetchone()
         return dict(row) if row is not None else None
 
     def search_quote_text(self, verbatim: str, k: int = 5) -> list[dict]:
         """LIKE-Suche in quotes.verbatim. Gibt [{quote_id, verbatim, paper_id}] zurueck."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        rows = conn.execute(
-            "SELECT quote_id, verbatim, paper_id FROM quotes WHERE verbatim LIKE ? LIMIT ?",
-            (f"%{verbatim}%", k),
-        ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            rows = conn.execute(
+                "SELECT quote_id, verbatim, paper_id FROM quotes WHERE verbatim LIKE ? LIMIT ?",
+                (f"%{verbatim}%", k),
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def find_quotes(
@@ -337,45 +371,34 @@ class VaultDB:
         k: int = 10,
     ) -> list[dict]:
         """Suche Quotes fuer ein Paper, optional per verbatim-LIKE-Filter."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        if query:
-            rows = conn.execute(
-                "SELECT * FROM quotes WHERE paper_id = ? AND verbatim LIKE ? LIMIT ?",
-                (paper_id, f"%{query}%", k),
-            ).fetchall()
-        else:
-            rows = conn.execute(
-                "SELECT * FROM quotes WHERE paper_id = ? LIMIT ?",
-                (paper_id, k),
-            ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            if query:
+                rows = conn.execute(
+                    "SELECT * FROM quotes WHERE paper_id = ? AND verbatim LIKE ? LIMIT ?",
+                    (paper_id, f"%{query}%", k),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM quotes WHERE paper_id = ? LIMIT ?",
+                    (paper_id, k),
+                ).fetchall()
         return [dict(r) for r in rows]
 
     def set_ocr_done(self, paper_id: str, value: int = 1) -> None:
         """Setzt ocr_done-Flag fuer ein Paper."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            "UPDATE papers SET ocr_done = ?, updated_at = ? WHERE paper_id = ?",
-            (value, int(time.time()), paper_id),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                "UPDATE papers SET ocr_done = ?, updated_at = ? WHERE paper_id = ?",
+                (value, int(time.time()), paper_id),
+            )
 
     def update_pdf_path(self, paper_id: str, new_path: str) -> None:
         """Aktualisiert pdf_path fuer ein Paper."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            "UPDATE papers SET pdf_path = ?, updated_at = ? WHERE paper_id = ?",
-            (new_path, int(time.time()), paper_id),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                "UPDATE papers SET pdf_path = ?, updated_at = ? WHERE paper_id = ?",
+                (new_path, int(time.time()), paper_id),
+            )
 
     # ------------------------------------------------------------------
     # Figures CRUD
@@ -392,42 +415,32 @@ class VaultDB:
         """INSERT einer Figure. Gibt figure_id (UUID) zurueck."""
         figure_id = str(uuid4())
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO figures
-              (figure_id, paper_id, page, caption, vlm_description, data_extracted_json, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            (figure_id, paper_id, page, caption, vlm_description, data_extracted_json, now),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO figures
+                  (figure_id, paper_id, page, caption, vlm_description, data_extracted_json, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (figure_id, paper_id, page, caption, vlm_description, data_extracted_json, now),
+            )
         return figure_id
 
     def get_figure(self, figure_id: str) -> Optional[dict]:
         """Gibt Figure-Record als dict zurueck oder None."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        row = conn.execute(
-            "SELECT * FROM figures WHERE figure_id = ?", (figure_id,)
-        ).fetchone()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            row = conn.execute(
+                "SELECT * FROM figures WHERE figure_id = ?", (figure_id,)
+            ).fetchone()
         return dict(row) if row is not None else None
 
     def list_figures(self, paper_id: str) -> list[dict]:
         """Alle Figures fuer ein Paper, nach page sortiert."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        rows = conn.execute(
-            "SELECT * FROM figures WHERE paper_id = ? ORDER BY page",
-            (paper_id,),
-        ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM figures WHERE paper_id = ? ORDER BY page",
+                (paper_id,),
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def find_figures_by_caption(
@@ -436,20 +449,17 @@ class VaultDB:
         paper_id: Optional[str] = None,
     ) -> list[dict]:
         """LIKE-Suche in figures.caption. Optionaler paper_id-Filter."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        if paper_id is not None:
-            rows = conn.execute(
-                "SELECT * FROM figures WHERE caption LIKE ? AND paper_id = ?",
-                (f"%{caption_fragment}%", paper_id),
-            ).fetchall()
-        else:
-            rows = conn.execute(
-                "SELECT * FROM figures WHERE caption LIKE ?",
-                (f"%{caption_fragment}%",),
-            ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            if paper_id is not None:
+                rows = conn.execute(
+                    "SELECT * FROM figures WHERE caption LIKE ? AND paper_id = ?",
+                    (f"%{caption_fragment}%", paper_id),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM figures WHERE caption LIKE ?",
+                    (f"%{caption_fragment}%",),
+                ).fetchall()
         return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
@@ -465,31 +475,23 @@ class VaultDB:
         """INSERT einer Decision. Gibt decision_id (UUID) zurueck."""
         decision_id = str(uuid4())
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO decisions (decision_id, category, text, rationale, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (decision_id, category, text, rationale, now),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO decisions (decision_id, category, text, rationale, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (decision_id, category, text, rationale, now),
+            )
         return decision_id
 
     def supersede_decision(self, decision_id: str, superseded_by: str) -> None:
         """Setzt superseded_by fuer eine Decision."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            "UPDATE decisions SET superseded_by = ? WHERE decision_id = ?",
-            (superseded_by, decision_id),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                "UPDATE decisions SET superseded_by = ? WHERE decision_id = ?",
+                (superseded_by, decision_id),
+            )
 
     def list_decisions(
         self,
@@ -497,8 +499,6 @@ class VaultDB:
         active_only: bool = True,
     ) -> list[dict]:
         """Gibt Decisions zurueck, optional nach Kategorie und/oder active gefiltert."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
         clauses = []
         params: list = []
         if category is not None:
@@ -507,12 +507,11 @@ class VaultDB:
         if active_only:
             clauses.append("superseded_by IS NULL")
         where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
-        rows = conn.execute(
-            f"SELECT * FROM decisions {where} ORDER BY created_at DESC",
-            params,
-        ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            rows = conn.execute(
+                f"SELECT * FROM decisions {where} ORDER BY created_at DESC",
+                params,
+            ).fetchall()
         return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
@@ -522,37 +521,29 @@ class VaultDB:
     def add_excluded_source(self, paper_id: str, reason: Optional[str] = None) -> None:
         """INSERT or REPLACE eines excluded_source-Eintrags."""
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO excluded_sources (paper_id, reason, excluded_at)
-            VALUES (?, ?, ?)
-            """,
-            (paper_id, reason, now),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO excluded_sources (paper_id, reason, excluded_at)
+                VALUES (?, ?, ?)
+                """,
+                (paper_id, reason, now),
+            )
 
     def list_excluded_sources(self) -> list[dict]:
         """Gibt alle excluded_sources zurueck."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        rows = conn.execute("SELECT * FROM excluded_sources ORDER BY excluded_at DESC").fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM excluded_sources ORDER BY excluded_at DESC"
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def is_excluded(self, paper_id: str) -> bool:
         """Prueft ob paper_id in excluded_sources ist."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        row = conn.execute(
-            "SELECT 1 FROM excluded_sources WHERE paper_id = ?", (paper_id,)
-        ).fetchone()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM excluded_sources WHERE paper_id = ?", (paper_id,)
+            ).fetchone()
         return row is not None
 
     # ------------------------------------------------------------------
@@ -568,19 +559,15 @@ class VaultDB:
         """INSERT eines RoB-Assessments. Gibt assessment_id (UUID) zurueck."""
         assessment_id = str(uuid4())
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO risk_of_bias_assessments
-              (assessment_id, paper_id, study_type, domain_scores_json, ts)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (assessment_id, paper_id, study_type, domain_scores_json, now),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO risk_of_bias_assessments
+                  (assessment_id, paper_id, study_type, domain_scores_json, ts)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (assessment_id, paper_id, study_type, domain_scores_json, now),
+            )
         return assessment_id
 
     def list_risk_of_bias(
@@ -588,19 +575,16 @@ class VaultDB:
         paper_id: Optional[str] = None,
     ) -> list[dict]:
         """Gibt RoB-Assessments zurueck, optional nach paper_id gefiltert."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        if paper_id is not None:
-            rows = conn.execute(
-                "SELECT * FROM risk_of_bias_assessments WHERE paper_id = ? ORDER BY ts DESC",
-                (paper_id,),
-            ).fetchall()
-        else:
-            rows = conn.execute(
-                "SELECT * FROM risk_of_bias_assessments ORDER BY ts DESC"
-            ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            if paper_id is not None:
+                rows = conn.execute(
+                    "SELECT * FROM risk_of_bias_assessments WHERE paper_id = ? ORDER BY ts DESC",
+                    (paper_id,),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM risk_of_bias_assessments ORDER BY ts DESC"
+                ).fetchall()
         return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
@@ -616,18 +600,14 @@ class VaultDB:
         """INSERT eines Score-Snapshots. Gibt snapshot_id (UUID) zurueck."""
         snapshot_id = str(uuid4())
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO score_history (snapshot_id, paper_id, session_id, ts, scores_json)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (snapshot_id, paper_id, session_id, now, scores_json),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO score_history (snapshot_id, paper_id, session_id, ts, scores_json)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (snapshot_id, paper_id, session_id, now, scores_json),
+            )
         return snapshot_id
 
     def get_score_history(
@@ -636,20 +616,17 @@ class VaultDB:
         k: Optional[int] = None,
     ) -> list[dict]:
         """Gibt Score-History fuer ein Paper zurueck, nach ts DESC sortiert."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        if k is not None:
-            rows = conn.execute(
-                "SELECT * FROM score_history WHERE paper_id = ? ORDER BY ts DESC LIMIT ?",
-                (paper_id, k),
-            ).fetchall()
-        else:
-            rows = conn.execute(
-                "SELECT * FROM score_history WHERE paper_id = ? ORDER BY ts DESC",
-                (paper_id,),
-            ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            if k is not None:
+                rows = conn.execute(
+                    "SELECT * FROM score_history WHERE paper_id = ? ORDER BY ts DESC LIMIT ?",
+                    (paper_id, k),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM score_history WHERE paper_id = ? ORDER BY ts DESC",
+                    (paper_id,),
+                ).fetchall()
         return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
@@ -679,58 +656,44 @@ class VaultDB:
         """
         chunk_id = str(uuid4())
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT INTO chunk_embeddings
-              (chunk_id, paper_id, chunk_text, context_sentence, embedding_text,
-               embedding_vector, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            (chunk_id, paper_id, chunk_text, context_sentence, embedding_text,
-             embedding_vector, now),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT INTO chunk_embeddings
+                  (chunk_id, paper_id, chunk_text, context_sentence, embedding_text,
+                   embedding_vector, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (chunk_id, paper_id, chunk_text, context_sentence, embedding_text,
+                 embedding_vector, now),
+            )
         return chunk_id
 
     def get_chunk_embeddings(self, paper_id: str) -> list[dict]:
         """Gibt alle Chunk-Embeddings fuer ein Paper zurueck."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        rows = conn.execute(
-            "SELECT * FROM chunk_embeddings WHERE paper_id = ? ORDER BY created_at",
-            (paper_id,),
-        ).fetchall()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM chunk_embeddings WHERE paper_id = ? ORDER BY created_at",
+                (paper_id,),
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def lock_vault(self, slug: str) -> None:
         """Setzt Vault-Lock fuer einen Slug. Idempotent."""
         now = int(time.time())
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO vault_locked_status (slug, locked_at)
-            VALUES (?, ?)
-            """,
-            (slug, now),
-        )
-        if own_conn:
-            conn.commit()
-            conn.close()
+        with self._connection(commit=True) as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO vault_locked_status (slug, locked_at)
+                VALUES (?, ?)
+                """,
+                (slug, now),
+            )
 
     def is_locked(self, slug: str) -> bool:
         """Prueft ob Vault-Lock fuer Slug gesetzt ist."""
-        conn = self._get_conn()
-        own_conn = self._conn is None
-        row = conn.execute(
-            "SELECT 1 FROM vault_locked_status WHERE slug = ?", (slug,)
-        ).fetchone()
-        if own_conn:
-            conn.close()
+        with self._connection() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM vault_locked_status WHERE slug = ?", (slug,)
+            ).fetchone()
         return row is not None

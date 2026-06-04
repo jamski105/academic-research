@@ -150,3 +150,98 @@ def test_existing_quote_check_still_works(tmp_path):
         env_overrides={"VAULT_DB_PATH": db_path},
     )
     assert result.returncode == 2, f"Erwartet exit 2 (Quote-Block), got {result.returncode}"
+
+
+# ---------------------------------------------------------------------------
+# Regression #220: Edit/MultiEdit duerfen verbatim-guard nicht umgehen.
+# Edit-Tool-Input traegt den neuen Text in new_string; MultiEdit in
+# edits[].new_string. Der Guard muss diese Pfade ebenso pruefen wie Write.
+# ---------------------------------------------------------------------------
+
+
+def run_hook_raw(payload: dict, env_overrides: dict = None) -> subprocess.CompletedProcess:
+    """Startet den Hook mit beliebiger Payload (fuer Edit/MultiEdit-Shape)."""
+    env = os.environ.copy()
+    env["VAULT_DB_PATH"] = str(WORKTREE_ROOT / "nonexistent_vault_for_tests.db")
+    if env_overrides:
+        env.update(env_overrides)
+    return subprocess.run(
+        ["node", str(HOOK_PATH)],
+        input=json.dumps(payload),
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=15,
+    )
+
+
+def _empty_vault(tmp_path, name="empty_vault.db"):
+    sys.path.insert(0, str(WORKTREE_ROOT))
+    from academic_vault.db import VaultDB
+    from academic_vault.server import add_paper
+
+    db_path = str(tmp_path / name)
+    db = VaultDB(db_path)
+    db.init_schema()
+    add_paper(
+        db_path=db_path,
+        paper_id="paper-001",
+        csl_json=json.dumps({"title": "Test", "type": "article-journal"}),
+    )
+    return db_path
+
+
+def test_hook_blocks_unverified_quote_on_edit(tmp_path):
+    """Regression #220: Edit auf kapitel/*.md mit unverifiziertem Zitat -> Block (exit 2)."""
+    db_path = _empty_vault(tmp_path)
+    payload = {
+        "tool_name": "Edit",
+        "tool_input": {
+            "file_path": "kapitel/kap1.md",
+            "old_string": "Platzhalter",
+            "new_string": 'Laut dem Autor "Dies ist ein sehr wichtiger Satz aus dem Buch" stimmt das.',
+        },
+    }
+    result = run_hook_raw(payload, env_overrides={"VAULT_DB_PATH": db_path})
+    assert result.returncode == 2, (
+        f"Edit umgeht verbatim-guard: erwartet exit 2 (block), got {result.returncode}. "
+        f"stderr: {result.stderr}"
+    )
+
+
+def test_hook_blocks_unverified_quote_on_multiedit(tmp_path):
+    """Regression #220: MultiEdit auf *.tex mit unverifiziertem Zitat -> Block (exit 2)."""
+    db_path = _empty_vault(tmp_path, "empty_vault2.db")
+    payload = {
+        "tool_name": "MultiEdit",
+        "tool_input": {
+            "file_path": "kapitel/kap1.tex",
+            "edits": [
+                {"old_string": "x", "new_string": "Harmloser Text ohne Zitat."},
+                {
+                    "old_string": "y",
+                    "new_string": 'Er schrieb "Dies ist ein sehr wichtiger Satz aus dem Buch" woertlich.',
+                },
+            ],
+        },
+    }
+    result = run_hook_raw(payload, env_overrides={"VAULT_DB_PATH": db_path})
+    assert result.returncode == 2, (
+        f"MultiEdit umgeht verbatim-guard: erwartet exit 2 (block), got {result.returncode}. "
+        f"stderr: {result.stderr}"
+    )
+
+
+def test_hook_allows_clean_edit(tmp_path):
+    """Edit ohne Zitat/Figure-Referenz wird durchgelassen (exit 0)."""
+    db_path = _empty_vault(tmp_path, "empty_vault3.db")
+    payload = {
+        "tool_name": "Edit",
+        "tool_input": {
+            "file_path": "kapitel/kap1.md",
+            "old_string": "alt",
+            "new_string": "Ein voellig unauffaelliger Absatz ohne Zitate.",
+        },
+    }
+    result = run_hook_raw(payload, env_overrides={"VAULT_DB_PATH": db_path})
+    assert result.returncode == 0, f"Erwartet 0, got {result.returncode}. stderr: {result.stderr}"

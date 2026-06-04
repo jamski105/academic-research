@@ -26,3 +26,29 @@ jobs:
             exit 1
           fi
           echo "Version stimmt ueberein."
+      - name: marketplace.json-Version vs. plugin.json vergleichen
+        run: |
+          set -euo pipefail
+          PLUGIN="$(jq -r '.version' .claude-plugin/plugin.json)"
+          MARKET="$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)"
+          echo "plugin.json:      $PLUGIN"
+          echo "marketplace.json: $MARKET"
+          if [ "$PLUGIN" != "$MARKET" ]; then
+            echo "::error::marketplace.json plugins[0].version ($MARKET) stimmt nicht mit plugin.json version ($PLUGIN) ueberein."
+            exit 1
+          fi
+          echo "Marketplace-Version stimmt ueberein."
+
+  marketplace-notice:
+    name: Marketplace-Update-Notice
+    needs: version-match
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hinweis zum Marketplace-Refresh ausgeben
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME#v}"
+          echo "::notice::Release v${TAG} getaggt. Marketplace-Quelle ist './' (lokal im Repo);"
+          echo "::notice::der Marketplace-Refresh erfolgt automatisch beim naechsten Plugin-Sync."
+          echo "Release ${GITHUB_REF_NAME} bereit — Manifest-Versionen geprueft." >> "$GITHUB_STEP_SUMMARY"
