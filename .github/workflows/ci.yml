@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - name: node --check fuer alle .mjs-Hooks
@@ -124,7 +124,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       # Hook-Tests starten .mjs-Hooks per `node` — daher zwingend noetig
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - name: Python-Deps installieren (erster Step, vgl. #197)
