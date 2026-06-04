@@ -709,6 +709,18 @@ Aktuell: **1111 Tests gesammelt**, davon **963 bestanden** und 148 übersprungen
 
 Die Kern-Suite ist **offline-hermetisch** und läuft ohne Netzwerk. Übersprungen werden Tests, die externe Abhängigkeiten brauchen: API-basierte Evals unter `tests/evals/` setzen einen `ANTHROPIC_API_KEY` voraus (Network/External), und einige Integrations-Tests werden ohne installierte optionale Pakete (z.B. `requests`, `sqlite-vec`) automatisch geskippt.
 
+### pre-commit (empfohlen)
+
+Für lokale Hygiene wird `pre-commit` empfohlen. Die Konfiguration liegt in
+[`.pre-commit-config.yaml`](.pre-commit-config.yaml) und blockt versehentlich
+committete große Dateien, neue Submodule und private Schlüssel. OS-Artefakte wie
+`.DS_Store` werden bereits über `.gitignore` ausgeschlossen.
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
 ### Evals
 
 ```bash
