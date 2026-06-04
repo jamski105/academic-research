@@ -482,7 +482,9 @@ Jede Sektion folgt demselben Schema: **Syntax** (mit `argument-hint`), **Beispie
 
 **Skills/Agents:** Nutzt den vendorierten `humanizer-de`-Skill (`skills/humanizer-de/`) und erzeugt `<basename>.humanized.md` plus ein Severity-gegliedertes `<basename>.diff.md`.
 
-### `/academic-research:latex` (neu in v6.5)
+### `/academic-research:latex`
+
+Neu in v6.5: exportiert Markdown-Kapitel nach LaTeX.
 
 **Syntax:** `/academic-research:latex --kapitel <n>|all --output <datei.tex> [--bib <datei.bib>] [--template <uni>]`
 
