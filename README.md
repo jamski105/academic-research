@@ -479,25 +479,72 @@ Der **Vault** (`academic_vault/`) ist die Kernkomponente seit v6.0. Er ersetzt d
 
 **Datenbank:** `~/.academic-research/projects/<slug>/vault.db`
 
-### MCP-Tools (Auswahl)
+### MCP-Tools (alle 28)
 
-| Tool | Beschreibung |
-|------|-------------|
-| `vault.search(query, type?, top_k?)` | Hybrid-Suche (BM25 + vec0 + RRF) |
-| `vault.get_paper(paper_id)` | Metadaten + PDF-Status |
-| `vault.add_paper(csl_json)` | Paper einpflegen |
-| `vault.add_quote(paper_id, quote)` | Verbatim-Zitat mit Provenance |
-| `vault.find_quotes(paper_id, query, k?)` | Ähnlichkeitssuche über Zitate |
-| `vault.search_quote_text(text)` | Volltext-Suche Zitate |
-| `vault.add_decision(text, category)` | Entscheidung ins Decision-Log |
-| `vault.list_decisions(category?)` | Entscheidungen abrufen |
-| `vault.add_risk_of_bias(paper_id, data)` | RoB-Bewertung speichern |
-| `vault.add_score_snapshot(paper_id, scores)` | Score-Historie |
-| `vault.export_material_passport(paper_id)` | Material-Passport generieren |
-| `vault.lock_passport(paper_id)` | Passport unveränderlich sperren |
-| `vault.ensure_file(pdf_path)` | PDF → Anthropic Files-API (`file_id`) |
-| `vault.export_snapshot()` / `vault.restore_snapshot(ts)` | Backup/Restore |
-| `vault.stats()` | DB-Statistiken |
+Der Server registriert **28 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referenz: [`academic_vault/server.py`](academic_vault/server.py) (Funktion `_build_mcp_server`). Die folgenden Tabellen sind nach Kategorie geordnet; Signatur mit Default-Werten, Beschreibung und Beispiel-Call.
+
+**Suche & Papers**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.search(query, type=None, k=5, rerank=False)` | Hybrid-Suche (BM25 + vec0 + RRF); `rerank=True` aktiviert Voyage/Cohere | `vault.search("transformer attention", k=10)` |
+| `vault.get_paper(paper_id)` | Paper-Metadaten + `pdf_status` | `vault.get_paper("vaswani2017")` |
+| `vault.add_paper(paper_id, csl_json, pdf_path=None, doi=None, isbn=None, page_offset=0, editor=None, chapter=None, page_first=None, page_last=None, container_title=None, parent_paper_id=None)` | Upsert eines Papers; `type` aus `csl_json` | `vault.add_paper("vaswani2017", csl_json, doi="10.5555/...")` |
+| `vault.add_chapter(parent_paper_id, chapter_number, csl_json, paper_id=None, pdf_path=None, page_first=None, page_last=None)` | Legt Kapitel als Kind-Paper an; gibt `paper_id` zurück | `vault.add_chapter("book2020", 3, csl_json, page_first=45)` |
+| `vault.ensure_file(paper_id)` | PDF → Anthropic Files-API; gibt gecachte `file_id` zurück | `vault.ensure_file("vaswani2017")` |
+| `vault.stats()` | DB-Counts + Token-Ersparnis-Schätzung | `vault.stats()` |
+
+**Zitate (Quotes)**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_quote(paper_id, verbatim, extraction_method, api_response_id=None, pdf_page=None, printed_page=None, section=None, context_before=None, context_after=None)` | Fügt Verbatim-Zitat mit Provenance ein; `extraction_method="citations-api"` erfordert `api_response_id` | `vault.add_quote("vaswani2017", "Attention is all you need", "citations-api", api_response_id="resp_1")` |
+| `vault.search_quote_text(verbatim, k=5)` | LIKE-Volltextsuche in `quotes.verbatim` (prüft, ob ein Zitat existiert) | `vault.search_quote_text("Attention is all", k=3)` |
+| `vault.find_quotes(paper_id, query=None, k=10)` | Gibt Quotes für ein Paper zurück (optional Ähnlichkeitssuche) | `vault.find_quotes("vaswani2017", query="self-attention")` |
+| `vault.get_quote(quote_id)` | Vollständiger Quote-Record | `vault.get_quote("q_42")` |
+
+**Figures & Tabellen** (v6.1 Figure-Verifier)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_figure(paper_id, page=None, caption=None, vlm_description=None, data_extracted_json=None)` | Fügt Figure/Tabelle ein; gibt `figure_id` zurück | `vault.add_figure("vaswani2017", page=3, caption="Fig. 1: Architecture")` |
+| `vault.get_figure(figure_id)` | Gibt Figure-Record zurück oder `None` | `vault.get_figure("fig_7")` |
+| `vault.list_figures(paper_id)` | Alle Figures eines Papers, nach `page` sortiert | `vault.list_figures("vaswani2017")` |
+
+**OCR-Pipeline & Seitenzählung** (v6.1)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.set_ocr_done(paper_id, value=1)` | Setzt `ocr_done`-Flag (`1`=OCR durchgeführt) | `vault.set_ocr_done("scan2019")` |
+| `vault.update_pdf_path(paper_id, new_path)` | Aktualisiert den PDF-Pfad nach OCR | `vault.update_pdf_path("scan2019", "/data/scan2019_ocr.pdf")` |
+| `vault.set_page_offset(paper_id, offset)` | Setzt `page_offset` (Bücher mit Vorseiten/Vorwort) | `vault.set_page_offset("book2020", 12)` |
+| `vault.get_printed_page(paper_id, pdf_page)` | Berechnet gedruckte Seite: `pdf_page - page_offset` | `vault.get_printed_page("book2020", 25)` |
+
+**Decision-Log & Ausschlüsse**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_decision(category=None, text="", rationale=None)` | Fügt Entscheidung ins Decision-Log ein; gibt `decision_id` zurück | `vault.add_decision(category="scope", text="Nur Studien ab 2015", rationale="Aktualität")` |
+| `vault.list_decisions(category=None, active_only=True)` | Gibt Decisions zurück (optionaler `category`-Filter) | `vault.list_decisions(category="scope")` |
+| `vault.add_excluded_source(paper_id, reason=None)` | Fügt `paper_id` zu `excluded_sources` (verhindert Re-Vorschlag) | `vault.add_excluded_source("smith2010", reason="off-topic")` |
+| `vault.is_excluded(paper_id)` | Prüft, ob `paper_id` ausgeschlossen ist | `vault.is_excluded("smith2010")` |
+
+**Risk-of-Bias & Score-Historie** (v6.4)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_risk_of_bias(paper_id, study_type, domain_scores)` | Fügt RoB-Assessment ein (`domain_scores` als JSON-String); gibt `assessment_id` zurück | `vault.add_risk_of_bias("rct2018", "RCT", '{"randomization":"low"}')` |
+| `vault.list_risk_of_bias(paper_id=None)` | Gibt RoB-Assessments zurück (optional nach `paper_id` gefiltert) | `vault.list_risk_of_bias("rct2018")` |
+| `vault.add_score_snapshot(paper_id, session_id, scores)` | Fügt Score-Snapshot ein (`scores` als JSON-String); gibt `snapshot_id` zurück | `vault.add_score_snapshot("rct2018", "sess_1", '{"relevance":0.8}')` |
+| `vault.get_score_history(paper_id, k=None)` | Score-History eines Papers (neueste zuerst) | `vault.get_score_history("rct2018", k=5)` |
+
+**Material-Passport & Lock** (v6.4)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.export_material_passport(slug, output_dir=".", score_algo_version="1.0", plugin_version="6.4")` | Exportiert `material-passport.json`; gibt Dateipfad zurück | `vault.export_material_passport("mein-projekt")` |
+| `vault.lock_passport(slug)` | Setzt Vault-Lock für `slug` (macht Vault read-only) | `vault.lock_passport("mein-projekt")` |
+| `vault.is_locked(slug)` | Prüft, ob der Vault für `slug` gelockt ist | `vault.is_locked("mein-projekt")` |
 
 ### Halluzinationsschutz
 
