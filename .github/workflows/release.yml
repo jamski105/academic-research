@@ -13,7 +13,7 @@ jobs:
     name: Manifest-Version == Tag
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Tag vs. plugin.json-Version vergleichen
         run: |
           set -euo pipefail
@@ -44,7 +44,7 @@ jobs:
     needs: version-match
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Hinweis zum Marketplace-Refresh ausgeben
         run: |
           set -euo pipefail
