@@ -50,15 +50,16 @@ PDFs registriert: 38/42 (4 ohne lokale PDF-Datei, nur Metadaten).
 literature_state.md bleibt als Backup erhalten.
 ```
 
-### Manuelle Migration (Fallback)
+### Migration klappt nicht?
 
-Falls die automatische Migration nicht klappt:
+Falls die automatische Migration scheitert, zuerst sicherstellen, dass der Vault initialisiert ist, und das Setup erneut starten:
 
-```bash
-~/.academic-research/venv/bin/python scripts/migrate_v5.py \
-  --literature-state ./literature_state.md \
-  --vault ~/.academic-research/projects/<slug>/vault.db
 ```
+/academic-research:setup
+/academic-research:setup --migrate-v5
+```
+
+Schlägt sie weiterhin fehl, hilft der Verbose-Modus bei der Fehleranalyse (siehe Abschnitt 8 — Troubleshooting). Häufigste Ursache sind unvollständige `## [paper_id]`-Blöcke in `literature_state.md`.
 
 ### Nach der Migration prüfen
 
@@ -116,20 +117,23 @@ Nein — nicht nötig, aber auch kein Problem. Das Plugin liest sie weiterhin al
 
 ## 4. Hooks installieren
 
-v6.x installiert vier Hooks. Das Setup erledigt das automatisch. Zur manuellen Überprüfung:
+v6.x konfiguriert 7 Hook-Events (5 Skript-Dateien + 1 Inline-Bash). Das Setup erledigt das automatisch. Zur manuellen Überprüfung:
 
 ```bash
 cat ~/.claude/plugins/cache/academic-research/hooks/hooks.json
 ```
 
-Sollte vier Einträge zeigen:
+Sollte sieben Event-Einträge zeigen:
 
 | Hook | Trigger | Zweck |
 |------|---------|-------|
 | `verbatim-guard.mjs` | `PreToolUse(Write)` für `kapitel/*.md` | Zitat-Validation gegen Vault |
 | `pre-compact.mjs` | `PreCompact` | Snapshot-Backup vor Compaction |
 | `post-tool-use-decisions.mjs` | `PostToolUse(Write)` für `*.md` | Decision-Log |
-| `mid-session-reinforcement.mjs` | `SessionMid` | Anti-Fabrikations-Erinnerung |
+| `mid-session-reinforcement.mjs` | `Notification` | Anti-Fabrikations-Erinnerung (nach ~20 Nachrichten) |
+| `mid-session-reinforcement.mjs` | `PostCompact` | Anti-Fabrikations-Erinnerung nach Compaction |
+| `onboard-project-uni-prompt.sh` | `SessionStart` | Python-venv-Bereitschaft prüfen |
+| *(Inline-Bash)* | `Stop` | Hinweis bei ungesicherten `academic_context.md`-Änderungen |
 
 ### Manuelle Hook-Aktivierung
 
@@ -314,15 +318,14 @@ Oder `/academic-research:setup` erneut ausführen — der Setup-Wizard fragt neu
 ```bash
 # Zeige die ersten 50 Zeilen zur Fehleranalyse
 head -50 ./literature_state.md
-
-# Migration mit Verbose-Logging
-~/.academic-research/venv/bin/python scripts/migrate_v5.py \
-  --literature-state ./literature_state.md \
-  --vault ~/.academic-research/projects/<slug>/vault.db \
-  --verbose
 ```
 
-Häufigste Ursache: Unvollständige `## [paper_id]`-Blöcke in der Datei. Im Verbose-Modus werden die fehlerhaften Einträge angezeigt.
+```
+# Migration erneut anstoßen — das Setup meldet fehlerhafte Einträge
+/academic-research:setup --migrate-v5
+```
+
+Häufigste Ursache: Unvollständige `## [paper_id]`-Blöcke in der Datei. Das Setup zeigt die fehlerhaften Einträge an und überspringt sie, statt abzubrechen.
 
 ### Vault nicht gefunden nach Update
 

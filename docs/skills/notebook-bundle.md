@@ -30,7 +30,7 @@ Dieser Skill:
 
 ## Voraussetzungen
 
-- Python 3.x mit PyPDF2>=3.0.0 (in `scripts/requirements.txt` enthalten)
+- Python 3.x mit pypdf>=4.0.0 (in `scripts/requirements.txt` enthalten)
 - Lokale PDF-Dateien der gewuenschten Paper
 
 ---
@@ -118,7 +118,7 @@ Seiten N+1 bis Ende: Paper 1, Paper 2, Paper 3, ... (in TOC-Reihenfolge)
 |---------|--------|
 | PDF nicht gefunden | `pdf_path` pruefen — absoluter Pfad empfohlen |
 | Bundle >500 MB | Skill teilt automatisch auf; mehrere Dateien hochladen |
-| NotebookLM-Upload schlaegt fehl | PDF-Integritaet pruefen: `python -c "from PyPDF2 import PdfReader; PdfReader('bundle.pdf')"` |
+| NotebookLM-Upload schlaegt fehl | PDF-Integritaet pruefen: `python -c "from pypdf import PdfReader; PdfReader('bundle.pdf')"` |
 | Zu viele Paper fuer ein Bundle | `--size-limit-mb 400` fuer konservativeres Limit nutzen |
 
 ---

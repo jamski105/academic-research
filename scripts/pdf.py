@@ -5,7 +5,7 @@ Merges v3 pdf_resolver.py + fulltext_index.py into a single module.
 
 Actions:
   resolve  — Download PDFs via 5-tier fallback strategy
-  extract  — Extract text from downloaded PDFs (PyPDF2)
+  extract  — Extract text from downloaded PDFs (pypdf)
   index    — Build TF-IDF fulltext index
   search   — Search fulltext index
 
@@ -34,7 +34,7 @@ import httpx
 from text_utils import normalize_doi, safe_filename, load_json, save_json
 
 try:
-    from PyPDF2 import PdfReader
+    from pypdf import PdfReader
 except ImportError:  # pragma: no cover
     PdfReader = None  # type: ignore[assignment,misc]
 
@@ -351,7 +351,7 @@ def action_resolve(papers_path: str, output_dir: str, output_path: str, email: s
 # ---------------------------------------------------------------------------
 
 def extract_text_from_pdf(pdf_path: str) -> str:
-    """Extract text from PDF using PyPDF2."""
+    """Extract text from PDF using pypdf."""
     try:
         reader = PdfReader(pdf_path)
         text_parts = []
@@ -464,7 +464,7 @@ def detect_needs_ocr(
 ) -> bool:
     """Prueft ob ein PDF OCR benoetigt.
 
-    Liest bis zu sample_pages zufaellig verteilte Seiten via PyPDF2.
+    Liest bis zu sample_pages zufaellig verteilte Seiten via pypdf.
     Gibt True zurueck wenn der Durchschnitt der extrahierten Zeichen
     je Seite < threshold (Standard: 100 Zeichen).
     Bei leerem PDF (0 Seiten) gibt die Funktion True zurueck.

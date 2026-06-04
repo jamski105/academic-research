@@ -1,0 +1,9 @@
+{
+  "component": "humanizer-de",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "hd-01", "input": "Ueberarbeite diesen Satz, sodass er weniger nach KI klingt: 'In der heutigen schnelllebigen Welt ist es von entscheidender Bedeutung, dass wir die transformative Kraft der Digitalisierung nutzen.'", "expected": {"type": "regex", "value": "(\\w+)"}, "mode": "with_skill"},
+    {"id": "hd-02", "input": "Welche typischen Anzeichen fuer KI-generierte Texte pruefst du bei einem deutschen Kapitelentwurf?", "expected": {"type": "regex", "value": "(Werbesprache|Floskel|Symbolik|Trikolon|Parallelismus|KI)"}, "mode": "with_skill"},
+    {"id": "hd-03", "input": "Markiere die KI-typischen Stellen in: 'Es ist wichtig zu beachten, dass dieser innovative Ansatz nicht nur effizient, sondern auch nachhaltig und zukunftsweisend ist.'", "expected": {"type": "regex", "value": "(\\w+)"}, "mode": "with_skill"}
+  ]
+}

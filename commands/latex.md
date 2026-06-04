@@ -1,5 +1,7 @@
 ---
 description: Exportiert Kapitel des aktuellen Projekts als .tex-Dateien und generiert eine biblatex-konforme .bib-Datei aus dem Vault.
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash(pandoc *), Bash(python3 *), Agent(quality-reviewer)
 argument-hint: --kapitel <n>|all --output <datei.tex> [--bib <datei.bib>] [--template <uni>]
 ---
 

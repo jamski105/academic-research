@@ -2,32 +2,26 @@
 name: citation-style-import
 description: >
   Verwende diesen Skill wenn der User einen Zitierstil aus dem CSL-Repository
-  importieren moechte und eine neue custom-Variante generieren will.
-  Trigger-Phrasen: "Zitierstil importieren", "CSL importieren", "neuer Stil",
+  importieren möchte und eine neue custom-Variante generieren will.
+  Trigger-Phrasen: "Zitierstil importieren", "eigenen Zitierstil laden",
+  "CSL importieren", "CSL laden", "neuer Stil",
   "custom citation style", "Stil aus GitHub laden".
-  Parst .csl-Dateien ("Stilübernahme / Import" via xml.etree.ElementTree) und generiert
-  Prompt-Regel-Varianten unter skills/citation-extraction/references/custom-<style>.md.
-triggers:
-  - "Zitierstil importieren"
-  - "CSL importieren"
-  - "CSL-Stil laden"
-  - "neuer Zitierstil"
-  - "custom citation style"
-  - "Stil aus GitHub laden"
-  - "citation style language"
-tools:
+  Parst .csl-Dateien ("Stilübernahme / Stiluebernahme" via xml.etree.ElementTree) und generiert
+  Prompt-Regel-Varianten unter ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-<style>.md.
+license: MIT
+allowed-tools:
   - Bash
   - Write
 references:
-  - skills/citation-style-import/references/csl-spec.md
+  - ${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/references/csl-spec.md
 ---
 
 # CSL-Import Skill
 
 > **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
-> und befolge alle dort definierten Bloecke (Vorbedingungen, Keine Fabrikation,
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
 > Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
-> fortfaehrst.
+> fortfährst.
 
 ## Zweck
 
@@ -35,12 +29,12 @@ Importiert einen beliebigen Zitierstil aus dem
 [citation-style-language/styles](https://github.com/citation-style-language/styles)
 GitHub-Repository oder einem lokalen Pfad. Parst die .csl-Datei (XML nach
 CSL 1.0.2) und generiert eine neue Prompt-Regel-Variante analog zu
-`skills/citation-extraction/references/apa.md`.
+`${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/apa.md`.
 
 ## Voraussetzungen
 
 Python 3.10+ mit `lxml>=4.9.0` (in `scripts/requirements.txt` enthalten).
-Internetverbindung fuer den Download aus GitHub (optional — lokales .csl geht auch).
+Internetverbindung für den Download aus GitHub (optional — lokales .csl geht auch).
 
 ## Verwendung
 
@@ -58,30 +52,30 @@ Beispiele:
 ### 2. CSL-Datei herunterladen (remote)
 
 ```bash
-# Raw-URL fuer direkten Download:
+# Raw-URL für direkten Download:
 # https://raw.githubusercontent.com/citation-style-language/styles/master/<dateiname>.csl
 
 curl -o /tmp/<dateiname>.csl \
   "https://raw.githubusercontent.com/citation-style-language/styles/master/<dateiname>.csl"
 ```
 
-### 3. Parser ausfuehren
+### 3. Parser ausführen
 
 ```bash
-python skills/citation-style-import/scripts/csl_import.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/scripts/csl_import.py \
   /tmp/<dateiname>.csl \
-  -o skills/citation-extraction/references/custom-<dateiname>.md
+  -o ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-<dateiname>.md
 ```
 
-Beispiel fuer Springer Author-Date:
+Beispiel für Springer Author-Date:
 
 ```bash
 curl -o /tmp/springer-basic-author-date.csl \
   "https://raw.githubusercontent.com/citation-style-language/styles/master/springer-basic-author-date.csl"
 
-python skills/citation-style-import/scripts/csl_import.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/scripts/csl_import.py \
   /tmp/springer-basic-author-date.csl \
-  -o skills/citation-extraction/references/custom-springer-basic-author-date.md
+  -o ${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/custom-springer-basic-author-date.md
 ```
 
 ## Verhalten
@@ -122,7 +116,7 @@ Die generierte Datei `custom-<style>.md` hat folgende Struktur:
 ...
 ```
 
-## Unterstuetzte Quellentypen (Eval: 5 Typen)
+## Unterstützte Quellentypen (Eval: 5 Typen)
 
 | CSL-Typ | DE-Bezeichnung |
 |---|---|
@@ -140,15 +134,15 @@ auf die neue Variante hinweisen:
 
 > "Zitiere im Stil springer-basic-author-date (custom-Variante)"
 
-## Bekannte Einschraenkungen
+## Bekannte Einschränkungen
 
 - Komplexe CSL-Macros mit bedingten Regeln werden vereinfacht dargestellt
-- Abkuerzungsregeln (`abbreviation` Felder) werden nicht uebertragen
+- Abkürzungsregeln (`abbreviation` Felder) werden nicht übertragen
 - Sprachspezifische Lokalisierungen (`<locale>`) werden ignoriert
-- Nur bibliographische Stile werden unterstuetzt (kein `class="note"`)
+- Nur bibliographische Stile werden unterstützt (kein `class="note"`)
 
 ## CSL-Spezifikation
 
-Vollstaendige Kurzreferenz: `skills/citation-style-import/references/csl-spec.md`
+Vollständige Kurzreferenz: `${CLAUDE_PLUGIN_ROOT}/skills/citation-style-import/references/csl-spec.md`
 
 Offizielle Doku: https://docs.citationstyles.org/en/stable/specification.html

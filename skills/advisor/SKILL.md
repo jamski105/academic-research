@@ -1,7 +1,9 @@
 ---
 name: advisor
-description: Use this skill when the user needs structural feedback on their outline, argumentation flow, or exposé. Triggers on "Gliederung prüfen / Gliederung pruefen", "Argumentationskette", "Kapitel-Feedback", "Exposé feedback", "Exposee-Bewertung", "outline review", or when another skill detects structural weaknesses. Baut die Gliederung und den Argumentations-Fluss; Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
+description: Use this skill for structural feedback on outline, argumentation flow, or exposé — Review ohne Neuschrieb. Triggers on "Gliederung prüfen / Gliederung pruefen", "Struktur", "Argumentationskette", "Argumentations-Outline review", "Exposé feedback / Expose feedback", "Exposee-Bewertung", or when another skill detects structural weaknesses. Für das tatsächliche SCHREIBEN eines Kapitels → `chapter-writer`. Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Advisor — Gliederungs- und Exposé-Builder
@@ -13,20 +15,18 @@ license: MIT
 
 ## Übersicht
 
-Supervisor-Agent für die Gesamt-Gliederung einer Arbeit. Bewertet Struktur,
-schlägt Kapitel-Reorganisation vor, liefert Expose-Templates. Orchestriert
-andere Skills, wenn spezifische Themenbereiche vertieft werden müssen.
+Supervisor-Agent für die Gesamt-Gliederung. Bewertet Struktur, schlägt
+Kapitel-Reorganisation vor und liefert Expose-Templates.
 
 ## Abgrenzung
 
-Baut die Gliederung und das Exposé.
-Für Schärfung der Forschungsfrage selbst → `research-question-refiner`.
-Für Methodenwahl und Scoring-Matrix → `methodology-advisor`.
+Liefert Review/Feedback zu Struktur, Gliederung und Exposé — **ohne
+Neuschrieb** von Kapitel-Prosa.
+Kapitel-Text schreiben → `chapter-writer`; Forschungsfrage → `research-question-refiner`; Methodenwahl → `methodology-advisor`.
 
 ## Bewertungskriterien (PASS/FAIL)
 
-Prüfe die Outline gegen diese 7 Kriterien. Jedes ist PASS oder FAIL — kein
-Zwischenstufen-Urteil:
+Prüfe die Outline gegen diese 7 Kriterien (je PASS oder FAIL):
 
 1. **Forschungsfrage formuliert** — ≤ 25 Wörter, eine W-Frage (Was/Wie/Warum/Inwiefern)
 2. **Outline mit ≥ 3 Kapiteln** — Haupt-Kapitel, nicht nur Gliederungspunkte
@@ -36,7 +36,7 @@ Zwischenstufen-Urteil:
 6. **Supervisor identifiziert** — Name in `./academic_context.md`
 7. **Abgabetermin fixiert** — konkretes Datum in `./academic_context.md`
 
-Ausgabe: Tabelle mit Kriterium + PASS/FAIL + Begründung bei FAIL.
+Ausgabe: Tabelle mit Kriterium + Status + Begründung bei FAIL.
 
 ## Kontext-Dateien
 

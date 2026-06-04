@@ -2,6 +2,8 @@
 name: title-generator
 description: Use this skill when the user needs a thesis title proposal. Triggers on "Titel vorschlagen", "Titelvorschläge / Titelvorschlaege", "Arbeitstitel", "Thesis title", "thesis title proposal", "Untertitel bitte", or when submission requires a final title. Schlägt Arbeitstitel vor; Für Abstract, Keywords und Zusammenfassung → `abstract-generator`.
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Titel-Generator
