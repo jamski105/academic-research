@@ -26,6 +26,11 @@ description: "LaTeX/.tex-Export von Markdown-Kapiteln oder vollständiger BibTeX
 - **Vault leer:** Leere `.bib` + Meldung „Vault leer – Papers via `add` hinzufügen."
 - **Template nicht gefunden:** Ausgabe ohne Vorlage + Meldung „Template `<uni>` fehlt."
 
+## BibTeX-Abgrenzung
+
+BibTeX hier = Vault-weiter Bibliography-Dump (alle Papers).
+Einzelzitat aus PDF (one-shot) → `citation-extraction`.
+
 ## Verbatim-Guard
 
 Hook `hooks/verbatim-guard.mjs` schützt `*.tex`-Writes (wie `kapitel/*.md`).

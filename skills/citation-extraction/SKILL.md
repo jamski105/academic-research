@@ -25,6 +25,12 @@ Extrahiert und formatiert wörtliche Zitate aus PDFs für einzelne Belege.
 Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 (ruft `citation-extraction` bei Bedarf auf).
 
+**BibTeX-Abgrenzung:** Der BibTeX-Output dieses Skills = einzelne Zitate aus
+PDF-Extraktion (one-shot, aus dem aktuell betrachteten Quellmaterial). Für den
+vollständigen Vault→`.bib`-Export aller Papers (Bibliography-Dump zur
+LaTeX-Kompilation) → `latex-export --bib`. Phrasen wie „BibTeX aus Vault" oder
+„komplette Bibliographie als .bib" gehören zu `latex-export`, nicht hierher.
+
 ## Variant-Selector
 
 Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Variant-Datei:
@@ -192,7 +198,8 @@ Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill `l
 
 Diese Output-Formate werden unterstützt (inline generiert, kein externes Skript):
 
-- **BibTeX** — für LaTeX-Integration
+- **BibTeX** — für LaTeX-Integration einzelner extrahierter Zitate (one-shot).
+  Für den vollständigen Vault→`.bib`-Dump aller Papers → `latex-export --bib`.
 - **Markdown** — für Review und manuelles Editieren
 - **JSON** — für die programmatische Nutzung durch andere Skills
 
