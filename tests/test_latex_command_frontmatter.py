@@ -100,3 +100,16 @@ def test_frontmatter_allowed_tools():
     assert allowed, (
         f"commands/latex.md: allowed-tools fehlt oder ist leer (Frontmatter: {fm!r})"
     )
+
+
+# ---------------------------------------------------------------------------
+# Test 7 — disable-model-invocation: true (Issue #167 Akzeptanzkriterium)
+# ---------------------------------------------------------------------------
+
+def test_frontmatter_disable_model_invocation():
+    """Gold-Standard commands/excel.md setzt disable-model-invocation: true."""
+    fm = _parse_frontmatter(COMMAND_FILE)
+    assert fm.get("disable-model-invocation") is True, (
+        "commands/latex.md: disable-model-invocation: true fehlt "
+        f"(Frontmatter: {fm!r})"
+    )
