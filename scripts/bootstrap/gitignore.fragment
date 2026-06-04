@@ -5,3 +5,6 @@ sessions/
 credentials.json
 .DS_Store
 .claude/settings.local.json
+# Vault-Datenbank — Forschungs-PII, nie ins Repo (Issue #190)
+*.db
+vault.db

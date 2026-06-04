@@ -24,8 +24,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from PyPDF2 import PdfReader, PdfWriter
-from PyPDF2.generic import (
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import (
     DecodedStreamObject,
     DictionaryObject,
     NameObject,
@@ -61,7 +61,7 @@ def _make_toc_bytes(papers: List[Dict[str, Any]], page_numbers: List[int]) -> by
         PDF-Bytes der TOC-Seite.
 
     Note:
-        Nutzt writer.pages[-1] für Stream-Injection (PyPDF2-Quirk:
+        Nutzt writer.pages[-1] für Stream-Injection (pypdf-Quirk:
         add_blank_page() gibt transientes Objekt zurück).
     """
     writer = PdfWriter()

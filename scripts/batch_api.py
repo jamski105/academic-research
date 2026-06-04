@@ -7,9 +7,10 @@ Usage:
   job = submit_batch(papers, query="DevOps", model="claude-haiku-4-5")
   save_batch_job(session_dir, job)
 
-  # later
+  # later (pickup via /history --batch <id>)
   job = load_batch_job(session_dir)
-  print(job["batch_id"])
+  if get_batch_status(job["batch_id"]) == "ended":
+      scores = fetch_batch_results(job["batch_id"])
 """
 
 from __future__ import annotations
@@ -109,3 +110,55 @@ def load_batch_job(session_dir: str) -> dict[str, Any]:
     """Load batch job metadata from <session_dir>/batch.json."""
     path = Path(session_dir) / _BATCH_JSON
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def get_batch_status(batch_id: str, api_key: str | None = None) -> str:
+    """Return the processing status of a submitted batch.
+
+    Polls the Anthropic Message Batches API. The batch is ready to be
+    retrieved once the status is ``ended``.
+
+    Args:
+        batch_id: The ``msgbatch_...`` id returned by submit_batch().
+        api_key: Anthropic API key (falls back to ANTHROPIC_API_KEY env var).
+
+    Returns:
+        The processing status string (e.g. ``in_progress`` or ``ended``).
+    """
+    key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+    client = anthropic.Anthropic(api_key=key)
+    batch = client.beta.messages.batches.retrieve(batch_id)
+    return batch.processing_status
+
+
+def fetch_batch_results(batch_id: str, api_key: str | None = None) -> dict[str, float]:
+    """Fetch and parse relevance scores for a finished batch.
+
+    Should only be called once :func:`get_batch_status` reports ``ended``.
+    Maps each ``paper_<i>`` custom_id back to its parsed relevance score.
+
+    Args:
+        batch_id: The ``msgbatch_...`` id of an ``ended`` batch.
+        api_key: Anthropic API key (falls back to ANTHROPIC_API_KEY env var).
+
+    Returns:
+        Mapping of custom_id (e.g. ``paper_0``) to relevance score (float).
+        Entries that did not succeed or could not be parsed are skipped.
+    """
+    key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+    client = anthropic.Anthropic(api_key=key)
+
+    scores: dict[str, float] = {}
+    for entry in client.beta.messages.batches.results(batch_id):
+        if getattr(entry.result, "type", None) != "succeeded":
+            continue
+        message = entry.result.message
+        text = "".join(
+            block.text for block in message.content if getattr(block, "type", None) == "text"
+        )
+        try:
+            parsed = json.loads(text)
+            scores[entry.custom_id] = float(parsed["score"])
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            continue
+    return scores

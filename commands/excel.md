@@ -1,7 +1,7 @@
 ---
 description: Generate or update a literature Excel spreadsheet via the vendored xlsx skill
 disable-model-invocation: true
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash(ls ~/.academic-research/sessions/*), Skill(xlsx)
 argument-hint: [--papers papers.json] [--output literature.xlsx] [--context]
 ---
 

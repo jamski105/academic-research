@@ -1,9 +1,10 @@
 # Academic Research v6.5
 
 [![CI](https://github.com/jamski105/academic-research/actions/workflows/ci.yml/badge.svg)](https://github.com/jamski105/academic-research/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/jamski105/academic-research/branch/main/graph/badge.svg)](https://codecov.io/gh/jamski105/academic-research)
 [![Version](https://img.shields.io/badge/version-6.5.0-blue.svg)](CHANGELOG.md)
-[![Skills](https://img.shields.io/badge/skills-23+-orange.svg)](#skills-übersicht)
-[![Tests](https://img.shields.io/badge/tests-963%20passing-success.svg)](#entwicklung-und-evals)
+[![Skills](https://img.shields.io/badge/skills-28-orange.svg)](#skills-übersicht)
+[![Tests](https://img.shields.io/badge/tests-963%20passing%20%2F%201111%20collected-success.svg)](#entwicklung-und-evals)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-8A2BE2.svg)](https://code.claude.com/docs/en/plugins)
 
@@ -49,7 +50,7 @@ Seit v6.0 hat das Plugin einen eigenen **Vault-MCP-Server** (SQLite + FTS5 + sql
 5. [Update auf v6.5 (Migration von v5)](#update-auf-v65--migration-von-v5)
 6. [Walkthrough — Erstes Projekt](#walkthrough--erstes-projekt)
 7. [Commands / Slash-Commands](#commands--slash-commands)
-8. [Skills (23+ selbstaktivierend)](#skills-übersicht)
+8. [Skills (28 selbstaktivierend)](#skills-übersicht)
 9. [Agents (LLM-Subagents)](#agents)
 10. [Vault-MCP-Server](#vault-mcp-server)
 11. [5D-Scoring und Cluster](#5d-scoring-und-cluster)
@@ -70,7 +71,7 @@ Seit v6.0 hat das Plugin einen eigenen **Vault-MCP-Server** (SQLite + FTS5 + sql
 - **Schüler\*innen**, die eine Facharbeit schreiben und sauber zitieren lernen wollen.
 - **Alle**, die Claude Code bereits nutzen und akademisches Schreiben mit KI-Unterstützung professionalisieren möchten.
 
-Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU München, RWTH Aachen, FAU Erlangen-Nürnberg und weitere DACH-Hochschulen. Weitere Profile sind einfach hinzufügbar.
+Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für ETH Zürich, FU Berlin, TU München, Universität Hamburg und Universität Wien. Weitere Profile sind einfach hinzufügbar.
 
 ---
 
@@ -103,14 +104,14 @@ Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU 
 | **Vault MCP** | v6.0 | SQLite-Backend mit FTS5 + sqlite-vec: Zitate, Entscheidungen, Risk-of-Bias, Score-Historie, Material-Passport. Halluzinationsschutz via Verbatim-Validation-Hook. |
 | **Universal Book Fetcher** | v6.2 | 8-Tier-Download-Pipeline mit 10 Site-Subagenten (TIB, Springer, De Gruyter, OAPEN, DOAB, KVK, Ebook Central, Nationallizenzen, generischer Fallback). Autarke Browser-Navigation via `browser-use`. |
 | **humanizer-de** | v6.0 | Anti-KI-Audit-Pass mit Severity-Ranking und Stimmkalibrierung. Schützt vor Turnitin / GPTZero / OriginalityAI-Detection. |
-| **Per-Uni-Profile** | v6.2 | `library-profiles/<uni>.yaml` konfiguriert HAN, Shibboleth, EZproxy, lizenzierte Sites. 5 DACH-Templates mitgeliefert. |
+| **Per-Uni-Profile** | v6.2 | `config/library-profiles/<uni>.yaml` konfiguriert HAN, Shibboleth, EZproxy, lizenzierte Sites. 5 Profile (eth-zurich, fu-berlin, tum, uni-hamburg, uni-wien) mitgeliefert. |
 | **PRISMA-Flow** | v6.4 | Mermaid-Diagramm + PRISMA-2020-Checkliste für Systematic Reviews. |
 | **Meta-Analysis** | v6.4 | DerSimonian-Laird Random-Effects mit Mermaid-Forest-Plot. |
 | **Risk-of-Bias** | v6.4 | Cochrane RoB 2 / ROBINS-I / CASP Assessment Agent. |
 | **Material-Passport** | v6.4 | Unveränderlicher Artefakt-Passport mit Repro-Lock. |
 | **NotebookLM-Bundle** | v6.3 | PDF-Pack für manuelle NotebookLM-Uploads (Riesen-Bücher >600 Seiten). |
 | **Zotero-Import** | v6.3 | pyzotero-Pull-only mit DOI/ISBN-Dedup in den Vault. |
-| **Hooks-Stack** | v6.4 | PreCompact-Snapshot, Post-Tool-Use Decision-Log, Mid-Session-Reinforcement, Verbatim-Guard. |
+| **Hooks-Stack** | v6.4 | 7 Hook-Events: PreToolUse, PostToolUse, PreCompact, Notification, PostCompact, SessionStart, Stop. |
 | **LaTeX-Export** | v6.5 | Markdown-Kapitel → `.tex`, Bibliographie → `.bib` (biblatex DIN-1505). Per-Uni-Template-Slot. |
 | **Contextual Retrieval** | v6.5 | Hybrid BM25 + vec0 mit Reciprocal-Rank-Fusion. Anthropic-Contextual-Embedding-Cache. |
 | **Topic-Brainstorm** | v6.5 | 3-5 Kandidaten mit Feasibility/Novelty/Career-Fit-Scores + Pilot-Paper-Sets. |
@@ -126,7 +127,7 @@ Das Plugin kommt mit vorkonfigurierten **Per-Uni-Profilen** für Leibniz FH, TU 
 | Komponente | Warum | Installation |
 |-----------|-------|--------------|
 | **Claude Code** | CLI zum Ausführen | [Installations-Anleitung](https://code.claude.com/docs/en/quickstart) |
-| **Python 3.10+** | Vault-MCP-Server, Suchskripte | `brew install python@3.11` (macOS) |
+| **Python 3.11+** (entwickelt + getestet mit 3.14) | Vault-MCP-Server, Suchskripte | `brew install python@3.11` (macOS) |
 | **`uv` oder `pipx`** | Für die automatische `browser-use`-Installation | `brew install pipx` oder `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | **Git** | Plugin-Marketplace-Install | auf macOS/Linux meist vorinstalliert |
 
@@ -165,7 +166,7 @@ Dieser Command:
 
 1. Legt `~/.academic-research/` als Daten-Verzeichnis an.
 2. Erzeugt ein isoliertes Python-venv unter `~/.academic-research/venv/`.
-3. Installiert Python-Pakete (httpx, PyPDF2, pyyaml, anthropic, openpyxl, pandas, sqlite-vec u.a.).
+3. Installiert Python-Pakete (httpx, pypdf, pyyaml, anthropic, openpyxl, pandas, sqlite-vec u.a.).
 4. Installiert `browser-use`-CLI automatisch via `uv tool install browser-use` oder `pipx install browser-use`.
 5. Richtet den Vault-MCP-Server ein (`academic_vault/`).
 6. Fragt nach **Hochschul-Profil** (Opt-in für Per-Uni-Konfiguration).
@@ -224,14 +225,14 @@ In Claude Code:
 /academic-research:setup
 ```
 
-Antworte auf *„Hier einen Facharbeit-Arbeitsordner initialisieren?"* mit `y`. Das Plugin legt an:
+Antworte auf *„Hier einen Facharbeit-Arbeitsordner initialisieren?"* mit `y`. Das Plugin legt im **User-Projektordner** an (nicht im Plugin-Repo); alle Pfade unten sind relativ zu `<projekt>/`:
 
 ```
-Facharbeit-DevOps/
-├── academic_context.md     # Thesis-Profil (leere Stubs)
+<projekt>/                      # z.B. Facharbeit-DevOps/
+├── academic_context.md     # Thesis-Profil (leere Stubs) — User-Output
 ├── CLAUDE.md               # Plugin-Anleitung für Claude (generiert)
 ├── .gitignore              # sinnvolle Defaults
-├── kapitel/
+├── kapitel/                # Kapitel-Markdown — User-Output
 ├── literatur/
 └── pdfs/
 ```
@@ -388,13 +389,13 @@ OA-Bücher (OAPEN → DOAB → TIB → KVK), Verlags-Bücher (Springer → De Gr
 
 ## Skills-Übersicht
 
-Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt.
+Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt. Insgesamt **28 Skills** mit eigener `SKILL.md` (Claude-Code-Discovery-Count, inkl. dem vendored `xlsx/`). Das Verzeichnis `skills/_common/` enthält nur geteilte Markdown-Fragmente und zählt nicht als Skill.
 
 ### Kern-Skills
 
 | Skill | Aktiviert bei | Beschreibung |
 |-------|--------------|-------------|
-| `academic-context` | *„meine Arbeit"*, *„Thesis"*, *„Forschungsfrage"* | Bootet akademischen Kontext in `./academic_context.md` |
+| `academic-context` | *„meine Arbeit"*, *„Thesis"*, *„Forschungsfrage"* | Bootet akademischen Kontext in `<projekt>/academic_context.md` (User-Output) |
 | `research-question-refiner` | *„Forschungsfrage formulieren"*, *„präzisieren"* | Verfeinert auf Spezifität, Beantwortbarkeit, Falsifizierbarkeit |
 | `advisor` | *„Gliederung"*, *„Exposé"*, *„Struktur"* | Baut Gliederungen und Exposés im Dialog (7-Kriterien-Check) |
 | `methodology-advisor` | *„welche Methodik"*, *„Forschungsdesign"* | Berät bei Methodenwahl (4-Dimensionen-Scoring) |
@@ -410,6 +411,7 @@ Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt.
 | `zotero-import` | *„Zotero importieren"*, *„Bibliothek einlesen"* | pyzotero-Pull mit Vault-Dedup |
 | `reading-list-import` | *„Literaturliste importieren"*, *„Quellenliste"* | PDF/Markdown/Text → Vault |
 | `citation-style-import` | *„eigenen Zitierstil"*, *„CSL laden"* | CSL-Repository → Vault-Stilregeln |
+| `book-handler` | *„Buch"*, *„Monografie"*, *„Sammelband"*, ISBN-/Springer-DOI-Muster | Löst ISBN/Titel/DOI via DNB + OpenLibrary + DOAB auf, legt CSL-JSON im Vault an ([SKILL.md](skills/book-handler/SKILL.md)) |
 
 ### Schreib-Skills
 
@@ -434,6 +436,9 @@ Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt.
 | `grant-proposal` | *„Förderantrag"*, *„DFG"*, *„BMBF"*, *„EU-Antrag"* | DFG/BMBF/EU-Antrag mit Vault-Quellen |
 | `conference-poster` | *„Poster"*, *„Konferenz-Poster"* | A0-Poster (LaTeX tikzposter / PowerPoint) |
 | `reviewer-response` | *„Response-Letter"*, *„Reviewer-Kommentare"* | Point-by-point Response |
+| `latex-export` | *„Thesis als .tex"*, *„Kapitel exportieren"*, *„BibTeX aus Vault"* | Markdown-Kapitel → `.tex` (Pandoc/Custom) + `.bib` aus Vault (biblatex, DIN-1505) ([SKILL.md](skills/latex-export/SKILL.md)) |
+| `notebook-bundle` | *„NotebookLM Bundle"*, *„PDF-Bundle exportieren"*, *„Riesen-PDF aufteilen"* | Konkateniertes PDF (Cover + TOC) der Paper für NotebookLM-Upload ([SKILL.md](skills/notebook-bundle/SKILL.md)) |
+| `cluster-visualizer` | *„zeige Cluster"*, *„visualisiere"*, *„Mindmap"*, *„Netzwerk der Quellen"* | Cluster-JSON → Mermaid-`graph-LR`-Diagramm, optional PNG via mmdc ([SKILL.md](skills/cluster-visualizer/SKILL.md)) |
 
 ### Abschluss-Skills
 
@@ -479,25 +484,82 @@ Der **Vault** (`academic_vault/`) ist die Kernkomponente seit v6.0. Er ersetzt d
 
 **Datenbank:** `~/.academic-research/projects/<slug>/vault.db`
 
-### MCP-Tools (Auswahl)
+### MCP-Tools (alle 33)
 
-| Tool | Beschreibung |
-|------|-------------|
-| `vault.search(query, type?, top_k?)` | Hybrid-Suche (BM25 + vec0 + RRF) |
-| `vault.get_paper(paper_id)` | Metadaten + PDF-Status |
-| `vault.add_paper(csl_json)` | Paper einpflegen |
-| `vault.add_quote(paper_id, quote)` | Verbatim-Zitat mit Provenance |
-| `vault.find_quotes(paper_id, query, k?)` | Ähnlichkeitssuche über Zitate |
-| `vault.search_quote_text(text)` | Volltext-Suche Zitate |
-| `vault.add_decision(text, category)` | Entscheidung ins Decision-Log |
-| `vault.list_decisions(category?)` | Entscheidungen abrufen |
-| `vault.add_risk_of_bias(paper_id, data)` | RoB-Bewertung speichern |
-| `vault.add_score_snapshot(paper_id, scores)` | Score-Historie |
-| `vault.export_material_passport(paper_id)` | Material-Passport generieren |
-| `vault.lock_passport(paper_id)` | Passport unveränderlich sperren |
-| `vault.ensure_file(pdf_path)` | PDF → Anthropic Files-API (`file_id`) |
-| `vault.export_snapshot()` / `vault.restore_snapshot(ts)` | Backup/Restore |
-| `vault.stats()` | DB-Statistiken |
+Der Server registriert **33 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referenz: [`academic_vault/server.py`](academic_vault/server.py) (Funktion `_build_mcp_server`). Die folgenden Tabellen sind nach Kategorie geordnet; Signatur mit Default-Werten, Beschreibung und Beispiel-Call.
+
+**Suche & Papers**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.search(query, type=None, k=5, rerank=False)` | Hybrid-Suche (BM25 + vec0 + RRF); `rerank=True` aktiviert Voyage/Cohere | `vault.search("transformer attention", k=10)` |
+| `vault.get_paper(paper_id)` | Paper-Metadaten + `pdf_status` | `vault.get_paper("vaswani2017")` |
+| `vault.add_paper(paper_id, csl_json, pdf_path=None, doi=None, isbn=None, page_offset=0, editor=None, chapter=None, page_first=None, page_last=None, container_title=None, parent_paper_id=None)` | Upsert eines Papers; `type` aus `csl_json` | `vault.add_paper("vaswani2017", csl_json, doi="10.5555/...")` |
+| `vault.add_chapter(parent_paper_id, chapter_number, csl_json, paper_id=None, pdf_path=None, page_first=None, page_last=None)` | Legt Kapitel als Kind-Paper an; gibt `paper_id` zurück | `vault.add_chapter("book2020", 3, csl_json, page_first=45)` |
+| `vault.ensure_file(paper_id)` | PDF → Anthropic Files-API; gibt gecachte `file_id` zurück | `vault.ensure_file("vaswani2017")` |
+| `vault.stats()` | DB-Counts + Token-Ersparnis-Schätzung | `vault.stats()` |
+
+**Zitate (Quotes)**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_quote(paper_id, verbatim, extraction_method, api_response_id=None, pdf_page=None, printed_page=None, section=None, context_before=None, context_after=None)` | Fügt Verbatim-Zitat mit Provenance ein; `extraction_method="citations-api"` erfordert `api_response_id` | `vault.add_quote("vaswani2017", "Attention is all you need", "citations-api", api_response_id="resp_1")` |
+| `vault.search_quote_text(verbatim, k=5)` | LIKE-Volltextsuche in `quotes.verbatim` (prüft, ob ein Zitat existiert) | `vault.search_quote_text("Attention is all", k=3)` |
+| `vault.find_quotes(paper_id, query=None, k=10)` | Gibt Quotes für ein Paper zurück (optional Ähnlichkeitssuche) | `vault.find_quotes("vaswani2017", query="self-attention")` |
+| `vault.get_quote(quote_id)` | Vollständiger Quote-Record | `vault.get_quote("q_42")` |
+
+**Figures & Tabellen** (v6.1 Figure-Verifier)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_figure(paper_id, page=None, caption=None, vlm_description=None, data_extracted_json=None)` | Fügt Figure/Tabelle ein; gibt `figure_id` zurück | `vault.add_figure("vaswani2017", page=3, caption="Fig. 1: Architecture")` |
+| `vault.get_figure(figure_id)` | Gibt Figure-Record zurück oder `None` | `vault.get_figure("fig_7")` |
+| `vault.list_figures(paper_id)` | Alle Figures eines Papers, nach `page` sortiert | `vault.list_figures("vaswani2017")` |
+
+**OCR-Pipeline & Seitenzählung** (v6.1)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.set_ocr_done(paper_id, value=1)` | Setzt `ocr_done`-Flag (`1`=OCR durchgeführt) | `vault.set_ocr_done("scan2019")` |
+| `vault.update_pdf_path(paper_id, new_path)` | Aktualisiert den PDF-Pfad nach OCR | `vault.update_pdf_path("scan2019", "/data/scan2019_ocr.pdf")` |
+| `vault.set_page_offset(paper_id, offset)` | Setzt `page_offset` (Bücher mit Vorseiten/Vorwort) | `vault.set_page_offset("book2020", 12)` |
+| `vault.get_printed_page(paper_id, pdf_page)` | Berechnet gedruckte Seite: `pdf_page - page_offset` | `vault.get_printed_page("book2020", 25)` |
+
+**Decision-Log & Ausschlüsse**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_decision(category=None, text="", rationale=None)` | Fügt Entscheidung ins Decision-Log ein; gibt `decision_id` zurück | `vault.add_decision(category="scope", text="Nur Studien ab 2015", rationale="Aktualität")` |
+| `vault.list_decisions(category=None, active_only=True)` | Gibt Decisions zurück (optionaler `category`-Filter) | `vault.list_decisions(category="scope")` |
+| `vault.supersede_decision(decision_id, superseded_by)` | Markiert eine Decision als abgelöst durch eine neuere (`superseded_by`) | `vault.supersede_decision("dec_3", "dec_7")` |
+| `vault.add_excluded_source(paper_id, reason=None)` | Fügt `paper_id` zu `excluded_sources` (verhindert Re-Vorschlag) | `vault.add_excluded_source("smith2010", reason="off-topic")` |
+| `vault.is_excluded(paper_id)` | Prüft, ob `paper_id` ausgeschlossen ist | `vault.is_excluded("smith2010")` |
+| `vault.list_excluded_sources()` | Gibt alle ausgeschlossenen Quellen zurück | `vault.list_excluded_sources()` |
+| `vault.list_papers_by_provenance(provenance)` | Provenance-Audit: alle Papers mit gegebenem Herkunfts-Tag (z.B. `"scihub"`) | `vault.list_papers_by_provenance("scihub")` |
+
+**Risk-of-Bias & Score-Historie** (v6.4)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.add_risk_of_bias(paper_id, study_type, domain_scores)` | Fügt RoB-Assessment ein (`domain_scores` als JSON-String); gibt `assessment_id` zurück | `vault.add_risk_of_bias("rct2018", "RCT", '{"randomization":"low"}')` |
+| `vault.list_risk_of_bias(paper_id=None)` | Gibt RoB-Assessments zurück (optional nach `paper_id` gefiltert) | `vault.list_risk_of_bias("rct2018")` |
+| `vault.add_score_snapshot(paper_id, session_id, scores)` | Fügt Score-Snapshot ein (`scores` als JSON-String); gibt `snapshot_id` zurück | `vault.add_score_snapshot("rct2018", "sess_1", '{"relevance":0.8}')` |
+| `vault.get_score_history(paper_id, k=None)` | Score-History eines Papers (neueste zuerst) | `vault.get_score_history("rct2018", k=5)` |
+
+**Material-Passport & Lock** (v6.4)
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.export_material_passport(slug, output_dir=".", score_algo_version="1.0", plugin_version="6.4")` | Exportiert `material-passport.json`; gibt Dateipfad zurück | `vault.export_material_passport("mein-projekt")` |
+| `vault.lock_passport(slug)` | Setzt Vault-Lock für `slug` (macht Vault read-only) | `vault.lock_passport("mein-projekt")` |
+| `vault.is_locked(slug)` | Prüft, ob der Vault für `slug` gelockt ist | `vault.is_locked("mein-projekt")` |
+
+**Snapshots & Backup**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.export_snapshot(slug, project_dir=".", snapshots_dir=None)` | Exportiert State-Dateien + Vault-DB als `.tgz`-Snapshot; gibt Pfad zurück (`snapshots_dir` default `~/.academic-research/snapshots`) | `vault.export_snapshot("mein-projekt")` |
+| `vault.restore_snapshot(slug, ts, snapshots_dir=None, target_dir=".")` | Stellt Snapshot `<slug>/<ts>.tgz` wieder her; gibt `True`/`False` zurück | `vault.restore_snapshot("mein-projekt", "20260604-0930")` |
 
 ### Halluzinationsschutz
 
@@ -558,39 +620,61 @@ Jedes Paper wird nach 5 Dimensionen bewertet (0–1):
 
 ## Hooks-Stack
 
-Das Plugin installiert vier Hooks via `hooks/hooks.json`:
+Das Plugin konfiguriert 7 Events in `hooks/hooks.json` (5 Skript-Dateien + 1 Inline-Bash):
 
-| Hook | Typ | Beschreibung |
-|------|-----|-------------|
+| Hook | Event | Beschreibung |
+|------|-------|-------------|
 | `verbatim-guard.mjs` | `PreToolUse(Write)` | Blockt Kapitel-Writes mit nicht-verifizierten Zitaten |
-| `pre-compact.mjs` | `PreCompact` | Snapshot-Backup vor Claude-Compaction |
 | `post-tool-use-decisions.mjs` | `PostToolUse(Write)` | Decision-Log: jede `.md`-Änderung wird protokolliert |
-| `mid-session-reinforcement.mjs` | `SessionMid` | Erinnerung an Anti-Fabrikations-Regeln |
+| `pre-compact.mjs` | `PreCompact` | Snapshot-Backup vor Claude-Compaction |
+| `mid-session-reinforcement.mjs` | `Notification` | Erinnerung an Anti-Fabrikations-Regeln (nach ~20 Nachrichten) |
+| `mid-session-reinforcement.mjs` | `PostCompact` | Erinnerung an Anti-Fabrikations-Regeln nach Compaction |
+| `onboard-project-uni-prompt.sh` | `SessionStart` | Prüft Python-venv-Bereitschaft beim Session-Start |
+| *(Inline-Bash)* | `Stop` | Hinweis bei ungesicherten `academic_context.md`-Änderungen |
+
+---
+
+## Privacy/Logs
+
+Der `post-tool-use-decisions.mjs`-Hook protokolliert jede `.md`-Änderung im
+Projekt nach `~/.academic-research/decisions.log` (Pfad überschreibbar via
+`ACADEMIC_DECISIONS_LOG`). Datenschutz-Eigenschaften:
+
+- **Kein Klartext-Inhalt.** Statt eines Content-Snippets steht in jeder Zeile
+  nur der **SHA-256-Hash** des geschriebenen Inhalts
+  (`… | Write | <pfad> | sha256=<hash>`). Damit bleibt der Idempotenz-/
+  Änderungs-Check möglich, ohne PII (z. B. Zitat-Texte, Kapitelinhalte) zu
+  leaken (CWE-532).
+- **0600-Permissions.** Das Logfile wird mit `chmod 0600` (nur Owner liest/
+  schreibt) erstellt; das Verzeichnis mit `0700`.
+- **Rotation.** Überschreitet `decisions.log` 10 MB, wird es nach
+  `decisions.log.1` rotiert und ein frisches Log begonnen.
+
+Wer gar kein Decision-Log möchte, kann den Hook in `hooks/hooks.json`
+deaktivieren oder `ACADEMIC_DECISIONS_LOG` auf einen verworfenen Pfad
+(z. B. unter `/tmp`) setzen.
 
 ---
 
 ## Per-Uni-Profile
 
-Profile liegen unter `library-profiles/<uni>.yaml` und konfigurieren Bibliotheks-Auth für den `book-fetcher` und Browser-Module.
+Profile liegen unter `config/library-profiles/<uni>.yaml` und konfigurieren Bibliotheks-Auth für den `book-fetcher` und Browser-Module.
 
 **Mitgelieferte Profile:**
 
 | Profil | Hochschule | Auth-Typ |
 |--------|-----------|----------|
-| `leibniz-fh.yaml` | Leibniz FH Hannover | HAN |
+| `eth-zurich.yaml` | ETH Zürich | Shibboleth |
+| `fu-berlin.yaml` | Freie Universität Berlin | Shibboleth |
 | `tum.yaml` | TU München | Shibboleth |
-| `rwth-aachen.yaml` | RWTH Aachen | Shibboleth |
-| `fau-erlangen.yaml` | FAU Erlangen-Nürnberg | Shibboleth |
-| `template-han.yaml` | HAN-Template (generisch) | HAN |
-| `template-shibboleth.yaml` | Shibboleth-WAYF-Template | Shibboleth |
-| `template-ezproxy.yaml` | EZproxy-Template | EZproxy |
-| `template-oa-only.yaml` | Nur OA-Quellen | keine |
+| `uni-hamburg.yaml` | Universität Hamburg | Shibboleth |
+| `uni-wien.yaml` | Universität Wien | Shibboleth |
 
 ### Profil aktivieren
 
 ```bash
-# Profil aus Template kopieren und anpassen
-cp library-profiles/template-han.yaml \
+# Vorhandenes Profil als Ausgangsbasis kopieren und anpassen
+cp config/library-profiles/tum.yaml \
    ~/.academic-research/library-profiles/meine-uni.yaml
 # → uni, auth_url, credentials_keys, licensed_sites eintragen
 
@@ -609,6 +693,12 @@ cp library-profiles/template-han.yaml \
 | **Site-Profile** | YAML-Konfiguration einer Hochschule, die Auth-Typ (HAN/Shibboleth/EZproxy), lizenzierte Seiten und Zugangsdaten-Keys beschreibt. Wird von `auth-helper` und `book-fetcher` genutzt. |
 | **Material-Passport** | Unveränderlicher Metadaten-Passport für ein Artefakt (Paper, Kapitel). Kann via `vault.lock_passport()` eingefroren werden — danach keine Änderungen mehr möglich. |
 | **Contextual Retrieval** | Anthropic-Pattern: vor jedem Chunk-Embedding wird ein 1-Satz-Kontext angehängt (via Prompt-Caching). Verbessert Recall@10 deutlich vs. Vanilla-vec0. |
+| **Decision-Log** | Append-only-Protokoll aller `.md`-Änderungen und Entscheidungen. Wird vom Hook `post-tool-use-decisions.mjs` (PostToolUse) automatisch befüllt; programmatisch via `vault.add_decision(text, category)`. |
+| **Vault-Lock** | Read-only-Sperre des Vault. Nach `vault.lock_passport(paper_id)` sind keine Schreibzugriffe mehr möglich — Grundlage für reproduzierbare Abgaben (siehe Repro-Lock, Skill `material-passport`). |
+| **Repro-Lock** | Reproduzierbarkeits-Sperre des Skills `material-passport`: friert den Material-Passport ein und sperrt den Vault read-only (Vault-Lock), damit Dritte den Stand exakt nachvollziehen können. |
+| **OCR-Detection** | Automatische Prüfung, ob ein PDF einen Text-Layer besitzt (`scripts/pdf.py:detect_needs_ocr`). Fehlt der Layer, schlägt das Plugin OCR via `ocrmypdf` vor. |
+| **page_offset** | Differenz zwischen PDF-Seitenzahl und gedruckter Seitenzahl bei Büchern mit Vorseiten (`printed_page = pdf_page - offset`). Wird von `scripts/page_offset.py` ermittelt und vom `book-handler` für seitengenaue Zitate genutzt. |
+| **output_targets** | Opt-in-Eintrag im Projekt-State, der Default-Off-Output-Skills (`grant-proposal`, `conference-poster`, `reviewer-response`) aktiviert. Nur wenn der passende Wert gesetzt ist, läuft der jeweilige Skill (v6.5-Opt-in-Pattern). |
 | **PRISMA** | Preferred Reporting Items for Systematic Reviews and Meta-Analyses — Standard-Framework für Transparent-Reporting. Das Plugin generiert PRISMA-2020-konforme Mermaid-Flussdiagramme. |
 | **HAN** | Hochschulauthentifizierungs-Netzwerk — Bibliotheks-Proxy für lizenzpflichtige Datenbanken. |
 | **RRF** | Reciprocal-Rank-Fusion — Methode zum Zusammenführen von BM25- und vec0-Rankings im Vault. |
@@ -652,7 +742,44 @@ cp library-profiles/template-han.yaml \
 ~/.academic-research/venv/bin/python -m pytest tests/ -v
 ```
 
-Aktuell: ~60 Tests, inkl. Regression-Guards (`test_skill_naming.py`, `test_cross_references.py`).
+Aktuell: **1111 Tests gesammelt**, davon **963 bestanden** und 148 übersprungen (`pytest --collect-only` für die Gesamtzahl). Enthalten sind Regression-Guards (`tests/test_skill_naming.py`, `tests/test_cross_references.py`, `tests/test_skills_manifest.py`).
+
+Die Kern-Suite ist **offline-hermetisch** und läuft ohne Netzwerk. Übersprungen werden Tests, die externe Abhängigkeiten brauchen: API-basierte Evals unter `tests/evals/` setzen einen `ANTHROPIC_API_KEY` voraus (Network/External), und einige Integrations-Tests werden ohne installierte optionale Pakete (z.B. `requests`, `sqlite-vec`) automatisch geskippt.
+
+### pre-commit (empfohlen)
+
+Für lokale Hygiene wird `pre-commit` empfohlen. Die Konfiguration liegt in
+[`.pre-commit-config.yaml`](.pre-commit-config.yaml) und blockt versehentlich
+committete große Dateien, neue Submodule und private Schlüssel. OS-Artefakte wie
+`.DS_Store` werden bereits über `.gitignore` ausgeschlossen.
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+### Mitwirken (CONTRIBUTING)
+
+Lint, Format und Typpruefung sind zentral in `pyproject.toml` konfiguriert
+(`[tool.ruff]`, `[tool.mypy]`) und werden ueber **pre-commit** durchgesetzt.
+
+```bash
+# Einmalig einrichten
+pip install pre-commit
+pre-commit install            # installiert den Git-Hook
+
+# Manuell ueber alle Dateien laufen lassen
+pre-commit run --all-files
+
+# Einzelne Tools direkt
+ruff check .                  # Linter
+ruff format .                 # Formatter
+mypy                          # Typpruefung (Pfade aus pyproject.toml)
+```
+
+Die pre-commit-Hooks umfassen `ruff` (Lint + Format), `mypy`,
+`end-of-file-fixer`, `check-yaml` und `check-json`. Reproduzierbare Installs
+liefert der gepinnte `requirements.lock` (`pip install -r requirements.lock`).
 
 ### Evals
 
@@ -661,7 +788,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ~/.academic-research/venv/bin/python -m pytest tests/evals/ -v
 ```
 
-- **Quality-Evals:** `with_skill` vs. `without_skill`, Schwelle: Δ ≥ 20 pp PASS-Rate.
+- **Quality-Evals:** `with_skill` vs. `without_skill`, Schwelle: Δ ≥ 20 pp PASS-Rate (enforced via `eval_runner.check_quality_delta`, konfigurierbar über `EVAL_DELTA_THRESHOLD`, Default `0.20`).
 - **Trigger-Evals:** Recall ≥ 85 %, FPR ≤ 10 % je Skill.
 
 Kein CI-Trigger — Evals laufen lokal vor jedem Release. Reports unter `docs/evals/`.

@@ -2,6 +2,8 @@
 name: literature-gap-analysis
 description: Use this skill when the user wants to analyze literature coverage, find missing sources, or identify gaps. Triggers on "Literaturlücken / Literaturluecken", "Coverage", "fehlende Quellen", "Gap Analysis", "Quellenabdeckung", "literature gaps", "missing sources", "Abdeckung prüfen / Abdeckung pruefen", or when another skill detects under-sourced chapters. Bewertet Korpus-Vollständigkeit; Für einzelne Quellen-Qualität → `source-quality-audit`.
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Literatur-Lückenanalyse
