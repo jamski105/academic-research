@@ -663,7 +663,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ~/.academic-research/venv/bin/python -m pytest tests/evals/ -v
 ```
 
-- **Quality-Evals:** `with_skill` vs. `without_skill`, Schwelle: Δ ≥ 20 pp PASS-Rate.
+- **Quality-Evals:** `with_skill` vs. `without_skill`, Schwelle: Δ ≥ 20 pp PASS-Rate (enforced via `eval_runner.check_quality_delta`, konfigurierbar über `EVAL_DELTA_THRESHOLD`, Default `0.20`).
 - **Trigger-Evals:** Recall ≥ 85 %, FPR ≤ 10 % je Skill.
 
 Kein CI-Trigger — Evals laufen lokal vor jedem Release. Reports unter `docs/evals/`.
