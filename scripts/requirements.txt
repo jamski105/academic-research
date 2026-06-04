@@ -2,8 +2,12 @@ anthropic>=0.40
 httpx>=0.25.0
 pypdf>=4.0.0
 pyyaml>=6.0
-requests>=2.28.0
-lxml>=4.9.0
+openpyxl>=3.1
+pandas>=2.0
+# requests>=2.32.4: CVE-2024-35195 (cert verification bypass), CVE-2024-47081 (.netrc credential leak)
+requests>=2.32.4
+# lxml>=5.2.0: CVE-2022-2309 (NULL pointer deref)
+lxml>=5.2.0
 # Barcode-Generierung fuer /academic-research:pickup (Skill: barcode_utils)
 python-barcode[images]>=0.15.0
 # academic-vault MCP-Server (Vault): FastMCP-SDK + Vektor-Suche-Extension
