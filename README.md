@@ -1,6 +1,7 @@
 # Academic Research v6.5
 
 [![CI](https://github.com/jamski105/academic-research/actions/workflows/ci.yml/badge.svg)](https://github.com/jamski105/academic-research/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/jamski105/academic-research/branch/main/graph/badge.svg)](https://codecov.io/gh/jamski105/academic-research)
 [![Version](https://img.shields.io/badge/version-6.5.0-blue.svg)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-28-orange.svg)](#skills-übersicht)
 [![Tests](https://img.shields.io/badge/tests-963%20passing%20%2F%201111%20collected-success.svg)](#entwicklung-und-evals)
