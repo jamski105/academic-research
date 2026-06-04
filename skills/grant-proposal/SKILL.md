@@ -1,6 +1,6 @@
 ---
 name: grant-proposal
-description: Use this skill when the user needs to write a grant proposal / Förderantrag. Triggers on "Förderantrag / Foerderantrag schreiben", "DFG-Antrag", "BMBF-Antrag", "EU-Horizon-Antrag", "Drittmittelantrag", "grant proposal", or when the user asks for funding application support. Erstellt strukturierte Förderanträge mit Vault-Quellen und Bibliographie; für Kapiteltext → `chapter-writer`.
+description: Use this skill when the user needs to write a grant proposal / Förderantrag. Triggers on "Förderantrag / Foerderantrag schreiben", "DFG-Antrag", "BMBF-Antrag", "EU-Antrag / EU-Horizon-Antrag", "Drittmittelantrag", "grant proposal", or when the user asks for funding application support. Erstellt strukturierte Förderanträge mit Vault-Quellen und Bibliographie; für Kapiteltext → `chapter-writer`.
 license: MIT
 ---
 

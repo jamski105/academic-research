@@ -1,6 +1,6 @@
 ---
 name: advisor
-description: Use this skill for structural feedback on outline, argumentation flow, or exposé — Review ohne Neuschrieb. Triggers on "Gliederung prüfen / Gliederung pruefen", "Argumentations-Outline review", "Exposé feedback / Expose feedback", "Exposee-Bewertung", or when another skill detects structural weaknesses. Für das tatsächliche SCHREIBEN eines Kapitels → `chapter-writer`. Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
+description: Use this skill for structural feedback on outline, argumentation flow, or exposé — Review ohne Neuschrieb. Triggers on "Gliederung prüfen / Gliederung pruefen", "Struktur", "Argumentationskette", "Argumentations-Outline review", "Exposé feedback / Expose feedback", "Exposee-Bewertung", or when another skill detects structural weaknesses. Für das tatsächliche SCHREIBEN eines Kapitels → `chapter-writer`. Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
 license: MIT
 ---
 
@@ -20,9 +20,7 @@ Kapitel-Reorganisation vor und liefert Expose-Templates.
 
 Liefert Review/Feedback zu Struktur, Gliederung und Exposé — **ohne
 Neuschrieb** von Kapitel-Prosa.
-Für das tatsächliche Schreiben von Kapitel-Text (Text-Output) → `chapter-writer`.
-Für Schärfung der Forschungsfrage selbst → `research-question-refiner`.
-Für Methodenwahl und Scoring-Matrix → `methodology-advisor`.
+Kapitel-Text schreiben → `chapter-writer`; Forschungsfrage → `research-question-refiner`; Methodenwahl → `methodology-advisor`.
 
 ## Bewertungskriterien (PASS/FAIL)
 

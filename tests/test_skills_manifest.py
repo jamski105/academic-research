@@ -16,6 +16,7 @@ from pathlib import Path
 import pytest
 
 SKILLS_DIR = Path(__file__).parent.parent / "skills"
+README_PATH = Path(__file__).parent.parent / "README.md"
 VENDORED_SKILLS = {"xlsx", "_common", "humanizer-de"}
 ALL_SKILLS = sorted(
     p for p in SKILLS_DIR.glob("*/SKILL.md") if p.parent.name not in VENDORED_SKILLS
@@ -32,6 +33,77 @@ TOKEN_DRIFT_THRESHOLD = 1.20  # max. +20% Token-Drift vs. Baseline (Issue #200)
 def _estimate_tokens(text: str) -> int:
     """Deterministischer cl100k-Proxy: aufgerundete Zeichenzahl / 4."""
     return math.ceil(len(text) / CHARS_PER_TOKEN)
+
+
+def _description(path: Path) -> str:
+    """Liefert die zusammengesetzte 'description' aus dem Frontmatter.
+
+    Unterstuetzt sowohl Single-Line- als auch YAML-Block-Skalar (``>``)-Stil.
+    """
+    text = path.read_text()
+    m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+    if not m:
+        return ""
+    fm = m.group(1)
+    dm = re.search(r"^description:\s*(.*?)(?=^[a-zA-Z_][a-zA-Z0-9_-]*:|\Z)", fm, re.DOTALL | re.M)
+    if not dm:
+        return ""
+    return " ".join(dm.group(1).split())
+
+
+def _readme_skill_triggers() -> dict[str, list[str]]:
+    """Parst die README-'Skills-Übersicht'-Tabelle.
+
+    Liefert ``{skill_name: [trigger_phrase, ...]}`` aus der Spalte
+    'Aktiviert bei'. Trigger stehen dort als kursive Phrasen in
+    deutschen Anfuehrungszeichen, z.B. *„Kapitel schreiben"*.
+    """
+    text = README_PATH.read_text()
+    start = text.index("## Skills-Übersicht")
+    end = text.index("\n---", start)
+    section = text[start:end]
+
+    row_re = re.compile(r"^\|\s*`([a-z0-9-]+)`\s*\|\s*(.+?)\s*\|", re.M)
+    trig_re = re.compile(r'[„"]([^„""]+)["""]')
+
+    triggers: dict[str, list[str]] = {}
+    for m in row_re.finditer(section):
+        skill = m.group(1)
+        phrases = trig_re.findall(m.group(2))
+        if phrases:
+            triggers[skill] = phrases
+    return triggers
+
+
+# (skill, trigger)-Paare flach fuer parametrize, damit jede Drift einzeln
+# als Test-Failure sichtbar wird (Issue #208).
+README_TRIGGER_CASES = [
+    (skill, trig)
+    for skill, phrases in _readme_skill_triggers().items()
+    for trig in phrases
+]
+
+
+@pytest.mark.parametrize(
+    "skill_name,trigger",
+    README_TRIGGER_CASES,
+    ids=[f"{s}:{t}" for s, t in README_TRIGGER_CASES],
+)
+def test_readme_trigger_in_skill_description(skill_name: str, trigger: str) -> None:
+    """Issue #208: Jede README-Trigger-Phrase muss in der SKILL.md-description stehen.
+
+    Andernfalls verspricht das README eine Aktivierung, die der Skill nicht
+    leistet (funktionale Desynchronisation). Match ist case-insensitiv als
+    Substring — die description darf den Trigger einbetten (z.B. in einer
+    'X / Y'-Umlaut-Variante).
+    """
+    skill_path = SKILLS_DIR / skill_name / "SKILL.md"
+    assert skill_path.exists(), f"README nennt Skill '{skill_name}', aber {skill_path} fehlt"
+    desc = _description(skill_path)
+    assert trigger.lower() in desc.lower(), (
+        f"{skill_name}: README-Trigger '{trigger}' fehlt in SKILL.md-description "
+        f"(funktional desynchron, Issue #208). description={desc[:200]!r}"
+    )
 
 
 def _frontmatter(path: Path) -> dict:
