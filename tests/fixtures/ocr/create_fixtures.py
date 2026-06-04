@@ -3,7 +3,7 @@
 import os
 import sys
 
-from PyPDF2 import PdfWriter
+from pypdf import PdfWriter
 
 
 def create_empty_pdf(path: str, pages: int = 3) -> None:

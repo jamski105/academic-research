@@ -296,6 +296,77 @@ class TestAcademicContextWrite:
 
 
 # ---------------------------------------------------------------------------
+# Test 6b: SKILL.md dupliziert KEINE Scoring-Tabellen (Issue #180)
+# ---------------------------------------------------------------------------
+
+class TestNoScoringTableDuplication:
+    """SKILL.md darf die Scoring-Tabellen nicht duplizieren (Progressive Disclosure).
+
+    Die Modifikator-Tabellen (Datenverfuegbarkeit, Zeitbudget, Studienrichtung)
+    leben kanonisch in references/scoring-criteria.md. SKILL.md verweist nur darauf.
+    """
+
+    _SKILL_MD = _WORKTREE_ROOT / "skills" / "topic-brainstorm" / "SKILL.md"
+    _SCORING_REF = (
+        _WORKTREE_ROOT
+        / "skills"
+        / "topic-brainstorm"
+        / "references"
+        / "scoring-criteria.md"
+    )
+
+    def test_skill_md_has_no_data_access_table_rows(self):
+        """SKILL.md enthaelt keine Datenverfuegbarkeit-Modifikator-Tabellenzeilen."""
+        text = self._SKILL_MD.read_text(encoding="utf-8")
+        for forbidden in (
+            "| Public Datasets | +1.0 |",
+            "| Literatur-Only | +0.5 |",
+            "| Unternehmensdaten | -1.0 |",
+        ):
+            assert forbidden not in text, (
+                f"SKILL.md dupliziert Scoring-Tabelle (gefunden: {forbidden!r}) "
+                "— gehoert nach references/scoring-criteria.md"
+            )
+
+    def test_skill_md_has_no_time_budget_table_rows(self):
+        """SKILL.md enthaelt keine Zeitbudget-Modifikator-Tabellenzeilen."""
+        text = self._SKILL_MD.read_text(encoding="utf-8")
+        for forbidden in (
+            "| 3 Monate | -1.0 |",
+            "| 6 Monate | 0.0 |",
+            "| 12 Monate | +1.0 |",
+        ):
+            assert forbidden not in text, (
+                f"SKILL.md dupliziert Zeitbudget-Tabelle (gefunden: {forbidden!r})"
+            )
+
+    def test_skill_md_has_no_field_modifier_table(self):
+        """SKILL.md enthaelt keine Studienrichtung-Modifier-Referenz-Tabelle."""
+        text = self._SKILL_MD.read_text(encoding="utf-8")
+        assert "| Modifier-Referenz |" not in text, (
+            "SKILL.md dupliziert Studienrichtung-Modifier-Tabelle "
+            "— gehoert nach references/scoring-criteria.md"
+        )
+
+    def test_skill_md_references_scoring_criteria(self):
+        """SKILL.md verweist explizit auf references/scoring-criteria.md."""
+        text = self._SKILL_MD.read_text(encoding="utf-8")
+        assert "references/scoring-criteria.md" in text, (
+            "SKILL.md muss auf references/scoring-criteria.md verweisen"
+        )
+
+    def test_scoring_tables_remain_in_reference(self):
+        """Die Scoring-Tabellen bleiben kanonisch in der Referenz erhalten."""
+        ref = self._SCORING_REF.read_text(encoding="utf-8")
+        assert "| Public Datasets | +1.0 |" in ref, (
+            "Datenverfuegbarkeit-Tabelle fehlt in scoring-criteria.md"
+        )
+        assert "| 3 Monate | -1.0 |" in ref, (
+            "Zeitbudget-Tabelle fehlt in scoring-criteria.md"
+        )
+
+
+# ---------------------------------------------------------------------------
 # Test 6: skill_sizes.json enthaelt 'topic-brainstorm'
 # ---------------------------------------------------------------------------
 

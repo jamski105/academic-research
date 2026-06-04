@@ -1,6 +1,11 @@
 {
   "component": "book-handler",
   "component_type": "skill",
+  "prompts": [
+    {"id": "bh-p01", "input": "Validiere die ISBN-13 978-3-16-148410-0 und sage mir, ob die Pruefziffer korrekt ist.", "expected": {"type": "regex", "value": "(978-3-16-148410-0|9783161484100|ISBN|Pruefziffer|gueltig)"}, "mode": "with_skill"},
+    {"id": "bh-p02", "input": "Wie unterscheidet die Verarbeitung zwischen einer Monografie und einem Sammelband?", "expected": {"type": "regex", "value": "(Monografie|Sammelband|Herausgeber|Kapitel|Editor)"}, "mode": "with_skill"},
+    {"id": "bh-p03", "input": "Welche Dienste nutzt du, um ein Buch ueber ISBN oder DOI aufzuloesen?", "expected": {"type": "regex", "value": "(DNB|OpenLibrary|DOAB|ISBN|DOI)"}, "mode": "with_skill"}
+  ],
   "cases": [
     {
       "id": "bh-01",

@@ -1,6 +1,6 @@
 ---
 name: reviewer-response
-description: Use this skill when the user needs to write a reviewer response / Gutachter-Antwort after paper submission. Triggers on "Antwort für Reviewer schreiben / Antwort fuer Reviewer write", "Reviewer-Response", "point-by-point response", "Revise and Resubmit", "R&R", or when responding to peer review comments. Erstellt strukturierte Response-Letters mit Vault-Belegen; für Kapitelrevision → `chapter-writer`.
+description: Use this skill when the user needs to write a reviewer response / Gutachter-Antwort after paper submission. Triggers on "Antwort für Reviewer schreiben / Antwort fuer Reviewer schreiben", "Reviewer-Response", "Reviewer-Kommentare beantworten", "point-by-point response", "Revise and Resubmit", "R&R", or when responding to peer review comments. Erstellt strukturierte Response-Letters mit Vault-Belegen; für Kapitelrevision → `chapter-writer`.
 license: MIT
 allowed-tools:
   - Read
@@ -49,7 +49,7 @@ Format-Erkennung:
 - `RC1: ...`
 - Nummerierte Listen (1. ... 2. ...)
 
-Lade Referenzformat: `skills/reviewer-response/references/response-letter-structure.md`
+Lade Referenzformat: `${CLAUDE_PLUGIN_ROOT}/skills/reviewer-response/references/response-letter-structure.md`
 
 ### 2. Kommentare kategorisieren
 
@@ -73,7 +73,7 @@ vault.add_quote(paper_id=<id>, verbatim="<Zitat>", page=<n>)
 
 ### 4. point-by-point Response erstellen
 
-Nutze die Struktur aus `skills/reviewer-response/references/response-letter-structure.md`.
+Nutze die Struktur aus `${CLAUDE_PLUGIN_ROOT}/skills/reviewer-response/references/response-letter-structure.md`.
 
 Für jeden Reviewer-Kommentar:
 1. Kommentar zitieren (kursiv/blockquote)

@@ -1,10 +1,11 @@
 ---
 name: prisma-flow
 description: >
-  Rendert ein PRISMA-2020-Flow-Diagramm als Mermaid-Block und integriert es in
-  kapitel/methodik.md. Triggert nach /search wenn PRISMA-Zähler (n_identified etc.)
-  vorliegen, oder wenn der User "PRISMA Flow", "PRISMA-Diagramm",
-  "Flussdiagramm Literatursuche / Flowchart", "Einschlüsse / Inclusions" oder "PRISMA 2020" anfragt.
+  Rendert ein PRISMA-2020-Flow-Diagramm als Mermaid-Block in kapitel/methodik.md.
+  Triggert nach /search wenn PRISMA-Zähler (n_identified etc.) vorliegen oder bei
+  "PRISMA Flow", "PRISMA-Diagramm", "Systematic Review",
+  "Flussdiagramm Literatursuche / Flowchart",
+  "Einschlüsse / Einschluesse / Inclusions", "PRISMA 2020".
 license: MIT
 allowed-tools: [Bash, Read, Write]
 ---
@@ -67,7 +68,9 @@ Zählwerte bitten oder aus dem angezeigten Ergebnis-Summary ableiten.
 Oder per Python-API:
 
 ```python
-from skills.prisma_flow.scripts.render_flow import render_prisma_flow
+import sys
+sys.path.insert(0, "${CLAUDE_PLUGIN_ROOT}/skills/prisma-flow/scripts")
+from render_flow import render_prisma_flow
 mermaid = render_prisma_flow(counters, output_path="kapitel/methodik.md")
 ```
 

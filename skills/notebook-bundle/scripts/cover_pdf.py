@@ -1,6 +1,6 @@
 """Erzeugt Bibliographie-Cover-PDF aus einer Paper-Liste.
 
-Nutzt PyPDF2-Stream-Injection (kein reportlab, kein fpdf).
+Nutzt pypdf-Stream-Injection (kein reportlab, kein fpdf).
 Jede Zeile wird als PDF-Content-Stream in eine Blank-Page injiziert.
 """
 from __future__ import annotations
@@ -8,8 +8,8 @@ from __future__ import annotations
 import io
 from typing import Any, Dict, List
 
-from PyPDF2 import PdfReader, PdfWriter
-from PyPDF2.generic import (
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import (
     DecodedStreamObject,
     DictionaryObject,
     NameObject,

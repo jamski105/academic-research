@@ -152,3 +152,71 @@ def test_hook_appends_multiple_writes(tmp_path):
 
     lines = [l for l in log_file.read_text().strip().splitlines() if l.strip()]
     assert len(lines) >= 3, f"Erwartet 3 Log-Zeilen, got {len(lines)}: {lines}"
+
+
+# ---------------------------------------------------------------------------
+# Regression #220: Edit/MultiEdit duerfen verbatim-guard + decision-log
+# nicht umgehen. Der Hook muss auch bei Edit (new_string) und MultiEdit
+# (edits[].new_string) eine Log-Zeile schreiben.
+# ---------------------------------------------------------------------------
+
+
+def test_hook_logs_md_edit(tmp_path):
+    """Regression #220: Edit-Event auf *.md erzeugt eine Log-Zeile.
+
+    Edit-Tool-Input hat kein 'content', sondern old_string/new_string.
+    """
+    log_file = tmp_path / "decisions.log"
+    md_file = tmp_path / "kapitel" / "kap1.md"
+    md_file.parent.mkdir(parents=True)
+
+    payload = {
+        "tool_name": "Edit",
+        "tool_input": {
+            "file_path": str(md_file),
+            "old_string": "alter Absatz",
+            "new_string": "# Kapitel 1\nNeu eingefuegter Absatz",
+        },
+    }
+    env_overrides = {
+        "ACADEMIC_DECISIONS_LOG": str(log_file),
+        "CLAUDE_PROJECT_DIR": str(tmp_path),
+    }
+
+    result = run_hook(payload, env_overrides=env_overrides)
+    assert result.returncode == 0, f"Erwartet 0, got {result.returncode}. stderr: {result.stderr}"
+
+    assert log_file.exists(), "decisions.log wurde bei Edit nicht erstellt (Hook umgangen)"
+    lines = [l for l in log_file.read_text().strip().splitlines() if l.strip()]
+    assert len(lines) >= 1, f"Erwartet >=1 Log-Zeile bei Edit, got {len(lines)}"
+    assert "kap1.md" in lines[0], f"Dateiname fehlt in: {lines[0]}"
+
+
+def test_hook_logs_md_multiedit(tmp_path):
+    """Regression #220: MultiEdit-Event auf *.md erzeugt eine Log-Zeile."""
+    log_file = tmp_path / "decisions.log"
+    md_file = tmp_path / "kapitel" / "kap2.md"
+    md_file.parent.mkdir(parents=True)
+
+    payload = {
+        "tool_name": "MultiEdit",
+        "tool_input": {
+            "file_path": str(md_file),
+            "edits": [
+                {"old_string": "a", "new_string": "# Kapitel 2\nErster Block"},
+                {"old_string": "b", "new_string": "Zweiter Block"},
+            ],
+        },
+    }
+    env_overrides = {
+        "ACADEMIC_DECISIONS_LOG": str(log_file),
+        "CLAUDE_PROJECT_DIR": str(tmp_path),
+    }
+
+    result = run_hook(payload, env_overrides=env_overrides)
+    assert result.returncode == 0, f"Erwartet 0, got {result.returncode}. stderr: {result.stderr}"
+
+    assert log_file.exists(), "decisions.log wurde bei MultiEdit nicht erstellt (Hook umgangen)"
+    lines = [l for l in log_file.read_text().strip().splitlines() if l.strip()]
+    assert len(lines) >= 1, f"Erwartet >=1 Log-Zeile bei MultiEdit, got {len(lines)}"
+    assert "kap2.md" in lines[0], f"Dateiname fehlt in: {lines[0]}"
