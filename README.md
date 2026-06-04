@@ -533,6 +533,7 @@ Der Server registriert **28 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referen
 | `vault.list_decisions(category=None, active_only=True)` | Gibt Decisions zurück (optionaler `category`-Filter) | `vault.list_decisions(category="scope")` |
 | `vault.add_excluded_source(paper_id, reason=None)` | Fügt `paper_id` zu `excluded_sources` (verhindert Re-Vorschlag) | `vault.add_excluded_source("smith2010", reason="off-topic")` |
 | `vault.is_excluded(paper_id)` | Prüft, ob `paper_id` ausgeschlossen ist | `vault.is_excluded("smith2010")` |
+| `vault.list_papers_by_provenance(provenance)` | Provenance-Audit: alle Papers mit gegebenem Herkunfts-Tag (z.B. `"scihub"`) | `vault.list_papers_by_provenance("scihub")` |
 
 **Risk-of-Bias & Score-Historie** (v6.4)
 

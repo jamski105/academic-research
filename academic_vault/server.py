@@ -295,8 +295,11 @@ def add_paper(
     page_last: Optional[int] = None,
     container_title: Optional[str] = None,
     parent_paper_id: Optional[str] = None,
+    provenance: Optional[str] = None,
 ) -> None:
     """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter.
+
+    provenance: Herkunfts-Tag (z.B. "scihub") fuer Provenance-Audit (#195).
 
     csl_json wird strikt validiert (Issue #213): Pflichtfeld 'type', gueltiger
     CSL-Typ, valides JSON. Bei Verstoss ValueError statt silent default.
@@ -311,6 +314,7 @@ def add_paper(
         page_first=page_first, page_last=page_last,
         container_title=container_title,
         parent_paper_id=parent_paper_id,
+        provenance=provenance,
     )
 
 
@@ -356,6 +360,13 @@ def get_paper(db_path: str, paper_id: str) -> Optional[dict]:
     """Gibt Paper-Metadata als dict zurueck oder None."""
     db = VaultDB(db_path)
     return db.get_paper(paper_id)
+
+
+def list_papers_by_provenance(db_path: str, provenance: str) -> list[dict]:
+    """Gibt alle Papers mit dem angegebenen provenance-Tag zurueck (Audit, #195)."""
+    db = VaultDB(db_path)
+    db.init_schema()
+    return db.list_papers_by_provenance(provenance)
 
 
 def ensure_file(db_path: str, paper_id: str, api_key: str = "") -> str:
@@ -810,6 +821,11 @@ def _build_mcp_server():
         """Paper-Metadata + pdf_status."""
         return get_paper(db_path, paper_id)
 
+    @mcp.tool(name="vault.list_papers_by_provenance")
+    def _vault_list_papers_by_provenance(provenance: str) -> list[dict]:
+        """Audit: alle Papers mit gegebenem Herkunfts-Tag (z.B. "scihub")."""
+        return list_papers_by_provenance(db_path, provenance)
+
     @mcp.tool(name="vault.add_paper")
     def _vault_add_paper(
         paper_id: str,
@@ -824,8 +840,12 @@ def _build_mcp_server():
         page_last: int = None,
         container_title: str = None,
         parent_paper_id: str = None,
+        provenance: str = None,
     ) -> None:
-        """Upsert eines Papers. type aus csl_json; book|chapter|article-journal erlaubt."""
+        """Upsert eines Papers. type aus csl_json; book|chapter|article-journal erlaubt.
+
+        provenance: Herkunfts-Tag (z.B. "scihub") fuer Provenance-Audit (#195).
+        """
         add_paper(
             db_path, paper_id, csl_json,
             pdf_path=pdf_path, doi=doi, isbn=isbn, page_offset=page_offset,
@@ -833,6 +853,7 @@ def _build_mcp_server():
             page_first=page_first, page_last=page_last,
             container_title=container_title,
             parent_paper_id=parent_paper_id,
+            provenance=provenance,
         )
 
     @mcp.tool(name="vault.add_chapter")

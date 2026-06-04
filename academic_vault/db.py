@@ -198,10 +198,13 @@ class VaultDB:
         page_last: Optional[int] = None,
         container_title: Optional[str] = None,
         parent_paper_id: Optional[str] = None,
+        provenance: Optional[str] = None,
     ) -> None:
         """Upsert eines Papers in die papers-Tabelle.
 
         type wird aus csl_json extrahiert. Erlaubte Werte: article-journal, book, chapter.
+
+        provenance: Herkunfts-Tag (z.B. "scihub", "oa") fuer Audit-Zwecke (#195).
 
         Malformed JSON wird NICHT mehr stillschweigend zu 'article-journal'
         defaulted (Issue #213, Security Round-2 M3), sondern als ValueError
@@ -230,9 +233,9 @@ class VaultDB:
                 INSERT INTO papers
                   (paper_id, type, csl_json, doi, isbn, pdf_path, page_offset,
                    editor, chapter, page_first, page_last, container_title,
-                   parent_paper_id,
+                   parent_paper_id, provenance,
                    added_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(paper_id) DO UPDATE SET
                   type            = excluded.type,
                   csl_json        = excluded.csl_json,
@@ -246,12 +249,13 @@ class VaultDB:
                   page_last       = excluded.page_last,
                   container_title = excluded.container_title,
                   parent_paper_id = excluded.parent_paper_id,
+                  provenance      = excluded.provenance,
                   updated_at      = excluded.updated_at
                 """,
                 (
                     paper_id, paper_type, csl_json, doi, isbn, pdf_path, page_offset,
                     editor, chapter, page_first, page_last, container_title,
-                    parent_paper_id,
+                    parent_paper_id, provenance,
                     now, now,
                 ),
             )
@@ -294,6 +298,19 @@ class VaultDB:
         if row is None:
             return 0
         return int(row["page_offset"] or 0)
+
+    def list_papers_by_provenance(self, provenance: str) -> list[dict]:
+        """Gibt alle Papers mit dem angegebenen provenance-Tag zurueck (Audit, #195).
+
+        Beispiel: ``list_papers_by_provenance("scihub")`` liefert alle aus dem
+        SciHub-Tier bezogenen Papers fuer ein Provenance-Audit.
+        """
+        with self._connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM papers WHERE provenance = ? ORDER BY added_at",
+                (provenance,),
+            ).fetchall()
+        return [dict(r) for r in rows]
 
     # ------------------------------------------------------------------
     # Quotes CRUD
