@@ -153,6 +153,49 @@ def test_search_md_interactive_off_documented():
 
 
 # ---------------------------------------------------------------------------
+# Regression #227: relevance-scorer darf nur einmal pro Suchlauf aufgerufen werden
+# ---------------------------------------------------------------------------
+
+def test_search_md_relevance_scorer_invoked_once():
+    """commands/search.md darf den relevance-scorer-Agent nur EINMAL als
+    Ausführungsschritt starten (kein doppeltes LLM-Relevanz-Scoring).
+
+    Issue #227: Schritt 7 (Draft-Überbleibsel) und Schritt 9 beschrieben
+    beide wortidentisch das Starten des relevance-scorer-Agents in Batches
+    von 10 Papers -> Scorer-Doppelaufruf -> unnötige API-Kosten +
+    inkonsistentes Überschreiben von papers.json.
+    """
+    search_md = REPO_ROOT / "commands" / "search.md"
+    content = search_md.read_text(encoding="utf-8")
+    phrase = "Den `relevance-scorer`-Agent in Batches von 10 Papers starten."
+    occurrences = content.count(phrase)
+    assert occurrences == 1, (
+        f"relevance-scorer-Start-Anweisung kommt {occurrences}x vor "
+        f"(erwartet: genau 1) -> doppeltes Relevanz-Scoring (#227)"
+    )
+
+
+def test_search_md_no_duplicate_step_numbers():
+    """commands/search.md darf keine doppelten Schritt-Nummern haben.
+
+    Nach Entfernen des redundanten Schritts (#227) müssen die verbleibenden
+    Schritte lückenlos und eindeutig nummeriert sein.
+    """
+    import re
+    search_md = REPO_ROOT / "commands" / "search.md"
+    content = search_md.read_text(encoding="utf-8")
+    numbers = [int(m) for m in re.findall(r"^### Schritt (\d+):", content, re.MULTILINE)]
+    assert numbers, "Keine '### Schritt N:'-Überschriften gefunden"
+    assert len(numbers) == len(set(numbers)), (
+        f"Doppelte Schritt-Nummern gefunden: {numbers}"
+    )
+    # Lückenlos von 1 aufsteigend
+    assert numbers == list(range(1, len(numbers) + 1)), (
+        f"Schritt-Nummern nicht lückenlos aufsteigend: {numbers}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # chapter-writer SKILL.md approval gate
 # ---------------------------------------------------------------------------
 

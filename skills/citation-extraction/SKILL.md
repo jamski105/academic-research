@@ -24,6 +24,9 @@ Extrahiert und formatiert wörtliche Zitate aus PDFs für einzelne Belege.
 Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 (ruft `citation-extraction` bei Bedarf auf).
 
+**BibTeX-Abgrenzung:** „BibTeX aus Vault" / „komplette Bibliographie als .bib"
+→ `latex-export --bib`, nicht hierher (Details → `references/output-formats.md`).
+
 ## Variant-Selector
 
 Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Variant-Datei:
@@ -40,10 +43,8 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 
 Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
 
-**Typ-basierte Erweiterung:** Falls die Quelle `type: chapter` hat (Buchkapitel aus Sammelband),
-lade zusaetzlich `references/book-chapter-de.md` und nutze die dort definierten
-Formatierungsregeln fuer den aktiven Zitierstil (DIN 1505, Harvard-de oder APA-7).
-Die Regeln in `book-chapter-de.md` haben Vorrang vor den generischen Artikel-Regeln.
+**Typ-basierte Erweiterung:** Je nach Quellen-`type` zusaetzliche Referenz laden
+(siehe Tabelle); deren Regeln haben Vorrang vor den generischen Artikel-Regeln.
 
 | Quellen-Typ | Zusaetzliche Referenz |
 |-------------|----------------------|

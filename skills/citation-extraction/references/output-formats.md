@@ -11,8 +11,11 @@ Variant-Selector in `SKILL.md`).
 
 ## Unterstützte Output-Formate
 
-- **BibTeX** — für LaTeX-Integration. Ziel-Datei:
-  `~/.academic-research/citations.bib`.
+- **BibTeX** — für LaTeX-Integration einzelner extrahierter Zitate (one-shot).
+  Ziel-Datei: `~/.academic-research/citations.bib`. Für den vollständigen
+  Vault→`.bib`-Dump aller Papers → `latex-export --bib`. Phrasen wie
+  „BibTeX aus Vault" oder „komplette Bibliographie als .bib" gehören zu
+  `latex-export`, nicht zu diesem Skill.
 - **Markdown** — für Review und manuelles Editieren.
 - **JSON** — für die programmatische Nutzung durch andere Skills.
 

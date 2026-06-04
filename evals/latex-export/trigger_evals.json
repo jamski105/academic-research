@@ -1,0 +1,27 @@
+{
+  "component": "latex-export",
+  "should_trigger": [
+    "Exportiere mein Kapitel als .tex.",
+    "Wandle meine Thesis nach LaTeX um.",
+    "Kapitel uebersetzen nach LaTeX bitte.",
+    "Erzeuge eine .bib-Datei aus dem Vault.",
+    "Ich brauche meinen Text als LaTeX-Output.",
+    "Konvertiere das Markdown-Kapitel in tex.",
+    "Baue mir die BibTeX aus den Quellen im Vault.",
+    "LaTeX-Export der gesamten Arbeit starten.",
+    "Generiere biblatex im DIN-1505-Stil.",
+    "Mach aus dem Kapitel eine tex-Datei mit Pandoc."
+  ],
+  "should_not_trigger": [
+    "Schreibe Kapitel 3 meiner Arbeit.",
+    "Welches Thema soll ich nehmen?",
+    "Pruefe meinen Text auf KI-Muster.",
+    "Erstelle ein Konferenz-Poster.",
+    "Importiere meine Reading List.",
+    "Schaerfe meine Forschungsfrage.",
+    "Suche Open-Access-Paper zu Microservices.",
+    "Generiere einen Arbeitstitel.",
+    "Schreibe einen Foerderantrag.",
+    "Visualisiere meinen Literaturcluster."
+  ]
+}

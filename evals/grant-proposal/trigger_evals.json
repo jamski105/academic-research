@@ -1,0 +1,27 @@
+{
+  "component": "grant-proposal",
+  "should_trigger": [
+    "Hilf mir einen Foerderantrag zu schreiben.",
+    "Ich brauche einen DFG-Antrag.",
+    "Schreibe einen BMBF-Antrag fuer mein Projekt.",
+    "Wie formuliere ich einen EU-Horizon-Antrag?",
+    "Erstelle einen Drittmittelantrag.",
+    "Ich moechte einen grant proposal verfassen.",
+    "Unterstuetze mich bei der Foerderantragstellung.",
+    "Antrag fuer Forschungsfoerderung schreiben.",
+    "Hilf mir beim Antragstext fuer die DFG-Sachbeihilfe.",
+    "Kannst du einen Projektantrag fuer Drittmittel aufsetzen?"
+  ],
+  "should_not_trigger": [
+    "Schreibe Kapitel 2 meiner Dissertation.",
+    "Welches Thema soll ich waehlen?",
+    "Exportiere mein Kapitel nach LaTeX.",
+    "Erstelle ein Konferenz-Poster.",
+    "Antworte auf die Reviewer-Kommentare.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Importiere meine Zotero-Bibliothek.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel fuer das Paper.",
+    "Visualisiere die Literaturcluster."
+  ]
+}

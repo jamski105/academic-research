@@ -1,0 +1,27 @@
+{
+  "component": "material-passport",
+  "should_trigger": [
+    "Erstelle ein Reproduzierbarkeits-Manifest.",
+    "Ich moechte die Abgabe vorbereiten.",
+    "Sperre den Vault fuer die Abgabe.",
+    "Mach einen Repro-Lock.",
+    "Generiere die material-passport.json.",
+    "Dokumentiere die Reproduzierbarkeit meines Projekts.",
+    "Material-Passport fuer das Projekt erstellen.",
+    "Finalisiere das Projekt fuer die Einreichung.",
+    "Exportiere alle Metadaten als Repro-Manifest.",
+    "Erzeuge den Decision-Snapshot fuer die Abgabe."
+  ],
+  "should_not_trigger": [
+    "Schreibe Kapitel 4.",
+    "Welches Thema soll ich nehmen?",
+    "Extrahiere Zitate aus dem PDF.",
+    "Suche Open-Access-Paper.",
+    "Exportiere nach LaTeX.",
+    "Importiere meine Zotero-Bibliothek.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage.",
+    "Generiere einen Titel."
+  ]
+}
