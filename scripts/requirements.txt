@@ -9,7 +9,7 @@ requests>=2.32.4
 # lxml>=5.2.0: CVE-2022-2309 (NULL pointer deref)
 lxml>=5.2.0
 # Barcode-Generierung fuer /academic-research:pickup (Skill: barcode_utils)
-python-barcode[images]>=0.15.0
+python-barcode[images]>=0.16.1
 # academic-vault MCP-Server (Vault): FastMCP-SDK + Vektor-Suche-Extension
 mcp>=1.0
 sqlite-vec>=0.1.0
