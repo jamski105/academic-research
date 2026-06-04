@@ -8,20 +8,20 @@ license: MIT
 # Buch-Handler
 
 > **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
-> und befolge alle dort definierten Bloecke (Vorbedingungen, Keine Fabrikation,
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
 > Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
-> fortfaehrst.
+> fortfährst.
 
-## Uebersicht
+## Übersicht
 
-Indexiert Buecher und Kapitel analog zu Artikeln. Liefert CSL-JSON mit
-`type: book | chapter`, Herausgeber-Array und Seitenangaben. Prueft
-DOAB/OAPEN auf Open-Access-Verfuegbarkeit.
+Indexiert Bücher und Kapitel analog zu Artikeln. Liefert CSL-JSON mit
+`type: book | chapter`, Herausgeber-Array und Seitenangaben. Prüft
+DOAB/OAPEN auf Open-Access-Verfügbarkeit.
 
 ## Abgrenzung
 
 Schneidet keine Kapitel aus PDFs (F2.2), berechnet kein Seitenmapping
-(F2.3), fuehrt keine OCR durch (F2.4).
+(F2.3), führt keine OCR durch (F2.4).
 Zitationsformatierung: `citation-extraction`.
 
 ## Trigger-Erkennung
@@ -33,7 +33,7 @@ Aktiviert sich bei:
 
 ## Workflow
 
-### 1. Metadaten aufloesen
+### 1. Metadaten auflösen
 
 ```bash
 python scripts/book_resolve.py --isbn {isbn}
@@ -72,22 +72,22 @@ Ergebnis via `vault.set_page_offset({citekey}, {offset})` speichern.
 
 Falls `book_resolve.py` ein `URL`-Feld liefert (DOAB/OAPEN):
 - Setze `pdf_path` im Vault-Eintrag
-- Informiere User: "OA-PDF verfuegbar unter {url}"
+- Informiere User: "OA-PDF verfügbar unter {url}"
 
 ### 4. Nachfolge-Hinweise
 
 Nach erfolgreichem Vault-Eintrag dem User anbieten:
 - Kapitel extrahieren? -> F2.2: `chunk_pdf.py`
-- Scan-PDF (kein Text)? -> Schritt 5 ausfuehren
+- Scan-PDF (kein Text)? -> Schritt 5 ausführen
 
-### 5. OCR-Pruefung (bei pdf_path vorhanden)
+### 5. OCR-Prüfung (bei pdf_path vorhanden)
 
 ```python
 from pdf import detect_needs_ocr
 if detect_needs_ocr(pdf_path):
     # User fragen:
     # "Scan-PDF erkannt: wenig Text auf Stichproben-Seiten.
-    #  OCR ausfuehren? (~30 s/Seite, lokal via ocrmypdf) [j/n]"
+    #  OCR ausführen? (~30 s/Seite, lokal via ocrmypdf) [j/n]"
     # Bei Zustimmung:
     from ocr import run_ocrmypdf
     run_ocrmypdf(pdf_path, pdf_path_ocr)
@@ -109,8 +109,8 @@ Buch indexiert: {titel} ({year})
 ## Beispiel
 
 **Gut:** User gibt ISBN 978-3-446-46103-1 an.
-book-handler fuehrt `book_resolve.py --isbn 9783446461031` aus,
-erhaelt CSL-JSON (type=book, title, author, publisher, year),
-legt Vault-Eintrag an, bestaetigt dem User.
+book-handler führt `book_resolve.py --isbn 9783446461031` aus,
+erhält CSL-JSON (type=book, title, author, publisher, year),
+legt Vault-Eintrag an, bestätigt dem User.
 
 **Schlecht:** Metadaten ohne API-Aufruf erfinden -- VERBOTEN.

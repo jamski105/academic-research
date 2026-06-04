@@ -2,9 +2,14 @@
 /**
  * hooks/post-tool-use-decisions.mjs — PostToolUse Decision-Log Hook
  *
- * Bei Write-Events auf *.md-Dateien im Projekt-Verzeichnis schreibt
- * eine Zeile in decisions.log:
- *   <ISO-Timestamp> | Write | <relativer-Pfad>
+ * Bei Write/Edit/MultiEdit-Events auf *.md-Dateien im Projekt-Verzeichnis
+ * schreibt eine Zeile in decisions.log:
+ *   <ISO-Timestamp> | <Tool> | <relativer-Pfad> | sha256=<hash>
+ *
+ * Datenschutz (CWE-532):
+ *   - KEIN Content-Snippet im Klartext — nur der SHA-256-Hash des Inhalts.
+ *   - Logfile wird mit 0600-Permissions geschrieben (nur Owner).
+ *   - Rotation bei >10 MB: decisions.log -> decisions.log.1.
  *
  * Protokoll:
  *   - Eingabe: JSON via stdin (Claude Code PostToolUse-Format)
@@ -15,12 +20,16 @@
  *   CLAUDE_PROJECT_DIR      — Projekt-Verzeichnis (default: cwd)
  */
 
-import { appendFileSync, mkdirSync, existsSync } from 'node:fs';
+import { appendFileSync, mkdirSync, existsSync, chmodSync, statSync, renameSync } from 'node:fs';
 import { dirname, relative, basename } from 'node:path';
+import { createHash } from 'node:crypto';
 import * as os from 'node:os';
 import * as path from 'node:path';
 
 const DEFAULT_LOG = path.join(os.homedir(), '.academic-research', 'decisions.log');
+
+// Rotation: maximale Logfile-Groesse in Bytes (10 MB), dann -> decisions.log.1
+const MAX_LOG_BYTES = 10 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------
 // Konfiguration
@@ -28,6 +37,25 @@ const DEFAULT_LOG = path.join(os.homedir(), '.academic-research', 'decisions.log
 
 const DECISIONS_LOG = process.env.ACADEMIC_DECISIONS_LOG || DEFAULT_LOG;
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+
+// Tools die Dateiinhalte schreiben und daher protokolliert werden (#220).
+const WRITE_LIKE_TOOLS = new Set(['Write', 'Edit', 'MultiEdit']);
+
+/**
+ * Extrahiert den geschriebenen Text aus tool_input — abhaengig vom Tool:
+ *   - Write:     tool_input.content
+ *   - Edit:      tool_input.new_string
+ *   - MultiEdit: alle edits[].new_string (zusammengefuegt)
+ */
+function extractContent(toolName, toolInput) {
+  if (toolName === 'MultiEdit' && Array.isArray(toolInput.edits)) {
+    return toolInput.edits.map((e) => (e && e.new_string) || '').join('\n');
+  }
+  if (toolName === 'Edit') {
+    return toolInput.new_string || '';
+  }
+  return toolInput.content || '';
+}
 
 // ---------------------------------------------------------------------------
 // Stdin lesen
@@ -67,10 +95,31 @@ function isMdInProject(filePath) {
 // ---------------------------------------------------------------------------
 
 /**
- * Schreibt eine Zeile in decisions.log.
- * Format: ISO-Timestamp | Write | <relativer-Pfad> | <Δ-Summary>
+ * Rotiert das Logfile, wenn es MAX_LOG_BYTES ueberschreitet.
+ * decisions.log -> decisions.log.1 (ueberschreibt eine evtl. vorhandene .1).
  */
-function writeLogLine(filePath, content) {
+function rotateIfNeeded() {
+  try {
+    if (!existsSync(DECISIONS_LOG)) return;
+    const size = statSync(DECISIONS_LOG).size;
+    if (size <= MAX_LOG_BYTES) return;
+    renameSync(DECISIONS_LOG, `${DECISIONS_LOG}.1`);
+  } catch {
+    // Rotation ist best-effort — nie blockierend.
+  }
+}
+
+/**
+ * Schreibt eine Zeile in decisions.log.
+ * Format: ISO-Timestamp | <Tool> | <relativer-Pfad> | sha256=<hash>
+ *
+ * Der Tool-Name (Write/Edit/MultiEdit, #220) wird mitprotokolliert.
+ *
+ * Aus Datenschutzgruenden (CWE-532) wird KEIN Content-Snippet im Klartext
+ * geloggt. Stattdessen steht der SHA-256-Hash des Inhalts in der Zeile —
+ * ausreichend fuer Idempotenz-/Aenderungs-Checks, ohne PII zu leaken.
+ */
+function writeLogLine(toolName, filePath, content) {
   const ts = new Date().toISOString();
 
   // Relativer Pfad wenn moeglich
@@ -81,19 +130,21 @@ function writeLogLine(filePath, content) {
     relPath = basename(filePath);
   }
 
-  // Δ-Summary: erste Zeile des Inhalts (bis 60 Zeichen)
-  const firstLine = (content || '').split('\n')[0].slice(0, 60).trim();
-  const delta = firstLine || '<leer>';
+  // SHA-256-Hash des Inhalts statt Klartext-Snippet (Idempotenz-Check ohne Leak).
+  const hash = createHash('sha256').update(content || '', 'utf-8').digest('hex');
 
-  const line = `${ts} | Write | ${relPath} | ${delta}\n`;
+  const line = `${ts} | ${toolName} | ${relPath} | sha256=${hash}\n`;
 
   try {
     // Log-Verzeichnis sicherstellen
     const logDir = dirname(DECISIONS_LOG);
     if (!existsSync(logDir)) {
-      mkdirSync(logDir, { recursive: true });
+      mkdirSync(logDir, { recursive: true, mode: 0o700 });
     }
+    rotateIfNeeded();
     appendFileSync(DECISIONS_LOG, line, 'utf-8');
+    // Restriktive Permissions: nur Owner darf lesen/schreiben (0600).
+    chmodSync(DECISIONS_LOG, 0o600);
   } catch (err) {
     process.stderr.write(`[Decisions-Log] Fehler beim Schreiben: ${err.message}\n`);
   }
@@ -115,22 +166,22 @@ async function main() {
     process.exit(0);
   }
 
-  // Nur Write-Events
+  // Schreibende Tool-Events protokollieren: Write, Edit, MultiEdit (#220)
   const toolName = input?.tool_name || input?.hook_event_name || '';
-  if (toolName !== 'Write') {
+  if (!WRITE_LIKE_TOOLS.has(toolName)) {
     process.exit(0);
   }
 
   const toolInput = input?.tool_input || {};
   const filePath = toolInput.file_path || '';
-  const content = toolInput.content || '';
+  const content = extractContent(toolName, toolInput);
 
   // Nur .md-Dateien im Projekt
   if (!isMdInProject(filePath)) {
     process.exit(0);
   }
 
-  writeLogLine(filePath, content);
+  writeLogLine(toolName, filePath, content);
   process.exit(0);
 }
 

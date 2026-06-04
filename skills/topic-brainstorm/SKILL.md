@@ -130,35 +130,15 @@ Nächster Schritt: Forschungsfrage präzisieren
 
 ## Scoring-Dimensionen
 
+Drei Scores (je 0-10), Summe ergibt den Gesamtscore (0-30).
 Details: `${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/references/scoring-criteria.md`
 
-### Feasibility (0-10)
-Gewichtung: Datenverfügbarkeit (3 Punkte) + Zeitaufwand (3 Punkte) + Methoden-Match (4 Punkte)
+- **Feasibility**: Datenverfügbarkeit + Zeitaufwand + Methoden-Match
+- **Novelty**: Forschungslücken-Heuristik (Stichwort-Überschneidung mit Interessensgebieten)
+- **Career-Fit**: Schlagwort-Überschneidung mit Studienrichtung
 
-| Datenzugang | Basismodifikator |
-|-------------|-----------------|
-| Public Datasets | +1.0 |
-| Literatur-Only | +0.5 |
-| Interview-fähig | 0.0 |
-| Unternehmensdaten | -1.0 |
-
-| Zeitbudget | Basismodifikator |
-|------------|-----------------|
-| 3 Monate | -1.0 |
-| 6 Monate | 0.0 |
-| 12 Monate | +1.0 |
-
-### Novelty (0-10)
-Pilotsuche-Gap-Indikator: Stichwort-Überschneidung mit Interessensgebieten erhöht Relevanz-Score.
-
-### Career-Fit (0-10)
-Schlagwort-Überschneidung mit Studienrichtung.
-
-| Studienrichtung | Modifier-Referenz |
-|-----------------|-------------------|
-| Wirtschaftsinformatik | hoch für IT+BWL-Kombithemen |
-| BWL | hoch für Management/Finance-Themen |
-| Informatik | hoch für rein technische Themen |
+Scoring-Kriterien (alle Modifikator-Tabellen für Datenverfügbarkeit, Zeitbudget
+und Studienrichtung) siehe `${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/references/scoring-criteria.md`.
 
 ## Wichtige Regeln
 

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS papers (
   page_last             INTEGER,
   container_title       TEXT,
   parent_paper_id       TEXT REFERENCES papers(paper_id),
+  provenance            TEXT DEFAULT NULL,
   added_at              INTEGER NOT NULL,
   updated_at            INTEGER NOT NULL
 );

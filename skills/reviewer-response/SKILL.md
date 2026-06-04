@@ -1,6 +1,6 @@
 ---
 name: reviewer-response
-description: Use this skill when the user needs to write a reviewer response / Gutachter-Antwort after paper submission. Triggers on "Antwort für Reviewer schreiben / Antwort fuer Reviewer write", "Reviewer-Response", "point-by-point response", "Revise and Resubmit", "R&R", or when responding to peer review comments. Erstellt strukturierte Response-Letters mit Vault-Belegen; für Kapitelrevision → `chapter-writer`.
+description: Use this skill when the user needs to write a reviewer response / Gutachter-Antwort after paper submission. Triggers on "Antwort für Reviewer schreiben / Antwort fuer Reviewer write", "Reviewer-Response", "Reviewer-Kommentare beantworten", "point-by-point response", "Revise and Resubmit", "R&R", or when responding to peer review comments. Erstellt strukturierte Response-Letters mit Vault-Belegen; für Kapitelrevision → `chapter-writer`.
 license: MIT
 ---
 

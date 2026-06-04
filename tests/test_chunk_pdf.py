@@ -55,7 +55,7 @@ class TestOutlineParsing:
 class TestWriteChapter:
     def test_write_single_chapter_creates_pdf(self):
         """write_chapter schreibt ein gueltiges PDF."""
-        from PyPDF2 import PdfReader
+        from pypdf import PdfReader
         m = _get_module()
         chapters = m.extract_chapters(str(FIXTURE_PDF))
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -81,7 +81,7 @@ class TestWriteChapter:
 class TestTOCFallback:
     def test_toc_fallback_for_pdf_without_outline(self, tmp_path):
         """PDF ohne Outline-Tree: Fallback liefert leere Liste oder SystemExit(2)."""
-        from PyPDF2 import PdfWriter
+        from pypdf import PdfWriter
         m = _get_module()
         writer = PdfWriter()
         writer.add_blank_page(width=595, height=842)
@@ -158,7 +158,7 @@ LARGE_BOOK_PDF = Path(__file__).parent / "fixtures" / "large_book.pdf"
 class TestLargeBook:
     def test_write_all_chapters_400_pages_8_chapters(self):
         """AC1: 1 OA-Buch >= 400 Seiten -> 8 Kapitel-PDFs (8 x 55 = 440 Seiten)."""
-        from PyPDF2 import PdfReader
+        from pypdf import PdfReader
 
         m = _get_module()
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -9,12 +9,14 @@ Prueft jede skills/*/SKILL.md auf:
 """
 
 import json
+import math
 import re
 from pathlib import Path
 
 import pytest
 
 SKILLS_DIR = Path(__file__).parent.parent / "skills"
+README_PATH = Path(__file__).parent.parent / "README.md"
 VENDORED_SKILLS = {"xlsx", "_common", "humanizer-de"}
 ALL_SKILLS = sorted(
     p for p in SKILLS_DIR.glob("*/SKILL.md") if p.parent.name not in VENDORED_SKILLS
@@ -22,7 +24,86 @@ ALL_SKILLS = sorted(
 
 PREAMBLE_PATTERN = "> **Gemeinsames Preamble laden:**"
 BASELINES_PATH = Path(__file__).parent / "baselines" / "skill_sizes.json"
+TOKEN_BASELINE_PATH = Path(__file__).parent / "baselines" / "tokens.json"
 TOKEN_REDUCTION_MIN = 1400  # Zeichen ~ 350 Token (cl100k-Proxy)
+CHARS_PER_TOKEN = 4  # cl100k-Proxy: 1400 Zeichen ~ 350 Token
+TOKEN_DRIFT_THRESHOLD = 1.20  # max. +20% Token-Drift vs. Baseline (Issue #200)
+
+
+def _estimate_tokens(text: str) -> int:
+    """Deterministischer cl100k-Proxy: aufgerundete Zeichenzahl / 4."""
+    return math.ceil(len(text) / CHARS_PER_TOKEN)
+
+
+def _description(path: Path) -> str:
+    """Liefert die zusammengesetzte 'description' aus dem Frontmatter.
+
+    Unterstuetzt sowohl Single-Line- als auch YAML-Block-Skalar (``>``)-Stil.
+    """
+    text = path.read_text()
+    m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+    if not m:
+        return ""
+    fm = m.group(1)
+    dm = re.search(r"^description:\s*(.*?)(?=^[a-zA-Z_][a-zA-Z0-9_-]*:|\Z)", fm, re.DOTALL | re.M)
+    if not dm:
+        return ""
+    return " ".join(dm.group(1).split())
+
+
+def _readme_skill_triggers() -> dict[str, list[str]]:
+    """Parst die README-'Skills-Übersicht'-Tabelle.
+
+    Liefert ``{skill_name: [trigger_phrase, ...]}`` aus der Spalte
+    'Aktiviert bei'. Trigger stehen dort als kursive Phrasen in
+    deutschen Anfuehrungszeichen, z.B. *„Kapitel schreiben"*.
+    """
+    text = README_PATH.read_text()
+    start = text.index("## Skills-Übersicht")
+    end = text.index("\n---", start)
+    section = text[start:end]
+
+    row_re = re.compile(r"^\|\s*`([a-z0-9-]+)`\s*\|\s*(.+?)\s*\|", re.M)
+    trig_re = re.compile(r'[„"]([^„""]+)["""]')
+
+    triggers: dict[str, list[str]] = {}
+    for m in row_re.finditer(section):
+        skill = m.group(1)
+        phrases = trig_re.findall(m.group(2))
+        if phrases:
+            triggers[skill] = phrases
+    return triggers
+
+
+# (skill, trigger)-Paare flach fuer parametrize, damit jede Drift einzeln
+# als Test-Failure sichtbar wird (Issue #208).
+README_TRIGGER_CASES = [
+    (skill, trig)
+    for skill, phrases in _readme_skill_triggers().items()
+    for trig in phrases
+]
+
+
+@pytest.mark.parametrize(
+    "skill_name,trigger",
+    README_TRIGGER_CASES,
+    ids=[f"{s}:{t}" for s, t in README_TRIGGER_CASES],
+)
+def test_readme_trigger_in_skill_description(skill_name: str, trigger: str) -> None:
+    """Issue #208: Jede README-Trigger-Phrase muss in der SKILL.md-description stehen.
+
+    Andernfalls verspricht das README eine Aktivierung, die der Skill nicht
+    leistet (funktionale Desynchronisation). Match ist case-insensitiv als
+    Substring — die description darf den Trigger einbetten (z.B. in einer
+    'X / Y'-Umlaut-Variante).
+    """
+    skill_path = SKILLS_DIR / skill_name / "SKILL.md"
+    assert skill_path.exists(), f"README nennt Skill '{skill_name}', aber {skill_path} fehlt"
+    desc = _description(skill_path)
+    assert trigger.lower() in desc.lower(), (
+        f"{skill_name}: README-Trigger '{trigger}' fehlt in SKILL.md-description "
+        f"(funktional desynchron, Issue #208). description={desc[:200]!r}"
+    )
 
 
 def _frontmatter(path: Path) -> dict:
@@ -107,4 +188,28 @@ def test_token_reduction(skill_path: Path) -> None:
         f"{skill_name}: Reduktion nur {delta} Zeichen "
         f"(erwartet >= {TOKEN_REDUCTION_MIN}). "
         f"alt={old_chars}, neu={new_chars}"
+    )
+
+
+def test_token_baseline_not_empty() -> None:
+    """tokens.json muss befuellt sein, sonst skippt die Token-Regression still (Issue #200)."""
+    assert TOKEN_BASELINE_PATH.exists(), f"Token-Baseline fehlt: {TOKEN_BASELINE_PATH}"
+    baseline = json.loads(TOKEN_BASELINE_PATH.read_text())
+    assert baseline, "tokens.json ist leer -- Token-Regression-Baseline fehlt (Issue #200)"
+
+
+@pytest.mark.parametrize("skill_path", ALL_SKILLS, ids=lambda p: p.parent.name)
+def test_token_drift_vs_baseline(skill_path: Path) -> None:
+    """Jeder Skill muss in tokens.json stehen und darf <= +20% Token-Drift haben (Issue #200)."""
+    baseline = json.loads(TOKEN_BASELINE_PATH.read_text())
+    skill_name = skill_path.parent.name
+    assert skill_name in baseline, (
+        f"Skill '{skill_name}' fehlt in tokens.json -- Baseline aktualisieren"
+    )
+    baseline_tokens = baseline[skill_name]
+    current_tokens = _estimate_tokens(skill_path.read_text())
+    limit = baseline_tokens * TOKEN_DRIFT_THRESHOLD
+    assert current_tokens <= limit, (
+        f"{skill_name}: Token-Drift {current_tokens} > Baseline "
+        f"{baseline_tokens} * {TOKEN_DRIFT_THRESHOLD} = {limit:.0f}"
     )

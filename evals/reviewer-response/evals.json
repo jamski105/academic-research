@@ -1,0 +1,9 @@
+{
+  "component": "reviewer-response",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "rr-01", "input": "Reviewer 1 schreibt: 'The sample size of 12 interviews seems too small to justify the conclusions.' Formuliere eine hoefliche, sachliche point-by-point-Antwort.", "expected": {"type": "regex", "value": "(Reviewer|sample|Stichprobe|Comment|Response)"}, "mode": "with_skill"},
+    {"id": "rr-02", "input": "Erstelle das Geruest eines Response-Letters fuer ein Revise-and-Resubmit mit drei Reviewer-Kommentaren.", "expected": {"type": "regex", "value": "(Reviewer|Comment|Response|Kommentar)"}, "mode": "with_skill"},
+    {"id": "rr-03", "input": "Reviewer 2 bemaengelt fehlende Limitations. Formuliere eine Antwort, die auf eine neu ergaenzte Limitations-Sektion verweist.", "expected": {"type": "regex", "value": "(Limitation|Einschraenkung|Reviewer|added|ergaenzt)"}, "mode": "with_skill"}
+  ]
+}
