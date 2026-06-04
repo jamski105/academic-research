@@ -14,14 +14,14 @@ license: MIT
 
 ## Übersicht
 
-Indexiert Bücher und Kapitel erstklassig -- analog zu Artikeln. Liefert
-CSL-JSON mit `type: book | chapter`, Herausgeber-Array und Seitenangaben.
-Prüft DOAB/OAPEN auf Open-Access-Verfügbarkeit.
+Indexiert Bücher und Kapitel analog zu Artikeln. Liefert CSL-JSON mit
+`type: book | chapter`, Herausgeber-Array und Seitenangaben. Prüft
+DOAB/OAPEN auf Open-Access-Verfügbarkeit.
 
 ## Abgrenzung
 
-Löst Metadaten auf und legt Vault-Einträge an. Schneidet keine Kapitel aus
-PDFs (F2.2), berechnet kein Seitenmapping (F2.3), führt keine OCR durch (F2.4).
+Schneidet keine Kapitel aus PDFs (F2.2), berechnet kein Seitenmapping
+(F2.3), führt keine OCR durch (F2.4).
 Zitationsformatierung: `citation-extraction`.
 
 ## Trigger-Erkennung
@@ -41,7 +41,7 @@ python scripts/book_resolve.py --title "{titel}"
 python scripts/book_resolve.py --doi {doi}
 ```
 
-Output: CSL-JSON (type=book|chapter). API-Quellen: `skills/book-handler/references/sources.md`.
+Output: CSL-JSON (type=book|chapter). API-Quellen: `${CLAUDE_PLUGIN_ROOT}/skills/book-handler/references/sources.md`.
 
 ### 2. Vault-Eintrag anlegen
 

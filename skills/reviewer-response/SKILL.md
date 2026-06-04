@@ -47,7 +47,7 @@ Format-Erkennung:
 - `RC1: ...`
 - Nummerierte Listen (1. ... 2. ...)
 
-Lade Referenzformat: `skills/reviewer-response/references/response-letter-structure.md`
+Lade Referenzformat: `${CLAUDE_PLUGIN_ROOT}/skills/reviewer-response/references/response-letter-structure.md`
 
 ### 2. Kommentare kategorisieren
 
@@ -71,7 +71,7 @@ vault.add_quote(paper_id=<id>, verbatim="<Zitat>", page=<n>)
 
 ### 4. point-by-point Response erstellen
 
-Nutze die Struktur aus `skills/reviewer-response/references/response-letter-structure.md`.
+Nutze die Struktur aus `${CLAUDE_PLUGIN_ROOT}/skills/reviewer-response/references/response-letter-structure.md`.
 
 Für jeden Reviewer-Kommentar:
 1. Kommentar zitieren (kursiv/blockquote)

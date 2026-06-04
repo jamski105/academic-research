@@ -22,13 +22,13 @@ Diskussion, Fazit). Zieht Zitate via `vault.search()` +
 
 Erzeugt Kapitel-Prosa als **Text-Output** und baut Zitate in die
 Argumentation ein.
-Für reines Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`.
-Für reines Extrahieren wörtlicher Zitate aus einem PDF → `citation-extraction`.
+Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`.
+Wörtliche Zitate aus PDF → `citation-extraction`.
 
 ## Few-Shot-Beispiele (pro Kapiteltyp)
 
 Schlecht-/Gut-Beispiele pro Kapiteltyp (Theorie, Methoden, Diskussion):
-`skills/chapter-writer/references/chapter-examples.md`. Vor dem Draften lesen.
+`${CLAUDE_PLUGIN_ROOT}/skills/chapter-writer/references/chapter-examples.md`. Vor dem Draften lesen.
 
 ## Kontext-Dateien
 
@@ -49,8 +49,7 @@ Fehlt `./academic_context.md`: `academic-context`-Skill triggern.
 Fehlt Gliederung: `advisor`-Skill vorschlagen.
 
 Quellen nicht aus `literature_state.md` laden — stattdessen Vault-Queries
-verwenden (Schritt 4). So werden nur relevante Quellen geladen, nicht die
-komplette Literaturliste.
+verwenden (Schritt 4): nur relevante Quellen, nicht die komplette Liste.
 
 ### 2. Ziel-Kapitel bestimmen
 
@@ -83,7 +82,7 @@ Bevor geschrieben wird, erstelle einen kurzen internen Plan:
    `vault.search("<Kapitelthema>", k=5)` → `[paper_id, snippet]`, dann
    `vault.find_quotes(paper_id, query="<Unterabschnitts-Frage>", k=3)` →
    `[verbatim, page, quote_id]`. Ergebnis: ~1700 Token Quellen-Kontext statt
-   vollständigem `literature_state.md`-Dump (~8–15 k Token).
+   vollständigem `literature_state.md`-Dump.
 3. **Argumentationsfluss** — wie das Kapitel zur Forschungsfrage beiträgt
 4. **Schlüsseldefinitionen** — einzuführende oder referenzierte Begriffe
 
@@ -133,8 +132,8 @@ Nachdem alle Abschnitte reviewt und freigegeben sind:
 1. Abschnitte zum Gesamtkapitel zusammenführen
 2. Interne Konsistenz prüfen (Terminologie, Argumentationsfluss)
 3. Alle Zitate auf Vollständigkeit und Formatierung prüfen
-4. Kapitel-Einleitung (außer bei Thesis-Einleitung) und Kapitel-Zusammenfassung ergänzen
-5. Finale Wortzahl berichten
+4. Kapitel-Einleitung (außer Thesis-Einleitung) und -Zusammenfassung ergänzen
+5. Finale Wortzahl nennen
 
 ### 8. Writing-State aktualisieren
 
@@ -148,7 +147,7 @@ Nach der Freigabe des Kapitels durch den User:
 
 Struktur- und Zitations-Profile pro Kapiteltyp (Einleitung, Theoretischer
 Rahmen, Methodik, Analyse/Ergebnisse, Fazit):
-`skills/chapter-writer/references/chapter-types.md`. Beim Kapitelplanung-Schritt
+`${CLAUDE_PLUGIN_ROOT}/skills/chapter-writer/references/chapter-types.md`. Beim Kapitelplanung-Schritt
 das passende Profil anwenden.
 
 ## Zitat-Einbindung via Citations-API
@@ -156,20 +155,20 @@ das passende Profil anwenden.
 Quellen-PDFs im `documents`-Parameter übergeben, damit die API die
 Quellenbindung erzwingt; jedes Paraphrase-Segment via `citations[]`
 nachweisbar. Vollständiger Workflow und Fallback (kein PDF im Vault):
-`skills/chapter-writer/references/citations-api.md`.
+`${CLAUDE_PLUGIN_ROOT}/skills/chapter-writer/references/citations-api.md`.
 
 ## Humanizer-Audit-Pass (nur Hochschul-Kontext)
 
 Vor dem `quality-reviewer`-Aufruf prüfen, ob ein Anti-KI-Audit-Pass nötig ist
 (Hochschul-Marker in `academic_context.md`, kein `humanizer_de: off`).
-Trigger-Bedingung, Ausführung und Ergebnis-Handling:
-`skills/chapter-writer/references/humanizer-audit.md`.
+Trigger, Ausführung und Ergebnis-Handling:
+`${CLAUDE_PLUGIN_ROOT}/skills/chapter-writer/references/humanizer-audit.md`.
 
 ## Qualitaets-Review vor finalem Output
 
 Nach der Generierung des Kapitel-Entwurfs (ggf. nach Humanizer-Audit-Pass)
 triggere den `quality-reviewer`-Agent. Vollständige Kriterien-Konfiguration und
-PASS-/REVISE-Handling: `skills/chapter-writer/references/quality-review-config.md`.
+PASS-/REVISE-Handling: `${CLAUDE_PLUGIN_ROOT}/skills/chapter-writer/references/quality-review-config.md`.
 
 ## Wichtige Regeln
 

@@ -79,7 +79,7 @@ Claude erkennt folgende Phrasen:
 ### Manuell
 
 ```bash
-python skills/reading-list-import/scripts/parse_list.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/reading-list-import/scripts/parse_list.py \
   --file /Pfad/zur/Literaturliste.pdf \
   --db ~/.academic-research/projects/meine-arbeit/vault.db
 ```
@@ -91,7 +91,7 @@ python skills/reading-list-import/scripts/parse_list.py \
 - `.txt` — direkt eingelesen
 
 Erwartete Inhalts-Formate: APA, BibTeX-Snippets, Plain-Stil.
-Detaillierte Format-Hinweise: `skills/reading-list-import/references/format-hints.md`
+Detaillierte Format-Hinweise: `${CLAUDE_PLUGIN_ROOT}/skills/reading-list-import/references/format-hints.md`
 
 ## Pipeline
 
@@ -115,16 +115,16 @@ Ergebnis: N importiert, M übersprungen, Fehler
 
 ### Anystyle (optional)
 
-Falls `anystyle` installiert ist, kann es als vorgelagerter Parser
-verwendet werden. Claude prüft automatisch ob das Tool verfügbar ist:
+Falls `anystyle` installiert ist, dient es als vorgelagerter Parser.
+Claude prüft die Verfügbarkeit automatisch:
 
 ```bash
 # Prüfe ob anystyle verfügbar
 anystyle --version 2>/dev/null && echo "verfügbar" || echo "nicht installiert"
 ```
 
-Bei Verfügbarkeit wird anystyle für initiales Parsen genutzt;
-der LLM-Parser überprüft und vervollständigt das Ergebnis.
+Bei Verfügbarkeit parst anystyle initial; der LLM-Parser prüft
+und vervollständigt das Ergebnis.
 
 ## Verhalten
 

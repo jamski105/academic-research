@@ -63,10 +63,10 @@ Für eine gute Themenempfehlung brauche ich vier Angaben:
 
 ### Schritt 2: Scorer aufrufen
 
-Rufe `skills/topic-brainstorm/scripts/scorer.py` auf mit den gesammelten Werten:
+Rufe `${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/scripts/scorer.py` auf mit den gesammelten Werten:
 
 ```bash
-python skills/topic-brainstorm/scripts/scorer.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/scripts/scorer.py \
   --interests "<INTERESSEN>" \
   --field "<STUDIENRICHTUNG>" \
   --budget "<ZEITBUDGET>" \
@@ -93,7 +93,7 @@ Zeige pro Topic:
 - Die 2-3 Forschungsfragen
 - Das Pilot-Paper-Set (1-3 Referenzen)
 
-Score-Legende (aus `skills/topic-brainstorm/references/scoring-criteria.md`):
+Score-Legende (aus `${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/references/scoring-criteria.md`):
 - **Feasibility**: Datenverfügbarkeit + Zeitaufwand + Methoden-Match
 - **Novelty**: Lücken-Indikator (Anzahl recent vs. older papers in area)
 - **Career-Fit**: Schlagwort-Überschneidung mit Studienrichtung + Berufsbild
@@ -130,14 +130,15 @@ Nächster Schritt: Forschungsfrage präzisieren
 
 ## Scoring-Dimensionen
 
-Drei Scores (je 0-10), Summe ergibt den Gesamtscore (0-30):
+Drei Scores (je 0-10), Summe ergibt den Gesamtscore (0-30).
+Details: `${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/references/scoring-criteria.md`
 
 - **Feasibility**: Datenverfügbarkeit + Zeitaufwand + Methoden-Match
 - **Novelty**: Forschungslücken-Heuristik (Stichwort-Überschneidung mit Interessensgebieten)
 - **Career-Fit**: Schlagwort-Überschneidung mit Studienrichtung
 
 Scoring-Kriterien (alle Modifikator-Tabellen für Datenverfügbarkeit, Zeitbudget
-und Studienrichtung) siehe `skills/topic-brainstorm/references/scoring-criteria.md`.
+und Studienrichtung) siehe `${CLAUDE_PLUGIN_ROOT}/skills/topic-brainstorm/references/scoring-criteria.md`.
 
 ## Wichtige Regeln
 

@@ -41,10 +41,10 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 | Vancouver | `references/vancouver.md` |
 | Springer Author-Date | `references/springer-author-date.md` |
 
-Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
+Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Lies `${CLAUDE_PLUGIN_ROOT}/skills/citation-extraction/references/<variant>.md`.
 
-**Typ-basierte Erweiterung:** Je nach Quellen-`type` zusaetzliche Referenz laden
-(siehe Tabelle); deren Regeln haben Vorrang vor den generischen Artikel-Regeln.
+**Typ-basierte Erweiterung:** Je nach Quellen-`type` zusaetzliche Referenz laden;
+deren Regeln haben Vorrang vor den generischen Artikel-Regeln.
 
 | Quellen-Typ | Zusaetzliche Referenz |
 |-------------|----------------------|
@@ -54,7 +54,7 @@ Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read sk
 
 ## Citations-API
 
-Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der Claude-API statt Prompt-basierter Zitation. Vorteil: Zitate sind seitengenau, die API erzwingt die Quellenbindung.
+Liegen Quellen-PDFs im Session-Kontext, nutze den `documents`-Parameter der Claude-API statt Prompt-basierter Zitation. Vorteil: Zitate sind seitengenau, die API erzwingt die Quellenbindung.
 
 **Wann verwenden:** mindestens 1 PDF im Session-Pfad und Zitierstil-Konversion
 aus echtem Quelltext (nicht aus Metadaten).
