@@ -3,4 +3,4 @@
 -r scripts/requirements.txt
 
 pytest>=8.0
-pytest-cov>=5.0
+pytest-cov>=7.1.0
