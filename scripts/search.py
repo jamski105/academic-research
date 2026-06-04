@@ -116,6 +116,13 @@ TIMEOUT = 30.0
 OAI_DC_NS = "http://purl.org/dc/elements/1.1/"
 ARXIV_NS = "http://www.w3.org/2005/Atom"
 
+# Mengenlimits fuer den EconStor-OAI-PMH-Fallback (#236):
+# Verhindern, dass bei dauerhaftem REST-Ausfall der gesamte Repo-Dump
+# (> 250k Records) in den Speicher geladen wird bzw. die resumptionToken-
+# Schleife unbegrenzt paginiert.
+OAI_MAX_PAGES = 5  # max. resumptionToken-Runden (inkl. Erstabfrage)
+OAI_MAX_RECORDS = 1000  # max. insgesamt geparste Records pro Fallback
+
 log = logging.getLogger(__name__)
 
 
@@ -355,45 +362,75 @@ def search_econstor(query: str, limit: int) -> list[dict[str, Any]]:
         if rest_resp.status_code == 200 and rest_resp.headers.get("content-type", "").startswith("application/json"):
             items = rest_resp.json()
         else:
-            # Fallback: OAI-PMH harvest with client-side keyword filtering
+            # Fallback: OAI-PMH harvest with client-side keyword filtering.
+            # Mengenlimit (#236): hoechstens OAI_MAX_PAGES resumptionToken-Runden
+            # und insgesamt hoechstens OAI_MAX_RECORDS geparste Records, damit bei
+            # dauerhaftem REST-Ausfall nicht der gesamte Repo-Dump (> 250k Records)
+            # in den Speicher geladen wird und die Schleife garantiert terminiert.
             items = []
-            oai_resp = client.get(
-                "https://www.econstor.eu/oai/request",
-                params={"verb": "ListRecords", "metadataPrefix": "oai_dc"},
-            )
-            oai_resp.raise_for_status()
-            root = ET.fromstring(oai_resp.text)
             ns = {"oai": "http://www.openarchives.org/OAI/2.0/", "dc": OAI_DC_NS}
             query_lower = query.lower()
-            for record in root.findall(".//oai:record", ns):
-                metadata = record.find(".//oai:metadata", ns)
-                if metadata is None:
-                    continue
-                dc_el = metadata.find("{http://www.openarchives.org/OAI/2.0/oai_dc/}dc")
-                if dc_el is None:
-                    continue
-                title_el = dc_el.find(f"{{{OAI_DC_NS}}}title")
-                title = title_el.text if title_el is not None and title_el.text else ""
-                desc_el = dc_el.find(f"{{{OAI_DC_NS}}}description")
-                desc = desc_el.text if desc_el is not None and desc_el.text else ""
-                if query_lower not in title.lower() and query_lower not in desc.lower():
-                    continue
-                creators = [c.text for c in dc_el.findall(f"{{{OAI_DC_NS}}}creator") if c.text]
-                date_el = dc_el.find(f"{{{OAI_DC_NS}}}date")
-                year = None
-                if date_el is not None and date_el.text:
-                    year_str = date_el.text[:4]
-                    if year_str.isdigit():
-                        year = int(year_str)
-                doi = None
-                item_url = None
-                for id_el in dc_el.findall(f"{{{OAI_DC_NS}}}identifier"):
-                    if id_el.text and "doi.org" in id_el.text:
-                        doi = id_el.text.replace("https://doi.org/", "").replace("http://doi.org/", "")
-                    elif id_el.text and id_el.text.startswith("http"):
-                        item_url = id_el.text
-                items.append({"title": title, "authors": creators, "year": year, "abstract": desc, "doi": doi, "url": item_url})
-                if len(items) >= limit:
+            resumption_token: str | None = None
+            records_seen = 0
+            for _ in range(OAI_MAX_PAGES):
+                if resumption_token:
+                    oai_params: dict[str, str] = {
+                        "verb": "ListRecords",
+                        "resumptionToken": resumption_token,
+                    }
+                else:
+                    oai_params = {"verb": "ListRecords", "metadataPrefix": "oai_dc"}
+                oai_resp = client.get(
+                    "https://www.econstor.eu/oai/request",
+                    params=oai_params,
+                )
+                oai_resp.raise_for_status()
+                root = ET.fromstring(oai_resp.text)
+                page_done = False
+                for record in root.findall(".//oai:record", ns):
+                    if records_seen >= OAI_MAX_RECORDS or len(items) >= limit:
+                        page_done = True
+                        break
+                    records_seen += 1
+                    metadata = record.find(".//oai:metadata", ns)
+                    if metadata is None:
+                        continue
+                    dc_el = metadata.find("{http://www.openarchives.org/OAI/2.0/oai_dc/}dc")
+                    if dc_el is None:
+                        continue
+                    title_el = dc_el.find(f"{{{OAI_DC_NS}}}title")
+                    title = title_el.text if title_el is not None and title_el.text else ""
+                    desc_el = dc_el.find(f"{{{OAI_DC_NS}}}description")
+                    desc = desc_el.text if desc_el is not None and desc_el.text else ""
+                    if query_lower not in title.lower() and query_lower not in desc.lower():
+                        continue
+                    creators = [c.text for c in dc_el.findall(f"{{{OAI_DC_NS}}}creator") if c.text]
+                    date_el = dc_el.find(f"{{{OAI_DC_NS}}}date")
+                    year = None
+                    if date_el is not None and date_el.text:
+                        year_str = date_el.text[:4]
+                        if year_str.isdigit():
+                            year = int(year_str)
+                    doi = None
+                    item_url = None
+                    for id_el in dc_el.findall(f"{{{OAI_DC_NS}}}identifier"):
+                        if id_el.text and "doi.org" in id_el.text:
+                            doi = id_el.text.replace("https://doi.org/", "").replace("http://doi.org/", "")
+                        elif id_el.text and id_el.text.startswith("http"):
+                            item_url = id_el.text
+                    items.append({"title": title, "authors": creators, "year": year, "abstract": desc, "doi": doi, "url": item_url})
+                    if len(items) >= limit:
+                        page_done = True
+                        break
+                if page_done or len(items) >= limit or records_seen >= OAI_MAX_RECORDS:
+                    break
+                token_el = root.find(".//oai:resumptionToken", ns)
+                resumption_token = (
+                    token_el.text.strip()
+                    if token_el is not None and token_el.text and token_el.text.strip()
+                    else None
+                )
+                if not resumption_token:
                     break
     time.sleep(0.5)
     for item in items[:limit]:
