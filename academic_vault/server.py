@@ -192,14 +192,28 @@ def search_papers(
     return fused
 
 
+_FTS5_OPERATOR_KEYWORDS = re.compile(r'\b(?:NEAR|AND|OR|NOT)\b')
+
+
 def _sanitize_fts5_query(query: str) -> str:
     """Bereinigt Query fuer sichere FTS5-MATCH-Ausfuehrung.
 
-    FTS5-Sonderzeichen die Probleme verursachen: - / ^ * " ( )
-    Strategie: Bindestrich und andere Operatoren durch Leerzeichen ersetzen.
+    FTS5-Sonderzeichen die Probleme verursachen: - / ^ * " ( ) sowie der
+    Column-Filter-Operator ':'. Zusaetzlich werden die booleschen
+    Operator-Keywords NEAR/AND/OR/NOT (nur in Grossschreibung
+    operatorwirksam) neutralisiert, damit usergenerierte Strings nicht
+    versehentlich als FTS5-Syntax interpretiert werden und einen
+    Query-Crash ausloesen.
+
+    Strategie: Sonderzeichen und Operator-Keywords durch Leerzeichen
+    ersetzen, Mehrfach-Leerzeichen kollabieren. Kleingeschriebene Woerter
+    wie 'android' oder 'and' bleiben unangetastet — nur die in FTS5
+    operatorwirksamen Grossschreibungen werden entfernt.
     """
-    # FTS5-Operatoren entfernen/ersetzen: -, ^, /, *, (, ), "
-    sanitized = re.sub(r'[-^/*()]', ' ', query)
+    # FTS5-Sonderzeichen entfernen/ersetzen: -, ^, /, *, (, ), ", :
+    sanitized = re.sub(r'[-^/*():"]', ' ', query)
+    # Boolesche Operator-Keywords (Grossschreibung) neutralisieren
+    sanitized = _FTS5_OPERATOR_KEYWORDS.sub(' ', sanitized)
     # Mehrfache Leerzeichen zusammenfassen
     sanitized = re.sub(r'\s+', ' ', sanitized).strip()
     return sanitized if sanitized else query

@@ -19,7 +19,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, chmodSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as os from 'node:os';
@@ -82,9 +82,14 @@ function saveState(state) {
   try {
     const dir = dirname(STATE_FILE);
     if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
+      // Verzeichnis restriktiv (0700) anlegen — kann Session-Kontext enthalten.
+      mkdirSync(dir, { recursive: true, mode: 0o700 });
     }
-    writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
+    // State-Datei nur owner-readable/writable (0600) schreiben.
+    // mode bei writeFileSync greift nur bei Neuanlage — chmodSync erzwingt
+    // 0600 auch beim Ueberschreiben einer bereits existierenden Datei.
+    writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), { encoding: 'utf-8', mode: 0o600 });
+    chmodSync(STATE_FILE, 0o600);
   } catch (err) {
     process.stderr.write(`[Reinforcement] State-Datei konnte nicht gespeichert werden: ${err.message}\n`);
   }

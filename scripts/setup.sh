@@ -12,8 +12,17 @@
 
 set -euo pipefail
 
-BASE="$HOME/.academic-research"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Unter 'set -u' (nounset) bricht jede Referenz auf eine unbelegte Variable ab.
+# Externe Variablen daher defensiv absichern: $HOME muss gesetzt sein, sonst
+# klarer Fehler statt kryptischem "unbound variable". ${0:-} faengt den (sehr
+# seltenen) Fall ab, dass das Skript ohne $0 gestartet wird.
+if [ -z "${HOME:-}" ]; then
+  echo "❌ \$HOME ist nicht gesetzt — setup.sh benoetigt ein Home-Verzeichnis." >&2
+  exit 1
+fi
+
+BASE="${HOME}/.academic-research"
+SCRIPT_DIR="$(cd "$(dirname "${0:-.}")" && pwd)"
 
 # ---------------------------------------------------------------------------
 # 1. Datenverzeichnis + Python venv
@@ -94,7 +103,7 @@ echo ""
 # 4. browser-use Claude-Skill (global)
 # ---------------------------------------------------------------------------
 
-if [ -d "$HOME/.claude/skills/browser-use" ]; then
+if [ -d "${HOME}/.claude/skills/browser-use" ]; then
   echo "✅ browser-use Claude-Skill: vorhanden (~/.claude/skills/browser-use/)"
 else
   echo "⚠️  browser-use Claude-Skill unter ~/.claude/skills/browser-use/ fehlt."
