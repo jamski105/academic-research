@@ -1,0 +1,27 @@
+{
+  "component": "topic-brainstorm",
+  "should_trigger": [
+    "Welches Thema soll ich fuer meine Bachelorarbeit nehmen?",
+    "Ich brauche ein Thema fuer meine Masterarbeit.",
+    "Hilf mir bei der Themenfindung.",
+    "Welches Thema lohnt sich gerade im Bereich KI-Ethik?",
+    "Ich habe noch kein Thema, kannst du mir Ideen geben?",
+    "Kannst du diese Themenidee bewerten?",
+    "Thema gesucht fuer meine Abschlussarbeit.",
+    "Ich suche ein gutes Thesis-Thema.",
+    "Welches Forschungsthema waere zukunftstraechtig?",
+    "Brainstorming fuer mein Dissertationsthema bitte."
+  ],
+  "should_not_trigger": [
+    "Schaerfe meine bestehende Forschungsfrage.",
+    "Schreibe Kapitel 2 meiner Arbeit.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Formatiere meine Zitate nach APA.",
+    "Welche Methodik passt zu meiner Fallstudie?",
+    "Exportiere mein Kapitel als LaTeX.",
+    "Suche Paper zu Zero Trust.",
+    "Generiere einen Titel fuer meine Arbeit.",
+    "Erstelle ein Konferenz-Poster.",
+    "Importiere meine Zotero-Bibliothek."
+  ]
+}

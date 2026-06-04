@@ -1,0 +1,27 @@
+{
+  "component": "conference-poster",
+  "should_trigger": [
+    "Erstelle ein Poster fuer die Konferenz.",
+    "Ich brauche ein A0-Poster fuer meine Praesentation.",
+    "Mach mir ein tikzposter aus meinen Ergebnissen.",
+    "Kannst du ein conference poster aus dem Kapitel bauen?",
+    "Ich moechte eine visuelle Zusammenfassung als Poster.",
+    "Erzeuge ein Konferenz-Poster mit den Top-Figures.",
+    "Poster fuer die Tagung erstellen bitte.",
+    "Wandle meine Forschungsergebnisse in ein A0-Poster um.",
+    "Layout fuer ein wissenschaftliches Poster generieren.",
+    "Brauche ein Poster im tikzposter-Format."
+  ],
+  "should_not_trigger": [
+    "Schreibe das vollstaendige Kapitel 4.",
+    "Welches Thema soll ich nehmen?",
+    "Schreibe einen Foerderantrag.",
+    "Exportiere mein Kapitel nach LaTeX.",
+    "Antworte auf die Reviewer.",
+    "Importiere meine Reading List.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Generiere einen Titel.",
+    "Schaerfe meine Forschungsfrage.",
+    "Suche Open-Access-Paper."
+  ]
+}

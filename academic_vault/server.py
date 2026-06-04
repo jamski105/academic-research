@@ -12,12 +12,62 @@ from pathlib import Path
 from uuid import uuid4
 from typing import Optional
 
-from .db import VaultDB
+from .db import VALID_PAPER_TYPES, VaultDB, default_db_path
 from .files_api import FilesAPIClient
 
-# VAULT_DB_PATH aus Env; Fallback auf vault.db im CWD
-_DEFAULT_DB = os.environ.get("VAULT_DB_PATH", "vault.db")
+# Kanonischer DB-Default (Single Source of Truth, Issue #190):
+# VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db.
+_DEFAULT_DB = default_db_path()
 _ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+
+
+# JSON-Schema fuer das csl_json eines Papers (Issue #213, Security Round-2 M3).
+# 'type' ist Pflichtfeld und muss einer der CSL-Typen sein, die der Vault
+# kennt. So landet kein als 'article-journal' fehl-getaggter Eintrag im Vault,
+# wenn ein Skill versehentlich kaputtes oder unvollstaendiges JSON sendet.
+_CSL_JSON_SCHEMA = {
+    "type": "object",
+    "required": ["type"],
+    "properties": {
+        "type": {"enum": sorted(VALID_PAPER_TYPES)},
+    },
+}
+
+
+def validate_csl_json(csl_json: str) -> dict:
+    """Validiert csl_json strikt und gibt das geparste dict zurueck.
+
+    Wirft ValueError bei: kaputtem JSON, Nicht-Objekt, fehlendem Pflichtfeld
+    'type' oder unbekanntem type-Wert. Kein stiller Default mehr (#213).
+    """
+    try:
+        data = json.loads(csl_json)
+    except (json.JSONDecodeError, TypeError) as exc:
+        raise ValueError(f"csl_json ist kein valides JSON: {exc}") from exc
+
+    try:
+        import jsonschema
+    except ImportError:
+        # Fallback ohne jsonschema-Lib: gleiche Invarianten manuell pruefen.
+        if not isinstance(data, dict):
+            raise ValueError("csl_json muss ein JSON-Objekt sein.")
+        if "type" not in data:
+            raise ValueError(
+                "csl_json: Pflichtfeld 'type' fehlt -- "
+                f"erlaubt: {sorted(VALID_PAPER_TYPES)}"
+            )
+        if data["type"] not in VALID_PAPER_TYPES:
+            raise ValueError(
+                f"Ungueltiger type '{data['type']}' -- "
+                f"erlaubt: {sorted(VALID_PAPER_TYPES)}"
+            )
+        return data
+
+    try:
+        jsonschema.validate(instance=data, schema=_CSL_JSON_SCHEMA)
+    except jsonschema.ValidationError as exc:
+        raise ValueError(f"csl_json verletzt Schema: {exc.message}") from exc
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -246,7 +296,12 @@ def add_paper(
     container_title: Optional[str] = None,
     parent_paper_id: Optional[str] = None,
 ) -> None:
-    """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter."""
+    """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter.
+
+    csl_json wird strikt validiert (Issue #213): Pflichtfeld 'type', gueltiger
+    CSL-Typ, valides JSON. Bei Verstoss ValueError statt silent default.
+    """
+    validate_csl_json(csl_json)
     db = VaultDB(db_path)
     db.init_schema()
     db.add_paper(
@@ -280,8 +335,10 @@ def add_chapter(
         csl = json.loads(csl_json)
         csl.setdefault("type", "chapter")
         csl_json = json.dumps(csl, ensure_ascii=False)
-    except Exception:
-        pass
+    except Exception as exc:
+        # Kein stilles Durchreichen von malformed csl_json -- sonst wuerde
+        # add_paper() es als article-journal fehlklassifizieren (siehe #232).
+        raise ValueError(f"add_chapter: Ungueltiges csl_json: {exc}") from exc
     add_paper(
         db_path=db_path,
         paper_id=paper_id,
@@ -681,10 +738,32 @@ def restore_snapshot(
     target_path.mkdir(parents=True, exist_ok=True)
 
     try:
+        dest = target_path.resolve()
         with tarfile.open(str(tar_path), "r:gz") as tar:
-            # Nur sichere Mitglieder extrahieren (kein path-traversal)
-            members = [m for m in tar.getmembers() if not m.name.startswith('/') and '..' not in m.name]
-            tar.extractall(str(target_path), members=members)
+            # Sicher extrahieren (CVE-2007-4559 / CWE-22, Issue #192).
+            # Schicht 1: Symlink-/Hardlink-Member und Path-Traversal pro
+            # Member explizit ablehnen — funktioniert auch auf Python < 3.12
+            # ohne PEP-706-Filter.
+            safe_members = []
+            for m in tar.getmembers():
+                if m.issym() or m.islnk():
+                    # Symlinks/Hardlinks erlauben Escapes aus dem Zielverzeichnis.
+                    raise ValueError(f"symlink/hardlink not allowed: {m.name}")
+                if m.name.startswith("/"):
+                    raise ValueError(f"absolute path not allowed: {m.name}")
+                resolved = (dest / m.name).resolve()
+                if resolved != dest and dest not in resolved.parents:
+                    raise ValueError(f"path traversal: {m.name}")
+                safe_members.append(m)
+            # Schicht 2: PEP-706-data-Filter (Python 3.12+, backportiert auf
+            # 3.9.17+/3.10.12+/3.11.4+). Blockiert Symlink-Escape und
+            # Path-Traversal zusaetzlich auf C-Ebene. Wenn nicht verfuegbar,
+            # greift nur Schicht 1.
+            try:
+                tar.extractall(str(target_path), members=safe_members, filter="data")
+            except TypeError:
+                # filter-Argument auf aelteren Pythons nicht vorhanden
+                tar.extractall(str(target_path), members=safe_members)
         return True
     except Exception:
         return False
@@ -891,10 +970,20 @@ def _build_mcp_server():
         """Gibt Decisions zurueck. Optionaler category-Filter, active_only-Flag."""
         return list_decisions(db_path, category=category, active_only=active_only)
 
+    @mcp.tool(name="vault.supersede_decision")
+    def _vault_supersede_decision(decision_id: str, superseded_by: str) -> None:
+        """Markiert eine Decision als superseded (verweist auf Nachfolge-Decision)."""
+        supersede_decision(db_path, decision_id=decision_id, superseded_by=superseded_by)
+
     @mcp.tool(name="vault.add_excluded_source")
     def _vault_add_excluded_source(paper_id: str, reason: str = None) -> None:
         """Fuegt paper_id zu excluded_sources hinzu (verhindert Re-Vorschlag)."""
         add_excluded_source(db_path, paper_id=paper_id, reason=reason)
+
+    @mcp.tool(name="vault.list_excluded_sources")
+    def _vault_list_excluded_sources() -> list[dict]:
+        """Gibt alle excluded_sources zurueck."""
+        return list_excluded_sources(db_path)
 
     @mcp.tool(name="vault.is_excluded")
     def _vault_is_excluded(paper_id: str) -> bool:
@@ -963,6 +1052,37 @@ def _build_mcp_server():
     def _vault_is_locked(slug: str) -> bool:
         """Prueft ob Vault fuer Slug gelockt ist."""
         return is_locked(db_path, slug=slug)
+
+    @mcp.tool(name="vault.export_snapshot")
+    def _vault_export_snapshot(
+        slug: str,
+        project_dir: str = ".",
+        snapshots_dir: Optional[str] = None,
+    ) -> Optional[str]:
+        """Exportiert State-Dateien + Vault-DB als .tgz-Snapshot.
+
+        Schreibt <snapshots_dir>/<slug>/<YYYYMMDD-HHMM>.tgz und gibt den Pfad
+        zurueck (None bei Fehler). snapshots_dir default: ~/.academic-research/snapshots.
+        """
+        return export_snapshot(
+            db_path, slug, project_dir=project_dir, snapshots_dir=snapshots_dir
+        )
+
+    @mcp.tool(name="vault.restore_snapshot")
+    def _vault_restore_snapshot(
+        slug: str,
+        ts: str,
+        snapshots_dir: Optional[str] = None,
+        target_dir: str = ".",
+    ) -> bool:
+        """Stellt einen Snapshot zurueck: entpackt <slug>/<ts>.tgz nach target_dir.
+
+        ts ist der Timestamp-String (Dateiname ohne .tgz). Gibt True bei Erfolg,
+        False bei Fehler. snapshots_dir default: ~/.academic-research/snapshots.
+        """
+        return restore_snapshot(
+            slug, ts, snapshots_dir=snapshots_dir, target_dir=target_dir
+        )
 
     return mcp
 

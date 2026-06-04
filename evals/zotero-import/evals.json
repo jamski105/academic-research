@@ -1,0 +1,9 @@
+{
+  "component": "zotero-import",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "zi-01", "input": "Wie dedupliziert ein Zotero-Import Items gegen bereits vorhandene Vault-Eintraege?", "expected": {"type": "regex", "value": "(DOI|ISBN|Dedup|dupli|normalisier)"}, "mode": "with_skill"},
+    {"id": "zi-02", "input": "Beschreibe den Ablauf, um Items und PDF-Attachments aus einer Zotero-Library zu importieren.", "expected": {"type": "regex", "value": "(pyzotero|Zotero|Item|Attachment|PDF)"}, "mode": "with_skill"},
+    {"id": "zi-03", "input": "Schreibt der Zotero-Import jemals Aenderungen zurueck nach Zotero?", "expected": {"type": "regex", "value": "(read-only|nur lesen|kein Push|no_push|read only|nicht)"}, "mode": "with_skill"}
+  ]
+}

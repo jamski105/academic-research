@@ -1,0 +1,9 @@
+{
+  "component": "latex-export",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "lx-01", "input": "Wandle dieses Markdown-Kapitel in LaTeX um:\n\n# Einleitung\n\nDiese Arbeit untersucht **DevOps Governance** in KMU.\n\n## Motivation\n\nText.", "expected": {"type": "regex", "value": "(\\\\section|\\\\textbf|\\\\chapter|documentclass|tex)"}, "mode": "with_skill"},
+    {"id": "lx-02", "input": "Erstelle einen biblatex-Eintrag im DIN-1505-Stil fuer: Smith, J. (2023). DevOps Governance. Journal of Software, 12(3), 45-60. DOI 10.1109/MS.2023.1234567", "expected": {"type": "regex", "value": "(@article|@book|@misc|author|title)"}, "mode": "with_skill"},
+    {"id": "lx-03", "input": "Konvertiere die Markdown-Tabelle in eine LaTeX-tabular-Umgebung:\n\n| Jahr | Wert |\n|---|---|\n| 2022 | 10 |\n| 2023 | 20 |", "expected": {"type": "regex", "value": "(tabular|\\\\begin|&)"}, "mode": "with_skill"}
+  ]
+}
