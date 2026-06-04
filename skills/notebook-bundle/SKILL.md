@@ -1,11 +1,11 @@
 ---
 name: notebook-bundle
 description: >
-  Verwende diesen Skill wenn der User ein NotebookLM-Bundle erstellen moechte.
-  Trigger-Phrasen: "NotebookLM Bundle", "PDF-Bundle exportieren", "Bundle fuer Upload",
-  "Bücher / grosse Dokumente aufteilen", "Riesen-PDF aufteilen", "NotebookLM vorbereiten".
-  Erzeugt ein konkateniertes PDF aller ausgewaehlten Paper (mit Cover + TOC)
-  fuer manuellen Upload in Google NotebookLM.
+  Verwende diesen Skill wenn der User ein NotebookLM-Bundle erstellen möchte.
+  Trigger-Phrasen: "NotebookLM Bundle", "PDF-Bundle exportieren", "Bundle für Upload",
+  "Bücher / große Dokumente aufteilen", "Riesen-PDF aufteilen", "NotebookLM vorbereiten".
+  Erzeugt ein konkateniertes PDF aller ausgewählten Paper (mit Cover + TOC)
+  für manuellen Upload in Google NotebookLM.
 compatibility: Claude Code
 license: MIT
 ---
@@ -13,9 +13,9 @@ license: MIT
 # NotebookLM-Bundle Skill
 
 > **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
-> und befolge alle dort definierten Bloecke (Vorbedingungen, Keine Fabrikation,
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
 > Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
-> fortfaehrst.
+> fortfährst.
 
 ---
 
@@ -24,18 +24,18 @@ license: MIT
 **NotebookLM (Gemini) ist ein Triage-Tool, KEIN Zitat-Pfad.**
 
 Antworten aus NotebookLM sind NICHT verbatim aus den Quellen zitiert und
-duerfen NICHT als zitierfahige Quellen in wissenschaftlichen Arbeiten
+dürfen NICHT als zitierfahige Quellen in wissenschaftlichen Arbeiten
 verwendet werden.
 
-- Fuer verbatim-gesicherte Zitate: **Vault-Zitat-Pfad** (`vault.add_quote`) nutzen.
-- Dieses Bundle dient der **Orientierung und Uebersicht** — nicht als Belegen.
-- NotebookLM-Antworten koennen sinngemass korrekt, aber verbatim falsch sein.
+- Für verbatim-gesicherte Zitate: **Vault-Zitat-Pfad** (`vault.add_quote`) nutzen.
+- Dieses Bundle dient der **Orientierung und Übersicht** — nicht als Belegen.
+- NotebookLM-Antworten können sinngemäß korrekt, aber verbatim falsch sein.
 
 Diese Warnung muss dem User bei jeder Bundle-Erstellung explizit mitgeteilt werden.
 
 ---
 
-## Uebersicht
+## Übersicht
 
 Erzeugt aus einer Paper-Selektion ein Bundle-PDF:
 - Bibliographie-Cover als erste Seite(n)
@@ -52,10 +52,10 @@ Output: `notebook-bundle-<ts>.pdf` — manuell in NotebookLM hochladen.
 Aktiviert bei:
 - "NotebookLM Bundle"
 - "PDF-Bundle exportieren"
-- "Bundle fuer Upload"
-- "Buecher zu gross" / "Riesen-PDF aufteilen"
+- "Bundle für Upload"
+- "Bücher zu groß" / "Riesen-PDF aufteilen"
 - "NotebookLM vorbereiten"
-- "Paper fuer NotebookLM zusammenstellen"
+- "Paper für NotebookLM zusammenstellen"
 
 ---
 
@@ -85,7 +85,7 @@ Erwartetes Schema der `selection.json`:
 }
 ```
 
-Fehlende `pdf_path`-Eintraege: Skill meldet diese Paper als "uebersprungen".
+Fehlende `pdf_path`-Einträge: Skill meldet diese Paper als "übersprungen".
 
 ### Schritt 2: Bundle bauen
 
@@ -111,17 +111,17 @@ python skills/notebook-bundle/scripts/bundle.py <selection.json> \
 Ausgabe:
 - Pfad(e) zur Bundle-PDF
 - Anzahl Seiten + Dateigröße
-- Liste uebersprungener Paper (fehlende PDFs)
+- Liste übersprungener Paper (fehlende PDFs)
 - **Wiederholung der Verbatim-Warning**
 
 Beispiel:
 ```
 Bundle erzeugt: /projekt/notebook-bundle-20260518T123456.pdf
-Seiten: 152  |  Groesse: 18.4 MB
+Seiten: 152  |  Größe: 18.4 MB
 Uebersprungen (0): —
 
 WARNUNG: NotebookLM-Antworten sind NICHT verbatim-garantiert.
-Fuer Zitate: Vault-Zitat-Pfad (vault.add_quote) nutzen.
+Für Zitate: Vault-Zitat-Pfad (vault.add_quote) nutzen.
 ```
 
 Bei Split (mehrere Dateien):
@@ -138,5 +138,5 @@ notebook-bundle-20260518T123456-part2.pdf  (120 MB, 88 Seiten)
 - Kein automatischer Upload nach NotebookLM — manuell durch User.
 - Ersetzt nicht den Vault-Zitat-Pfad (verbatim-gesichert).
 - Keine Konvertierung von non-PDF-Formaten.
-- Keine Vault-DB-Eintraege — Bundle ist reine Export-Funktion.
-- Maximale NotebookLM-Source-Groesse: 500MB. Bei Split mehrere Quellen hochladen.
+- Keine Vault-DB-Einträge — Bundle ist reine Export-Funktion.
+- Maximale NotebookLM-Source-Größe: 500MB. Bei Split mehrere Quellen hochladen.
