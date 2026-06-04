@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
-from PyPDF2 import PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter
 
 # Pfad zu scripts hinzufügen
 sys.path.insert(0, str(Path(__file__).parent.parent / "skills" / "notebook-bundle" / "scripts"))

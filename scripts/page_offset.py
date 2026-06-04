@@ -17,21 +17,15 @@ from typing import Optional
 
 
 def _get_pdf_reader():
-    """Gibt PdfReader-Klasse zurueck (PyPDF2 oder pypdf, je nach Verfuegbarkeit)."""
-    try:
-        from PyPDF2 import PdfReader
-        return PdfReader
-    except ImportError:
-        pass
+    """Gibt die pypdf-PdfReader-Klasse zurueck."""
     try:
         from pypdf import PdfReader
         return PdfReader
     except ImportError:
-        pass
-    raise ImportError(
-        "Kein PDF-Lesemodul verfuegbar. "
-        "Bitte 'pip install PyPDF2' oder 'pip install pypdf' ausfuehren."
-    )
+        raise ImportError(
+            "Kein PDF-Lesemodul verfuegbar. "
+            "Bitte 'pip install pypdf' ausfuehren."
+        )
 
 
 def _extract_page_number(text: str) -> Optional[int]:

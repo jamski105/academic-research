@@ -49,7 +49,7 @@ Unterstützt PDF, Markdown und Plaintext. Dedupliziert via DOI/ISBN.
 ```bash
 pip install anthropic requests lxml
 # Optional für PDF:
-pip install PyPDF2
+pip install pypdf
 # Optional: anystyle (Ruby-Gem) für strukturiertes Parsen
 gem install anystyle-cli
 ```
@@ -85,7 +85,7 @@ python skills/reading-list-import/scripts/parse_list.py \
 
 ### Unterstützte Formate
 
-- `.pdf` — Text wird via PyPDF2 oder pdfminer.six extrahiert
+- `.pdf` — Text wird via pypdf oder pdfminer.six extrahiert
 - `.md` / `.markdown` — direkt eingelesen
 - `.txt` — direkt eingelesen
 
@@ -97,7 +97,7 @@ Detaillierte Format-Hinweise: `skills/reading-list-import/references/format-hint
 ```
 Datei-Eingabe
     ↓
-Text-Extraktion (PyPDF2 für PDF, direkt für md/txt)
+Text-Extraktion (pypdf für PDF, direkt für md/txt)
     ↓
 LLM-Parser (Sonnet): Text → [{author, title, year, doi, isbn, ...}]
     ↓  (optional: anystyle-Fallback)
@@ -160,7 +160,7 @@ Auswahl (Nummer):
 
 - Einträge ohne DOI und ISBN können nicht dedupliziert werden;
   sie werden bei erneutem Import neu angelegt
-- PDF-Extraktion erfordert PyPDF2 oder pdfminer.six
+- PDF-Extraktion erfordert pypdf oder pdfminer.six
 - Scan-PDFs (keine Textschicht) können nicht verarbeitet werden;
   OCR muss vorgelagert werden
 - anystyle erfordert Ruby-Umgebung (optional, kein Pflicht-Dep)
