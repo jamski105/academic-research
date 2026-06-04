@@ -86,13 +86,13 @@ class TestProfileOwnerCheck:
 
     def test_passes_for_own_0600_file(self, tmp_path):
         """Eigene 0600-Datei besteht weiterhin."""
-        from agents.auth_helper_lib import check_profile_permissions
+        from scripts.auth_helper_lib import check_profile_permissions
         profile = self._write_profile(tmp_path)
         check_profile_permissions(str(profile))  # darf nicht werfen
 
     def test_raises_when_owner_differs(self, tmp_path):
         """Gehoert die Datei einem anderen UID, muss PermissionError fliegen."""
-        from agents.auth_helper_lib import check_profile_permissions
+        from scripts.auth_helper_lib import check_profile_permissions
         profile = self._write_profile(tmp_path)
 
         real_stat = os.stat(str(profile))
@@ -103,13 +103,13 @@ class TestProfileOwnerCheck:
         fake.st_mode = real_stat.st_mode
         fake.st_uid = foreign_uid
 
-        with mock.patch("agents.auth_helper_lib.os.stat", return_value=fake):
+        with mock.patch("scripts.auth_helper_lib.os.stat", return_value=fake):
             with pytest.raises(PermissionError):
                 check_profile_permissions(str(profile))
 
     def test_owner_check_uses_geteuid(self):
         """Quelltext referenziert os.geteuid() und st_uid — belegt den Check."""
-        src = (REPO_ROOT / "agents" / "auth_helper_lib.py").read_text(encoding="utf-8")
+        src = (REPO_ROOT / "scripts" / "auth_helper_lib.py").read_text(encoding="utf-8")
         assert "geteuid" in src
         assert "st_uid" in src
 

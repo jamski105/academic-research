@@ -131,6 +131,77 @@ def test_submit_batch_skips_when_below_threshold():
 
 
 # ---------------------------------------------------------------------------
+# Batch-Abholung (#228): get_batch_status / fetch_batch_results
+# ---------------------------------------------------------------------------
+
+def test_batch_api_has_get_batch_status():
+    """batch_api must expose get_batch_status() for --batch pickup."""
+    import batch_api
+    assert hasattr(batch_api, "get_batch_status")
+    assert callable(batch_api.get_batch_status)
+
+
+def test_batch_api_has_fetch_batch_results():
+    """batch_api must expose fetch_batch_results() for --batch pickup."""
+    import batch_api
+    assert hasattr(batch_api, "fetch_batch_results")
+    assert callable(batch_api.fetch_batch_results)
+
+
+def test_get_batch_status_returns_processing_status():
+    """get_batch_status() returns the API processing_status string."""
+    import batch_api
+
+    mock_batch = MagicMock()
+    mock_batch.processing_status = "ended"
+
+    with patch("batch_api.anthropic") as mock_anthropic:
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+        mock_client.beta.messages.batches.retrieve.return_value = mock_batch
+
+        status = batch_api.get_batch_status("msgbatch_test001")
+
+    assert status == "ended"
+    mock_client.beta.messages.batches.retrieve.assert_called_once_with("msgbatch_test001")
+
+
+def test_fetch_batch_results_parses_scores():
+    """fetch_batch_results() maps custom_id -> parsed relevance score."""
+    import batch_api
+
+    def _entry(custom_id, text, rtype="succeeded"):
+        block = MagicMock()
+        block.type = "text"
+        block.text = text
+        message = MagicMock()
+        message.content = [block]
+        result = MagicMock()
+        result.type = rtype
+        result.message = message
+        entry = MagicMock()
+        entry.custom_id = custom_id
+        entry.result = result
+        return entry
+
+    entries = [
+        _entry("paper_0", '{"score": 0.9}'),
+        _entry("paper_1", '{"score": 0.1}'),
+        _entry("paper_2", "not json"),          # unparsable -> skipped
+        _entry("paper_3", '{"score": 0.5}', rtype="errored"),  # failed -> skipped
+    ]
+
+    with patch("batch_api.anthropic") as mock_anthropic:
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+        mock_client.beta.messages.batches.results.return_value = iter(entries)
+
+        scores = batch_api.fetch_batch_results("msgbatch_test001")
+
+    assert scores == {"paper_0": 0.9, "paper_1": 0.1}
+
+
+# ---------------------------------------------------------------------------
 # commands/search.md contains --batch flag
 # ---------------------------------------------------------------------------
 

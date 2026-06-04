@@ -1,17 +1,15 @@
 ---
 name: zotero-import
 description: >
-  Verwende diesen Skill wenn der User Zotero-Items in den Vault importieren moechte.
-  Trigger-Phrasen: "Zotero importieren", "Bibliothek synchronisieren", "Zotero sync".
+  Verwende diesen Skill wenn der User Zotero-Items in den Vault importieren möchte.
+  Trigger-Phrasen: "Zotero importieren", "Zotero-Bibliothek importieren",
+  "Bibliothek einlesen", "Bibliothek prüfen / pruefen",
+  "Bibliothek synchronisieren", "Zotero sync".
   Holt Items und PDF-Attachments aus einer Zotero-Library via pyzotero.
   Dedupliziert via DOI/ISBN ("Prüfung / Deduplication" via normalisierten Identifikatoren).
-  Laedt PDFs in die Files-API hoch und cached file_ids. Read-only — kein Push zurueck.
-triggers:
-  - "Zotero importieren"
-  - "Bibliothek synchronisieren"
-  - "Zotero sync"
-  - "Zotero-Bibliothek importieren"
-tools:
+  Lädt PDFs in die Files-API hoch und cached file_ids. Read-only — kein Push zurück.
+license: MIT
+allowed-tools:
   - Bash
 security:
   - api_key_source: "~/.academic-research/config.yaml (0600)"
@@ -22,15 +20,15 @@ security:
 # Zotero-Import Skill
 
 > **Gemeinsames Preamble laden:** Lies `skills/_common/preamble.md`
-> und befolge alle dort definierten Bloecke (Vorbedingungen, Keine Fabrikation,
+> und befolge alle dort definierten Blöcke (Vorbedingungen, Keine Fabrikation,
 > Aktivierung, Abgrenzung), bevor du mit diesem Skill-spezifischen Inhalt
-> fortfaehrst.
+> fortfährst.
 
 ## Zweck
 
 Holt alle Items und PDF-Attachments aus einer Zotero-Library (user oder group)
 und importiert sie in den academic-research Vault. Idempotent: wiederholter
-Aufruf erstellt keine Duplikate (fuer Items mit DOI oder ISBN).
+Aufruf erstellt keine Duplikate (Items mit DOI/ISBN).
 
 ## Voraussetzungen
 
@@ -56,20 +54,20 @@ Permissions setzen (Pflicht):
 chmod 0600 ~/.academic-research/config.yaml
 ```
 
-**Hinweis:** Der API-Key ist ein persoenliches Credential. Er wird niemals geloggt,
+**Hinweis:** Der API-Key ist ein persönliches Credential. Er wird niemals geloggt,
 in den Vault geschrieben oder im PR-Diff sichtbar.
 
 ### 3. Zotero API-Key erstellen
 
 1. https://www.zotero.org/settings/keys aufrufen
-2. "Create new private key" → Read-only fuer die gewuenschte Library
+2. "Create new private key" → Read-only für die gewünschte Library
 3. Key in config.yaml eintragen
 
 ## Verwendung
 
 ### Automatisch (Skill-Trigger)
 
-Claude erkennt folgende Phrasen und fuehrt den Import aus:
+Claude erkennt folgende Phrasen und führt den Import aus:
 - "Zotero importieren"
 - "Bibliothek synchronisieren"
 - "Zotero sync"
@@ -77,29 +75,29 @@ Claude erkennt folgende Phrasen und fuehrt den Import aus:
 ### Manuell
 
 ```bash
-python skills/zotero-import/scripts/zotero_pull.py \
+python ${CLAUDE_PLUGIN_ROOT}/skills/zotero-import/scripts/zotero_pull.py \
   --config ~/.academic-research/config.yaml \
   --db vault.db
 ```
 
 ## Verhalten
 
-1. Config laden und 0600-Permissions pruefen
+1. Config laden und 0600-Permissions prüfen
 2. Alle Items aus Zotero holen (paginiert via `zot.everything()`)
-3. Fuer jedes Item: DOI/ISBN-Dedup gegen Vault
+3. Für jedes Item: DOI/ISBN-Dedup gegen Vault
 4. Neue Items: `vault.add_paper()` + ggf. PDF-Attachment herunterladen
 5. PDFs: `vault.ensure_file()` → Files-API-Upload + file_id cachen
-6. Ergebnis ausgeben: N importiert, M uebersprungen, Fehler
+6. Ergebnis ausgeben: N importiert, M übersprungen, Fehler
 
 ## Sicherheitshinweise
 
-- **Read-only**: Kein Schreiben zurueck nach Zotero
-- **Netz-Allowlist**: Ausschliesslich `api.zotero.org` (via pyzotero)
-- **Credentials**: Nur in `~/.academic-research/config.yaml` mit 0600-Permissions
+- **Read-only**: Kein Schreiben zurück nach Zotero
+- **Netz-Allowlist**: Nur `api.zotero.org` (via pyzotero)
+- **Credentials**: Nur in `~/.academic-research/config.yaml` mit 0600
 
-## Bekannte Einschraenkungen
+## Bekannte Einschränkungen
 
-- Items ohne DOI und ISBN koennen nicht dedupliziert werden — sie werden bei
+- Items ohne DOI und ISBN können nicht dedupliziert werden — sie werden bei
   jedem Import neu angelegt
 - Nur das erste PDF-Attachment pro Item wird verarbeitet
 - Annotations, Notes und verschachtelte Attachments werden nicht importiert

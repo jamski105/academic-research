@@ -1,0 +1,27 @@
+{
+  "component": "citation-style-import",
+  "should_trigger": [
+    "Importiere einen Zitierstil aus dem CSL-Repository.",
+    "Kannst du CSL importieren?",
+    "Ich brauche einen neuen Zitierstil.",
+    "Lade mir einen custom citation style.",
+    "Hol den Stil aus GitHub und mach eine Variante.",
+    "Importiere den Chicago-CSL-Stil.",
+    "CSL-Stil laden und als Prompt-Regel generieren.",
+    "Ich moechte einen eigenen Zitierstil aus einer .csl-Datei.",
+    "Citation Style Language importieren.",
+    "Neuer Stil aus dem CSL-Repo bitte."
+  ],
+  "should_not_trigger": [
+    "Extrahiere Zitate aus diesem PDF.",
+    "Formatiere diese Quelle nach APA.",
+    "Schreibe Kapitel 2.",
+    "Welches Thema soll ich nehmen?",
+    "Importiere meine Zotero-Bibliothek.",
+    "Importiere meine Reading List.",
+    "Pruefe meinen Text auf Plagiate.",
+    "Exportiere nach LaTeX.",
+    "Erstelle ein Poster.",
+    "Schaerfe meine Forschungsfrage."
+  ]
+}
