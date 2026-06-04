@@ -68,7 +68,7 @@ Akzeptierte Formate:
 
 ## PDF-Eingaben
 
-PDFs werden via PyPDF2 oder pdfminer.six verarbeitet. Empfehlungen:
+PDFs werden via pypdf oder pdfminer.six verarbeitet. Empfehlungen:
 
 - **Wissenschaftliche Papers mit Referenzliste am Ende**: werden gut verarbeitet
 - **Scanned PDFs ohne Textschicht**: nicht unterstuetzt — OCR vorab ausfuehren

@@ -26,7 +26,7 @@ description: |
   assistant: "CASP-Checkliste: 10 Items, Score je yes/no/can't tell. Quotes und
   Assessment im Vault gespeichert."
   </example>
-tools: [Read]
+tools: [Read, mcp__academic_vault__vault_get_paper, mcp__academic_vault__vault_search_quote_text, mcp__academic_vault__vault_add_quote, mcp__academic_vault__vault_add_risk_of_bias]
 maxTurns: 5
 ---
 

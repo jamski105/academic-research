@@ -7,17 +7,37 @@
 #   3. browser-use CLI (via uv oder pipx)
 #   4. Check: globaler browser-use Claude-Skill
 #   5. Claude-Code-Permissions via configure_permissions.py
+#   6. Projekt-Bootstrap (Auto-Detect) via project_bootstrap.py
+#   7. SciHub Opt-in (F18) via scihub_optin.py
 
 set -euo pipefail
 
-BASE="$HOME/.academic-research"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Unter 'set -u' (nounset) bricht jede Referenz auf eine unbelegte Variable ab.
+# Externe Variablen daher defensiv absichern: $HOME muss gesetzt sein, sonst
+# klarer Fehler statt kryptischem "unbound variable". ${0:-} faengt den (sehr
+# seltenen) Fall ab, dass das Skript ohne $0 gestartet wird.
+if [ -z "${HOME:-}" ]; then
+  echo "❌ \$HOME ist nicht gesetzt — setup.sh benoetigt ein Home-Verzeichnis." >&2
+  exit 1
+fi
+
+BASE="${HOME}/.academic-research"
+SCRIPT_DIR="$(cd "$(dirname "${0:-.}")" && pwd)"
 
 # ---------------------------------------------------------------------------
 # 1. Datenverzeichnis + Python venv
 # ---------------------------------------------------------------------------
 
 mkdir -p "$BASE/sessions" "$BASE/pdfs"
+
+# Mindest-Python-Version pruefen, bevor die venv erstellt wird (vgl. #201).
+# Konsistent mit README.md ("Python 3.11+") und pyproject.toml (requires-python >=3.11).
+if ! python3 -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)'; then
+  CURRENT="$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null || echo "unbekannt")"
+  echo "❌ Python 3.11+ erforderlich (gefunden: $CURRENT)." >&2
+  echo "   Bitte ein neueres Python installieren, z.B. 'brew install python@3.11' (macOS)." >&2
+  exit 1
+fi
 
 if [ ! -d "$BASE/venv" ]; then
   python3 -m venv "$BASE/venv"
@@ -83,7 +103,7 @@ echo ""
 # 4. browser-use Claude-Skill (global)
 # ---------------------------------------------------------------------------
 
-if [ -d "$HOME/.claude/skills/browser-use" ]; then
+if [ -d "${HOME}/.claude/skills/browser-use" ]; then
   echo "✅ browser-use Claude-Skill: vorhanden (~/.claude/skills/browser-use/)"
 else
   echo "⚠️  browser-use Claude-Skill unter ~/.claude/skills/browser-use/ fehlt."
@@ -100,10 +120,22 @@ echo ""
 python3 "$SCRIPT_DIR/configure_permissions.py"
 
 # ---------------------------------------------------------------------------
-# 7. Projekt-Bootstrap (Auto-Detect)
+# 6. Projekt-Bootstrap (Auto-Detect)
 # ---------------------------------------------------------------------------
 
 "$BASE/venv/bin/python" "$SCRIPT_DIR/project_bootstrap.py"
+
+echo ""
+
+# ---------------------------------------------------------------------------
+# 7. SciHub Opt-in (F18)
+# ---------------------------------------------------------------------------
+# Fragt interaktiv, ob der rechtlich umstrittene SciHub-Last-Resort-Tier
+# aktiviert werden soll, und schreibt das Ergebnis als scihub_optin nach
+# ~/.academic-research/library-profiles/active.yaml. Default: false.
+# Bei nicht-interaktivem stdin (z.B. CI) gilt der sichere Default (deaktiviert).
+
+"$BASE/venv/bin/python" "$SCRIPT_DIR/scihub_optin.py"
 
 echo ""
 echo "Setup complete: $BASE"

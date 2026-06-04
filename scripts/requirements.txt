@@ -1,10 +1,10 @@
 anthropic>=0.40
 httpx>=0.25.0
-PyPDF2>=3.0.0
+pypdf>=4.0.0
 pyyaml>=6.0
 openpyxl>=3.1
 pandas>=2.0
-# requests>=2.32.4: CVE-2024-35195 (cert verification bypass)
+# requests>=2.32.4: CVE-2024-35195 (cert verification bypass), CVE-2024-47081 (.netrc credential leak)
 requests>=2.32.4
 # lxml>=5.2.0: CVE-2022-2309 (NULL pointer deref)
 lxml>=5.2.0
@@ -13,5 +13,7 @@ python-barcode[images]>=0.15.0
 # academic-vault MCP-Server (Vault): FastMCP-SDK + Vektor-Suche-Extension
 mcp>=1.0
 sqlite-vec>=0.1.0
+# strikte csl_json-Validierung in vault.add_paper (Issue #213)
+jsonschema>=4.0
 # optional — nur fuer Zotero-Import (Skill: zotero-import)
 pyzotero>=1.5
