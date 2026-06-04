@@ -484,9 +484,9 @@ Der **Vault** (`academic_vault/`) ist die Kernkomponente seit v6.0. Er ersetzt d
 
 **Datenbank:** `~/.academic-research/projects/<slug>/vault.db`
 
-### MCP-Tools (alle 28)
+### MCP-Tools (alle 33)
 
-Der Server registriert **28 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referenz: [`academic_vault/server.py`](academic_vault/server.py) (Funktion `_build_mcp_server`). Die folgenden Tabellen sind nach Kategorie geordnet; Signatur mit Default-Werten, Beschreibung und Beispiel-Call.
+Der Server registriert **33 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referenz: [`academic_vault/server.py`](academic_vault/server.py) (Funktion `_build_mcp_server`). Die folgenden Tabellen sind nach Kategorie geordnet; Signatur mit Default-Werten, Beschreibung und Beispiel-Call.
 
 **Suche & Papers**
 
@@ -531,8 +531,10 @@ Der Server registriert **28 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referen
 |------|-------------|------|
 | `vault.add_decision(category=None, text="", rationale=None)` | Fügt Entscheidung ins Decision-Log ein; gibt `decision_id` zurück | `vault.add_decision(category="scope", text="Nur Studien ab 2015", rationale="Aktualität")` |
 | `vault.list_decisions(category=None, active_only=True)` | Gibt Decisions zurück (optionaler `category`-Filter) | `vault.list_decisions(category="scope")` |
+| `vault.supersede_decision(decision_id, superseded_by)` | Markiert eine Decision als abgelöst durch eine neuere (`superseded_by`) | `vault.supersede_decision("dec_3", "dec_7")` |
 | `vault.add_excluded_source(paper_id, reason=None)` | Fügt `paper_id` zu `excluded_sources` (verhindert Re-Vorschlag) | `vault.add_excluded_source("smith2010", reason="off-topic")` |
 | `vault.is_excluded(paper_id)` | Prüft, ob `paper_id` ausgeschlossen ist | `vault.is_excluded("smith2010")` |
+| `vault.list_excluded_sources()` | Gibt alle ausgeschlossenen Quellen zurück | `vault.list_excluded_sources()` |
 | `vault.list_papers_by_provenance(provenance)` | Provenance-Audit: alle Papers mit gegebenem Herkunfts-Tag (z.B. `"scihub"`) | `vault.list_papers_by_provenance("scihub")` |
 
 **Risk-of-Bias & Score-Historie** (v6.4)
@@ -551,6 +553,13 @@ Der Server registriert **28 MCP-Tools** (`@mcp.tool`). Maßgebliche Code-Referen
 | `vault.export_material_passport(slug, output_dir=".", score_algo_version="1.0", plugin_version="6.4")` | Exportiert `material-passport.json`; gibt Dateipfad zurück | `vault.export_material_passport("mein-projekt")` |
 | `vault.lock_passport(slug)` | Setzt Vault-Lock für `slug` (macht Vault read-only) | `vault.lock_passport("mein-projekt")` |
 | `vault.is_locked(slug)` | Prüft, ob der Vault für `slug` gelockt ist | `vault.is_locked("mein-projekt")` |
+
+**Snapshots & Backup**
+
+| Tool (Signatur mit Defaults) | Beschreibung | Beispiel-Call |
+|------|-------------|------|
+| `vault.export_snapshot(slug, project_dir=".", snapshots_dir=None)` | Exportiert State-Dateien + Vault-DB als `.tgz`-Snapshot; gibt Pfad zurück (`snapshots_dir` default `~/.academic-research/snapshots`) | `vault.export_snapshot("mein-projekt")` |
+| `vault.restore_snapshot(slug, ts, snapshots_dir=None, target_dir=".")` | Stellt Snapshot `<slug>/<ts>.tgz` wieder her; gibt `True`/`False` zurück | `vault.restore_snapshot("mein-projekt", "20260604-0930")` |
 
 ### Halluzinationsschutz
 
