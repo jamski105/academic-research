@@ -1,0 +1,9 @@
+{
+  "component": "material-passport",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "mp-01", "input": "Welche Felder muss eine material-passport.json fuer ein reproduzierbares Literaturprojekt enthalten? Antworte als JSON-Objekt mit Beispielfeldern.", "expected": {"type": "regex", "value": "(paper_ids|DOI|hash|version|Score)"}, "mode": "with_skill"},
+    {"id": "mp-02", "input": "Warum sind PDF-Hashes und Modellversionen Teil eines Reproduzierbarkeits-Manifests?", "expected": {"type": "regex", "value": "(Hash|Reproduzier|Version|Nachvollzieh)"}, "mode": "with_skill"},
+    {"id": "mp-03", "input": "Beschreibe, wie der Reproduzierbarkeits-Block in kapitel/methodik.md aussehen sollte.", "expected": {"type": "regex", "value": "(Reproduzier|Methodik|material-passport|Block)"}, "mode": "with_skill"}
+  ]
+}

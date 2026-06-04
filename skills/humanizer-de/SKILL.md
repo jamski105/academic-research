@@ -7,6 +7,9 @@ description: >
   normal (Sachlich) und deep (vollständiger Zwei-Pass-Durchlauf mit finalem
   Anti-KI-Audit). Optionale Voice-Kalibrierung via Schreibproben.
   Produziert humanisierten Text sowie Severity-gegliedertes Diff.
+  Inkludiert Korrektur (Eingriff am Text) — für reine Detektion/Score/Audit
+  ohne Eingriff → style-evaluator. Triggert auf: "humanisieren", "umschreiben",
+  "weniger KI-haft", "menschlicher klingen".
   Nicht triggern für: Zitation, Literaturrecherche, Kapitelplanung.
 version: 3.2.4-de.1-vendored
 vendored_from: "https://github.com/marmbiz/humanizer-de"

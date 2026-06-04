@@ -1,6 +1,8 @@
 ---
 name: academic-research:pickup
 description: Erzeugt eine Bibliotheks-Pickup-Liste als Excel-Datei (4 Sheets nach Verfügbarkeitsstatus) aus Vault-Einträgen. Code128-Barcodes für ISBNs werden als Zellbild eingebettet.
+allowed-tools: Read, Write, Bash(python3 *)
+argument-hint: [--filter <verfuegbar|fernleihe|oa|lizenz>] [--output <file.xlsx>]
 ---
 
 # /academic-research:pickup
