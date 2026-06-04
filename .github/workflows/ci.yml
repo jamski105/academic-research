@@ -141,7 +141,7 @@ jobs:
             --cov-report=xml:coverage.xml
       - name: Coverage-Report zu Codecov hochladen
         if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage.xml
           fail_ci_if_error: false
