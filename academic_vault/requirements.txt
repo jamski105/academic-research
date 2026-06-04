@@ -1,5 +1,5 @@
 anthropic>=0.40
-mcp>=1.0
+mcp>=1.27.2
 sqlite-vec>=0.1.0
 # strikte csl_json-Validierung in vault.add_paper (Issue #213)
 jsonschema>=4.0
