@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/jamski105/academic-research/actions/workflows/ci.yml/badge.svg)](https://github.com/jamski105/academic-research/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-6.5.0-blue.svg)](CHANGELOG.md)
-[![Skills](https://img.shields.io/badge/skills-23+-orange.svg)](#skills-übersicht)
-[![Tests](https://img.shields.io/badge/tests-963%20passing-success.svg)](#entwicklung-und-evals)
+[![Skills](https://img.shields.io/badge/skills-28-orange.svg)](#skills-übersicht)
+[![Tests](https://img.shields.io/badge/tests-963%20passing%20%2F%201111%20collected-success.svg)](#entwicklung-und-evals)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-8A2BE2.svg)](https://code.claude.com/docs/en/plugins)
 
@@ -49,7 +49,7 @@ Seit v6.0 hat das Plugin einen eigenen **Vault-MCP-Server** (SQLite + FTS5 + sql
 5. [Update auf v6.5 (Migration von v5)](#update-auf-v65--migration-von-v5)
 6. [Walkthrough — Erstes Projekt](#walkthrough--erstes-projekt)
 7. [Commands / Slash-Commands](#commands--slash-commands)
-8. [Skills (23+ selbstaktivierend)](#skills-übersicht)
+8. [Skills (28 selbstaktivierend)](#skills-übersicht)
 9. [Agents (LLM-Subagents)](#agents)
 10. [Vault-MCP-Server](#vault-mcp-server)
 11. [5D-Scoring und Cluster](#5d-scoring-und-cluster)
@@ -388,7 +388,7 @@ OA-Bücher (OAPEN → DOAB → TIB → KVK), Verlags-Bücher (Springer → De Gr
 
 ## Skills-Übersicht
 
-Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt.
+Skills aktivieren sich **automatisch** wenn Claude passende Keywords erkennt. Insgesamt **28 Skills** mit eigener `SKILL.md` (Claude-Code-Discovery-Count, inkl. dem vendored `xlsx/`). Das Verzeichnis `skills/_common/` enthält nur geteilte Markdown-Fragmente und zählt nicht als Skill.
 
 ### Kern-Skills
 
@@ -652,7 +652,9 @@ cp config/library-profiles/tum.yaml \
 ~/.academic-research/venv/bin/python -m pytest tests/ -v
 ```
 
-Aktuell: ~60 Tests, inkl. Regression-Guards (`test_skill_naming.py`, `test_cross_references.py`).
+Aktuell: **1111 Tests gesammelt**, davon **963 bestanden** und 148 übersprungen (`pytest --collect-only` für die Gesamtzahl). Enthalten sind Regression-Guards (`test_skill_naming.py`, `test_cross_references.py`, `test_skills_manifest.py`).
+
+Die Kern-Suite ist **offline-hermetisch** und läuft ohne Netzwerk. Übersprungen werden Tests, die externe Abhängigkeiten brauchen: API-basierte Evals unter `tests/evals/` setzen einen `ANTHROPIC_API_KEY` voraus (Network/External), und einige Integrations-Tests werden ohne installierte optionale Pakete (z.B. `requests`, `sqlite-vec`) automatisch geskippt.
 
 ### Evals
 
