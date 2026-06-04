@@ -1,8 +1,8 @@
 ---
 name: chapter-writer
 description: Use this skill when the user wants a chapter SCHREIBEN (Text-Output, kein Review). Triggers on "Kapitel SCHREIBEN", "Einleitung schreiben", "Theorieteil ausformulieren / Theoretischer Rahmen", "Methodik-Kapitel / Methodenteil", "Empirie / Ergebnisse darstellen", "Diskussion schreiben / Diskussionsteil drafted", "Fazit / Schlussteil", "Übergänge formulieren / Uebergaenge formulieren". Für reines Struktur-/Gliederungs-Feedback ohne Neuschrieb → `advisor`. Für Abstract/Keywords → `abstract-generator`. Für Zitations-Formatierung → `citation-extraction`.
-compatibility: Claude API mit documents[] und citations.enabled
 license: MIT
+allowed-tools: [Read]
 ---
 
 # Kapitel-Autor

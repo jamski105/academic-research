@@ -2,6 +2,8 @@
 name: advisor
 description: Use this skill for structural feedback on outline, argumentation flow, or exposé — Review ohne Neuschrieb. Triggers on "Gliederung prüfen / Gliederung pruefen", "Struktur", "Argumentationskette", "Argumentations-Outline review", "Exposé feedback / Expose feedback", "Exposee-Bewertung", or when another skill detects structural weaknesses. Für das tatsächliche SCHREIBEN eines Kapitels → `chapter-writer`. Für Schärfung der Forschungsfrage → `research-question-refiner`. Für Methodenwahl → `methodology-advisor`.
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Advisor — Gliederungs- und Exposé-Builder

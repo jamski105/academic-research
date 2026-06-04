@@ -2,6 +2,10 @@
 name: topic-brainstorm
 description: Use this skill when the user needs help finding or evaluating a thesis topic. Triggers on "welches Thema?", "Themenfindung", "Idee evaluieren", "Thema gesucht", "ich brauche ein Thema", "welches Thema lohnt", "Thema für Bachelorarbeit / Thema fuer Bachelorarbeit", "Thema für Masterarbeit", or when academic-context is missing a topic. Fokus auf strategische Themensuche und Bewertung; Schärfung einer bestehenden Forschungsfrage übernimmt `research-question-refiner`.
 license: MIT
+allowed-tools:
+  - Bash
+  - Read
+  - Write
 ---
 
 # Topic-Brainstorm Skill

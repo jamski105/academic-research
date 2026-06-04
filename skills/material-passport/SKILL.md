@@ -4,20 +4,15 @@ description: >
   Verwende diesen Skill wenn der User ein Reproduzierbarkeits-Manifest erstellen
   oder das Projekt für die Abgabe finalisieren möchte.
   Trigger-Phrasen: "Reproduzierbarkeits-Manifest / Material-Passport erstellen",
-  "Artefakt sichern", "Manifest prüfen / pruefen", "Abgabe vorbereiten", "Vault sperren", "Repro-Lock", "material-passport.json".
+  "Artefakt sichern", "Manifest prüfen / pruefen", "Abgabe vorbereiten",
+  "Vault sperren", "Repro-Lock", "material-passport.json",
+  "Reproduzierbarkeit dokumentieren".
   Exporttyp: "Prüfung / Validation" via JSON-Schema.
   Exportiert alle relevanten Metadaten (paper_ids, DOIs, Scores, Algo-Version,
   Modellversionen, PDF-Hashes, Decision-Snapshot) als material-passport.json
   und ergänzt kapitel/methodik.md automatisch um einen Reproduzierbarkeits-Block.
-triggers:
-  - "Reproduzierbarkeits-Manifest"
-  - "Material-Passport erstellen"
-  - "Abgabe vorbereiten"
-  - "Vault sperren"
-  - "Repro-Lock"
-  - "material-passport.json"
-  - "Reproduzierbarkeit dokumentieren"
-tools:
+license: MIT
+allowed-tools:
   - Bash
 ---
 

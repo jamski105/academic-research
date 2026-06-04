@@ -1,7 +1,9 @@
 ---
 name: style-evaluator
-description: Use this skill when the user wants to evaluate academic writing style (without source comparison). Triggers on "Stil prüfen / Stil pruefen", "KI-Erkennung", "Schreibstil", "Satzlänge / Satzlaenge", "Passiv-Quote", "Nominalstil", "style evaluation", "Score", "Audit". Detektion-only ohne Revision; für KI-Korrektur (humanisieren / umschreiben) → humanizer-de. Für Textähnlichkeit → plagiarism-check.
+description: Use this skill when the user wants to evaluate academic writing style (without source comparison). Triggers on "Stil prüfen / pruefen", "KI-Erkennung", "Schreibstil", "Satzlänge / Satzlaenge", "Passiv-Quote", "Nominalstil", "style evaluation", "Score", "Audit". Detektion-only ohne Revision; für KI-Korrektur (humanisieren / umschreiben) → humanizer-de. Für Textähnlichkeit → plagiarism-check.
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Stil-Evaluator

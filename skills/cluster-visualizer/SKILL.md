@@ -8,8 +8,8 @@ description: >
   Mermaid-graph-LR-Diagramm. Erzeugt Knoten für Paper (Titel + Jahr)
   und Kanten für geteilte Zitationsverbindungen ("Kantenstärke / Kantenstaerke" via linkStyle).
   Optional wird das Diagramm per Mermaid-CLI (mmdc) als PNG exportiert.
-compatibility: Claude Code
 license: MIT
+allowed-tools: [Bash, Read, Write]
 ---
 
 # Cluster-Visualizer
@@ -24,16 +24,6 @@ license: MIT
 Visualisiert einen Literaturcluster als Mermaid-`graph LR`-Diagramm.
 Knoten sind Paper (Titel + Jahr), Kanten sind gemeinsame
 Zitationsverbindungen (Kantengewicht via Strichdicke).
-
-## Trigger-Erkennung
-
-Aktiviert sich bei:
-- "zeige Cluster"
-- "visualisiere"
-- "Mindmap"
-- "Cluster-Diagramm"
-- "Netzwerk der Quellen"
-- "zeige Verbindungen"
 
 ## Workflow
 

@@ -2,6 +2,8 @@
 name: abstract-generator
 description: Use this skill when the user wants to generate an abstract or keyword list. Triggers on "Abstract schreiben / Abstract generieren", "Keywords vorschlagen", "Zusammenfassung der Arbeit", "IMRaD-Abstract", "Kurzfassung / Kurzzusammenfassung", "abstract 150 Wörter / abstract 150 Woerter", or when submission requires an abstract section. Generiert Abstract, Keywords und Zusammenfassung; Für Titel → `title-generator`.
 license: MIT
+allowed-tools:
+  - Read
 ---
 
 # Abstract-Generator
