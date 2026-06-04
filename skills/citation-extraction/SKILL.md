@@ -16,8 +16,7 @@ license: MIT
 
 Extrahiert und formatiert Zitate aus PDFs und Volltexten. Liefert
 Literaturverzeichnisse im Zitationsstil aus `./academic_context.md`
-(APA7, IEEE, Harvard etc.). Arbeitet eng mit der Claude-API
-`documents[] + citations.enabled`.
+(APA7, IEEE, Harvard etc.). Nutzt die Claude-API `documents[] + citations.enabled`.
 
 ## Abgrenzung
 
@@ -25,11 +24,8 @@ Extrahiert und formatiert wörtliche Zitate aus PDFs für einzelne Belege.
 Für Kapitel-Prosa, die Belege in Argumentation einbaut → `chapter-writer`
 (ruft `citation-extraction` bei Bedarf auf).
 
-**BibTeX-Abgrenzung:** Der BibTeX-Output dieses Skills = einzelne Zitate aus
-PDF-Extraktion (one-shot, aus dem aktuell betrachteten Quellmaterial). Für den
-vollständigen Vault→`.bib`-Export aller Papers (Bibliography-Dump zur
-LaTeX-Kompilation) → `latex-export --bib`. Phrasen wie „BibTeX aus Vault" oder
-„komplette Bibliographie als .bib" gehören zu `latex-export`, nicht hierher.
+**BibTeX-Abgrenzung:** „BibTeX aus Vault" / „komplette Bibliographie als .bib"
+→ `latex-export --bib`, nicht hierher (Details → `references/output-formats.md`).
 
 ## Variant-Selector
 
@@ -47,10 +43,8 @@ Lies `./academic_context.md`, Feld `Zitationsstil`. Lade die entsprechende Varia
 
 Ist `Zitationsstil` leer → `apa.md`. Unbekannt → Rueckfrage. Laden: `Read skills/citation-extraction/references/<variant>.md`.
 
-**Typ-basierte Erweiterung:** Falls die Quelle `type: chapter` hat (Buchkapitel aus Sammelband),
-lade zusaetzlich `references/book-chapter-de.md` und nutze die dort definierten
-Formatierungsregeln fuer den aktiven Zitierstil (DIN 1505, Harvard-de oder APA-7).
-Die Regeln in `book-chapter-de.md` haben Vorrang vor den generischen Artikel-Regeln.
+**Typ-basierte Erweiterung:** Je nach Quellen-`type` zusaetzliche Referenz laden
+(siehe Tabelle); deren Regeln haben Vorrang vor den generischen Artikel-Regeln.
 
 | Quellen-Typ | Zusaetzliche Referenz |
 |-------------|----------------------|
@@ -62,14 +56,13 @@ Die Regeln in `book-chapter-de.md` haben Vorrang vor den generischen Artikel-Reg
 
 Wenn Quellen-PDFs im Session-Kontext liegen, nutze den `documents`-Parameter der Claude-API statt Prompt-basierter Zitation. Vorteil: Zitate sind seitengenau, die API erzwingt die Quellenbindung.
 
-**Wann verwenden:**
-- Mindestens 1 PDF im Session-Pfad
-- Zitierstil-Konversion aus echtem Quelltext (nicht aus Metadaten)
+**Wann verwenden:** mindestens 1 PDF im Session-Pfad und Zitierstil-Konversion
+aus echtem Quelltext (nicht aus Metadaten).
 
-**Wann nicht:**
-- Reiner Metadaten-zu-Zitat-Workflow → weiter mit Prompt-basierter Formatierung nach Variant-References.
+**Wann nicht:** reiner Metadaten-zu-Zitat-Workflow → Prompt-basierte
+Formatierung nach Variant-References.
 
-**Output-Integration:** `citations[].start_page_number` / `end_page_number` direkt als Seitenangabe (`S. X–Y`). Bei Buechern mit Vorseiten: `printed_page = vault.get_printed_page(paper_id, pdf_page)`.
+**Output-Integration:** Seitenangaben aus `citations[].start_page_number` / `end_page_number` → Details in `references/output-formats.md`.
 
 ## Kontext-Dateien
 
@@ -125,10 +118,8 @@ Fehlen Vault-Zitate, den Agent `quote-extractor` spawnen (definiert in
 }
 ```
 
-Der `quote-extractor`-Agent holt das PDF via `vault.ensure_file(paper_id)` —
-kein `pdf_text` im Context mehr nötig. Extrahierte Zitate werden vom Agent
-automatisch via `vault.add_quote()` persistiert und mit `vault_quote_id` im
-Output zurückgegeben.
+Der Agent holt das PDF via `vault.ensure_file(paper_id)`, persistiert die
+Zitate automatisch via `vault.add_quote()` und gibt `vault_quote_id` zurück.
 
 Bei kapitelbezogener Extraktion den `research_query` aus Kapiteltitel und
 Schlüsselkonzepten der Gliederung ableiten. Die Gliederungs-Struktur aus
@@ -143,23 +134,13 @@ Nach der Extraktion die Ergebnisse prüfen:
 - Prüfen, ob Zitate tatsächlich für das Zielkapitel/-thema relevant sind
 - Duplikate über Paper hinweg entfernen (gleiche Idee, andere Formulierung)
 
-Extrahierte Zitate dem User gruppiert nach Quelle präsentieren, mit:
-
-- Zitattext
-- Seitenzahl (falls verfügbar)
-- Ursprungs-Abschnitt
-- Relevanz-Score
-- Paper-Titel und Autoren
+Extrahierte Zitate dem User gruppiert nach Quelle präsentieren, je mit
+Zitattext, Seitenzahl (falls verfügbar), Ursprungs-Abschnitt, Relevanz-Score
+sowie Paper-Titel und Autoren.
 
 ### 5. Zitat-Formatierung
 
-Formatiere Zitate inline nach dem in `./academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten.
-
-#### Output-Formate
-
-Claude erzeugt bei Bedarf: In-text-Zitat, Literaturverzeichnis-Eintrag,
-BibTeX (`~/.academic-research/citations.bib`), Markdown-Bibliografie, JSON.
-Details zu jedem Stil in der Variant-Referenz-Datei (s.o.).
+Formatiere Zitate inline nach dem in `./academic_context.md` konfigurierten Stil. Keine externe Skript-Pipeline — Claude generiert die Formate direkt aus den strukturierten Paper-Daten. Output-Formate → `references/output-formats.md`.
 
 ### 6. Kapitelzuordnung
 
@@ -172,16 +153,12 @@ Wenn Zitate für ein bestimmtes Kapitel extrahiert werden:
 
 ### 7. Literaturstatus
 
-Nach Extraktion und Formatierung: Der Vault ist die Quelle der Wahrheit.
-`./literature_state.md` ist ein read-only Snapshot-Export — nicht beschreiben.
-
-Zum Regenerieren des Snapshots:
+Der Vault ist die Quelle der Wahrheit; `./literature_state.md` ist ein
+read-only Snapshot — nicht beschreiben. Snapshot regenerieren:
 ```bash
 node scripts/export-literature-state.mjs
 ```
-
-Der Snapshot dient nur zur manuellen Übersicht. Zitatanzahlen und Coverage
-werden im Vault über `vault.stats()` abgefragt.
+Zitatanzahlen und Coverage über `vault.stats()` abfragen.
 
 ## Lückenerkennung
 
@@ -196,38 +173,13 @@ Bei erkannten Lücken `/search` mit gezielten Queries anbieten oder den Skill `l
 
 ## Export-Formate
 
-Diese Output-Formate werden unterstützt (inline generiert, kein externes Skript):
-
-- **BibTeX** — für LaTeX-Integration einzelner extrahierter Zitate (one-shot).
-  Für den vollständigen Vault→`.bib`-Dump aller Papers → `latex-export --bib`.
-- **Markdown** — für Review und manuelles Editieren
-- **JSON** — für die programmatische Nutzung durch andere Skills
+Unterstützte Output-Formate (BibTeX, Markdown, JSON; inline generiert, kein
+externes Skript). Details und Ziel-Pfade → `references/output-formats.md`.
 
 ## Few-Shot-Beispiele
 
-### Stil: APA7-Zitation
-
-**Schlecht** (Grund: fehlende Autor-Initialen, keine DOI, unvollständig):
-
-> Müller, T. (2023). Cloud-Migration in KMU.
-
-**Gut** (Grund: vollständige APA7-Notation mit DOI):
-
-> Müller, T., & Schmidt, A. (2023). Cloud-Migration in deutschen
-> KMU: Eine empirische Studie. *Zeitschrift für Wirtschaftsinformatik*,
-> 65(3), 215–234. https://doi.org/10.1007/s11576-023-00012-x
-
-### Stil: Bibliography-Vollständigkeit
-
-**Schlecht** (Grund: Eintrag im Text ohne Literaturverzeichnis-Eintrag):
-
-> Text: "Müller (2023) argumentiert…"
-> Bibliography: (kein Müller-Eintrag)
-
-**Gut** (Grund: jeder In-Text-Zitat hat Bibliographie-Pendant):
-
-> Text: "Müller (2023) argumentiert…"
-> Bibliography: Müller, T. (2023). *Titel*. Verlag. DOI.
+Gut/Schlecht-Beispiele zur Qualitätskalibrierung (APA7-Zitation,
+Bibliography-Vollständigkeit) → `references/citation-examples.md`.
 
 ## Wichtige Regeln
 
