@@ -1,10 +1,12 @@
-# .pre-commit-config.yaml — Issue #202
+# .pre-commit-config.yaml — Issue #202 (+ #189)
 #
 # Setup:  pip install pre-commit && pre-commit install
 # Manuell: pre-commit run --all-files
 #
 # Konfiguration der Linter/Formatter liegt zentral in pyproject.toml
-# ([tool.ruff], [tool.mypy]).
+# ([tool.ruff], [tool.mypy]). Verhindert ausserdem u. a. das versehentliche
+# Committen grosser Dateien, neuer Submodule und privater Schluessel. Lokale
+# OS-Artefakte wie .DS_Store werden bereits via .gitignore ausgeschlossen.
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -15,6 +17,9 @@ repos:
       - id: check-json
       - id: trailing-whitespace
       - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: forbid-new-submodules
+      - id: detect-private-key
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.6

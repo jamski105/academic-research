@@ -7,6 +7,7 @@ description: |
   liegen auf externen Providern. Liefert PDF-Pfad oder metadata_only.
 tools:
   - Bash(browser-use:*)
+  - Bash(browser-use *)
   - Read
   - Write
 maxTurns: 12

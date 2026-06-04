@@ -1,18 +1,23 @@
 # pyproject.toml — Tooling-Konfiguration fuer academic-research (Issue #202)
 #
-# Dieses Plugin ist KEIN installierbares Python-Paket, sondern ein Claude-Code-
-# Plugin mit lose gekoppelten Skripten unter scripts/ und academic_vault/.
-# pyproject.toml dient hier ausschliesslich als zentrale Tool-Konfiguration
-# (pytest, ruff, mypy) — es wird bewusst kein build-system deklariert, damit
-# `pip install .` nicht versehentlich ein Paket baut.
+# Dieses Plugin ist primaer ein Claude-Code-Plugin mit lose gekoppelten Skripten
+# unter scripts/ und academic_vault/. pyproject.toml dient hier vor allem als
+# zentrale Tool-Konfiguration (pytest, ruff, mypy). Das build-system ist mit
+# setuptools deklariert, damit Standard-Tooling die Metadaten lesen kann.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "academic-research"
 version = "6.6.0"
-description = "Modulares akademisches Forschungs-Toolkit (Claude-Code-Plugin)."
+description = "Claude-Code-Plugin fuer wissenschaftliche Recherche, Vault-MCP-Server und Fetch-Pipelines."
 readme = "README.md"
+# Mindestversion: 3.11 (entwickelt + getestet mit 3.14, CI-Matrix 3.11/3.12/3.13).
+# Konsistent mit README.md und .github/workflows/ci.yml (vgl. #201).
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 authors = [{ name = "Jonas Ahler", email = "jam@ahler.org" }]
 
 # ---------------------------------------------------------------------------

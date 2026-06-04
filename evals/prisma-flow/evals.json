@@ -1,0 +1,9 @@
+{
+  "component": "prisma-flow",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "pf-01", "input": "Render ein PRISMA-2020-Flussdiagramm als Mermaid-Block fuer: n_identified=320, n_duplicates=80, n_screened=240, n_excluded=180, n_included=60.", "expected": {"type": "regex", "value": "(flowchart|graph|320|240|60|mermaid)"}, "mode": "with_skill"},
+    {"id": "pf-02", "input": "Welche Stufen (Identification, Screening, Eligibility, Included) gehoeren in ein PRISMA-2020-Flussdiagramm?", "expected": {"type": "regex", "value": "(Identification|Screening|Eligibility|Included)"}, "mode": "with_skill"},
+    {"id": "pf-03", "input": "Wie integrierst du das gerenderte PRISMA-Diagramm in kapitel/methodik.md?", "expected": {"type": "regex", "value": "(methodik|Mermaid|Diagramm|integrier)"}, "mode": "with_skill"}
+  ]
+}
