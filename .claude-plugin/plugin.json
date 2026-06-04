@@ -26,8 +26,11 @@
     "vault",
     "latex",
     "bibtex",
-    "book-fetcher",
     "humanizer",
-    "open-access"
+    "book-fetcher",
+    "open-access",
+    "prisma",
+    "meta-analysis",
+    "risk-of-bias"
   ]
 }
