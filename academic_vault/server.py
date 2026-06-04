@@ -964,6 +964,37 @@ def _build_mcp_server():
         """Prueft ob Vault fuer Slug gelockt ist."""
         return is_locked(db_path, slug=slug)
 
+    @mcp.tool(name="vault.export_snapshot")
+    def _vault_export_snapshot(
+        slug: str,
+        project_dir: str = ".",
+        snapshots_dir: Optional[str] = None,
+    ) -> Optional[str]:
+        """Exportiert State-Dateien + Vault-DB als .tgz-Snapshot.
+
+        Schreibt <snapshots_dir>/<slug>/<YYYYMMDD-HHMM>.tgz und gibt den Pfad
+        zurueck (None bei Fehler). snapshots_dir default: ~/.academic-research/snapshots.
+        """
+        return export_snapshot(
+            db_path, slug, project_dir=project_dir, snapshots_dir=snapshots_dir
+        )
+
+    @mcp.tool(name="vault.restore_snapshot")
+    def _vault_restore_snapshot(
+        slug: str,
+        ts: str,
+        snapshots_dir: Optional[str] = None,
+        target_dir: str = ".",
+    ) -> bool:
+        """Stellt einen Snapshot zurueck: entpackt <slug>/<ts>.tgz nach target_dir.
+
+        ts ist der Timestamp-String (Dateiname ohne .tgz). Gibt True bei Erfolg,
+        False bei Fehler. snapshots_dir default: ~/.academic-research/snapshots.
+        """
+        return restore_snapshot(
+            slug, ts, snapshots_dir=snapshots_dir, target_dir=target_dir
+        )
+
     return mcp
 
 
