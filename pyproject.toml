@@ -1,3 +1,10 @@
+# pyproject.toml — Tooling-Konfiguration fuer academic-research (Issue #202)
+#
+# Dieses Plugin ist primaer ein Claude-Code-Plugin mit lose gekoppelten Skripten
+# unter scripts/ und academic_vault/. pyproject.toml dient hier vor allem als
+# zentrale Tool-Konfiguration (pytest, ruff, mypy). Das build-system ist mit
+# setuptools deklariert, damit Standard-Tooling die Metadaten lesen kann.
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
@@ -7,7 +14,71 @@ name = "academic-research"
 version = "6.6.0"
 description = "Claude-Code-Plugin fuer wissenschaftliche Recherche, Vault-MCP-Server und Fetch-Pipelines."
 readme = "README.md"
-license = { file = "LICENSE" }
 # Mindestversion: 3.11 (entwickelt + getestet mit 3.14, CI-Matrix 3.11/3.12/3.13).
 # Konsistent mit README.md und .github/workflows/ci.yml (vgl. #201).
 requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Jonas Ahler", email = "jam@ahler.org" }]
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+# WICHTIG (Issue #202): Diese Sektion darf die bestehende Test-Discovery NICHT
+# brechen. rootdir bleibt das Repo-Root (Verzeichnis dieser Datei), testpaths
+# zeigt auf tests/ — exakt das Verhalten von `pytest tests/`.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+# Bewusst KEINE erzwungenen addopts (z.B. --cov / -x): die CI setzt Coverage
+# und sonstige Flags weiterhin via CLI. So bleibt die Suite identisch gruen.
+filterwarnings = [
+    "ignore::DeprecationWarning:PyPDF2",
+]
+
+# ---------------------------------------------------------------------------
+# ruff — Linter + Formatter
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["scripts", "academic_vault", "tests"]
+extend-exclude = [
+    "skills/humanizer-de",  # vendored
+    "skills/xlsx",          # vendored
+    "evals",
+]
+
+[tool.ruff.lint]
+# Konservatives Default-Set, damit bestehender Code nicht massenhaft bricht:
+# E/F = pycodestyle-Errors + pyflakes, I = Import-Sortierung, UP = pyupgrade.
+select = ["E", "F", "I", "UP", "B"]
+ignore = [
+    "E501",  # Zeilenlaenge — wird vom Formatter gehandhabt
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ---------------------------------------------------------------------------
+# mypy — statische Typpruefung
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+files = ["scripts", "academic_vault"]
+ignore_missing_imports = true
+warn_unused_ignores = false
+warn_redundant_casts = true
+no_implicit_optional = true
+# Schrittweise Einfuehrung — vorerst nicht-strikt, damit CI nicht sofort rot ist.
+check_untyped_defs = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "evals.*"]
+ignore_errors = true
