@@ -1,5 +1,7 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "academic-research",
+  "description": "Modulares akademisches Forschungs-Toolkit mit selbstaktivierenden Skills, 5D-Scoring, Excel-Export und KI-Stil-Erkennung.",
   "owner": {
     "name": "Jonas Ahler",
     "email": "jam@ahler.org",
@@ -10,7 +12,16 @@
       "name": "academic-research",
       "source": "./",
       "description": "Modulares akademisches Forschungs-Toolkit mit 28 selbstaktivierenden Skills, Vault-MCP-Server (SQLite + FTS5 + sqlite-vec), Universal Book Fetcher (8-Tier-Pipeline), humanizer-de Anti-KI-Audit, LaTeX-Export, Per-Uni-Profile, 5D-Scoring.",
-      "version": "6.5.0"
+      "version": "6.5.0",
+      "category": "research",
+      "tags": [
+        "academic",
+        "vault",
+        "literature-review",
+        "latex",
+        "humanizer",
+        "open-access"
+      ]
     }
   ]
 }
