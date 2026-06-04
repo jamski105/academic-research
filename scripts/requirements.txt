@@ -9,5 +9,7 @@ python-barcode[images]>=0.15.0
 # academic-vault MCP-Server (Vault): FastMCP-SDK + Vektor-Suche-Extension
 mcp>=1.0
 sqlite-vec>=0.1.0
+# strikte csl_json-Validierung in vault.add_paper (Issue #213)
+jsonschema>=4.0
 # optional — nur fuer Zotero-Import (Skill: zotero-import)
 pyzotero>=1.5

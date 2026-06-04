@@ -12,13 +12,62 @@ from pathlib import Path
 from uuid import uuid4
 from typing import Optional
 
-from .db import VaultDB, default_db_path
+from .db import VALID_PAPER_TYPES, VaultDB, default_db_path
 from .files_api import FilesAPIClient
 
 # Kanonischer DB-Default (Single Source of Truth, Issue #190):
 # VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db.
 _DEFAULT_DB = default_db_path()
 _ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+
+
+# JSON-Schema fuer das csl_json eines Papers (Issue #213, Security Round-2 M3).
+# 'type' ist Pflichtfeld und muss einer der CSL-Typen sein, die der Vault
+# kennt. So landet kein als 'article-journal' fehl-getaggter Eintrag im Vault,
+# wenn ein Skill versehentlich kaputtes oder unvollstaendiges JSON sendet.
+_CSL_JSON_SCHEMA = {
+    "type": "object",
+    "required": ["type"],
+    "properties": {
+        "type": {"enum": sorted(VALID_PAPER_TYPES)},
+    },
+}
+
+
+def validate_csl_json(csl_json: str) -> dict:
+    """Validiert csl_json strikt und gibt das geparste dict zurueck.
+
+    Wirft ValueError bei: kaputtem JSON, Nicht-Objekt, fehlendem Pflichtfeld
+    'type' oder unbekanntem type-Wert. Kein stiller Default mehr (#213).
+    """
+    try:
+        data = json.loads(csl_json)
+    except (json.JSONDecodeError, TypeError) as exc:
+        raise ValueError(f"csl_json ist kein valides JSON: {exc}") from exc
+
+    try:
+        import jsonschema
+    except ImportError:
+        # Fallback ohne jsonschema-Lib: gleiche Invarianten manuell pruefen.
+        if not isinstance(data, dict):
+            raise ValueError("csl_json muss ein JSON-Objekt sein.")
+        if "type" not in data:
+            raise ValueError(
+                "csl_json: Pflichtfeld 'type' fehlt -- "
+                f"erlaubt: {sorted(VALID_PAPER_TYPES)}"
+            )
+        if data["type"] not in VALID_PAPER_TYPES:
+            raise ValueError(
+                f"Ungueltiger type '{data['type']}' -- "
+                f"erlaubt: {sorted(VALID_PAPER_TYPES)}"
+            )
+        return data
+
+    try:
+        jsonschema.validate(instance=data, schema=_CSL_JSON_SCHEMA)
+    except jsonschema.ValidationError as exc:
+        raise ValueError(f"csl_json verletzt Schema: {exc.message}") from exc
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -247,7 +296,12 @@ def add_paper(
     container_title: Optional[str] = None,
     parent_paper_id: Optional[str] = None,
 ) -> None:
-    """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter."""
+    """Upsert eines Papers in den Vault. Unterstuetzt type=book|chapter.
+
+    csl_json wird strikt validiert (Issue #213): Pflichtfeld 'type', gueltiger
+    CSL-Typ, valides JSON. Bei Verstoss ValueError statt silent default.
+    """
+    validate_csl_json(csl_json)
     db = VaultDB(db_path)
     db.init_schema()
     db.add_paper(

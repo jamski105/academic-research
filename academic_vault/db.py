@@ -202,12 +202,21 @@ class VaultDB:
         """Upsert eines Papers in die papers-Tabelle.
 
         type wird aus csl_json extrahiert. Erlaubte Werte: article-journal, book, chapter.
+
+        Malformed JSON wird NICHT mehr stillschweigend zu 'article-journal'
+        defaulted (Issue #213, Security Round-2 M3), sondern als ValueError
+        gemeldet. Fehlt das Feld 'type' komplett, gilt weiterhin der
+        DB-Default 'article-journal'.
         """
         try:
             csl = json.loads(csl_json)
-            paper_type = csl.get("type", "article-journal")
-        except Exception:
-            paper_type = "article-journal"
+        except (json.JSONDecodeError, TypeError) as exc:
+            raise ValueError(
+                f"csl_json ist kein valides JSON: {exc}"
+            ) from exc
+        if not isinstance(csl, dict):
+            raise ValueError("csl_json muss ein JSON-Objekt sein.")
+        paper_type = csl.get("type", "article-journal")
 
         if paper_type not in VALID_PAPER_TYPES:
             raise ValueError(
