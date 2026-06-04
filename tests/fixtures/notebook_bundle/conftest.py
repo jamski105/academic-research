@@ -2,7 +2,7 @@
 import io
 import json
 import pytest
-from PyPDF2 import PdfWriter
+from pypdf import PdfWriter
 
 
 def make_mock_pdf(title: str, num_pages: int = 3) -> bytes:

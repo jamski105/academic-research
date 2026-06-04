@@ -203,6 +203,27 @@ def add_parent_paper_id_column(db_path: str) -> None:
         conn.close()
 
 
+def add_provenance_column(db_path: str) -> None:
+    """Fuegt provenance-Spalte zu papers hinzu. Idempotent (try/except). (#195)
+
+    Persistiert den Herkunfts-Tag (z.B. "scihub") fuer Provenance-Audits.
+    Default NULL fuer bestehende Eintraege. Aufruf-Sicher: kann mehrfach auf
+    derselben DB ausgefuehrt werden.
+    """
+    import sqlite3 as _sqlite3
+    conn = _sqlite3.connect(db_path)
+    try:
+        try:
+            conn.execute(
+                "ALTER TABLE papers ADD COLUMN provenance TEXT DEFAULT NULL"
+            )
+        except _sqlite3.OperationalError:
+            pass  # Spalte existiert bereits -- idempotent
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def add_figures_table(db_path: str) -> None:
     """Erstellt figures-Tabelle falls nicht vorhanden. Idempotent.
 

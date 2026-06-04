@@ -1,0 +1,9 @@
+{
+  "component": "grant-proposal",
+  "component_type": "skill",
+  "prompts": [
+    {"id": "gp-01", "input": "Skizziere die Gliederung eines DFG-Sachbeihilfe-Antrags zum Thema 'Erklaerbare KI in der Medizin'.", "expected": {"type": "regex", "value": "(Stand der Forschung|Arbeitsprogramm|Ziele|Gliederung|Antrag)"}, "mode": "with_skill"},
+    {"id": "gp-02", "input": "Formuliere einen Abschnitt 'Ziele und Arbeitshypothesen' fuer einen BMBF-Antrag zu nachhaltiger Logistik.", "expected": {"type": "regex", "value": "(Ziel|Hypothese|Arbeitshypothese)"}, "mode": "with_skill"},
+    {"id": "gp-03", "input": "Welche Pflichtbestandteile muss ein EU-Horizon-Antrag (Excellence, Impact, Implementation) enthalten?", "expected": {"type": "regex", "value": "(Excellence|Impact|Implementation|Bestandteile)"}, "mode": "with_skill"}
+  ]
+}

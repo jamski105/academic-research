@@ -7,6 +7,7 @@ description: |
   fuer Pickup zurueck. Kein eigener Volltext-Host.
 tools:
   - Bash(browser-use:*)
+  - Bash(browser-use *)
   - Read
   - Write
 maxTurns: 12

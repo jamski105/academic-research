@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""chunk_pdf.py — Zerlegt Buch-PDFs kapitelweise via PyPDF2 Outline-Tree.
+"""chunk_pdf.py — Zerlegt Buch-PDFs kapitelweise via pypdf Outline-Tree.
 
 CLI:
     python chunk_pdf.py --input book.pdf --chapter <n|toc|all> --output <pfad>
 
 Kapitel-Erkennung (Prioritaet):
-    1. PyPDF2 Outline-Tree (PdfReader.outline)
+    1. pypdf Outline-Tree (PdfReader.outline)
     2. Fallback: Textextraktion erste 20 Seiten, Regex-Kapitelsuche
 
 Ausgabe:
@@ -22,8 +22,8 @@ import re
 import sys
 from typing import Optional
 
-from PyPDF2 import PdfReader, PdfWriter
-from PyPDF2.generic import Destination
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import Destination
 
 
 def _outline_page_number(reader: PdfReader, item) -> Optional[int]:
@@ -31,7 +31,7 @@ def _outline_page_number(reader: PdfReader, item) -> Optional[int]:
     try:
         if isinstance(item, Destination):
             return reader.get_destination_page_number(item)
-        # Neuere PyPDF2-Versionen: item kann dict-aehnlich sein
+        # Neuere pypdf-Versionen: item kann dict-aehnlich sein
         if hasattr(item, "page"):
             page_obj = item.page
             if hasattr(page_obj, "get_object"):
@@ -63,7 +63,7 @@ def _flatten_outline(reader: PdfReader, outline, depth: int = 0) -> list[dict]:
 
 
 def _extract_via_outline(reader: PdfReader) -> list[dict]:
-    """Extrahiert Kapitel aus PyPDF2 Outline-Tree. Gibt [] wenn kein Outline."""
+    """Extrahiert Kapitel aus pypdf Outline-Tree. Gibt [] wenn kein Outline."""
     outline = reader.outline
     if not outline:
         return []
@@ -207,7 +207,7 @@ def write_all_chapters(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Zerlegt Buch-PDFs kapitelweise (PyPDF2 Outline-Tree)."
+        description="Zerlegt Buch-PDFs kapitelweise (pypdf Outline-Tree)."
     )
     parser.add_argument("--input", required=True, help="Eingabe-PDF")
     parser.add_argument(

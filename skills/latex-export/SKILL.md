@@ -1,6 +1,6 @@
 ---
 name: latex-export
-description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel übersetzen / exportieren", "Thesis als .tex", "BibTeX aus Vault", "/academic-research:latex". Converts Markdown-Kapitel to .tex (Pandoc or custom renderer) and builds .bib from Vault (biblatex, DIN-1505).
+description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel exportieren", "Kapitel übersetzen / konvertieren", "Thesis als .tex", "BibTeX aus Vault", "/academic-research:latex". Converts Markdown-Kapitel to .tex (Pandoc or custom renderer) and builds .bib from Vault (biblatex, DIN-1505).
 ---
 
 # LaTeX-Export
@@ -11,28 +11,25 @@ description: Use this skill for LaTeX-Output / .tex-Export. Triggers on "Kapitel
 
 ## Workflow
 
-1. Kapitel aus `kapitel/` lesen
-2. `skills/latex-export/scripts/render_tex.py` → `.tex` (Pandoc bevorzugt, Custom-Fallback)
-3. `skills/latex-export/scripts/build_bib.py` → `.bib` aus Vault (alle Papers)
-4. Optional: Uni-Template `~/.academic-research/library-profiles/<uni>.tex.template` wrappen
+1. `${CLAUDE_PLUGIN_ROOT}/skills/latex-export/scripts/render_tex.py` → `.tex` (Pandoc bevorzugt, Custom-Renderer-Fallback)
+2. `${CLAUDE_PLUGIN_ROOT}/skills/latex-export/scripts/build_bib.py` → `.bib` aus Vault (biblatex, DIN-1505)
+3. Optional: Uni-Template `~/.academic-research/library-profiles/<uni>.tex.template`
 
-## Command
+## Abgrenzung zu citation-extraction
 
-```
-/academic-research:latex --kapitel <n>|all --output thesis.tex [--bib refs.bib] [--template <uni>]
-```
+`latex-export` = vollständiger `.bib`-Export aller Vault-Papers + `.tex`-Konvertierung.
+`citation-extraction` = Einzelzitat aus PDF / Inline-Zitat belegen.
 
-## Heading-Mapping (Custom-Renderer)
+## Fehlerpfade
 
-`# H1` → `\chapter{}` | `## H2` → `\section{}` | `### H3` → `\subsection{}`
+- **Pandoc fehlt:** Custom-Renderer-Fallback (kein Absturz). Pandoc installieren empfehlen.
+- **Vault leer:** Leere `.bib` + Meldung „Vault leer – Papers via `add` hinzufügen."
+- **Template nicht gefunden:** Ausgabe ohne Vorlage + Meldung „Template `<uni>` fehlt."
 
-## BibTeX-Typen
+## BibTeX-Abgrenzung
 
-| CSL | BibTeX | Pflichtfelder |
-|-----|--------|---------------|
-| `article-journal` | `@article` | author, title, journal, year |
-| `book` | `@book` | author, title, publisher, year |
-| `chapter` | `@incollection` | author, title, booktitle, year |
+BibTeX hier = Vault-weiter Bibliography-Dump (alle Papers).
+Einzelzitat aus PDF (one-shot) → `citation-extraction`.
 
 ## Verbatim-Guard
 

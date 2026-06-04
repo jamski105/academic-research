@@ -1,0 +1,27 @@
+{
+  "component": "humanizer-de",
+  "should_trigger": [
+    "Pruefe diesen Text auf KI-typische Schreibmuster.",
+    "Mach diesen Kapitelentwurf weniger nach KI klingend.",
+    "Fuehre einen Anti-KI-Audit auf meinem Text durch.",
+    "Entferne KI-Floskeln aus diesem Absatz.",
+    "Humanisiere diesen deutschen Text.",
+    "Klingt das nach ChatGPT? Bitte ueberarbeiten.",
+    "Mach den Stil natuerlicher, weg vom KI-Sound.",
+    "Pruefe meinen Entwurf auf Anzeichen fuer KI-generierte Inhalte.",
+    "Deep-Pass: KI-Muster erkennen und ueberarbeiten.",
+    "Entferne aufgeblaehte Symbolik und Werbesprache aus dem Text."
+  ],
+  "should_not_trigger": [
+    "Extrahiere Zitate aus dem PDF.",
+    "Suche Literatur zu Microservices.",
+    "Plane mein naechstes Kapitel.",
+    "Formatiere meine Zitate nach APA.",
+    "Welches Thema soll ich nehmen?",
+    "Exportiere nach LaTeX.",
+    "Importiere meine Reading List.",
+    "Erstelle ein Poster.",
+    "Schreibe einen Foerderantrag.",
+    "Generiere einen Titel."
+  ]
+}

@@ -242,3 +242,77 @@ def test_figure_verifier_agent_frontmatter():
     assert "model: sonnet" in fm
     assert "vault.add_figure" in content
     assert "vault.list_figures" in content
+
+
+# ---------------------------------------------------------------------------
+# Regressions-Tests #168: description-Feld in agents/*.md (Auto-Discovery)
+# ---------------------------------------------------------------------------
+
+def _parse_frontmatter(agent_path: Path):
+    """Gibt den rohen YAML-Frontmatter-String einer agents/*.md-Datei zurueck."""
+    import re
+    content = agent_path.read_text(encoding="utf-8")
+    fm_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+    assert fm_match is not None, f"Kein YAML-Frontmatter in {agent_path.name}"
+    return fm_match.group(1)
+
+
+def test_figure_verifier_has_nonempty_description():
+    """Regression #168: figure-verifier.md muss ein nicht-leeres description-Feld haben.
+
+    Dieser Test wuerde gegen die urspruengliche Version (ohne description) fehlschlagen.
+    Er stellt sicher, dass die Auto-Discovery des Claude-Code-Sub-Agent-Frameworks
+    fuer figure-verifier dauerhaft funktioniert.
+    """
+    import re
+    agents_dir = Path(__file__).parent.parent / "agents"
+    agent_path = agents_dir / "figure-verifier.md"
+    assert agent_path.exists(), f"Agent-Datei fehlt: {agent_path}"
+
+    fm = _parse_frontmatter(agent_path)
+
+    # description-Schluessel muss vorhanden sein
+    assert re.search(r"^description\s*[:|>]", fm, re.MULTILINE), (
+        "figure-verifier.md: description-Feld fehlt im Frontmatter (Issue #168)"
+    )
+
+    # description muss nicht-leer sein (mindestens 10 Zeichen nach dem Schluessel)
+    content = agent_path.read_text(encoding="utf-8")
+    desc_match = re.search(r"description\s*[:|>]\s*([\s\S]+?)(?=\n\w|\n---)", content)
+    assert desc_match is not None, "description-Feld hat keinen Wert"
+    desc_value = desc_match.group(1).strip()
+    assert len(desc_value) >= 10, (
+        f"description-Feld ist zu kurz oder leer: '{desc_value}'"
+    )
+
+
+def test_all_agents_have_nonempty_description():
+    """Regression #168: Alle agents/*.md muessen ein nicht-leeres description-Feld haben.
+
+    Stellt sicher, dass kein Agent-Manifest durch kuenftige Aenderungen das
+    description-Feld verliert und damit fuer die Auto-Discovery unsichtbar wird.
+    """
+    import re
+    agents_dir = Path(__file__).parent.parent / "agents"
+    agent_files = sorted(agents_dir.glob("*.md"))
+    assert len(agent_files) > 0, f"Keine agents/*.md-Dateien gefunden in {agents_dir}"
+
+    failures = []
+    for agent_path in agent_files:
+        content = agent_path.read_text(encoding="utf-8")
+        fm_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+        if fm_match is None:
+            failures.append(f"{agent_path.name}: kein YAML-Frontmatter")
+            continue
+        fm = fm_match.group(1)
+        if not re.search(r"^description\s*[:|>]", fm, re.MULTILINE):
+            failures.append(f"{agent_path.name}: description-Feld fehlt")
+            continue
+        desc_match = re.search(r"description\s*[:|>]\s*([\s\S]+?)(?=\n\w|\n---)", content)
+        if desc_match is None or len(desc_match.group(1).strip()) < 10:
+            failures.append(f"{agent_path.name}: description-Feld ist leer oder zu kurz")
+
+    assert failures == [], (
+        "Folgende agents/*.md haben kein gueltiges description-Feld "
+        f"(Regression #168):\n" + "\n".join(f"  - {f}" for f in failures)
+    )
