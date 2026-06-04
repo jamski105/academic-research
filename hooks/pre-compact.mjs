@@ -41,8 +41,12 @@ const SNAPSHOTS_DIR = process.env.ACADEMIC_SNAPSHOTS_DIR
   || join(os.homedir(), '.academic-research', 'snapshots');
 const SLUG = process.env.ACADEMIC_PROJECT_SLUG || 'default';
 const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+// Kanonischer DB-Default (Single Source of Truth, Issue #190):
+// VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db
+// mit slug=basename(CWD) — identisch zu den anderen Hooks und dem MCP-Server.
+const DB_SLUG = basename(PROJECT_DIR) || 'default';
 const VAULT_DB = process.env.VAULT_DB_PATH
-  || join(os.homedir(), '.academic-research', 'projects', SLUG, 'vault.db');
+  || join(os.homedir(), '.academic-research', 'projects', DB_SLUG, 'vault.db');
 const VAULT_SRC = REPO_ROOT;
 
 // Zu sichernde State-Dateien (relativ zu PROJECT_DIR)

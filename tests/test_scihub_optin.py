@@ -9,10 +9,17 @@ Tests fuer SciHub-Tier Opt-in (Chunk D, v6.5 #97).
 5. Output-Disclaimer erscheint bei provenance=scihub
 """
 
+import json
+import os
+import sqlite3
+import sys
+import tempfile
 from pathlib import Path
 
 import pytest
 import yaml
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 REPO_ROOT = Path(__file__).parent.parent
 ACTIVE_YAML_TEMPLATE = REPO_ROOT / "library-profiles" / "active.yaml.template"
@@ -151,6 +158,52 @@ class TestVaultProvenance:
         entry = _build_vault_entry(provenance="oa")
         assert "provenance:oa" in entry["tags"]
         assert "provenance:scihub" not in entry["tags"]
+
+
+# ---------------------------------------------------------------------------
+# Test 4b: DB-Persistenz des provenance-Tags (Issue #195)
+# ---------------------------------------------------------------------------
+
+class TestVaultProvenancePersistence:
+    """Persistenz-Check: provenance:scihub muss im DB-Schema gespeichert werden."""
+
+    def setup_method(self):
+        self.tmp = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
+        self.db_path = self.tmp.name
+        self.tmp.close()
+        from academic_vault.db import VaultDB
+
+        self.db = VaultDB(self.db_path)
+        self.db.init_schema()
+
+    def teardown_method(self):
+        os.unlink(self.db_path)
+
+    def test_provenance_persisted_and_read_back(self):
+        """add_paper(provenance='scihub') wird in DB gespeichert und ausgelesen."""
+        self.db.add_paper(
+            paper_id="sci-persist",
+            csl_json=json.dumps({"type": "article-journal", "title": "Persisted"}),
+            provenance="scihub",
+        )
+        paper = self.db.get_paper("sci-persist")
+        assert paper is not None
+        assert paper["provenance"] == "scihub"
+
+    def test_list_papers_by_provenance_audit(self):
+        """list_papers_by_provenance('scihub') liefert genau die SciHub-Papers."""
+        self.db.add_paper(
+            paper_id="oa",
+            csl_json=json.dumps({"type": "article-journal", "title": "OA"}),
+            provenance="oa",
+        )
+        self.db.add_paper(
+            paper_id="sci",
+            csl_json=json.dumps({"type": "article-journal", "title": "Sci"}),
+            provenance="scihub",
+        )
+        ids = {r["paper_id"] for r in self.db.list_papers_by_provenance("scihub")}
+        assert ids == {"sci"}
 
 
 # ---------------------------------------------------------------------------

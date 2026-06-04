@@ -2,6 +2,7 @@
 description: Set up the academic research plugin (Python env, browser-use CLI, permissions)
 disable-model-invocation: true
 allowed-tools: Bash(bash *), Bash(python3 *)
+argument-hint: [--uni <profil>] [--skip-browser] [--enable-scihub]
 ---
 
 # Academic Research v5 Setup

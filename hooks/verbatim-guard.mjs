@@ -17,8 +17,9 @@
 
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as os from 'node:os';
 
 // ---------------------------------------------------------------------------
 // Konfiguration
@@ -27,7 +28,12 @@ import { fileURLToPath } from 'node:url';
 const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(HOOK_DIR);
 const VAULT_SRC = REPO_ROOT;
-const VAULT_DB = process.env.VAULT_DB_PATH || join(REPO_ROOT, 'vault.db');
+// Kanonischer DB-Default (Single Source of Truth, Issue #190):
+// VAULT_DB_PATH aus Env, sonst ~/.academic-research/projects/<slug>/vault.db
+// mit slug=basename(CWD). NICHT mehr REPO_ROOT/vault.db (= Plugin-Verzeichnis).
+const SLUG = basename(process.env.CLAUDE_PROJECT_DIR || process.cwd()) || 'default';
+const VAULT_DB = process.env.VAULT_DB_PATH
+  || join(os.homedir(), '.academic-research', 'projects', SLUG, 'vault.db');
 // Mindestlänge eines Zitat-Spans (in Zeichen). Muss mit den Regex-Quantifizierern übereinstimmen.
 const MIN_QUOTE_LEN = 10;
 // Pattern fuer Figure-Referenzen (Abb., Abbildung, Tab., Tabelle, Fig., Figure + Nummer)
@@ -63,6 +69,30 @@ function isProtectedPath(filePath) {
   // kapitel/<datei>.md — auch bei fuehrendem Slash oder relativen Pfaden
   if (/(?:^|\/)kapitel\/[^/]+\.md$/.test(normalized)) return true;
   return false;
+}
+
+// ---------------------------------------------------------------------------
+// Tool-Erkennung + Content-Extraktion
+// ---------------------------------------------------------------------------
+
+// Tools die Dateiinhalte schreiben und daher geprueft werden muessen (#220).
+const WRITE_LIKE_TOOLS = new Set(['Write', 'Edit', 'MultiEdit']);
+
+/**
+ * Extrahiert den zu pruefenden Text aus tool_input — abhaengig vom Tool:
+ *   - Write:     tool_input.content
+ *   - Edit:      tool_input.new_string
+ *   - MultiEdit: alle edits[].new_string (zusammengefuegt)
+ */
+function extractContent(toolName, toolInput) {
+  if (toolName === 'MultiEdit' && Array.isArray(toolInput.edits)) {
+    return toolInput.edits.map((e) => e?.new_string || '').join('\n');
+  }
+  if (toolName === 'Edit') {
+    return toolInput.new_string || '';
+  }
+  // Write (und Fallback)
+  return toolInput.content || '';
 }
 
 // ---------------------------------------------------------------------------
@@ -194,15 +224,15 @@ async function main() {
     process.exit(0);
   }
 
-  // Nur Write-Tool-Calls pruefen
+  // Schreibende Tool-Calls pruefen: Write, Edit, MultiEdit (#220)
   const toolName = input?.tool_name || input?.hook_event_name || '';
-  if (toolName !== 'Write') {
+  if (!WRITE_LIKE_TOOLS.has(toolName)) {
     process.exit(0);
   }
 
   const toolInput = input?.tool_input || {};
   const filePath = toolInput.file_path || '';
-  const content = toolInput.content || '';
+  const content = extractContent(toolName, toolInput);
 
   // Pfad-Match
   if (!isProtectedPath(filePath)) {
