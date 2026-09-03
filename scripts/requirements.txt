@@ -19,7 +19,7 @@ python-barcode[images]>=0.16.1
 # academic-vault MCP-Server (Vault): FastMCP-SDK + Vektor-Suche-Extension
 # <2: mcp 2.0.0 (PyPI) entfernt mcp.server.fastmcp, das academic_vault/server.py
 # importiert — der Server startet sonst nur noch mit "mcp SDK nicht installiert".
-mcp>=1.0,<2
+mcp>=1.0,<3
 sqlite-vec>=0.1.0
 # strikte csl_json-Validierung in vault.add_paper (Issue #213)
 jsonschema>=4.0
