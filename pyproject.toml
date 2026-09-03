@@ -46,7 +46,7 @@ dependencies = [
     # importiert — der MCP-Server startet sonst nur noch mit "mcp SDK nicht
     # installiert" (RuntimeError, server.py:1378). Siehe .github/workflows/ci.yml
     # E2E-Smoke-Voraussetzung-Step fuer die identische Begruendung.
-    "mcp>=1.0,<2",
+    "mcp>=1.0,<3",
     "sqlite-vec==0.1.10a4",
     "jsonschema>=4.0",
     "pyzotero>=1.5",
